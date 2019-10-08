@@ -57,22 +57,40 @@ i/db:
 start: s/dev
 .PHONY: start
 
-## alias for start
-s: start
-.PHONY: s
-
 ## starts the rails dev server
 s/dev:
 	$(tools-rails) server
 .PHONY: s/dev
+
+# -- test --
+## runs all the tests
+test:
+	$(tools-rails) test
+.PHONY: test
+
+# -- utilties --
+## no-op, group utitlies
+utils:
+.PHONY: utils
+
+## lists all the routes
+u/routes:
+	$(tools-rails) routes
+.PHONY: u/routes
 
 # -- db --
 ## alias for d/console
 db: d/console
 .PHONY: db
 
+## runs any pending migrations
+d/migrate:
+	$(tools-rails) db:migrate
+.PHONY: d/reset
+
 ## drops, recreates, and seeds the dev db
 d/reset:
+	$(tools-rails) db:reset
 .PHONY: d/reset
 
 ## connects a rails console to the dev db

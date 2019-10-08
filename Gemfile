@@ -4,6 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby "2.5.3"
 
 gem "bootsnap", ">= 1.4.2", require: false
+gem "clearance", "~> 1.17"
 gem "pg", ">= 0.18", "< 2.0"
 gem "puma", "~> 3.11"
 gem "rails", "~> 6.0.0"
@@ -16,4 +17,10 @@ group :development do
   gem "spring"
   gem "spring-watcher-listen", "~> 2.0.0"
   gem "web-console", ">= 3.3.0"
+end
+
+group :development, :test do
+  gem "pry-rails", "~> 0.3.9"
+  gem "pry-byebug", "~> 3.7"
+  gem "awesome_print", "~> 1.8"
 end
