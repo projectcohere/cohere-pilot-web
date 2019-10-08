@@ -3,15 +3,15 @@ Rails.application.routes.draw do
     root(to: "sessions#new", as: :sign_in)
 
     resource(:session,
-      only: %i[create]
-    )
-
-    resources(:passwords,
-      only: %i[create new]
+      only: [:create]
     )
   end
 
   constraints(Clearance::Constraints::SignedIn.new) do
     root(to: "home#show")
+
+    resource(:session,
+      only: [:destroy]
+    )
   end
 end
