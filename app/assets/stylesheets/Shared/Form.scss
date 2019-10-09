@@ -1,0 +1,28 @@
+.Form {
+  display: grid;
+  row-gap: $spacing1;
+}
+
+.Field {
+  > label {
+    display: block;
+    color: $gray0;
+  }
+
+  > input {
+    width: 100%;
+    display: block;
+    border: none;
+    border-bottom: 1px solid $black;
+
+    &::placeholder {
+      color: $gray1;
+    }
+  }
+}
+
+.Button {
+  height: 42px;
+  border: 1px solid $black;
+  background: none;
+}

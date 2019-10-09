@@ -1,0 +1,12 @@
+.Main {
+  padding: $spacing1;
+
+  &-title {
+    font-size: $fontSize0;
+
+    &-highlight {
+      color: $colorBrand;
+      font-weight: $fontWeightBold;
+    }
+  }
+}

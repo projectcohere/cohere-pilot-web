@@ -1,0 +1,18 @@
+body {
+  font-family: system-ui, sans-serif;
+  font-size: $fontSize3;
+}
+
+/* typography */
+h1 {
+  font-size: $fontSize0;
+}
+
+h2 {
+  font-size: $fontSize1;
+  font-weight: 300;
+}
+
+a {
+  border-bottom: 1px solid $black;
+}

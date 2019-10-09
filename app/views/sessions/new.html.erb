@@ -1,18 +1,17 @@
-<div id="clearance" class="sign-in">
-  <h2><%= t(".title") %></h2>
-  <%= form_for :session, url: session_path do |form| %>
-    <div class="text-field">
-      <%= form.label :email %>
-      <%= form.text_field :email, type: 'email' %>
+<main class="Main">
+  <h1><%= t(".title") %></h2>
+  <%= form_for(:session, url: session_path, html: { class: "SignInForm Form" }) do |form| %>
+    <h2><%= t(".prompt") %></h2>
+    <div class="Field">
+      <%= form.label(:email, t(".email-label")) %>
+      <%= form.text_field(:email, type: "email", placeholder: t(".email-placeholder")) %>
     </div>
 
-    <div class="password-field">
-      <%= form.label :password %>
-      <%= form.password_field :password %>
+    <div class="Field">
+      <%= form.label(:password, t(".password-label")) %>
+      <%= form.password_field(:password, placeholder: t(".password-placeholder")) %>
     </div>
 
-    <div class="submit-field">
-      <%= form.submit %>
-    </div>
+    <%= form.submit(class: "Button") %>
   <% end %>
-</div>
+</main>

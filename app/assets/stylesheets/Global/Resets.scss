@@ -65,6 +65,14 @@ button,
 textarea,
 select {
   font: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+button,
+input {
+  border: none;
+  background: none;
 }
 
 /* Remove all animations and transitions for people that prefer not to see them */

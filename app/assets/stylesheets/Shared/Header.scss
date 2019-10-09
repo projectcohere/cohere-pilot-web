@@ -1,0 +1,20 @@
+.Header {
+  display: flex;
+  justify-content: space-between;
+  padding: $spacing2 $spacing1;
+  border-bottom: 1px solid $black;
+
+  &-logo {
+    font-size: $fontSize2;
+  }
+
+  &-user {
+    display: flex;
+    align-items: center;
+  }
+
+  &-signOut {
+    margin-left: $spacing2;
+    border-bottom: 1px solid $black;
+  }
+}
