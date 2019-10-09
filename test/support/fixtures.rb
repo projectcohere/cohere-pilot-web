@@ -1,4 +1,4 @@
-module Ext
+module Support
   module Fixtures
     # -- queries --
     def password(password)
@@ -7,4 +7,4 @@ module Ext
   end
 end
 
-ActiveRecord::FixtureSet.context_class.include(Ext::Fixtures)
+ActiveRecord::FixtureSet.context_class.include(Support::Fixtures)

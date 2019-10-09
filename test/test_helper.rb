@@ -3,6 +3,7 @@ require_relative "../config/environment"
 require "rails/test_help"
 require "support/fixtures"
 require "support/sessions"
+require "support/asserts"
 
 # load pry-rescue if the flag is set
 if ENV["PRY_RESCUE"]
@@ -10,11 +11,14 @@ if ENV["PRY_RESCUE"]
 end
 
 class ActiveSupport::TestCase
-  # run tests in parallel with specified workers
   parallelize(workers: :number_of_processors)
 
-  # setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
-  fixtures :all
+  # setup fixtures
+  # TODO: generalize this for feature-namespaced records?
+  set_fixture_class(
+    cases: Case::Record,
+    recipients: Recipient::Record
+  )
 
-  # add more helper methods to be used by all tests here
+  fixtures :all
 end

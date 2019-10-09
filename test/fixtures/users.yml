@@ -1,4 +1,4 @@
-test:
+user_1:
   email: test@cohere.com
   encrypted_password: <%= password("password") %>
   remember_token: "test-token"

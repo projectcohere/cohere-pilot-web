@@ -1,6 +1,6 @@
 require "clearance/testing/deny_access_matcher"
 
-module Ext
+module Support
   module Sessions
     # -- commands --
     def sign_in(user = default_user)
@@ -33,4 +33,4 @@ module Ext
   end
 end
 
-ActionDispatch::IntegrationTest.include(Ext::Sessions)
+ActionDispatch::IntegrationTest.include(Support::Sessions)

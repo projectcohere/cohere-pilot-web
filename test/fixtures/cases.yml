@@ -1,0 +1,17 @@
+incomplete_1:
+  recipient: recipient_1
+  completed_at: nil
+  created_at: <%= Time.zone.now - 1.days %>
+  updated_at: <%= Time.zone.now %>
+
+incomplete_2:
+  recipient: recipient_1
+  completed_at: nil
+  created_at: <%= Time.zone.now - 1.days %>
+  updated_at: <%= Time.zone.now - 1.hours %>
+
+complete_1:
+  recipient: recipient_1
+  completed_at: <%= Time.zone.now %>
+  created_at: <%= Time.zone.now - 1.days %>
+  updated_at: <%= Time.zone.now %>

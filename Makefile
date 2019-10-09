@@ -63,18 +63,33 @@ s/dev:
 .PHONY: s/dev
 
 # -- test --
-## runs the tests
-test:
-	$(test-base)
+## alias for t/unit
+test: t/unit
 .PHONY: test
 
-## runs the tests and stops on exceptions
-t/rescue:
+## runs unit tests
+t/unit:
+	$(test-base)
+.PHONY: t/unit
+
+## runs unit tests and stops on exceptions
+t/u/rescue:
 	PRY_RESCUE=1 $(test-base)
 .PHONY: t/dbg
 
+## runs all tests
+t/all:
+	$(test-base-all)
+.PHONY: t/all
+
+## runs all tests and stops on exceptions
+t/a/rescue:
+	PRY_RESCUE=1 $(test-base-all)
+.PHONY: t/dbg
+
 # -- test/helpers
-test-base = $(tools-rails) test test/**/*_tests.rb
+test-base     = $(tools-rails) test test/features/**/*_tests.rb
+test-base-all = $(test-base) test/**/*_tests.rb
 
 # -- utilties --
 ## no-op, group utitlies
@@ -94,6 +109,15 @@ db: d/console
 ## runs any pending migrations
 d/migrate:
 	$(tools-rails) db:migrate
+.PHONY: d/reset
+
+## rolls back previous migration
+d/m/undo:
+	$(tools-rails) db:rollback
+.PHONY: d/reset
+
+## reapplies previous migration
+d/m/redo: d/m/undo d/migrate
 .PHONY: d/reset
 
 ## drops, recreates, and seeds the dev db
