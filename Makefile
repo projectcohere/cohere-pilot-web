@@ -4,9 +4,9 @@ include ./Makefile.base.mk
 help-column-width = 9
 
 # -- context --
-tools-bin         = ./bin
-tools-rails       = $(tools-bin)/rails
-tools-bundle      = $(tools-bin)/bundle
+tools-rb         = ./bin
+tools-rails       = $(tools-rb)/rails
+tools-bundle      = $(tools-rb)/bundle
 tools-yarn        = yarn
 tools-pg-up       = $(shell pg_isready 1>/dev/null 2>&1; echo $$?)
 tools-pg-start    = brew services start postgresql
@@ -63,10 +63,18 @@ s/dev:
 .PHONY: s/dev
 
 # -- test --
-## runs all the tests
+## runs the tests
 test:
-	$(tools-rails) test
+	$(test-base)
 .PHONY: test
+
+## runs the tests and stops on exceptions
+t/rescue:
+	PRY_RESCUE=1 $(test-base)
+.PHONY: t/dbg
+
+# -- test/helpers
+test-base = $(tools-rails) test test/**/*_tests.rb
 
 # -- utilties --
 ## no-op, group utitlies

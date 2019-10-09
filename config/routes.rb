@@ -1,9 +1,10 @@
 Rails.application.routes.draw do
   constraints(Clearance::Constraints::SignedOut.new) do
-    root(to: "sessions#new", as: :sign_in)
+    root(to: "user/sessions#new", as: :sign_in)
 
     resource(:session,
-      only: [:create]
+      only: [:create],
+      controller: "user/sessions"
     )
   end
 
@@ -11,7 +12,8 @@ Rails.application.routes.draw do
     root(to: "home#show")
 
     resource(:session,
-      only: [:destroy]
+      only: [:destroy],
+      controller: "user/sessions"
     )
   end
 end

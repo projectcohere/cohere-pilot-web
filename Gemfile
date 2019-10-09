@@ -21,6 +21,6 @@ end
 
 group :development, :test do
   gem "pry-rails", "~> 0.3.9"
-  gem "pry-byebug", "~> 3.7"
+  gem "pry-rescue", "~> 1.5"
   gem "awesome_print", "~> 1.8"
 end

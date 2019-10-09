@@ -1,6 +1,13 @@
-ENV['RAILS_ENV'] ||= 'test'
-require_relative '../config/environment'
-require 'rails/test_help'
+ENV['RAILS_ENV'] ||= "test"
+require_relative "../config/environment"
+require "rails/test_help"
+require "support/fixtures"
+require "support/sessions"
+
+# load pry-rescue if the flag is set
+if ENV["PRY_RESCUE"]
+  require "pry-rescue/minitest"
+end
 
 class ActiveSupport::TestCase
   # run tests in parallel with specified workers
