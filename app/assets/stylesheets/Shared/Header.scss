@@ -14,7 +14,7 @@
   }
 
   &-signOut {
+    @extend .u-link;
     margin-left: $spacing2;
-    border-bottom: 1px solid $black;
   }
 }

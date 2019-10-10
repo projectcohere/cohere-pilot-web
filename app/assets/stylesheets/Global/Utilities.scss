@@ -1,0 +1,30 @@
+/* typography */
+.u-title {
+  font-size: $fontSize0;
+  font-weight: $fontWeightBold;
+}
+
+.u-subtitle {
+  font-size: $fontSize2;
+  font-weight: $fontWeightThin;
+}
+
+.u-body {
+  font-size: $fontSize4;
+  font-weight: $fontWeightRegular;
+}
+
+.u-hint {
+  font-size: $fontSize5;
+  font-weight: $fontWeightBold;
+}
+
+/* elements */
+.u-link {
+  border-bottom: 1px solid $colorPrimary;
+  cursor: pointer;
+
+  &:hover {
+    color: $colorPrimary;
+  }
+}

@@ -6,10 +6,15 @@
 
 .Case {
   padding: $spacing2;
-  border-bottom: 1px solid $black;
   border-left: 1px solid $black;
+  border-bottom: 1px solid $black;
 
   &-name {
+    @extend .u-subtitle;
+    @extend .u-link;
+
+    display: inline-block;
+    margin-bottom: $spacing2;
     font-size: $fontSize3;
   }
 }

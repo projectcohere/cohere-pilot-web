@@ -5,8 +5,9 @@
 
 .Field {
   > label {
+    @extend .u-hint;
     display: block;
-    color: $gray0;
+    color: $colorPrimaryBlack;
   }
 
   > input {
@@ -23,6 +24,8 @@
 
 .Button {
   height: 42px;
-  border: 1px solid $black;
+  border: 1px solid $colorPrimary;
+  color: $colorPrimary;
   background: none;
+  cursor: pointer;
 }

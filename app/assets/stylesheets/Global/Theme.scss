@@ -1,18 +1,17 @@
 body {
   font-family: system-ui, sans-serif;
-  font-size: $fontSize4;
+  @extend .u-body;
 }
 
 /* typography */
 h1 {
-  font-size: $fontSize0;
+  @extend .u-title;
 }
 
 h2 {
-  font-size: $fontSize1;
-  font-weight: 300;
+  @extend .u-subtitle;
 }
 
 a {
-  border-bottom: 1px solid $black;
+  @extend .u-link;
 }
