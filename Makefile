@@ -18,7 +18,7 @@ tools-redis-start = brew services start redis
 init: i
 .PHONY: init
 
-i: i/pre i/base i/deps i/services i/db
+i: i/pre i/base i/deps i/services i/db i/hooks
 .PHONY: i
 
 ## installs the ruby/js deps
@@ -54,6 +54,10 @@ i/db:
 	$(tools-rails) db:create
 	$(tools-rails) db:seed
 .PHONY: i/db
+
+i/hooks:
+	cd .git/hooks && ln -s ../../hooks/pre-push
+.PHONY: i/hooks
 
 # -- start --
 ## alias for s/dev
