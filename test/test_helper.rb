@@ -11,14 +11,8 @@ if ENV["PRY_RESCUE"]
 end
 
 class ActiveSupport::TestCase
+  # parallelize tests
   parallelize(workers: :number_of_processors)
-
-  # setup fixtures
-  # TODO: generalize this for feature-namespaced records?
-  set_fixture_class(
-    cases: Case::Record,
-    recipients: Recipient::Record
-  )
-
+  # load all fixtures
   fixtures :all
 end

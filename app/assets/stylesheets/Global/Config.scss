@@ -1,3 +1,7 @@
+/* widths */
+$width1: 1000px;
+$width2: 400px;
+
 /* spacing */
 $spacing0: 40px;
 $spacing1: 20px;
@@ -7,11 +11,22 @@ $spacing2: 10px;
 $fontSize0: 48px;
 $fontSize1: 32px;
 $fontSize2: 24px;
-$fontSize3: 16px;
+$fontSize3: 20px;
+$fontSize4: 16px;
 $fontWeightBold: bold;
 
 /* colors */
-$black: black;
+$black: #000000;
+$white: #ffffff;
 $gray0: #777777;
 $gray1: #aaaaaa;
-$colorBrand: red;
+
+/* colors/brand */
+$colorPrimary: #807fff;
+$colorPrimaryBlack: #343434;
+$colorSecondary1: #ff6e61;
+$colorSecondary2: #d14252;
+$colorSecondary3: #1c004a;
+
+/* colors/feature */
+$colorError: $colorSecondary2;

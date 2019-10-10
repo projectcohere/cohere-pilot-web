@@ -1,13 +1,17 @@
 class Case
   # -- lifetime --
-  def initialize(recipient:, completed:)
+  def initialize(recipient:, updated_at:, completed_at:)
     @recipient = recipient
-    @completed = completed
+    @updated_at = updated_at
+    @completed_at = completed_at
   end
 
   # -- status --
+  attr_reader(:updated_at)
+  attr_reader(:completed_at)
+
   def incomplete?
-    !@completed
+    @completed_at.nil?
   end
 
   # -- recipient --
@@ -17,7 +21,8 @@ class Case
   def self.from_record(record)
     Case.new(
       recipient: Recipient.from_record(record.recipient),
-      completed: record.completed_at != nil
+      updated_at: record.updated_at,
+      completed_at: record.completed_at
     )
   end
 end

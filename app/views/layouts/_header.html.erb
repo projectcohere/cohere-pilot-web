@@ -6,7 +6,7 @@
     <div class="Header-user">
       <%= current_user.email %>
       <%=
-        button_to(t(".sign-out"), session_path,
+        button_to(t(".sign-out"), sign_out_path,
           method: :delete,
           class: "Header-signOut Link"
         )

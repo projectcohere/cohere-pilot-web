@@ -1,7 +1,12 @@
 require "test_helper"
 
 class SessionsTests < ActionDispatch::IntegrationTest
-  test "can start a session" do
+  test "can view the sign in page" do
+    get("/sign-in")
+    assert(:success)
+  end
+
+  test "can sign in" do
     post("/session", params: {
       session: {
         email: "test@cohere.com",
@@ -13,9 +18,9 @@ class SessionsTests < ActionDispatch::IntegrationTest
     assert(current_session.signed_in?)
   end
 
-  test "can end a session" do
+  test "can sign out" do
     sign_in
-    delete("/session")
+    delete("/sign-out")
     assert_response(:redirect)
     assert(current_session.signed_out?)
   end

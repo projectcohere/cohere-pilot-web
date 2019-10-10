@@ -1,7 +1,12 @@
 <main class="Main">
   <h1><%= t(".title") %></h2>
-  <%= form_for(:session, url: session_path, html: { class: "SignInForm Form" }) do |form| %>
+  <%= form_for(:session, url: session_path, html: { class: "SignIn Form" }) do |form| %>
     <h2><%= t(".prompt") %></h2>
+    <% if flash.notice.present? %>
+      <p class="SignIn-error">
+        <%= flash.notice %>
+      </p>
+    <% end %>
     <div class="Field">
       <%= form.label(:email, t(".email-label")) %>
       <%= form.text_field(:email, type: "email", placeholder: t(".email-placeholder")) %>

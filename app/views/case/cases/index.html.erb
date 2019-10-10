@@ -1,0 +1,17 @@
+<main class="Main">
+  <h1 class="Main-title">
+    All Cases
+  </h1>
+  <ul class="CaseList">
+    <% @cases.each do |kase| %>
+      <li class="Case">
+        <p class="Case-name">
+          <%= kase.recipient.name %>
+        </p>
+        <p class="Case-updateTime">
+          Updated <%= time_ago_in_words(kase.updated_at) %> ago
+        </p>
+      </li>
+    <% end %>
+  </ul>
+</main>

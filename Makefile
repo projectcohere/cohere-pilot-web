@@ -1,7 +1,7 @@
 include ./Makefile.base.mk
 
 # -- cosmetics --
-help-column-width = 9
+help-column-width = 10
 
 # -- context --
 tools-rb         = ./bin
@@ -15,8 +15,11 @@ tools-redis-start = brew services start redis
 
 # -- init --
 ## initializes the dev environment
-init: i/pre i/base i/deps i/services i/db
+init: i
 .PHONY: init
+
+i: i/pre i/base i/deps i/services i/db
+.PHONY: i
 
 ## installs the ruby/js deps
 i/deps:
@@ -54,7 +57,10 @@ i/db:
 
 # -- start --
 ## alias for s/dev
-start: s/dev
+start: s
+.PHONY: start
+
+s: s/dev
 .PHONY: start
 
 ## starts the rails dev server
@@ -64,8 +70,11 @@ s/dev:
 
 # -- test --
 ## alias for t/unit
-test: t/unit
+test: t
 .PHONY: test
+
+t: t/unit
+.PHONY: t
 
 ## runs unit tests
 t/unit:
@@ -88,7 +97,7 @@ t/a/rescue:
 .PHONY: t/dbg
 
 # -- test/helpers
-test-base     = $(tools-rails) test test/features/**/*_tests.rb
+test-base     = $(tools-rails) test test/features/*_tests.rb test/features/**/*_tests.rb
 test-base-all = $(test-base) test/**/*_tests.rb
 
 # -- utilties --
@@ -103,8 +112,21 @@ u/routes:
 
 # -- db --
 ## alias for d/console
-db: d/console
+db: d
 .PHONY: db
+
+d: d/console
+.PHONY: d
+
+## loads dev fixtures
+d/fixtures:
+	$(tools-rails) db:fixtures:load FIXTURES=recipients,cases
+.PHONY: d/fixtures
+
+## drops, recreates, and loads dev fixtures
+d/reset: d/fixtures
+	$(tools-rails) db:reset
+.PHONY: d/reset
 
 ## runs any pending migrations
 d/migrate:
@@ -120,12 +142,7 @@ d/m/undo:
 d/m/redo: d/m/undo d/migrate
 .PHONY: d/reset
 
-## drops, recreates, and seeds the dev db
-d/reset:
-	$(tools-rails) db:reset
-.PHONY: d/reset
-
-## connects a rails console to the dev db
+## starts the rails dev console
 d/console:
 	$(tools-rails) console
 .PHONY: d/console

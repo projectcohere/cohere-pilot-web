@@ -1,0 +1,15 @@
+.CaseList {
+  max-width: $width1;
+  display: grid;
+  gap: $spacing1;
+}
+
+.Case {
+  padding: $spacing2;
+  border-bottom: 1px solid $black;
+  border-left: 1px solid $black;
+
+  &-name {
+    font-size: $fontSize3;
+  }
+}
