@@ -22,11 +22,11 @@ module Support
     end
 
     def current_user
-      @current_session.current_user
+      current_session.current_user
     end
 
     def default_user
-      u = User.first
+      u = User::Record.first
       u.password = "password"
       u
     end

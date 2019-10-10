@@ -4,6 +4,7 @@ module Environment
   module Fixtures
     # provide the namespace paths to our active record models
     K_ClassMap = {
+      users: User::Record,
       cases: Case::Record,
       recipients: Recipient::Record
     }
