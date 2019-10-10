@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_09_184517) do
+ActiveRecord::Schema.define(version: 2019_10_10_185847) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,6 +21,12 @@ ActiveRecord::Schema.define(version: 2019_10_09_184517) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["recipient_id"], name: "index_cases_on_recipient_id"
+  end
+
+  create_table "enrollers", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "recipients", force: :cascade do |t|
@@ -38,7 +44,10 @@ ActiveRecord::Schema.define(version: 2019_10_09_184517) do
     t.string "encrypted_password", limit: 128, null: false
     t.string "confirmation_token", limit: 128
     t.string "remember_token", limit: 128, null: false
+    t.string "organization_type", null: false
+    t.bigint "organization_id"
     t.index ["email"], name: "index_users_on_email"
+    t.index ["organization_type", "organization_id"], name: "index_users_on_organization_type_and_organization_id"
     t.index ["remember_token"], name: "index_users_on_remember_token"
   end
 
