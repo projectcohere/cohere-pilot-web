@@ -1,5 +1,4 @@
 class User < Entity
-  # -- properties --
   prop(:role)
   prop(:organization)
 

@@ -1,5 +1,5 @@
-class Recipient
-  attr_reader(:name)
+class Recipient < Entity
+  prop(:name)
 
   # -- lifetime --
   def initialize(name:)

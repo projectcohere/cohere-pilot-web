@@ -1,10 +1,8 @@
-class Case
-  attr_reader(
-    :recipient,
-    :enroller,
-    :updated_at,
-    :completed_at
-  )
+class Case < Entity
+  prop(:recipient)
+  prop(:enroller)
+  prop(:updated_at)
+  prop(:completed_at)
 
   # -- lifetime --
   def initialize(recipient:, enroller:, updated_at:, completed_at:)
