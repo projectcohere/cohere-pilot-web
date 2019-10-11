@@ -1,8 +1,7 @@
 ENV['RAILS_ENV'] ||= "test"
 require_relative "../config/environment"
 require "rails/test_help"
-require "support/fixtures"
-require "support/sessions"
+require "support/session"
 require "support/asserts"
 
 # load pry-rescue if the flag is set

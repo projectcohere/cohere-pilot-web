@@ -8,7 +8,8 @@ module CoherePilotWeb
   class Application < Rails::Application
     config.load_defaults(6.0)
     config.autoload_paths += [
-      "app/features/base"
+      "app/features/base",
+      "app/web/concerns"
     ]
   end
 end

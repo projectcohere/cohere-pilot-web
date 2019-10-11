@@ -3,15 +3,24 @@
     All Cases
   </h1>
   <ul class="CaseList">
-    <% @cases.each do |kase| %>
-      <li class="Case">
-        <p class="Case-name">
-          <%= kase.recipient.name %>
-        </p>
-        <p class="Case-updateTime">
-          Updated <%= time_ago_in_words(kase.updated_at) %> ago
-        </p>
-      </li>
+    <% if @cases.blank? %>
+      <p>No cases left!</p>
+    <% else %>
+      <% @cases.each do |kase| %>
+        <li class="CaseCell">
+          <p class="CaseCell-name">
+            <%= kase.recipient.name %>
+          </p>
+          <div class="CaseCell-row">
+            <p class="CaseCell-enroller">
+              <%= kase.enroller.name %>
+            </p>
+            <p class="CaseCell-updateTime">
+              Updated <%= time_ago_in_words(kase.updated_at) %> ago
+            </p>
+          </div>
+        </li>
+      <% end %>
     <% end %>
   </ul>
 </main>

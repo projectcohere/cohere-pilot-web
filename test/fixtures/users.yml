@@ -3,3 +3,9 @@ cohere_1:
   encrypted_password: <%= password("password") %>
   organization_type: cohere
   remember_token: "test-token"
+
+enroller_1:
+  email: test@enroller.com
+  encrypted_password: <%= password("password") %>
+  organization: enroller_1 (Enroller::Record)
+  remember_token: "test-token"

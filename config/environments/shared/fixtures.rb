@@ -6,7 +6,8 @@ module Environment
     K_ClassMap = {
       users: User::Record,
       cases: Case::Record,
-      recipients: Recipient::Record
+      recipients: Recipient::Record,
+      enrollers: Enroller::Record
     }
 
     # we have to monkey patch the fixture class cache to namespace our fixture
@@ -21,7 +22,17 @@ module Environment
         super(class_names, *args, **kwargs, &block)
       end
     end
+
+    ActiveRecord::FixtureSet::ClassCache.prepend(ClassCacheExt)
+
+    # add helpers to fixtures context
+    module ContextExt
+      # -- queries --
+      def password(password)
+        ::BCrypt::Password.create(password, cost: ::BCrypt::Engine::MIN_COST)
+      end
+    end
+
+    ActiveRecord::FixtureSet.context_class.include(ContextExt)
   end
 end
-
-ActiveRecord::FixtureSet::ClassCache.prepend(Environment::Fixtures::ClassCacheExt)

@@ -127,17 +127,18 @@ d/seed:
 	$(tools-rails) db:seed
 .PHONY: d/seed
 
-## loads dev fixtures
+## loads fixtures
 d/fixtures:
-	$(tools-rails) db:fixtures:load FIXTURES=recipients,cases
+	$(tools-rails) db:fixtures:load
 .PHONY: d/fixtures
 
-## drops, recreates, and loads dev fixtures
-d/reset: d/reset/base d/fixtures
+## drops, recreates, and seeds the db
+d/reset:
+	$(tools-rails) db:reset
 .PHONY: d/reset
 
-d/reset/base:
-	$(tools-rails) db:reset
+## resets the db and loads fixtures
+d/r/all: d/reset d/fixtures
 .PHONY: d/reset/base
 
 ## runs any pending migrations

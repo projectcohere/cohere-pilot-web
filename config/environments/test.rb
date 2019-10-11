@@ -1,6 +1,9 @@
 require_relative "shared/fixtures"
 
 Rails.application.configure do
+  # -- middleware --
+  config.middleware.use(Clearance::BackDoor)
+
   # -- root --
   config.cache_classes = false
   config.eager_load = false

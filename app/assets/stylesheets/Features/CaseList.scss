@@ -4,17 +4,25 @@
   gap: $spacing1;
 }
 
-.Case {
+.CaseCell {
   padding: $spacing2;
   border-left: 1px solid $black;
   border-bottom: 1px solid $black;
 
+  > * + * {
+    margin-top: $spacing2;
+  }
+
   &-name {
     @extend .u-subtitle;
     @extend .u-link;
+  }
 
-    display: inline-block;
-    margin-bottom: $spacing2;
-    font-size: $fontSize3;
+  &-row {
+    display: flex;
+
+    > * + * {
+      margin-left: $spacing2;
+    }
   }
 }

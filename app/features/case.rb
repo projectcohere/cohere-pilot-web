@@ -1,26 +1,29 @@
 class Case
+  attr_reader(
+    :recipient,
+    :enroller,
+    :updated_at,
+    :completed_at
+  )
+
   # -- lifetime --
-  def initialize(recipient:, updated_at:, completed_at:)
+  def initialize(recipient:, enroller:, updated_at:, completed_at:)
     @recipient = recipient
+    @enroller = enroller
     @updated_at = updated_at
     @completed_at = completed_at
   end
 
-  # -- status --
-  attr_reader(:updated_at)
-  attr_reader(:completed_at)
-
+  # -- queries --
   def incomplete?
     @completed_at.nil?
   end
-
-  # -- recipient --
-  attr_reader(:recipient)
 
   # -- factories --
   def self.from_record(record)
     Case.new(
       recipient: Recipient.from_record(record.recipient),
+      enroller: Enroller.from_record(record.enroller),
       updated_at: record.updated_at,
       completed_at: record.completed_at
     )
