@@ -15,14 +15,3 @@ module Authentication
     end
   end
 end
-
-# module Clearance
-#   class Session
-#     sign_in = instance_method(:sign_in)
-
-#     define_method(:sign_in) do |*args|
-#       # binding.pry
-#       sign_in.bind(self).(*args)
-#     end
-#   end
-# end

@@ -7,9 +7,10 @@ Bundler.require(*Rails.groups)
 module CoherePilotWeb
   class Application < Rails::Application
     config.load_defaults(6.0)
-    config.autoload_paths += [
-      "app/features/base",
-      "app/web/concerns"
+    config.autoload_paths += %w[
+      app/features/base
+      app/web/base
+      app/web/concerns
     ]
   end
 end

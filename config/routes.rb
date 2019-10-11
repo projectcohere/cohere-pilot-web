@@ -6,11 +6,10 @@ Rails.application.routes.draw do
     root(to: redirect(sign_in_path), as: :root_signed_out)
 
     # auth
-    get(sign_in_path, to: "user/sessions#new")
+    get(sign_in_path, to: "sessions#new")
 
     resource(:session,
-      only: [:create],
-      controller: "user/sessions"
+      only: [:create]
     )
 
     # fallback
@@ -24,12 +23,11 @@ Rails.application.routes.draw do
     root(to: redirect(cases_path))
 
     # auth
-    delete("/sign-out", to: "user/sessions#destroy")
+    delete("/sign-out", to: "sessions#destroy")
 
     # cases
     resources(:cases,
-      only: [:index],
-      controller: "case/cases"
+      only: [:index]
     )
 
     # fallback
