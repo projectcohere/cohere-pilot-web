@@ -3,17 +3,15 @@ require "clearance/testing/deny_access_matcher"
 module Support
   module Session
     # -- commands --
-    def sign_in(user = users(:cohere_1))
-      # all the fixtures are gonna use password
-      user.password = "password"
+    def auth(url, as: users(:cohere_1))
+      as_user = as
+      as_param = "as=#{as_user.id}"
 
-      # make the sign-in request
-      post(session_path, params: {
-        session: {
-          email: user.email,
-          password: user.password
-        }
-      })
+      if url.include?("?")
+        "#{url}&#{as_param}"
+      else
+        "#{url}?#{as_param}"
+      end
     end
 
     # -- queries--

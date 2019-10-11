@@ -1,5 +1,24 @@
 class Case
   class Repo
+    # -- queries --
+    # -- queries/one
+    def find_one(id)
+      record = Case::Record
+        .find(id)
+
+      Case.from_record(record)
+    end
+
+    def find_one_for_enroller(id, enroller_id)
+      record = Case::Record
+        .where(enroller_id: enroller_id)
+        .pending
+        .find(id)
+
+      Case.from_record(record)
+    end
+
+    # -- queries/many
     def find_incomplete
       records = Case::Record
         .where(completed_at: nil)
@@ -10,7 +29,7 @@ class Case
       end
     end
 
-    def find_pending_for_enroller(enroller_id)
+    def find_for_enroller(enroller_id)
       records = Case::Record
         .where(enroller_id: enroller_id)
         .pending

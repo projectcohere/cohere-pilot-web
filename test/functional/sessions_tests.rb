@@ -19,8 +19,7 @@ class SessionsTests < ActionDispatch::IntegrationTest
   end
 
   test "can sign out" do
-    sign_in
-    delete("/sign-out")
+    delete(auth("/sign-out"))
     assert_response(:redirect)
     assert(current_session.signed_out?)
   end

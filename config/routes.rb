@@ -27,7 +27,7 @@ Rails.application.routes.draw do
 
     # cases
     resources(:cases,
-      only: [:index]
+      only: [:index, :show]
     )
 
     # fallback

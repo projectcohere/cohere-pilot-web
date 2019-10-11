@@ -16,6 +16,8 @@
   &-name {
     @extend .u-subtitle;
     @extend .u-link;
+
+    display: inline-block;
   }
 
   &-row {

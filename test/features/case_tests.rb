@@ -1,6 +1,7 @@
 class CaseTests < ActiveSupport::TestCase
   test "incomplete when completed date is missing" do
     kase = Case.new(
+      id: nil,
       recipient: nil,
       enroller: nil,
       updated_at: nil,

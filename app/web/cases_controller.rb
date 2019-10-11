@@ -1,6 +1,8 @@
 class CasesController < ApplicationController
   def index
-    return if policy.forbid?(:list)
+    if policy.forbid?(:list)
+      deny_access()
+    end
 
     user = Current.user
     repo = Case::Repo.new
@@ -9,8 +11,27 @@ class CasesController < ApplicationController
     when :cohere
       repo.find_incomplete
     when :enroller
-      repo.find_pending_for_enroller(user.organization.id)
+      repo.find_for_enroller(user.organization.id)
     end
+  end
+
+  def show
+    user = Current.user
+    repo = Case::Repo.new
+
+    kase_id = params[:id]
+    kase = case user.role
+    when :cohere
+      repo.find_one(kase_id)
+    when :enroller
+      repo.find_for_enroller(kase_id, user.organization.id)
+    end
+
+    if policy(kase).forbid?(:show)
+      deny_access()
+    end
+
+    @case = kase
   end
 
   private
