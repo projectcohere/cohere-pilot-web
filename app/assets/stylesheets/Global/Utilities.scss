@@ -21,7 +21,9 @@
 
 /* elements */
 .u-link {
-  border-bottom: 1px solid $colorPrimary;
+  color: $colorPrimaryBlack;
+  text-decoration: underline;
+  text-decoration-color: $colorPrimary;
   cursor: pointer;
 
   &:hover {

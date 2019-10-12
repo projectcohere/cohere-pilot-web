@@ -1,7 +1,7 @@
 class CasesController < ApplicationController
   def index
     if policy.forbid?(:list)
-      deny_access()
+      deny_access
     end
 
     user = Current.user
@@ -24,11 +24,11 @@ class CasesController < ApplicationController
     when :cohere
       repo.find_one(kase_id)
     when :enroller
-      repo.find_for_enroller(kase_id, user.organization.id)
+      repo.find_one_for_enroller(kase_id, user.organization.id)
     end
 
     if policy(kase).forbid?(:show)
-      deny_access()
+      deny_access
     end
 
     @case = kase

@@ -8,9 +8,9 @@
     <% else %>
       <% @cases.each do |kase| %>
         <li class="CaseCell">
-          <p class="CaseCell-name">
-            <%= kase.recipient.name %>
-          </p>
+          <%=
+            link_to(kase.recipient.name, kase, class: "CaseCell-name")
+          %>
           <div class="CaseCell-row">
             <p class="CaseCell-enroller">
               <%= kase.enroller.name %>

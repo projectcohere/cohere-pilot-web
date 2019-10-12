@@ -36,8 +36,8 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "can view a pending case for my org as an enroller" do
-    kase = Case.from_record(cases(:incomplete_1))
-    get(auth("/cases/#{kase.id}"))
+    kase = Case.from_record(cases(:incomplete_2))
+    get(auth("/cases/#{kase.id}", as: users(:enroller_1)))
     assert_response(:success)
     assert_select(".Main-title", text: /#{kase.recipient.name}/)
   end
