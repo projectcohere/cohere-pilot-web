@@ -18,6 +18,8 @@ class User < Entity
       [:cohere, nil]
     when Enroller::Record.to_s
       [:enroller, Enroller.from_record(record.organization)]
+    when Supplier::Record.to_s
+      [:supplier, Supplier.from_record(record.organization)]
     end
 
     # create entity

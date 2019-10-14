@@ -3,10 +3,13 @@ require "active_record/fixtures"
 module Environment
   module Fixtures
     # provide the namespace paths to our active record models
+    # TODO: generate this from a list of descendants of ApplicationRecord
+    # named Record.
     K_ClassMap = {
       users: User::Record,
       cases: Case::Record,
       recipients: Recipient::Record,
+      suppliers: Supplier::Record,
       enrollers: Enroller::Record
     }
 
