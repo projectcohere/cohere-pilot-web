@@ -6,7 +6,7 @@ class SessionsTests < ActionDispatch::IntegrationTest
     assert(:success)
   end
 
-  test "can sign in" do
+  test "can sign in as an operator" do
     post("/session", params: {
       session: {
         email: "me@cohere.com",
@@ -14,8 +14,32 @@ class SessionsTests < ActionDispatch::IntegrationTest
       }
     })
 
-    assert_response(:redirect)
     assert(current_session.signed_in?)
+    assert_redirected_to("/cases")
+  end
+
+  test "can sign in as an enroller" do
+    post("/session", params: {
+      session: {
+        email: "me@testmetro.com",
+        password: "password"
+      }
+    })
+
+    assert(current_session.signed_in?)
+    assert_redirected_to("/cases")
+  end
+
+  test "can sign in as a supplier" do
+    post("/session", params: {
+      session: {
+        email: "me@testenergy.com",
+        password: "password"
+      }
+    })
+
+    assert(current_session.signed_in?)
+    assert_redirected_to("/cases")
   end
 
   test "can sign out" do
