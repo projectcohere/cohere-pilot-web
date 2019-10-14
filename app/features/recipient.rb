@@ -1,4 +1,5 @@
 class Recipient < Entity
+  # -- props --
   prop(:name)
 
   # -- lifetime --
