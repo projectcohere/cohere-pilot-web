@@ -9,10 +9,10 @@
 
 If you don't use a tool to manage multiple ruby versions, please install one. We recommend [rbenv](https://github.com/rbenv/rbenv).
 
-Once rbenv is installed, please install ruby 2.5.3:
+Once rbenv is installed, please install the project ruby:
 
 ```sh
-$ rbenv install 2.5.3
+$ cat .ruby-version | xargs rbenv install
 ```
 
 And then run the setup command.
