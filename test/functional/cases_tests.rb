@@ -21,6 +21,13 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 1)
   end
 
+  # -- list/inbound
+  test "can list inbound cases as a supplier" do
+    get(auth("/cases/inbound", as: users(:supplier_1)))
+    assert_response(:success)
+    assert_select(".Main-title", text: /Inbound Cases/)
+  end
+
   # -- view --
   test "can't view unless signed-in" do
     kase = cases(:incomplete_1)
@@ -40,5 +47,12 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases/#{kase.id}", as: users(:enroller_1)))
     assert_response(:success)
     assert_select(".Main-title", text: /#{kase.recipient.name}/)
+  end
+
+  # -- new --
+  test "can add a new case as a supplier" do
+    get(auth("/cases/new", as: users(:supplier_1)))
+    assert_response(:success)
+    assert_select(".Main-title", text: /Add a Case/)
   end
 end

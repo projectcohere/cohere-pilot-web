@@ -8,9 +8,9 @@ Rails.application.routes.draw do
     # auth
     get(sign_in_path, to: "sessions#new")
 
-    resource(:session,
-      only: [:create]
-    )
+    resource(:session, only: %i[
+      create
+    ])
 
     # fallback
     get("*path", to: redirect(sign_in_path))
@@ -26,9 +26,13 @@ Rails.application.routes.draw do
     delete("/sign-out", to: "sessions#destroy")
 
     # cases
-    resources(:cases,
-      only: [:index, :show]
-    )
+    resources(:cases, only: %i[
+      index
+      show
+      new
+    ]) do
+      get(:inbound, on: :collection)
+    end
 
     # fallback
     get("*path", to: redirect(cases_path))

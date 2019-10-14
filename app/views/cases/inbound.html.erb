@@ -1,0 +1,10 @@
+<main class="Main">
+  <h1 class="Main-title">
+    Inbound Cases
+  </h1>
+  <div class="Main-actions">
+    <% if policy.permit?(:create) %>
+      <%= link_to("Add a Case", new_case_path) %>
+    <% end %>
+  </div>
+</main>

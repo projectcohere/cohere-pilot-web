@@ -39,7 +39,7 @@ class SessionsTests < ActionDispatch::IntegrationTest
     })
 
     assert(current_session.signed_in?)
-    assert_redirected_to("/cases")
+    assert_redirected_to("/cases/inbound")
   end
 
   test "can sign out" do

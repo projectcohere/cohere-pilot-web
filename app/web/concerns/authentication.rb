@@ -5,8 +5,6 @@ module Authentication
     before_action(:build_user)
   end
 
-  private
-
   # builds a user entity from the current_user record fetched
   # by clearance
   def build_user

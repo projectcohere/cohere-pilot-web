@@ -1,4 +1,8 @@
 class CasesController < ApplicationController
+  # -- helpers --
+  helper_method(:policy)
+
+  # -- actions --
   def index
     if policy.forbid?(:list)
       deny_access
@@ -19,12 +23,12 @@ class CasesController < ApplicationController
     user = Current.user
     repo = Case::Repo.new
 
-    kase_id = params[:id]
+    case_id = params[:id]
     kase = case user.role
     when :cohere
-      repo.find_one(kase_id)
+      repo.find_one(case_id)
     when :enroller
-      repo.find_one_for_enroller(kase_id, user.organization.id)
+      repo.find_one_for_enroller(case_id, user.organization.id)
     end
 
     if policy(kase).forbid?(:show)
@@ -34,9 +38,19 @@ class CasesController < ApplicationController
     @case = kase
   end
 
+  def inbound
+    if policy.permit?(:list)
+      redirect_to(cases_path)
+    end
+  end
+
   private
 
+  # -- queries --
   def policy(kase = nil)
-    @policy ||= Case::Policy.new(Current.user, kase)
+    @policy ||= Case::Policy.new(
+      Current.user,
+      kase
+    )
   end
 end

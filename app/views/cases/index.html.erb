@@ -2,29 +2,36 @@
   <h1 class="Main-title">
     All Cases
   </h1>
+  <div class="Main-actions">
+    <% if policy.permit?(:create) %>
+      <%= link_to("Add a Case", new_case_path) %>
+    <% end %>
+  </div>
   <ul class="CaseList">
     <% if @cases.blank? %>
       <p>No cases left!</p>
     <% else %>
       <% @cases.each do |kase| %>
-        <li class="CaseCell">
-          <%=
-            link_to(kase.recipient.name, kase, class: "CaseCell-name")
-          %>
-          <div class="CaseCell-row">
-            <% if @policy.permit?(:view_status) %>
+        <% @policy.with_record(kase) do %>
+          <li class="CaseCell">
+            <%=
+              link_to(kase.recipient.name, kase, class: "CaseCell-name")
+            %>
+            <div class="CaseCell-row">
+              <% if @policy.permit?(:view_status) %>
+                <p class="CaseCell-enroller">
+                  <%= kase.status.to_s.camelize %>
+                </p>
+              <% end %>
               <p class="CaseCell-enroller">
-                <%= kase.status.to_s.camelize %>
+                <%= kase.enroller.name %>
               </p>
-            <% end %>
-            <p class="CaseCell-enroller">
-              <%= kase.enroller.name %>
-            </p>
-            <p class="CaseCell-updateTime">
-              Updated <%= time_ago_in_words(kase.updated_at) %> ago
-            </p>
-          </div>
-        </li>
+              <p class="CaseCell-updateTime">
+                Updated <%= time_ago_in_words(kase.updated_at) %> ago
+              </p>
+            </div>
+          </li>
+        <% end %>
       <% end %>
     <% end %>
   </ul>

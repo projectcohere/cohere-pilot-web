@@ -8,14 +8,18 @@ class Case
 
     # -- queries --
     def permit?(action)
-      # this can pattern match on [action, user.role] in ruby 2.7
+      role = @user.role
+
+      # this can pattern match on [action, role] in ruby 2.7
       case action
       when :list
-        true
+        role != :supplier
       when :show
-        true
+        role != :supplier
+      when :create
+        role != :enroller
       when :view_status
-        @user.role == :cohere
+        role == :cohere
       else
         false
       end
@@ -23,6 +27,15 @@ class Case
 
     def forbid?(action)
       not permit?(action)
+    end
+
+    # -- commands --
+    def with_record(kase)
+      previous = @case
+      @case = kase
+      result = yield
+      @case = previous
+      result
     end
   end
 end
