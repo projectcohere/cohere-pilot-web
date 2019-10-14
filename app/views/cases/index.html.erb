@@ -12,6 +12,11 @@
             link_to(kase.recipient.name, kase, class: "CaseCell-name")
           %>
           <div class="CaseCell-row">
+            <% if @policy.permit?(:view_status) %>
+              <p class="CaseCell-enroller">
+                <%= kase.status.camelize %>
+              </p>
+            <% end %>
             <p class="CaseCell-enroller">
               <%= kase.enroller.name %>
             </p>

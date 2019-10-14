@@ -8,12 +8,16 @@ class Case
 
     # -- queries --
     def permit?(action)
-      # this can just pattern match in ruby 2.7
-      case @user.role
-      when :cohere
+      # this can pattern match on [action, user.role] in ruby 2.7
+      case action
+      when :list
         true
-      when :enroller
+      when :show
         true
+      when :view_status
+        @user.role == :cohere
+      else
+        false
       end
     end
 

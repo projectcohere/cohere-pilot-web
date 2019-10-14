@@ -4,6 +4,7 @@ class CaseTests < ActiveSupport::TestCase
       id: nil,
       recipient: nil,
       enroller: nil,
+      status: nil,
       updated_at: nil,
       completed_at: nil
     )

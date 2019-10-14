@@ -3,14 +3,16 @@ class Case < Entity
   prop(:id)
   prop(:recipient)
   prop(:enroller)
+  prop(:status)
   prop(:updated_at)
   prop(:completed_at)
 
   # -- lifetime --
-  def initialize(id:, recipient:, enroller:, updated_at:, completed_at:)
+  def initialize(id:, recipient:, enroller:, status:, updated_at:, completed_at:)
     @id = id
     @recipient = recipient
     @enroller = enroller
+    @status = status
     @updated_at = updated_at
     @completed_at = completed_at
   end
@@ -26,6 +28,7 @@ class Case < Entity
       id: record.id,
       recipient: Recipient.from_record(record.recipient),
       enroller: Enroller.from_record(record.enroller),
+      status: record.status,
       updated_at: record.updated_at,
       completed_at: record.completed_at
     )

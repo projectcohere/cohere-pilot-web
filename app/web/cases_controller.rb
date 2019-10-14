@@ -37,6 +37,6 @@ class CasesController < ApplicationController
   private
 
   def policy(kase = nil)
-    Case::Policy.new(Current.user, kase)
+    @policy ||= Case::Policy.new(Current.user, kase)
   end
 end
