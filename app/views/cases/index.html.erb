@@ -14,7 +14,7 @@
           <div class="CaseCell-row">
             <% if @policy.permit?(:view_status) %>
               <p class="CaseCell-enroller">
-                <%= kase.status.camelize %>
+                <%= kase.status.to_s.camelize %>
               </p>
             <% end %>
             <p class="CaseCell-enroller">

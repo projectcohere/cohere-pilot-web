@@ -9,7 +9,7 @@ class SessionsTests < ActionDispatch::IntegrationTest
   test "can sign in" do
     post("/session", params: {
       session: {
-        email: "test@cohere.com",
+        email: "me@cohere.com",
         password: "password"
       }
     })
