@@ -45,7 +45,7 @@ class Case
       repo = Case::Repo.new
       cases = repo.find_incomplete
       assert_length(cases, 4)
-      assert_all(cases, ->(c) { c.incomplete? })
+      assert_all(cases, ->(c) { c.completed_at == nil })
     end
 
     test "finds all pending cases for an enroller" do

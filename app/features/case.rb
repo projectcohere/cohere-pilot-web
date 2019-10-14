@@ -17,18 +17,13 @@ class Case < Entity
     @completed_at = completed_at
   end
 
-  # -- queries --
-  def incomplete?
-    @completed_at.nil?
-  end
-
   # -- factories --
   def self.from_record(record)
     Case.new(
       id: record.id,
       recipient: Recipient.from_record(record.recipient),
       enroller: Enroller.from_record(record.enroller),
-      status: record.status,
+      status: record.status.to_sym,
       updated_at: record.updated_at,
       completed_at: record.completed_at
     )
