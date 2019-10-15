@@ -29,13 +29,13 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   # -- view --
-  test "can't view unless signed-in" do
+  test "can't view a case unless signed-in" do
     kase = cases(:incomplete_1)
     get("/cases/#{kase.id}")
     assert_redirected_to("/sign-in")
   end
 
-  test "can view as an operator" do
+  test "can view a case as an operator" do
     kase = Case.from_record(cases(:incomplete_1))
     get(auth("/cases/#{kase.id}"))
     assert_response(:success)
@@ -49,10 +49,27 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".Main-title", text: /#{kase.recipient.name}/)
   end
 
+  test "can't view a case as a supplier" do
+    kase = Case.from_record(cases(:incomplete_2))
+    get(auth("/cases/#{kase.id}", as: users(:supplier_1)))
+    assert_redirected_to("/cases/inbound")
+  end
+
   # -- new --
+  test "can add a new case as an operator" do
+    get(auth("/cases/new", as: users(:cohere_1)))
+    assert_response(:success)
+    assert_select(".Main-title", text: /Add a Case/)
+  end
+
   test "can add a new case as a supplier" do
     get(auth("/cases/new", as: users(:supplier_1)))
     assert_response(:success)
     assert_select(".Main-title", text: /Add a Case/)
+  end
+
+  test "can't add a new case as an enroller" do
+    get(auth("/cases/new", as: users(:enroller_1)))
+    assert_redirected_to("/cases")
   end
 end

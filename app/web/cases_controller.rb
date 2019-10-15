@@ -45,6 +45,10 @@ class CasesController < ApplicationController
   end
 
   def new
+    if policy.forbid?(:create)
+      redirect_to(cases_path)
+    end
+
     @case = Case::Inbound.new
   end
 
