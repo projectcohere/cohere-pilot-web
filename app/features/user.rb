@@ -1,10 +1,11 @@
 class User < ::Entity
   # -- props --
+  prop(:id)
   prop(:role)
   prop(:organization)
 
   # -- liftime --
-  def initialize(role:, organization: nil)
+  def initialize(id:, role:, organization: nil)
     @role = role
     @organization = organization
   end
@@ -24,6 +25,7 @@ class User < ::Entity
 
     # create entity
     User.new(
+      id: record.id,
       role: role,
       organization: org
     )

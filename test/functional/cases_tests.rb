@@ -55,21 +55,41 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/inbound")
   end
 
-  # -- new --
-  test "can add a new case as an operator" do
-    get(auth("/cases/new", as: users(:cohere_1)))
-    assert_response(:success)
-    assert_select(".Main-title", text: /Add a Case/)
-  end
-
+  # -- create --
   test "can add a new case as a supplier" do
     get(auth("/cases/new", as: users(:supplier_1)))
     assert_response(:success)
     assert_select(".Main-title", text: /Add a Case/)
   end
 
+  test "can't add a new case as an operator" do
+    get(auth("/cases/new", as: users(:cohere_1)))
+    assert_redirected_to("/cases")
+  end
+
   test "can't add a new case as an enroller" do
     get(auth("/cases/new", as: users(:enroller_1)))
     assert_redirected_to("/cases")
+  end
+
+  test "can create a new case as a supplier" do
+    prev_count = Case::Record.count
+
+    post(auth("/cases", as: users(:supplier_1)), params: {
+      case: {
+        first_name: "Janice",
+        last_name: "Sample",
+        phone_number: "111-222-3333",
+        street: "123 Test Street",
+        city: "Testopolis",
+        state: "Testissippi",
+        zip: "11111",
+        account_number: "22222",
+        arrears: "$1000.0"
+      }
+    })
+
+    assert_response(:success)
+    assert_equal(Case::Record.count, prev_count + 1)
   end
 end

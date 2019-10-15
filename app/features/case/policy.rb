@@ -17,7 +17,7 @@ class Case
       when :show
         role != :supplier
       when :create
-        role != :enroller
+        role == :supplier
       when :view_status
         role == :cohere
       else

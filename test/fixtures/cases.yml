@@ -1,6 +1,7 @@
 incomplete_1:
   recipient: recipient_1
   enroller: enroller_1
+  supplier: supplier_1
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now %>
   completed_at: nil
@@ -9,6 +10,7 @@ incomplete_2:
   status: 2
   recipient: recipient_1
   enroller: enroller_1
+  supplier: supplier_1
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now - 2.hours %>
   completed_at: nil
@@ -16,6 +18,7 @@ incomplete_2:
 incomplete_3:
   recipient: recipient_1
   enroller: enroller_2
+  supplier: supplier_1
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now - 1.hours %>
   completed_at: nil
@@ -24,6 +27,7 @@ incomplete_4:
   status: 2
   recipient: recipient_1
   enroller: enroller_2
+  supplier: supplier_1
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now - 2.hours %>
   completed_at: nil
@@ -31,6 +35,7 @@ incomplete_4:
 complete_1:
   recipient: recipient_1
   enroller: enroller_1
+  supplier: supplier_1
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now %>
   completed_at: <%= Time.zone.now %>

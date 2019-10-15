@@ -30,6 +30,7 @@ Rails.application.routes.draw do
       index
       show
       new
+      create
     ]) do
       get(:inbound, on: :collection)
     end

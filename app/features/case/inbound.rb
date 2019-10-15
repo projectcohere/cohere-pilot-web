@@ -2,21 +2,21 @@ class Case
   class Inbound < ::Form
     # -- props --
     # -- props/name
-    attr_accessor(:first_name)
-    attr_accessor(:last_name)
-
-    # -- props/utility-account
-    attr_accessor(:account_number)
-    attr_accessor(:arrears)
+    prop(:first_name, :string, presence: true)
+    prop(:last_name, :string, presence: true)
 
     # -- props/phone
-    attr_accessor(:phone_number)
+    prop(:phone_number, :string, presence: true)
 
     # -- props/address
-    attr_accessor(:street)
-    attr_accessor(:street2)
-    attr_accessor(:city)
-    attr_accessor(:state)
-    attr_accessor(:zip)
+    prop(:street, :string, presence: true)
+    prop(:street2, :string)
+    prop(:city, :string, presence: true)
+    prop(:state, :string, presence: true)
+    prop(:zip, :string, presence: true)
+
+    # -- props/utility-account
+    prop(:account_number, :string, presence: true)
+    prop(:arrears, :string, presence: true)
   end
 end

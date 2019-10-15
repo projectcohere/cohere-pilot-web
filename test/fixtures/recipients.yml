@@ -1,4 +1,9 @@
 recipient_1:
   first_name: Janice
   last_name: Sample
-  phone_number: 11111
+  phone_number: 111-222-3333
+  street: 111 Sample St.
+  street2: Apt. 2
+  city: New Sampleton
+  state: Sample Dakota
+  zip: 22222

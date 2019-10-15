@@ -1,9 +1,20 @@
 # A form model for an entity. It expects to be nested inside of the entity
 # as a namespace.
 class Form
+  # -- definition --
+  def self.prop(name, type, **validations)
+    attribute(name, type)
+
+    if not validations.empty?
+      validates(name, validations)
+    end
+  end
+
   # -- ActiveModel --
-  # we minimally conform to ActiveModel so that we can use our entities
-  # with various Rails helpers like link_to
+  # for form objects, it's helpful to have full attribute assignment and
+  # validation
+  include ActiveModel::Model
+  include ActiveModel::Attributes
 
   # -- ActiveModel::naming
   extend ActiveModel::Naming
@@ -11,21 +22,17 @@ class Form
   # return our entity's name so that Rails helpers can deduce the right
   # paths for the corresponding entity
   def self.model_name
-    if ENV["RAILS_ENV"] == "development"
-      unless module_parent < Entity
+    if self == ::Form
+      return super
+    end
+
+    env = ENV["RAILS_ENV"]
+    if env == "development" || env == "test"
+      if not module_parent < Entity
         raise "#{self} must be nested inside of a subclass of Entity!"
       end
     end
 
     module_parent.model_name
-  end
-
-  # -- ActiveModel::Conversion
-  include ActiveModel::Conversion
-
-  # -- ActiveModel::Model
-  # i don't think we want the other modules ActiveModel::Model includes
-  def persisted?
-    @id != nil
   end
 end

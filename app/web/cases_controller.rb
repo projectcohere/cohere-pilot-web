@@ -29,27 +29,43 @@ class CasesController < ApplicationController
     user = Current.user
     repo = Case::Repo.new
 
-    case_id = params[:id]
-    kase = case user.role
+    @case = case user.role
     when :cohere
-      repo.find_one(case_id)
+      repo.find_one(params[:id])
     when :enroller
-      repo.find_one_for_enroller(case_id, user.organization.id)
+      repo.find_one_for_enroller(params[:id], user.organization.id)
     end
 
-    if policy(kase).forbid?(:show)
+    if policy(@case).forbid?(:show)
       deny_access
     end
-
-    @case = kase
   end
 
   def new
     if policy.forbid?(:create)
-      redirect_to(cases_path)
+      deny_access
     end
 
     @case = Case::Inbound.new
+  end
+
+  def create
+    if policy.forbid?(:create)
+      deny_access
+    end
+
+    attrs = params.require(:case).permit(Case::Inbound.attribute_names)
+    @case = Case::Inbound.new(attrs)
+
+    # we require that the user be a supplier right now
+    supplier = Current.user.organization
+
+    # and add every case to the default enroller
+    enroller = Enroller::Repo.new.find_default
+
+    # then create the new case
+    factory = Case::Factory.new
+    factory.create_inbound(@case, supplier.id, enroller.id)
   end
 
   private

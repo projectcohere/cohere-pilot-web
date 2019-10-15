@@ -1,6 +1,12 @@
 class Entity
-  class << self
-    alias_method(:prop, :attr_reader)
+  # -- definition --
+  def self.prop(name)
+    attr_reader(name)
+  end
+
+  # -- equality --
+  def ==(other)
+    self.class == other.class && self.id == other.id
   end
 
   # -- ActiveModel --

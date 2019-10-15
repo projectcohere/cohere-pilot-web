@@ -10,10 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_14_181147) do
+ActiveRecord::Schema.define(version: 2019_10_15_183634) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "accounts", force: :cascade do |t|
+    t.bigint "supplier_id"
+    t.bigint "recipient_id"
+    t.string "number", null: false
+    t.string "arrears", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["recipient_id"], name: "index_accounts_on_recipient_id"
+    t.index ["supplier_id"], name: "index_accounts_on_supplier_id"
+  end
 
   create_table "cases", force: :cascade do |t|
     t.bigint "recipient_id", null: false
@@ -22,9 +33,11 @@ ActiveRecord::Schema.define(version: 2019_10_14_181147) do
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "enroller_id", null: false
     t.integer "status", default: 0
+    t.bigint "supplier_id", null: false
     t.index ["enroller_id"], name: "index_cases_on_enroller_id"
     t.index ["recipient_id"], name: "index_cases_on_recipient_id"
     t.index ["status"], name: "index_cases_on_status"
+    t.index ["supplier_id"], name: "index_cases_on_supplier_id"
   end
 
   create_table "enrollers", force: :cascade do |t|
@@ -39,6 +52,11 @@ ActiveRecord::Schema.define(version: 2019_10_14_181147) do
     t.string "phone_number", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "street", null: false
+    t.string "street2"
+    t.string "city", null: false
+    t.string "state", null: false
+    t.string "zip", null: false
   end
 
   create_table "suppliers", force: :cascade do |t|
