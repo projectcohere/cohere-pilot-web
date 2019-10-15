@@ -1,4 +1,4 @@
-class Supplier < Entity
+class Supplier < ::Entity
   # -- props --
   prop(:id)
   prop(:name)

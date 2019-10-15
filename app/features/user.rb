@@ -1,4 +1,4 @@
-class User < Entity
+class User < ::Entity
   # -- props --
   prop(:role)
   prop(:organization)

@@ -1,22 +1,22 @@
 <main class="Main">
   <h1><%= t(".title") %></h2>
-  <%= form_for(:session, url: session_path, html: { class: "SignIn Form" }) do |form| %>
+  <%= form_for(:session, url: session_path, html: { class: "SignIn Form" }) do |f| %>
     <h2><%= t(".prompt") %></h2>
+
     <% if flash.notice.present? %>
       <p class="SignIn-error">
         <%= flash.notice %>
       </p>
     <% end %>
-    <div class="Field">
-      <%= form.label(:email, t(".email-label")) %>
-      <%= form.text_field(:email, type: "email", placeholder: t(".email-placeholder")) %>
-    </div>
 
-    <div class="Field">
-      <%= form.label(:password, t(".password-label")) %>
-      <%= form.password_field(:password, placeholder: t(".password-placeholder")) %>
-    </div>
+    <%= f.field(:email, t(".email-label")) do |name| %>
+      <% f.text_field(name, type: "email", placeholder: t(".email-placeholder")) %>
+    <% end %>
 
-    <%= form.submit(class: "Button") %>
+    <%= f.field(:password, t(".password-label")) do |name| %>
+      <% f.password_field(name, placeholder: t(".password-placeholder")) %>
+    <% end %>
+
+    <%= f.submit(class: "Button") %>
   <% end %>
 </main>

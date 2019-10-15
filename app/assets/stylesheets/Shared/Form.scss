@@ -1,10 +1,21 @@
 .Form {
   display: grid;
-  row-gap: $spacing1;
+  gap: $spacing1;
+
+  &-group {
+    display: grid;
+    gap: $spacing2;
+    grid-template-columns: repeat(3, 1fr);
+
+    > h2 {
+      grid-row: 1;
+      grid-column: 1 / 4;
+    }
+  }
 }
 
 .Field {
-  > label {
+  &-hint {
     @extend .u-hint;
     display: block;
     color: $colorPrimaryBlack;

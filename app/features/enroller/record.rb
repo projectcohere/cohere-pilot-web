@@ -1,5 +1,5 @@
 class Enroller
-  class Record < ApplicationRecord
+  class Record < ::ApplicationRecord
     self.table_name = :enrollers
 
     # -- associations --

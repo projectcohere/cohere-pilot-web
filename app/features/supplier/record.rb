@@ -1,5 +1,5 @@
 class Supplier
-  class Record < ApplicationRecord
+  class Record < ::ApplicationRecord
     self.table_name = :suppliers
 
     # -- associations --

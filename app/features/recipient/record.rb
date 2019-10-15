@@ -1,5 +1,5 @@
 class Recipient
-  class Record < ApplicationRecord
+  class Record < ::ApplicationRecord
     # TODO: generalize this for feature-namespaced records?
     self.table_name = :recipients
 

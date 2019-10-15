@@ -2,4 +2,53 @@
   <h1 class="Main-title">
     Add a Case
   </h1>
+  <%= form_for(@case, html: { class: "NewCase Form" }) do |f| %>
+    <div class="NewCase-name Form-group">
+      <h2>Name</h2>
+      <%= f.field(:first_name, class: "NewCase-firstName") do |name| %>
+        <% f.text_field(name) %>
+      <% end %>
+      <%= f.field(:last_name, class: "NewCase-lastName") do |name| %>
+        <% f.text_field(name) %>
+      <% end %>
+    </div>
+
+    <div class="NewCase-contact Form-group">
+      <h2>Contact</h2>
+      <%= f.field(:phone_number, class: "NewCase-phoneNumber") do |name| %>
+        <% f.text_field(name) %>
+      <% end %>
+    </div>
+
+    <div class="NewCase-address Form-group">
+      <h2>Address</h2>
+      <%= f.field(:street, class: "NewCase-street") do |name| %>
+        <% f.text_field(name) %>
+      <% end %>
+      <%= f.field(:street2, "", class: "NewCase-street2") do |name| %>
+        <% f.text_field(name) %>
+      <% end %>
+      <%= f.field(:city, class: "NewCase-city") do |name| %>
+        <% f.text_field(name) %>
+      <% end %>
+      <%= f.field(:state, class: "NewCase-state") do |name| %>
+        <% f.text_field(name) %>
+      <% end %>
+      <%= f.field(:zip, class: "NewCase-zip") do |name| %>
+        <% f.text_field(name) %>
+      <% end %>
+    </div>
+
+    <div class="NewCase-utilityAccount Form-group">
+      <h2>Utility Account</h2>
+      <%= f.field(:account_number, class: "NewCase-accountNumber") do |name| %>
+        <% f.text_field(name) %>
+      <% end %>
+      <%= f.field(:arrears, class: "NewCase-arrears") do |name| %>
+        <% f.text_field(name) %>
+      <% end %>
+    </div>
+
+    <%= f.submit(class: "Button") %>
+  <% end %>
 </main>

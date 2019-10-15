@@ -1,5 +1,5 @@
 class Case
-  class Record < ApplicationRecord
+  class Record < ::ApplicationRecord
     self.table_name = :cases
 
     # -- associations --

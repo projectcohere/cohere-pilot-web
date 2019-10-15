@@ -19,6 +19,12 @@ class CasesController < ApplicationController
     end
   end
 
+  def inbound
+    if policy.permit?(:list)
+      redirect_to(cases_path)
+    end
+  end
+
   def show
     user = Current.user
     repo = Case::Repo.new
@@ -38,10 +44,8 @@ class CasesController < ApplicationController
     @case = kase
   end
 
-  def inbound
-    if policy.permit?(:list)
-      redirect_to(cases_path)
-    end
+  def new
+    @case = Case::Inbound.new
   end
 
   private

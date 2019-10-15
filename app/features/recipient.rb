@@ -1,4 +1,4 @@
-class Recipient < Entity
+class Recipient < ::Entity
   # -- props --
   prop(:name)
 

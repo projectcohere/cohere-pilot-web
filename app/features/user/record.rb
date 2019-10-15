@@ -1,5 +1,5 @@
 class User
-  class Record < ApplicationRecord
+  class Record < ::ApplicationRecord
     include Clearance::User
 
     # -- config --

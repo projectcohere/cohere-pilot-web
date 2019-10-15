@@ -3,14 +3,18 @@ class Entity
     alias_method(:prop, :attr_reader)
   end
 
-  # -- experiments --
-  # TODO: this seems like all we need to do for entities to be passed
-  # to helpers expecting a nameable type like link_to
+  # -- ActiveModel --
+  # we minimally conform to ActiveModel so that we can use our entities
+  # with various Rails helpers like link_to
+
+  # -- ActiveModel::naming
   extend ActiveModel::Naming
+
+  # -- ActiveModel::Conversion
   include ActiveModel::Conversion
 
-  # this is normally from ActiveModel::Model, but i don't think we want
-  # its other included modules
+  # -- ActiveModel::Model
+  # i don't think we want the other modules ActiveModel::Model includes
   def persisted?
     @id != nil
   end

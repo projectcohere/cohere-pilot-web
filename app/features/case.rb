@@ -1,4 +1,4 @@
-class Case < Entity
+class Case < ::Entity
   # -- props --
   prop(:id)
   prop(:recipient)
