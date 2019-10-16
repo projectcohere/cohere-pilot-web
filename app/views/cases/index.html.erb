@@ -12,11 +12,14 @@
       <p>No cases left!</p>
     <% else %>
       <% @cases.each do |kase| %>
-        <% @policy.with_record(kase) do %>
+        <% policy.with_record(kase) do %>
           <li class="CaseCell">
-            <%=
-              link_to(kase.recipient.name, kase, class: "CaseCell-name")
-            %>
+            <%- name = kase.recipient.name %>
+            <% if policy.permit?(:show) %>
+              <%= link_to(name, kase, class: "CaseCell-name") %>
+            <% else %>
+              <p class="CaseCell-name"><%= name %></p>
+            <% end %>
             <div class="CaseCell-row">
               <% if @policy.permit?(:view_status) %>
                 <p class="CaseCell-enroller">

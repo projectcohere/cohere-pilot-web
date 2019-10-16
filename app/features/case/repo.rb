@@ -6,7 +6,7 @@ class Case
       record = Case::Record
         .find(id)
 
-      Case.from_record(record)
+      entity_from(record)
     end
 
     def find_one_for_enroller(id, enroller_id)
@@ -15,7 +15,7 @@ class Case
         .pending
         .find(id)
 
-      Case.from_record(record)
+      entity_from(record)
     end
 
     # -- queries/many
@@ -24,9 +24,7 @@ class Case
         .where(completed_at: nil)
         .includes(:recipient, :enroller)
 
-      records.map do |record|
-        Case.from_record(record)
-      end
+      entities_from(records)
     end
 
     def find_for_enroller(enroller_id)
@@ -35,8 +33,26 @@ class Case
         .pending
         .includes(:recipient, :enroller)
 
+      entities_from(records)
+    end
+
+    def find_opened
+      records = Case::Record
+        .opened
+        .includes(:recipient, :enroller)
+
+      entities_from(records)
+    end
+
+    private
+
+    def entity_from(record)
+      Case.from_record(record)
+    end
+
+    def entities_from(records)
       records.map do |record|
-        Case.from_record(record)
+        entity_from(record)
       end
     end
   end

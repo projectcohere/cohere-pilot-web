@@ -33,6 +33,7 @@ incomplete_4:
   completed_at: nil
 
 complete_1:
+  status: 3
   recipient: recipient_1
   enroller: enroller_1
   supplier: supplier_1

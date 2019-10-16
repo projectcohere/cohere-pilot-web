@@ -21,6 +21,13 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 1)
   end
 
+  test "can list opened cases as a dhs partner" do
+    get(auth("/cases", as: users(:dhs_1)))
+    assert_response(:success)
+    assert_select(".Main-title", text: /Cases/)
+    assert_select(".CaseCell", 2)
+  end
+
   # -- list/inbound
   test "can list inbound cases as a supplier" do
     get(auth("/cases/inbound", as: users(:supplier_1)))

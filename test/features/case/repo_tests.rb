@@ -21,6 +21,7 @@ class Case
       record = cases(:incomplete_2)
       kase = repo.find_one_for_enroller(record.id, record.enroller_id)
       assert_not_nil(kase)
+      assert_equal(kase.status, :pending)
     end
 
     test "can't find a non-pending case for an enroller" do
@@ -53,6 +54,14 @@ class Case
       enroller_id = cases(:incomplete_2).enroller_id
       cases = repo.find_for_enroller(enroller_id)
       assert_length(cases, 1)
+      assert_all(cases, ->(c) { c.status == :pending })
+    end
+
+    test "finds all opened cases" do
+      repo = Case::Repo.new
+      cases = repo.find_opened
+      assert_length(cases, 2)
+      assert_all(cases, ->(c) { c.status == :opened })
     end
   end
 end

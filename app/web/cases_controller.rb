@@ -17,7 +17,7 @@ class CasesController < ApplicationController
     when :enroller
       repo.find_for_enroller(user.organization.id)
     when :dhs
-      []
+      repo.find_opened
     end
   end
 
