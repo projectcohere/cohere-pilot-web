@@ -36,6 +36,8 @@ class CasesController < ApplicationController
       repo.find_one(params[:id])
     when :enroller
       repo.find_one_for_enroller(params[:id], user.organization.id)
+    when :dhs
+      repo.find_one_opened(params[:id])
     end
 
     if policy(@case).forbid?(:show)

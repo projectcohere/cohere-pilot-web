@@ -18,6 +18,14 @@ class Case
       entity_from(record)
     end
 
+    def find_one_opened(id)
+      record = Case::Record
+        .opened
+        .find(id)
+
+      entity_from(record)
+    end
+
     # -- queries/many
     def find_incomplete
       records = Case::Record

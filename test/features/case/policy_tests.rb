@@ -34,6 +34,13 @@ class Case
       assert(policy.permit?(:show))
     end
 
+    test "permits dhs partners to see a case" do
+      user = User::new(id: nil, role: :dhs)
+      kase = cases(:incomplete_1)
+      policy = Case::Policy.new(user, kase)
+      assert(policy.permit?(:show))
+    end
+
     test "forbids suppliers from seeing a case" do
       user = User::new(id: nil, role: :supplier)
       kase = cases(:incomplete_2)

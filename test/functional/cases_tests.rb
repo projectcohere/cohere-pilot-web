@@ -62,6 +62,13 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/inbound")
   end
 
+  test "can view an opened case as a dhs partner" do
+    kase = Case.from_record(cases(:incomplete_1))
+    get(auth("/cases/#{kase.id}", as: users(:dhs_1)))
+    assert_response(:success)
+    assert_select(".Main-title", text: /#{kase.recipient.name}/)
+  end
+
   # -- create --
   test "can add a new case as a supplier" do
     get(auth("/cases/new", as: users(:supplier_1)))

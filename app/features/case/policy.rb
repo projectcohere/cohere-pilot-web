@@ -15,7 +15,7 @@ class Case
       when :list
         role != :supplier
       when :show
-        role != :supplier && role != :dhs
+        role != :supplier
       when :create
         role == :supplier
       when :view_status

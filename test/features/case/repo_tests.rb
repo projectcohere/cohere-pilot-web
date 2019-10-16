@@ -42,6 +42,23 @@ class Case
       end
     end
 
+    test "finds an opened case by id" do
+      repo = Case::Repo.new
+      record = cases(:incomplete_1)
+      kase = repo.find_one_opened(record.id)
+      assert_not_nil(kase)
+      assert_equal(kase.status, :opened)
+    end
+
+    test "can't find an opened case by id" do
+      repo = Case::Repo.new
+      record = cases(:incomplete_2)
+
+      assert_raises(ActiveRecord::RecordNotFound) do
+        repo.find_one_opened(record.id)
+      end
+    end
+
     test "finds all incomplete cases" do
       repo = Case::Repo.new
       cases = repo.find_incomplete
