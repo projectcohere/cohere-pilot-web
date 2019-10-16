@@ -1,3 +1,4 @@
+/* form */
 .Form {
   display: grid;
   gap: $spacing1;
@@ -14,14 +15,17 @@
   }
 }
 
-.Field {
-  &-hint {
+/* field */
+$f: ".Field";
+
+#{$f} {
+  #{$f}-hint {
     @extend .u-hint;
     display: block;
     color: $colorPrimaryBlack;
   }
 
-  > input {
+  input {
     width: 100%;
     display: block;
     border: none;
@@ -33,6 +37,14 @@
   }
 }
 
+#{$f}.is-error {
+  #{$f}-errors {
+    color: $colorError;
+    font-weight: $fontWeightRegular;
+  }
+}
+
+/* button */
 .Button {
   height: 42px;
   border: 1px solid $colorPrimary;

@@ -9,12 +9,12 @@
       </p>
     <% end %>
 
-    <%= f.field(:email, t(".email-label")) do |name| %>
-      <% f.text_field(name, type: "email", placeholder: t(".email-placeholder")) %>
+    <%= f.field(:email, t(".email-label")) do %>
+      <% f.text_field(:email, type: "email", placeholder: t(".email-placeholder")) %>
     <% end %>
 
-    <%= f.field(:password, t(".password-label")) do |name| %>
-      <% f.password_field(name, placeholder: t(".password-placeholder")) %>
+    <%= f.field(:password, t(".password-label")) do %>
+      <% f.password_field(:password, placeholder: t(".password-placeholder")) %>
     <% end %>
 
     <%= f.submit(class: "Button") %>
