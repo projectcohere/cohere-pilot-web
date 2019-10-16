@@ -15,4 +15,9 @@ class UserTests < ActiveSupport::TestCase
     assert_equal(user.role, :supplier)
     assert_not_nil(user.organization)
   end
+
+  test "a dhs partner can be constructed from a record" do
+    user = User.from_record(users(:dhs_1))
+    assert_equal(user.role, :dhs)
+  end
 end

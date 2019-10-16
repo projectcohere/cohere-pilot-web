@@ -1,8 +1,5 @@
 name: Rails-CI
-on:
-  push:
-    branches:
-      - master
+on: []
 jobs:
   build:
     runs-on: ubuntu-latest

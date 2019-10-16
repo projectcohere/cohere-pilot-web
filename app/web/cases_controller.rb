@@ -16,6 +16,8 @@ class CasesController < ApplicationController
       repo.find_incomplete
     when :enroller
       repo.find_for_enroller(user.organization.id)
+    when :dhs
+      []
     end
   end
 

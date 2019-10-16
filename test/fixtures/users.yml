@@ -15,3 +15,9 @@ supplier_1:
   encrypted_password: <%= password("password") %>
   organization: supplier_1 (Supplier::Record)
   remember_token: "test-token"
+
+dhs_1:
+  email: me@dhs.gov
+  encrypted_password: <%= password("password") %>
+  organization_type: dhs
+  remember_token: "test-token"

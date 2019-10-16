@@ -42,6 +42,18 @@ class SessionsTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/inbound")
   end
 
+  test "can sign in as a dhs partner" do
+    post("/session", params: {
+      session: {
+        email: "me@dhs.gov",
+        password: "password"
+      }
+    })
+
+    assert(current_session.signed_in?)
+    assert_redirected_to("/cases")
+  end
+
   test "can sign out" do
     delete(auth("/sign-out"))
     assert_response(:redirect)

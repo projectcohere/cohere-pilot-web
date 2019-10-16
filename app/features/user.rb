@@ -17,6 +17,8 @@ class User < ::Entity
     role, org = case record.organization_type
     when "cohere"
       [:cohere, nil]
+    when "dhs"
+      [:dhs, nil]
     when Enroller::Record.to_s
       [:enroller, Enroller.from_record(record.organization)]
     when Supplier::Record.to_s
