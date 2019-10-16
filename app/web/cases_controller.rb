@@ -54,18 +54,22 @@ class CasesController < ApplicationController
       deny_access
     end
 
-    attrs = params.require(:case).permit(Case::Inbound.attribute_names)
-    @case = Case::Inbound.new(attrs)
+    @case = Case::Inbound.new(
+      params
+        .require(:case)
+        .permit(Case::Inbound.attribute_names)
+    )
 
-    # we require that the user be a supplier right now
+    # require that the user be a supplier right now
     supplier = Current.user.organization
-
     # and add every case to the default enroller
     enroller = Enroller::Repo.new.find_default
 
-    # then create the new case
-    factory = Case::Factory.new
-    factory.create_inbound(@case, supplier.id, enroller.id)
+    if @case.save(supplier.id, enroller.id)
+      redirect_to(inbound_cases_path)
+    else
+      render(:new)
+    end
   end
 
   private

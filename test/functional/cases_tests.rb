@@ -73,8 +73,6 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "can create a new case as a supplier" do
-    prev_count = Case::Record.count
-
     post(auth("/cases", as: users(:supplier_1)), params: {
       case: {
         first_name: "Janice",
@@ -89,7 +87,16 @@ class CasesTests < ActionDispatch::IntegrationTest
       }
     })
 
+    assert_redirected_to("/cases/inbound")
+  end
+
+  test "can't create an incomplete case" do
+    post(auth("/cases", as: users(:supplier_1)), params: {
+      case: {
+        first_name: "Janice",
+      }
+    })
+
     assert_response(:success)
-    assert_equal(Case::Record.count, prev_count + 1)
   end
 end
