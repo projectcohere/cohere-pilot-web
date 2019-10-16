@@ -12,8 +12,19 @@ jobs:
       uses: actions/setup-ruby@v1
       with:
         ruby-version: 2.6.x
-    - name: Build and Test
+    - name: Install Postgres
+      run: |
+        apt install -y libpq-dev
+    - name: Install Yarn & Node
+      run: |
+        curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+        echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+        curl -sL https://deb.nodesource.com/setup_12.x | bash -
+        apt install -y yarn nodejs
+    - name: Build
       run: |
         gem install bundler
         bundle install --jobs 4 --retry 3
+    - name: Test
+      run: |
         make t/all
