@@ -50,7 +50,7 @@ class CasesController < ApplicationController
       deny_access
     end
 
-    @case = Case::Inbound.new
+    @case = Case::Forms::Inbound.new
   end
 
   def create
@@ -58,10 +58,10 @@ class CasesController < ApplicationController
       deny_access
     end
 
-    @case = Case::Inbound.new(
+    @case = Case::Forms::Inbound.new(
       params
         .require(:case)
-        .permit(Case::Inbound.attribute_names)
+        .permit(Case::Forms::Inbound.attribute_names)
     )
 
     # require that the user be a supplier right now

@@ -3,7 +3,7 @@ require "test_helper"
 class Case
   class InboundTests < ActiveSupport::TestCase
     test "saves an inbound case" do
-      inbound = Case::Inbound.new(
+      inbound = Case::Forms::Inbound.new(
         first_name: "Janice",
         last_name: "Sample",
         phone_number: "111-222-3333",
@@ -34,7 +34,7 @@ class Case
     end
 
     test "does not save an invalid inbound case" do
-      inbound = Case::Inbound.new(
+      inbound = Case::Forms::Inbound.new(
         first_name: "Janice"
       )
 

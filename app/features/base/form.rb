@@ -26,13 +26,21 @@ class Form
       return super
     end
 
-    env = ENV["RAILS_ENV"]
-    if env == "development" || env == "test"
-      if not module_parent < Entity
-        raise "#{self} must be nested inside of a subclass of Entity!"
+    @_model_name ||= begin
+      entity_type = self
+      until entity_type < Entity || entity_type.nil?
+        entity_type = entity_type.module_parent
       end
+
+      env = ENV["RAILS_ENV"]
+      if env == "development" || env == "test"
+        if entity_type.nil?
+          raise "#{self} must be nested in a subclass of Entity"
+        end
+      end
+
+      entity_type.model_name
     end
 
-    module_parent.model_name
   end
 end
