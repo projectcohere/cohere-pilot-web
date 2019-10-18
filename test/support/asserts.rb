@@ -1,5 +1,9 @@
 module Support
   module Asserts
+    def assert_present(actual)
+      assert(actual.present?, "Expected #{actual} to be present.")
+    end
+
     def assert_length(collection, expected)
       actual = collection.length
       assert(actual == expected, "Expected length to be #{expected}, but was #{actual}")

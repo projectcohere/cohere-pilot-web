@@ -8,7 +8,7 @@
     gap: $spacing2;
     grid-template-columns: repeat(3, 1fr);
 
-    > h2 {
+    > h2, h3 {
       grid-row: 1;
       grid-column: 1 / 4;
     }

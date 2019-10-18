@@ -27,30 +27,12 @@ class CasesController < ApplicationController
     end
   end
 
-  def show
-    user = Current.user
-    repo = Case::Repo.new
-
-    @case = case user.role
-    when :cohere
-      repo.find_one(params[:id])
-    when :enroller
-      repo.find_one_for_enroller(params[:id], user.organization.id)
-    when :dhs
-      repo.find_one_opened(params[:id])
-    end
-
-    if policy(@case).forbid?(:show)
-      deny_access
-    end
-  end
-
   def new
     if policy.forbid?(:create)
       deny_access
     end
 
-    @case = Case::Forms::Inbound.new
+    @form = Case::Forms::Inbound.new
   end
 
   def create
@@ -58,7 +40,7 @@ class CasesController < ApplicationController
       deny_access
     end
 
-    @case = Case::Forms::Inbound.new(
+    @form = Case::Forms::Inbound.new(
       params
         .require(:case)
         .permit(Case::Forms::Inbound.attribute_names)
@@ -69,10 +51,62 @@ class CasesController < ApplicationController
     # and add every case to the default enroller
     enroller = Enroller::Repo.new.find_default
 
-    if @case.save(supplier.id, enroller.id)
+    if @form.save(supplier.id, enroller.id)
       redirect_to(inbound_cases_path)
     else
       render(:new)
+    end
+  end
+
+  def edit
+    user = Current.user
+    repo = Case::Repo.new
+
+    @form = case user.role
+    when :cohere
+      kase = repo.find_one(params[:id])
+      Case::Forms::Household.new(kase) # TODO: use the Full form
+    when :enroller
+      kase = repo.find_one_for_enroller(params[:id], user.organization.id)
+      Case::Forms::Household.new(kase) # TODO: use the Full form
+    when :dhs
+      kase = repo.find_one_opened(params[:id])
+      Case::Forms::Household.new(kase)
+    end
+
+    if @form == nil || policy(@form.case).forbid?(:edit)
+      deny_access
+    end
+  end
+
+  def update
+    user = Current.user
+    repo = Case::Repo.new
+
+    @form = case user.role
+    when :cohere
+      kase = repo.find_one(params[:id])
+      Case::Forms::Household.new(kase) # TODO: use the Full form
+    when :enroller
+      kase = repo.find_one_for_enroller(params[:id], user.organization.id)
+      Case::Forms::Household.new(kase) # TODO: use the Full form
+    when :dhs
+      kase = repo.find_one_opened(params[:id])
+      Case::Forms::Household.new(kase,
+        params
+          .require(:case)
+          .permit(Case::Forms::Household.params_shape)
+      )
+    end
+
+    if @form == nil || policy(@form.case).forbid?(:edit)
+      deny_access
+    end
+
+    if @form.save
+      redirect_to(cases_path)
+    else
+      render(:edit)
     end
   end
 

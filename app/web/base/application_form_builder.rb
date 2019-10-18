@@ -1,13 +1,13 @@
 class ApplicationFormBuilder < ::ActionView::Helpers::FormBuilder
-  def fieldset(title, *args, **kwargs, &children)
+  def group(title, header_tag = :h2, *args, **kwargs, &children)
     a_class = kwargs.delete(:class)
 
     # render the children & tag
-    f_class = "#{a_class} Form-fieldset"
+    f_class = "#{a_class} Form-group"
     content = @template.capture(&children)
 
     @template.tag.div(*args, class: f_class, **kwargs) do
-      @template.tag.h2(title) +
+      @template.content_tag(header_tag, title) +
       content
     end
   end

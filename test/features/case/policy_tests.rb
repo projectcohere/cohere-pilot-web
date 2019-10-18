@@ -19,33 +19,33 @@ class Case
       assert(policy.forbid?(:list))
     end
 
-    # -- show --
-    test "permits operators to see a case" do
+    # -- edit --
+    test "permits operators to edit a case" do
       user = User::new(id: nil, role: :cohere)
       kase = cases(:incomplete_1)
       policy = Case::Policy.new(user, kase)
-      assert(policy.permit?(:show))
+      assert(policy.permit?(:edit))
     end
 
-    test "permits enrollers to see a case" do
+    test "permits enrollers to edit a case" do
       user = User::new(id: nil, role: :enroller)
       kase = cases(:incomplete_2)
       policy = Case::Policy.new(user, kase)
-      assert(policy.permit?(:show))
+      assert(policy.permit?(:edit))
     end
 
-    test "permits dhs partners to see a case" do
+    test "permits dhs partners to edit a case" do
       user = User::new(id: nil, role: :dhs)
       kase = cases(:incomplete_1)
       policy = Case::Policy.new(user, kase)
-      assert(policy.permit?(:show))
+      assert(policy.permit?(:edit))
     end
 
-    test "forbids suppliers from seeing a case" do
+    test "forbids suppliers from editing a case" do
       user = User::new(id: nil, role: :supplier)
       kase = cases(:incomplete_2)
       policy = Case::Policy.new(user, kase)
-      assert(policy.forbid?(:show))
+      assert(policy.forbid?(:edit))
     end
 
     # -- create --

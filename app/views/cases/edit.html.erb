@@ -1,0 +1,33 @@
+<main class="Main">
+  <h1 class="Main-title">
+    <%= @form.case.recipient.name %>
+  </h1>
+
+  <%= form_for(@form, html: { class: "CaseForm Form" }) do |f| %>
+    <%= f.group("MDHHS", class: "CaseForm-mdhhs") do %>
+      <%= f.field(:mdhhs_number, "MDHHS Number", class: "CaseForm-mdhhsNumber") do %>
+        <%= f.text_field(:mdhhs_number) %>
+      <% end %>
+    <% end %>
+
+    <%= f.group("Household", class: "CaseForm-household") do %>
+      <%= f.field(:household_size, class: "CaseForm-householdSize") do %>
+        <%= f.text_field(:household_size) %>
+      <% end %>
+      <%= f.group("Monthly Income", :h3, class: "CaseForm-incomes") do %>
+        <%- @form.income_history.each do |income| %>
+          <%= f.fields_for(:income_history, income, index: 0) do |f| %>
+            <%= f.field(:month, class: "CaseForm-incomeMonth") do %>
+              <%= f.text_field(:month) %>
+            <% end %>
+            <%= f.field(:amount, class: "CaseForm-incomeAmount") do %>
+              <%= f.text_field(:amount) %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <%= f.submit(class: "Button") %>
+  <% end %>
+</main>

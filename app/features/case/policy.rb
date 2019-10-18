@@ -14,7 +14,7 @@ class Case
       case action
       when :list
         role != :supplier
-      when :show
+      when :edit
         role != :supplier
       when :create
         role == :supplier

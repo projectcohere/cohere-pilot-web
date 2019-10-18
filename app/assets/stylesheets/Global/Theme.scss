@@ -12,6 +12,10 @@ h2 {
   @extend .u-subtitle;
 }
 
+h3 {
+  @extend .u-section;
+}
+
 a {
   @extend .u-link;
 }

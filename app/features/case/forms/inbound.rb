@@ -2,24 +2,26 @@ class Case
   module Forms
     # A form object for inbound cases
     class Inbound < ::Form
-      # -- props --
-      # -- props/name
-      prop(:first_name, :string, presence: true)
-      prop(:last_name, :string, presence: true)
+      use_entity_name!
 
-      # -- props/phone
-      prop(:phone_number, :string, presence: true)
+      # -- fields --
+      # -- fields/name
+      field(:first_name, :string, presence: true)
+      field(:last_name, :string, presence: true)
 
-      # -- props/address
-      prop(:street, :string, presence: true)
-      prop(:street2, :string)
-      prop(:city, :string, presence: true)
-      prop(:state, :string, presence: true)
-      prop(:zip, :string, presence: true)
+      # -- fields/phone
+      field(:phone_number, :string, presence: true)
 
-      # -- props/utility-account
-      prop(:account_number, :string, presence: true)
-      prop(:arrears, :string, presence: true)
+      # -- fields/address
+      field(:street, :string, presence: true)
+      field(:street2, :string)
+      field(:city, :string, presence: true)
+      field(:state, :string, presence: true)
+      field(:zip, :string, presence: true)
+
+      # -- fields/utility-account
+      field(:account_number, :string, presence: true)
+      field(:arrears, :string, presence: true)
 
       # -- commands --
       def save(supplier_id, enroller_id)

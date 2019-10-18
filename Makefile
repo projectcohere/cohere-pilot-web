@@ -4,7 +4,7 @@ include ./Makefile.base.mk
 help-column-width = 10
 
 # -- context --
-tools-rb         = ./bin
+tools-rb          = ./bin
 tools-rails       = $(tools-rb)/rails
 tools-bundle      = $(tools-rb)/bundle
 tools-yarn        = yarn
@@ -101,8 +101,8 @@ t/a/rescue:
 .PHONY: t/dbg
 
 # -- test/helpers
-test-base     = $(tools-rails) test test/features/*_tests.rb test/features/**/*_tests.rb
-test-base-all = $(test-base) test/**/*_tests.rb
+test-base     = $(tools-rails) test $$(command find test/features -name "*_tests.rb")
+test-base-all = $(tools-rails) test $$(command find test -name "*_tests.rb")
 
 # -- utilties --
 ## no-op, group utitlies

@@ -28,9 +28,10 @@ Rails.application.routes.draw do
     # cases
     resources(:cases, only: %i[
       index
-      show
       new
       create
+      edit
+      update
     ]) do
       get(:inbound, on: :collection)
     end

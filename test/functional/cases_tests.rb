@@ -2,9 +2,15 @@ require "test_helper"
 
 class CasesTests < ActionDispatch::IntegrationTest
   # -- list --
-  test "can only list cases if signed-in" do
+  test "can't list cases if signed-out" do
     get("/cases")
     assert_redirected_to("/sign-in")
+  end
+
+  test "can't list cases without permission" do
+    user = users(:supplier_1)
+    get(auth("/cases", as: user))
+    assert_redirected_to("/cases/inbound")
   end
 
   test "can list incomplete cases as an operator" do
@@ -15,79 +21,62 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "can list pending cases for my org as an enroller" do
-    get(auth("/cases", as: users(:enroller_1)))
+    user = users(:enroller_1)
+    get(auth("/cases", as: user))
     assert_response(:success)
     assert_select(".Main-title", text: /Cases/)
     assert_select(".CaseCell", 1)
   end
 
   test "can list opened cases as a dhs partner" do
-    get(auth("/cases", as: users(:dhs_1)))
+    user = users(:dhs_1)
+    get(auth("/cases", as: user))
     assert_response(:success)
     assert_select(".Main-title", text: /Cases/)
     assert_select(".CaseCell", 2)
   end
 
   # -- list/inbound
-  test "can list inbound cases as a supplier" do
-    get(auth("/cases/inbound", as: users(:supplier_1)))
+  test "can't list inbound cases if signed-out" do
+    get("/cases/inbound")
+    assert_redirected_to("/sign-in")
+  end
+
+  test "can't list inbound cases without permission" do
+    user = users(:cohere_1)
+    get(auth("/cases/inbound", as: user))
+    assert_redirected_to("/cases")
+  end
+
+  test "can list inbound cases with permission" do
+    user = users(:supplier_1)
+    get(auth("/cases/inbound", as: user))
     assert_response(:success)
     assert_select(".Main-title", text: /Inbound Cases/)
   end
 
-  # -- view --
-  test "can't view a case unless signed-in" do
-    kase = cases(:incomplete_1)
-    get("/cases/#{kase.id}")
+  # -- create --
+  test "can't add an inbound case if signed-out" do
+    get("/cases/new")
     assert_redirected_to("/sign-in")
   end
 
-  test "can view a case as an operator" do
-    kase = Case.from_record(cases(:incomplete_1))
-    get(auth("/cases/#{kase.id}"))
-    assert_response(:success)
-    assert_select(".Main-title", text: /#{kase.recipient.name}/)
+  test "can't add an inbound case without permission" do
+    user = users(:cohere_1)
+    get(auth("/cases/new", as: user))
+    assert_redirected_to("/cases")
   end
 
-  test "can view a pending case for my org as an enroller" do
-    kase = Case.from_record(cases(:incomplete_2))
-    get(auth("/cases/#{kase.id}", as: users(:enroller_1)))
-    assert_response(:success)
-    assert_select(".Main-title", text: /#{kase.recipient.name}/)
-  end
-
-  test "can't view a case as a supplier" do
-    kase = Case.from_record(cases(:incomplete_2))
-    get(auth("/cases/#{kase.id}", as: users(:supplier_1)))
-    assert_redirected_to("/cases/inbound")
-  end
-
-  test "can view an opened case as a dhs partner" do
-    kase = Case.from_record(cases(:incomplete_1))
-    get(auth("/cases/#{kase.id}", as: users(:dhs_1)))
-    assert_response(:success)
-    assert_select(".Main-title", text: /#{kase.recipient.name}/)
-  end
-
-  # -- create --
-  test "can add a new case as a supplier" do
-    get(auth("/cases/new", as: users(:supplier_1)))
+  test "can add a inbound case with permission" do
+    user = users(:supplier_1)
+    get(auth("/cases/new", as: user))
     assert_response(:success)
     assert_select(".Main-title", text: /Add a Case/)
   end
 
-  test "can't add a new case as an operator" do
-    get(auth("/cases/new", as: users(:cohere_1)))
-    assert_redirected_to("/cases")
-  end
-
-  test "can't add a new case as an enroller" do
-    get(auth("/cases/new", as: users(:enroller_1)))
-    assert_redirected_to("/cases")
-  end
-
-  test "can create a new case as a supplier" do
-    post(auth("/cases", as: users(:supplier_1)), params: {
+  test "can create an inbound case with permission" do
+    user = users(:supplier_1)
+    post(auth("/cases", as: user), params: {
       case: {
         first_name: "Janice",
         last_name: "Sample",
@@ -104,13 +93,71 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/inbound")
   end
 
-  test "can't create an incomplete case" do
-    post(auth("/cases", as: users(:supplier_1)), params: {
+  test "can't create an incomplete inbound case" do
+    user = users(:supplier_1)
+    post(auth("/cases", as: user), params: {
       case: {
         first_name: "Janice",
       }
     })
 
     assert_response(:success)
+  end
+
+  # -- edit --
+  test "can't edit a case if signed-out" do
+    kase = cases(:incomplete_1)
+    get("/cases/#{kase.id}")
+    assert_redirected_to("/sign-in")
+  end
+
+  test "can't edit a case without permission" do
+    user = users(:supplier_1)
+    kase = Case.from_record(cases(:incomplete_2))
+    get(auth("/cases/#{kase.id}/edit", as: user))
+    assert_redirected_to("/cases/inbound")
+  end
+
+  test "can edit a case with permission" do
+    kase = Case.from_record(cases(:incomplete_1))
+    get(auth("/cases/#{kase.id}/edit"))
+    assert_response(:success)
+    assert_select(".Main-title", text: /#{kase.recipient.name}/)
+  end
+
+  test "can edit an in-org, pending case as an enroller" do
+    user = users(:enroller_1)
+    kase = Case.from_record(cases(:incomplete_2))
+    get(auth("/cases/#{kase.id}/edit", as: user))
+    assert_response(:success)
+    assert_select(".Main-title", text: /#{kase.recipient.name}/)
+  end
+
+  test "can edit an opened case as dhs" do
+    user = users(:dhs_1)
+    kase = Case.from_record(cases(:incomplete_1))
+    get(auth("/cases/#{kase.id}/edit", as: user))
+    assert_response(:success)
+    assert_select(".Main-title", text: /#{kase.recipient.name}/)
+  end
+
+  # -- update --
+  test "can update a case's household information" do
+    skip
+
+    user = users(:dhs_1)
+    kase = Case.from_record(cases(:incomplete_1))
+    put(auth("/cases/#{kase.id}", as: user), params: {
+      case: {
+        mdhhs_number: "12345",
+        household_size: "5",
+        incomes_attributes: {
+          month: "October",
+          amount: "$500"
+        }
+      }
+    })
+
+    assert_redirected_to("/cases")
   end
 end
