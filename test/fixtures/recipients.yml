@@ -7,3 +7,15 @@ recipient_1:
   city: New Sampleton
   state: Sample Dakota
   zip: 22222
+  dhs_number: null
+
+recipient_2:
+  first_name: Johnice
+  last_name: Simple
+  phone_number: 222-333-4444
+  street: 111 Sample St.
+  street2: Apt. 2
+  city: New Sampleton
+  state: Sample Carolina
+  zip: 44444
+  dhs_number: 88888

@@ -7,10 +7,12 @@ module Environment
     # named Record.
     K_ClassMap = {
       users: User::Record,
+      suppliers: Supplier::Record,
+      enrollers: Enroller::Record,
       cases: Case::Record,
       recipients: Recipient::Record,
-      suppliers: Supplier::Record,
-      enrollers: Enroller::Record
+      accounts: Recipient::Account::Record,
+      households: Recipient::Household::Record
     }
 
     # we have to monkey patch the fixture class cache to namespace our fixture

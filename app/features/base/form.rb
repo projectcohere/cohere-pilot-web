@@ -97,4 +97,16 @@ class Form
       parent_type.model_name
     end
   end
+
+  protected
+
+  # -- helpers --
+  # a version of with_defaults! that overwrites nils
+  def assign_defaults!(attrs, defaults)
+    defaults.each do |key, value|
+      if attrs[key].nil?
+        attrs[key] = defaults[key]
+      end
+    end
+  end
 end

@@ -74,7 +74,7 @@ class CasesController < ApplicationController
       Case::Forms::Household.new(kase)
     end
 
-    if @form == nil || policy(@form.case).forbid?(:edit)
+    if @form.nil? || policy(@form.case).forbid?(:edit)
       deny_access
     end
   end
@@ -99,7 +99,7 @@ class CasesController < ApplicationController
       )
     end
 
-    if @form == nil || policy(@form.case).forbid?(:edit)
+    if @form.nil? || policy(@form.case).forbid?(:edit)
       deny_access
     end
 

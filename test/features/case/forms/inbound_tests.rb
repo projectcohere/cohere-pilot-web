@@ -23,12 +23,11 @@ class Case
           )
         end
 
-        expected_change = 1
-        assert_difference([
-          -> { Case::Record.count },
-          -> { Recipient::Record.count },
-          -> { Recipient::Account::Record.count },
-        ], expected_change) do
+        assert_difference(
+          -> { Case::Record.count } => 1,
+          -> { Recipient::Record.count } => 1,
+          -> { Recipient::Account::Record.count } => 1,
+        ) do
           did_save = act.()
           assert(did_save)
         end

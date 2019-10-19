@@ -4,30 +4,37 @@ class Case
   module Forms
     class HouseholdTests < ActiveSupport::TestCase
       test "stubs an income history" do
-        kase = cases(:incomplete_1)
+        kase = Case::from_record(cases(:opened_1))
         form = Household.new(kase)
         assert_length(form.income_history, 1)
       end
 
+      test "can be initialized from a case" do
+        kase = Case::from_record(cases(:scorable_1))
+
+        form = Household.new(kase)
+        assert_length(form.income_history, 1)
+
+        income = form.income_history[0]
+        assert_equal(income.month, "10/19")
+        assert_equal(income.amount, "$300")
+      end
+
       test "can be initialized from params" do
-        kase = cases(:incomplete_1)
-        params = {
-          mdhhs_number: "11111",
+        kase = Case::from_record(cases(:opened_1))
+        case_params = {
+          dhs_number: "11111",
           household_size: "5",
           income_history: {
             "0": {
               month: "10/19",
               amount: "$111"
-            },
-            "1": {
-              month: "09/19",
-              amount: "$222"
             }
           }
         }
 
-        form = Household.new(kase, params)
-        assert_length(form.income_history, 2)
+        form = Household.new(kase, case_params)
+        assert_length(form.income_history, 1)
 
         income = form.income_history[0]
         assert_equal(income.month, "10/19")
@@ -35,9 +42,10 @@ class Case
       end
 
       test "saves household updates" do
-        skip
-
-        form = Household.new(
+        kase = Case.from_record(cases(:opened_1))
+        form = Household.new(kase,
+          dhs_number: "11111",
+          household_size: "3",
           income_history: {
             "0": {
               month: "10/19",
@@ -46,23 +54,21 @@ class Case
           }
         )
 
-        act = -> do
-          form.save
-        end
+        did_save = form.save
+        assert(did_save)
 
-        expected_change = 1
-        assert_difference([
-          -> { Case::Record.count },
-          -> { Recipient::Record.count },
-          -> { Recipient::Account::Record.count },
-        ], expected_change) do
-          did_save = act.()
-          assert(did_save)
-        end
+        record = kase.record
+        assert_equal(record.status.to_sym, :scorable)
+
+        record = kase.recipient.record
+        assert_equal(record.dhs_number, "11111")
+        assert_present(record.household)
+        assert_equal(record.household.size, "3")
       end
 
       test "does not save invalid household updates" do
-        form = Household.new(
+        kase = Case.from_record(cases(:opened_1))
+        form = Household.new(kase,
           income_history: {
             "0": {
               month: "10/19",

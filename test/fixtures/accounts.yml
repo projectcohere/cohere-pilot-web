@@ -1,0 +1,11 @@
+accounts_1x1:
+  number: "11111"
+  arrears: "$900"
+  recipient: recipient_1
+  supplier: supplier_1
+
+accounts_2x1:
+  number: "11111"
+  arrears: "$900"
+  recipient: recipient_2
+  supplier: supplier_1

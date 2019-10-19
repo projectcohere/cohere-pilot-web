@@ -10,10 +10,10 @@ class Enroller < ::Entity
   end
 
   # -- factories --
-  def self.from_record(record)
+  def self.from_record(r)
     Enroller.new(
-      id: record.id,
-      name: record.name
+      id: r.id,
+      name: r.name
     )
   end
 end

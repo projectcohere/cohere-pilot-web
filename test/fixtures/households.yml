@@ -1,0 +1,6 @@
+household_2:
+  recipient: recipient_2
+  size: 3
+  income_history:
+    - month: "10/19"
+      amount: "$300"

@@ -11,23 +11,23 @@ class User < ::Entity
   end
 
   # -- factories --
-  def self.from_record(record)
+  def self.from_record(r)
     # parse role from org type. if the user has an org with
     # an associated record it will be the record's class name.
-    role, org = case record.organization_type
+    role, org = case r.organization_type
     when "cohere"
       [:cohere, nil]
     when "dhs"
       [:dhs, nil]
     when Enroller::Record.to_s
-      [:enroller, Enroller.from_record(record.organization)]
+      [:enroller, Enroller.from_record(r.organization)]
     when Supplier::Record.to_s
-      [:supplier, Supplier.from_record(record.organization)]
+      [:supplier, Supplier.from_record(r.organization)]
     end
 
     # create entity
     User.new(
-      id: record.id,
+      id: r.id,
       role: role,
       organization: org
     )

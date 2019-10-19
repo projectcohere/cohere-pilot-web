@@ -16,15 +16,36 @@ class Case
 
       # -- fields --
       # -- fields/dhs
-      field(:mdhhs_number, :string, presence: true)
+      field(:dhs_number, :string, presence: true)
 
       # -- fields/household
       field(:household_size, :string, presence: true)
       field(:income_history, ListField.new(Income), presence: true, list: true)
 
       # -- lifetime --
-      def initialize(kase, attrs = Household.default_params)
+      def initialize(kase, attrs = {})
         @case = kase
+
+        # set initial values from case
+        r = kase.recipient
+        h = r.household
+
+        assign_defaults!(attrs, {
+          dhs_number: r.dhs_number,
+          household_size: h&.size,
+          income_history: h&.income_history&.map { |i|
+            Income.new(
+              month: i.month,
+              amount: i.amount
+            )
+          }
+        })
+
+        # stub income history if necessary
+        assign_defaults!(attrs, {
+          income_history: [Income.new]
+        })
+
         super(attrs)
       end
 
@@ -33,11 +54,31 @@ class Case
         if not valid?
           return false
         end
-      end
 
-      # -- queries --
-      def self.default_params
-        { income_history: [Income.new] }
+        if @case.record.nil? || @case.recipient.record.nil?
+          raise "case must be constructed from a db record!"
+        end
+
+        # TODO: need pattern for performing mutations through domain objects
+        # and then serializing and saving to db.
+        @case.record.transaction do
+          household = @case.recipient.record.household
+          if household.nil?
+            household = Recipient::Household::Record.new
+          end
+
+          household.size = household_size
+          household.income_history = income_history.map(&:attributes)
+
+          @case.recipient.record.update!(
+            dhs_number: dhs_number,
+            household: household
+          )
+
+          @case.record.update!(
+            status: :scorable
+          )
+        end
       end
 
       # -- ActiveModel::Model --

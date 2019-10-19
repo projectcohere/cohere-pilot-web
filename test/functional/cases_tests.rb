@@ -17,7 +17,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases"))
     assert_response(:success)
     assert_select(".Main-title", text: /Cases/)
-    assert_select(".CaseCell", 4)
+    assert_select(".CaseCell", 5)
   end
 
   test "can list pending cases for my org as an enroller" do
@@ -106,20 +106,20 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   # -- edit --
   test "can't edit a case if signed-out" do
-    kase = cases(:incomplete_1)
+    kase = cases(:opened_1)
     get("/cases/#{kase.id}")
     assert_redirected_to("/sign-in")
   end
 
   test "can't edit a case without permission" do
     user = users(:supplier_1)
-    kase = Case.from_record(cases(:incomplete_2))
+    kase = Case.from_record(cases(:pending_1))
     get(auth("/cases/#{kase.id}/edit", as: user))
     assert_redirected_to("/cases/inbound")
   end
 
   test "can edit a case with permission" do
-    kase = Case.from_record(cases(:incomplete_1))
+    kase = Case.from_record(cases(:opened_1))
     get(auth("/cases/#{kase.id}/edit"))
     assert_response(:success)
     assert_select(".Main-title", text: /#{kase.recipient.name}/)
@@ -127,7 +127,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "can edit an in-org, pending case as an enroller" do
     user = users(:enroller_1)
-    kase = Case.from_record(cases(:incomplete_2))
+    kase = Case.from_record(cases(:pending_1))
     get(auth("/cases/#{kase.id}/edit", as: user))
     assert_response(:success)
     assert_select(".Main-title", text: /#{kase.recipient.name}/)
@@ -135,7 +135,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "can edit an opened case as dhs" do
     user = users(:dhs_1)
-    kase = Case.from_record(cases(:incomplete_1))
+    kase = Case.from_record(cases(:opened_1))
     get(auth("/cases/#{kase.id}/edit", as: user))
     assert_response(:success)
     assert_select(".Main-title", text: /#{kase.recipient.name}/)
@@ -143,17 +143,17 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   # -- update --
   test "can update a case's household information" do
-    skip
-
     user = users(:dhs_1)
-    kase = Case.from_record(cases(:incomplete_1))
+    kase = Case.from_record(cases(:opened_1))
     put(auth("/cases/#{kase.id}", as: user), params: {
       case: {
-        mdhhs_number: "12345",
+        dhs_number: "12345",
         household_size: "5",
-        incomes_attributes: {
-          month: "October",
-          amount: "$500"
+        income_history: {
+          "0": {
+            month: "October",
+            amount: "$500"
+          }
         }
       }
     })

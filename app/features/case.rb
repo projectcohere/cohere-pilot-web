@@ -1,4 +1,7 @@
 class Case < ::Entity
+  # TODO: should this be generalized for the aggregate root?
+  attr_reader(:record)
+
   # -- props --
   prop(:id)
   prop(:recipient)
@@ -8,7 +11,8 @@ class Case < ::Entity
   prop(:completed_at)
 
   # -- lifetime --
-  def initialize(id:, recipient:, enroller:, status:, updated_at:, completed_at:)
+  def initialize(record: nil, id:, recipient:, enroller:, status:, updated_at:, completed_at:)
+    @record = record
     @id = id
     @recipient = recipient
     @enroller = enroller
@@ -18,14 +22,15 @@ class Case < ::Entity
   end
 
   # -- factories --
-  def self.from_record(record)
+  def self.from_record(r)
     Case.new(
-      id: record.id,
-      recipient: Recipient.from_record(record.recipient),
-      enroller: Enroller.from_record(record.enroller),
-      status: record.status.to_sym,
-      updated_at: record.updated_at,
-      completed_at: record.completed_at
+      record: r,
+      id: r.id,
+      recipient: Recipient.from_record(r.recipient),
+      enroller: Enroller.from_record(r.enroller),
+      status: r.status.to_sym,
+      updated_at: r.updated_at,
+      completed_at: r.completed_at
     )
   end
 end

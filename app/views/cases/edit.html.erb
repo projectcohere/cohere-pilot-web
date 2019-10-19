@@ -4,9 +4,9 @@
   </h1>
 
   <%= form_for(@form, html: { class: "CaseForm Form" }) do |f| %>
-    <%= f.group("MDHHS", class: "CaseForm-mdhhs") do %>
-      <%= f.field(:mdhhs_number, "MDHHS Number", class: "CaseForm-mdhhsNumber") do %>
-        <%= f.text_field(:mdhhs_number) %>
+    <%= f.group("MDHHS", class: "CaseForm-dhs") do %>
+      <%= f.field(:dhs_number, "MDHHS Number", class: "CaseForm-dhsNumber") do %>
+        <%= f.text_field(:dhs_number) %>
       <% end %>
     <% end %>
 
