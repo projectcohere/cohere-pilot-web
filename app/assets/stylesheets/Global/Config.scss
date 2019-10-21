@@ -9,6 +9,8 @@ $spacing2: 10px;
 $spacing3: 0px;
 
 /* typography */
+$fontFamily: "Euclid Flex";
+
 $fontSize0: 48px;
 $fontSize1: 32px;
 $fontSize2: 24px;
@@ -16,8 +18,9 @@ $fontSize3: 18px;
 $fontSize4: 16px;
 $fontSize5: 12px;
 
-$fontWeightRegular: 400;
-$fontWeightThin: 300;
+$fontWeightThin: 100;
+$fontWeightRegular: normal;
+$fontWeightMedium: 500;
 $fontWeightBold: 600;
 
 /* colors */
