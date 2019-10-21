@@ -65,6 +65,8 @@
 
   &-incomeRow {
     grid-column: 1 / 4;
+    position: relative;
+    align-items: end;
   }
 
   &-incomeMonth {
@@ -73,5 +75,10 @@
 
   &-incomeAmount {
     grid-column: 2 / 4;
+  }
+
+  &-incomeDelete {
+    position: absolute;
+    right: -$spacing1;
   }
 }

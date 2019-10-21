@@ -15,16 +15,18 @@
         <%= f.text_field(:household_size) %>
       <% end %>
       <%= f.section("Monthly Income", :h3, class: "CaseForm-income") do %>
-        <%- @form.income_history.each do |income| %>
-          <%= f.group(:ul, class: "CaseForm-incomeRows", id: "add-income-rows") do %>
-            <%= f.fields_for(:income_history, income, index: 0) do |f| %>
-              <%= f.group(:li, class: "CaseForm-incomeRow", id: "add-income-row") do %>
+        <%= f.group(:ul, class: "CaseForm-incomeRows", id: "income-rows") do %>
+          <%- @form.income_history.each_with_index do |income, i| %>
+            <%= f.fields_for(:income_history, income, index: i) do |f| %>
+              <%- row_id = i == 0 ? "income-row-template" : nil %>
+              <%= f.group(:li, class: "CaseForm-incomeRow", id: row_id) do %>
                 <%= f.field(:month, class: "CaseForm-incomeMonth") do %>
                   <%= f.text_field(:month) %>
                 <% end %>
                 <%= f.field(:amount, class: "CaseForm-incomeAmount") do %>
                   <%= f.text_field(:amount) %>
                 <% end %>
+                <%= tag.a("✘", class: "CaseForm-incomeDelete") %>
               <% end %>
             <% end %>
           <% end %>
