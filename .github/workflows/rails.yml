@@ -1,5 +1,8 @@
 name: Rails-CI
-on: []
+on:
+  push:
+    branches: 
+      - master
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -11,13 +14,13 @@ jobs:
         ruby-version: 2.6.x
     - name: Install Postgres
       run: |
-        apt install -y libpq-dev
+        sudo apt install -y libpq-dev
     - name: Install Yarn & Node
       run: |
         curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
         echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
         curl -sL https://deb.nodesource.com/setup_12.x | bash -
-        apt install -y yarn nodejs
+        sudo apt install -y yarn nodejs
     - name: Build
       run: |
         gem install bundler
