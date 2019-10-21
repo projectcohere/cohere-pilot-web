@@ -6,6 +6,7 @@ class Recipient < ::Entity
   prop(:id)
   prop(:name)
   prop(:dhs_number)
+  prop(:address)
   prop(:household)
 
   # -- lifetime --
@@ -14,12 +15,14 @@ class Recipient < ::Entity
     id:,
     dhs_number: nil,
     name:,
+    address:,
     household: nil
   )
     @record = record
     @id = id
     @name = name
     @dhs_number = dhs_number
+    @address = address
     @household = household
   end
 
@@ -32,6 +35,13 @@ class Recipient < ::Entity
       name: Name.new(
         first: r.first_name,
         last: r.last_name
+      ),
+      address: Address.new(
+        street: r.street,
+        street2: r.street2,
+        city: r.city,
+        state: r.state,
+        zip: r.zip
       ),
       household: r.household&.then { |h|
         Household.new(

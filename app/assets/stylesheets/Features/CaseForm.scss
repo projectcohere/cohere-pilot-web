@@ -16,6 +16,14 @@
   }
 
   /* CaseForm-address */
+  &-address.is-read {
+    gap: $spacing3;
+  }
+
+  &-addressLine {
+    grid-column: 1 / 4;
+  }
+
   &-street {
     grid-column: 1 / 3;
   }

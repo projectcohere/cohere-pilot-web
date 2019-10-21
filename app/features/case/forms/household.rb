@@ -81,6 +81,11 @@ class Case
         end
       end
 
+      # -- queries --
+      def address
+        @case.recipient.address.to_lines
+      end
+
       # -- ActiveModel::Model --
       def id
         @case.id

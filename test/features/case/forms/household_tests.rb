@@ -87,6 +87,12 @@ class Case
         assert_present(form.errors[:income_history])
         assert_present(form.income_history[0].errors)
       end
+
+      test "provides the address" do
+        kase = Case.from_record(cases(:opened_1))
+        form = Household.new(kase)
+        assert_length(form.address, 3)
+      end
     end
   end
 end

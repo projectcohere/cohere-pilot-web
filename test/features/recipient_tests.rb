@@ -4,6 +4,7 @@ class RecipientTests < ActiveSupport::TestCase
     assert_not_nil(recipient.record)
     assert_not_nil(recipient.id)
     assert_not_nil(recipient.name)
+    assert_not_nil(recipient.address)
     assert_not_nil(recipient.household)
     assert_length(recipient.household.income_history, 1)
   end

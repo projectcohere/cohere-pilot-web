@@ -1,6 +1,10 @@
 <header class="Header">
   <figure class="Header-logo">
-    <%= t(".logo") %>
+    <% if signed_in? %>
+      <%= link_to(t(".logo"), root_path_by_permissions) %>
+    <% else %>
+      <%= t(".logo") %>
+    <% end %>
   </figure>
   <% if signed_in? %>
     <div class="Header-user">
