@@ -81,4 +81,8 @@
     position: absolute;
     right: -$spacing1;
   }
+
+  &-incomeRow:only-child &-incomeDelete {
+    display: none;
+  }
 }

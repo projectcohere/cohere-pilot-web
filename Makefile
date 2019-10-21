@@ -6,6 +6,7 @@ help-column-width = 10
 # -- context --
 tools-rb          = ./bin
 tools-rails       = $(tools-rb)/rails
+tools-wds         = $(tools-rb)/webpack-dev-server
 tools-bundle      = $(tools-rb)/bundle
 tools-yarn        = yarn
 tools-pg-up       = $(shell pg_isready 1>/dev/null 2>&1; echo $$?)
@@ -70,6 +71,11 @@ s: s/dev
 ## starts the rails dev server
 s/dev:
 	$(tools-rails) server
+.PHONY: s/dev
+
+## starts the js dev server
+s/js:
+	$(tools-wds)
 .PHONY: s/dev
 
 # -- test --

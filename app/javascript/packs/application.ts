@@ -4,14 +4,12 @@ interface IRailsPlugin {
 }
 
 // -- main --
-(() => {
-  const plugins: IRailsPlugin[] = [
-    require("@rails/ujs"),
-    require("@rails/activestorage"),
-    require("turbolinks")
-  ]
+const plugins: IRailsPlugin[] = [
+  require("@rails/ujs"),
+  require("@rails/activestorage"),
+  require("turbolinks")
+]
 
-  for (const plugin of plugins) {
-    plugin.start()
-  }
-})()
+for (const plugin of plugins) {
+  plugin.start()
+}

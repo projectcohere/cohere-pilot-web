@@ -1,3 +1,10 @@
+
+// -- types --
+interface IncomeRowField {
+  label: Element
+  input: HTMLInputElement
+}
+
 // -- impls --
 class ShowEdit {
   // -- props --
@@ -13,58 +20,53 @@ class ShowEdit {
   }
 
   private onMount() {
-    const $c = this
+    this.$incomeRowTemplate = this.createTemplateFromIncomeRow(this.getById("income-row-template"))
 
-    $c.$incomeRowTemplate = $c.createTemplateFromIncomeRow($c.getById("income-row-template"))
+    this.$incomeRows = this.getById("income-rows")
+    this.$incomeRows.addEventListener("click", this.didClickDeleteIncomeLink)
 
-    $c.$incomeRows = $c.getById("income-rows")
-    $c.$incomeRows.addEventListener("click", $c.didClickDeleteIncomeLink)
-
-    $c.$addIncomeLink = $c.getById("add-income-link")
-    $c.$addIncomeLink.addEventListener("click", $c.didClickAddIncomeLink)
+    this.$addIncomeLink = this.getById("add-income-link")
+    this.$addIncomeLink.addEventListener("click", this.didClickAddIncomeLink)
   }
 
   // -- events --
   private didClickAddIncomeLink = () => {
-    const $c = this
-    $c.addIncomeRow()
+    this.addIncomeRow()
   }
 
   private didClickDeleteIncomeLink = (event: MouseEvent) => {
-    const $c = this
-
     // filter to clicks on a delete link
     const incomeRowDeleteLink = event.target as Element
-    if ($c.isIncomeRowDeleteLink(incomeRowDeleteLink)) {
-      $c.removeIncomeRow(incomeRowDeleteLink.parentElement)
+    if (this.isIncomeRowDeleteLink(incomeRowDeleteLink)) {
+      this.removeIncomeRow(incomeRowDeleteLink.parentElement)
     }
   }
 
   // -- commands --
   private addIncomeRow() {
-    const $c = this
-
     // create a new row from the template
-    const row = $c.$incomeRowTemplate.cloneNode(true) as Element
+    const row = this.$incomeRowTemplate.cloneNode(true) as Element
 
     // assign the right index
-    const index = $c.$incomeRows.children.length
-    $c.setIndexOfIncomeRow(row, index)
+    const index = this.$incomeRows.children.length
+    this.setIndexOfIncomeRow(row, index)
 
     // add the row to the list
-    $c.$incomeRows.appendChild(row)
+    this.$incomeRows.appendChild(row)
   }
 
   private removeIncomeRow(incomeRow: Element) {
-    const $c = this
+    if (this.$incomeRows.children.length <= 1) {
+      throw "tried to remove an income row when there was only one left!"
+    }
 
     // remove the matching income row
-    $c.$incomeRows.removeChild(incomeRow)
+    this.$incomeRows.removeChild(incomeRow)
 
     // re-assign the row indices
     let index = 0
-    for (const incomeRow of Array.from($c.$incomeRows.children)) {
-      $c.setIndexOfIncomeRow(incomeRow, index)
+    for (const incomeRow of Array.from(this.$incomeRows.children)) {
+      this.setIndexOfIncomeRow(incomeRow, index)
       index++
     }
   }
@@ -73,7 +75,7 @@ class ShowEdit {
   private getById(id: string): Element {
     const el = document.getElementById(id)
     if (el == null) {
-      throw `Failed to find element with id ${id}!`
+      throw `failed to find element with id ${id}!`
     }
 
     el.removeAttribute("id")
@@ -82,35 +84,35 @@ class ShowEdit {
 
   // -- el --
   // -- el/income-row
-  private getInputsFromIncomeRow(row: Element): HTMLInputElement[] {
-    return Array.from(row.getElementsByTagName("input"))
+  private getFieldsFromIncomeRow(row: Element): IncomeRowField[] {
+    return Array.from(row.getElementsByTagName("label")).map((label) => ({
+      label,
+      input: label.lastElementChild as HTMLInputElement
+    }))
   }
 
   private setIndexOfIncomeRow(row: Element, index: number) {
-    const $c = this
-    for (const input of $c.getInputsFromIncomeRow(row)) {
-      input.setAttribute("id", input.id.replace(/\d+/, index.toString()))
-      input.setAttribute("name", input.name.replace(/\d+/, index.toString()))
+    for (const field of this.getFieldsFromIncomeRow(row)) {
+      const id = field.input.id.replace(/\d+/, index.toString())
+      field.label.setAttribute("for", id)
+      field.input.setAttribute("id", id)
+      field.input.setAttribute("name", field.input.name.replace(/\d+/, index.toString()))
     }
-  }
-
-  private createTemplateFromIncomeRow(source: Element): Element {
-    const $c = this
-
-    const template = source.cloneNode(true) as Element
-    for (const input of $c.getInputsFromIncomeRow(template)) {
-      input.value = ""
-    }
-
-    return template
   }
 
   private isIncomeRowDeleteLink(element: Element | null): boolean {
     return element != null && element.className.includes("CaseForm-incomeDelete")
   }
+
+  private createTemplateFromIncomeRow(source: Element): Element {
+    const template = source.cloneNode(true) as Element
+    for (const field of this.getFieldsFromIncomeRow(template)) {
+      field.input.value = ""
+    }
+
+    return template
+  }
 }
 
 // -- main --
-(() => {
-  ShowEdit.start()
-})()
+ShowEdit.start()
