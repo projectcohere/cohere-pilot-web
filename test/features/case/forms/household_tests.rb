@@ -50,6 +50,10 @@ class Case
             "0": {
               month: "10/19",
               amount: "$999",
+            },
+            "1": {
+              month: "11/19",
+              amount: "$540"
             }
           }
         )
@@ -64,6 +68,7 @@ class Case
         assert_equal(record.dhs_number, "11111")
         assert_present(record.household)
         assert_equal(record.household.size, "3")
+        assert_length(record.household.income_history, 2)
       end
 
       test "does not save invalid household updates" do

@@ -55,7 +55,15 @@
     grid-column: 1 / 2;
   }
 
-  &-incomes {
+  &-income {
+    grid-column: 1 / 4;
+  }
+
+  &-incomeRows {
+    grid-column: 1 / 4;
+  }
+
+  &-incomeRow {
     grid-column: 1 / 4;
   }
 

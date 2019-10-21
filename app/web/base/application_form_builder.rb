@@ -1,13 +1,25 @@
 class ApplicationFormBuilder < ::ActionView::Helpers::FormBuilder
-  def group(title, header_tag = :h2, *args, **kwargs, &children)
+  def section(title, header_tag = :h2, *args, **kwargs, &children)
+    a_class = kwargs.delete(:class)
+
+    # render the children & tag
+    f_class = "#{a_class} Form-section"
+    content = @template.capture(&children)
+
+    group(*args, class: f_class, **kwargs) do
+      @template.content_tag(header_tag, title) +
+      content
+    end
+  end
+
+  def group(tag = :div, *args, **kwargs, &children)
     a_class = kwargs.delete(:class)
 
     # render the children & tag
     f_class = "#{a_class} Form-group"
     content = @template.capture(&children)
 
-    @template.tag.div(*args, class: f_class, **kwargs) do
-      @template.content_tag(header_tag, title) +
+    @template.content_tag(tag, *args, class: f_class, **kwargs) do
       content
     end
   end
