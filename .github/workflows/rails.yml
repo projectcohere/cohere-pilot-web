@@ -6,6 +6,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:11.5
+        ports:
+          # will assign a random free host port
+          - 5432/tcp
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ""
+          POSTGRES_DB: postgres
+        options: |
+          # postgres container does not provide a healthcheck
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
     - uses: actions/checkout@v1
     - name: Setup Ruby
@@ -22,9 +35,20 @@ jobs:
         curl -sL https://deb.nodesource.com/setup_12.x | sudo bash -
         sudo apt install -y yarn nodejs
     - name: Build
+      env:
+        PGHOST: localhost
+        PGUSER: postgres
+        PGPORT: ${{ job.services.postgres.ports[5432] }} # get the randomly-assigned port
+        RAILS_ENV: test
       run: |
         gem install bundler
         bundle install --jobs 4 --retry 3
+        bin/rails db:setup
     - name: Test
+      env:
+        PGHOST: localhost
+        PGUSER: postgres
+        PGPORT: ${{ job.services.postgres.ports[5432] }} # get the randomly-assigned port
+        RAILS_ENV: test
       run: |
         make t/all
