@@ -2,6 +2,7 @@ require "test_helper"
 
 class CasesTests < ActionDispatch::IntegrationTest
   # -- list --
+  # -- list/root
   test "can't list cases if signed-out" do
     get("/cases")
     assert_redirected_to("/sign-in")
@@ -28,14 +29,6 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 1)
   end
 
-  test "can list opened cases as a dhs partner" do
-    user = users(:dhs_1)
-    get(auth("/cases", as: user))
-    assert_response(:success)
-    assert_select(".Main-title", text: /Cases/)
-    assert_select(".CaseCell", 2)
-  end
-
   # -- list/inbound
   test "can't list inbound cases if signed-out" do
     get("/cases/inbound")
@@ -55,28 +48,49 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".Main-title", text: /Inbound Cases/)
   end
 
+  # -- list/opened
+  test "can't list opened cases if signed-out" do
+    get("/cases/opened")
+    assert_redirected_to("/sign-in")
+  end
+
+  test "can't list opened cases without permission" do
+    user = users(:cohere_1)
+    get(auth("/cases/opened", as: user))
+    assert_redirected_to("/cases")
+  end
+
+  test "can list opened cases with permission" do
+    user = users(:dhs_1)
+    get(auth("/cases/opened", as: user))
+    assert_response(:success)
+    assert_select(".Main-title", text: /Cases/)
+    assert_select(".CaseCell", 2)
+  end
+
   # -- create --
+  # -- create/inbound
   test "can't add an inbound case if signed-out" do
-    get("/cases/new")
+    get("/cases/inbound/new")
     assert_redirected_to("/sign-in")
   end
 
   test "can't add an inbound case without permission" do
     user = users(:cohere_1)
-    get(auth("/cases/new", as: user))
+    get(auth("/cases/inbound/new", as: user))
     assert_redirected_to("/cases")
   end
 
   test "can add a inbound case with permission" do
     user = users(:supplier_1)
-    get(auth("/cases/new", as: user))
+    get(auth("/cases/inbound/new", as: user))
     assert_response(:success)
     assert_select(".Main-title", text: /Add a Case/)
   end
 
   test "can create an inbound case with permission" do
     user = users(:supplier_1)
-    post(auth("/cases", as: user), params: {
+    post(auth("/cases/inbound", as: user), params: {
       case: {
         first_name: "Janice",
         last_name: "Sample",
@@ -93,9 +107,9 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/inbound")
   end
 
-  test "can't create an incomplete inbound case" do
+  test "show errors for an invalid inbound case" do
     user = users(:supplier_1)
-    post(auth("/cases", as: user), params: {
+    post(auth("/cases/inbound", as: user), params: {
       case: {
         first_name: "Janice",
       }
@@ -105,26 +119,6 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   # -- edit --
-  test "can't edit a case if signed-out" do
-    kase = cases(:opened_1)
-    get("/cases/#{kase.id}")
-    assert_redirected_to("/sign-in")
-  end
-
-  test "can't edit a case without permission" do
-    user = users(:supplier_1)
-    kase = Case.from_record(cases(:pending_1))
-    get(auth("/cases/#{kase.id}/edit", as: user))
-    assert_redirected_to("/cases/inbound")
-  end
-
-  test "can edit a case with permission" do
-    kase = Case.from_record(cases(:opened_1))
-    get(auth("/cases/#{kase.id}/edit"))
-    assert_response(:success)
-    assert_select(".Main-title", text: /#{kase.recipient.name}/)
-  end
-
   test "can edit an in-org, pending case as an enroller" do
     user = users(:enroller_1)
     kase = Case.from_record(cases(:pending_1))
@@ -133,19 +127,33 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".Main-title", text: /#{kase.recipient.name}/)
   end
 
-  test "can edit an opened case as dhs" do
+  # -- edit/opened
+  test "can't edit an opened case if signed-out" do
+    kase = cases(:opened_1)
+    get("/cases/opened/#{kase.id}/edit")
+    assert_redirected_to("/sign-in")
+  end
+
+  test "can't edit an opened case without permission" do
+    user = users(:supplier_1)
+    kase = Case.from_record(cases(:pending_1))
+    get(auth("/cases/opened/#{kase.id}/edit", as: user))
+    assert_redirected_to("/cases/inbound")
+  end
+
+  test "can edit an opened case with permission" do
     user = users(:dhs_1)
     kase = Case.from_record(cases(:opened_1))
-    get(auth("/cases/#{kase.id}/edit", as: user))
+    get(auth("/cases/opened/#{kase.id}/edit", as: user))
     assert_response(:success)
     assert_select(".Main-title", text: /#{kase.recipient.name}/)
   end
 
   # -- update --
-  test "can update a case's household information" do
+  test "can update an opened case's dhs info" do
     user = users(:dhs_1)
     kase = Case.from_record(cases(:opened_1))
-    put(auth("/cases/#{kase.id}", as: user), params: {
+    put(auth("/cases/opened/#{kase.id}", as: user), params: {
       case: {
         dhs_number: "12345",
         household_size: "5",

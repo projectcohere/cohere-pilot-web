@@ -1,6 +1,6 @@
 <main class="Main">
   <h1 class="Main-title">
-    All Cases
+    Open Cases
   </h1>
   <ul class="CaseList">
     <% if @cases.blank? %>
@@ -12,7 +12,7 @@
             <div class="CaseCell-row">
               <%- name = kase.recipient.name %>
               <% if policy.permit?(:edit) %>
-                <%= link_to(name, edit_case_path(kase), action: :edit, class: "CaseCell-name") %>
+                <%= link_to(name, edit_cases_opened_path(kase), action: :edit, class: "CaseCell-name") %>
               <% else %>
                 <p class="CaseCell-name"><%= name %></p>
               <% end %>

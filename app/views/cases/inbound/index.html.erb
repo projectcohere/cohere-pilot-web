@@ -4,7 +4,7 @@
   </h1>
   <div class="Main-actions">
     <% if policy.permit?(:create) %>
-      <%= link_to("Add a Case", new_case_path) %>
+      <%= link_to("Add a Case", new_cases_inbound_path) %>
     <% end %>
   </div>
 </main>

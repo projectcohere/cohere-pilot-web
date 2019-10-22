@@ -17,11 +17,13 @@ module Authentication
   # permissions
   def root_path_by_permissions
     case_policy = Case::Policy.new(Current.user)
-
-    if case_policy.permit?(:list)
+    case case_policy.scope_for_user
+    when :inbound
+      cases_inbound_index_path
+    when :opened
+      cases_opened_index_path
+    when :root
       cases_path
-    else
-      inbound_cases_path
     end
   end
 end

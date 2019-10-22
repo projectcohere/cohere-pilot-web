@@ -28,12 +28,23 @@ Rails.application.routes.draw do
     # cases
     resources(:cases, only: %i[
       index
-      new
-      create
       edit
       update
-    ]) do
-      get(:inbound, on: :collection)
+    ])
+
+    # cases/role-scoped
+    namespace(:cases) do
+      resources(:inbound, only: %i[
+        index
+        new
+        create
+      ])
+
+      resources(:opened, only: %i[
+        index
+        edit
+        update
+      ])
     end
 
     # fallback

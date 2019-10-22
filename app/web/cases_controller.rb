@@ -1,4 +1,7 @@
 class CasesController < ApplicationController
+  # -- filters --
+  before_action(:check_scope)
+
   # -- helpers --
   helper_method(:policy)
 
@@ -16,45 +19,6 @@ class CasesController < ApplicationController
       repo.find_incomplete
     when :enroller
       repo.find_for_enroller(user.organization.id)
-    when :dhs
-      repo.find_opened
-    end
-  end
-
-  def inbound
-    if policy.permit?(:list)
-      redirect_to(cases_path)
-    end
-  end
-
-  def new
-    if policy.forbid?(:create)
-      deny_access
-    end
-
-    @form = Case::Forms::Inbound.new
-  end
-
-  def create
-    if policy.forbid?(:create)
-      deny_access
-    end
-
-    @form = Case::Forms::Inbound.new(
-      params
-        .require(:case)
-        .permit(Case::Forms::Inbound.attribute_names)
-    )
-
-    # require that the user be a supplier right now
-    supplier = Current.user.organization
-    # and add every case to the default enroller
-    enroller = Enroller::Repo.new.find_default
-
-    if @form.save(supplier.id, enroller.id)
-      redirect_to(inbound_cases_path)
-    else
-      render(:new)
     end
   end
 
@@ -69,9 +33,6 @@ class CasesController < ApplicationController
     when :enroller
       kase = repo.find_one_for_enroller(params[:id], user.organization.id)
       Case::Forms::Household.new(kase) # TODO: use the Full form
-    when :dhs
-      kase = repo.find_one_opened(params[:id])
-      Case::Forms::Household.new(kase)
     end
 
     if @form.nil? || policy(@form.case).forbid?(:edit)
@@ -90,13 +51,6 @@ class CasesController < ApplicationController
     when :enroller
       kase = repo.find_one_for_enroller(params[:id], user.organization.id)
       Case::Forms::Household.new(kase) # TODO: use the Full form
-    when :dhs
-      kase = repo.find_one_opened(params[:id])
-      Case::Forms::Household.new(kase,
-        params
-          .require(:case)
-          .permit(Case::Forms::Household.params_shape)
-      )
     end
 
     if @form.nil? || policy(@form.case).forbid?(:edit)
@@ -111,6 +65,13 @@ class CasesController < ApplicationController
   end
 
   private
+
+  # -- commands --
+  def check_scope
+    if policy.forbid?(:some)
+      deny_access
+    end
+  end
 
   # -- queries --
   def policy(kase = nil)
