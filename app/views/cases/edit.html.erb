@@ -20,29 +20,14 @@
       <%= f.field(:household_size, "Size", class: "CaseForm-householdSize") do %>
         <%= f.text_field(:household_size) %>
       <% end %>
-      <%= f.section("Monthly Income", :h3, class: "CaseForm-income") do %>
-        <%= f.group(:ul, class: "CaseForm-incomeRows", id: "income-rows") do %>
-          <%- @form.income_history.each_with_index do |income, i| %>
-            <%= f.fields_for(:income_history, income, index: i) do |f| %>
-              <%- row_id = i == 0 ? "income-row-template" : nil %>
-              <%= f.group(:li, class: "CaseForm-incomeRow", id: row_id) do %>
-                <%= f.field(:month, class: "CaseForm-incomeMonth") do %>
-                  <%= f.text_field(:month) %>
-                <% end %>
-                <%= f.field(:amount, class: "CaseForm-incomeAmount") do %>
-                  <%= f.text_field(:amount) %>
-                <% end %>
-                <%= tag.a("✘", class: "CaseForm-deleteIncome") %>
-              <% end %>
-            <% end %>
-          <% end %>
+      <%- income = @form.income_history[0] %>
+      <%= f.fields_for(:income_history, income, index: 0) do |f| %>
+        <%= f.field(:amount, "Monthly Income", class: "CaseForm-monthlyIncome") do %>
+          <%= f.text_field(:amount) %>
         <% end %>
-        <%= tag.a("Add Income", id: "add-income-link", class: "CaseForm-addIncome Button") %>
       <% end %>
     <% end %>
 
     <%= f.submit(class: "Button--action") %>
   <% end %>
 </main>
-
-<%= javascript_pack_tag("cases/edit") %>

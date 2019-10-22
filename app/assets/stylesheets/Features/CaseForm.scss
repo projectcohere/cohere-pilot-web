@@ -65,41 +65,7 @@
     grid-column: 1 / 2;
   }
 
-  &-income {
-    grid-column: 1 / 5;
-  }
-
-  &-incomeRows {
-    grid-column: 1 / 5;
-  }
-
-  &-incomeRow {
-    grid-column: 1 / 5;
-    position: relative;
-    align-items: end;
-  }
-
-  &-incomeMonth {
-    grid-column: 1 / 2;
-  }
-
-  &-incomeAmount {
-    grid-column: 2 / 4;
-  }
-
-  &-addIncome {
-    margin-top: $spacing2;
-  }
-
-  &-deleteIncome {
-    display: flex;
-    align-items: center;
-    height: $height1;
-    font-size: $fontSize3;
-    margin-left: $spacing2;
-  }
-
-  &-incomeRow:only-child &-deleteIncome {
-    display: none;
+  &-monthlyIncome {
+    grid-column: 1 / 3;
   }
 }

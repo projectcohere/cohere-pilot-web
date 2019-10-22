@@ -5,7 +5,7 @@ class Recipient
     prop(:amount)
 
     # -- lifetime --
-    def initialize(month:, amount:)
+    def initialize(month: nil, amount:)
       @month = month
       @amount = amount
     end

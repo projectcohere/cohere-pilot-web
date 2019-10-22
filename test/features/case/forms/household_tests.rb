@@ -16,7 +16,6 @@ class Case
         assert_length(form.income_history, 1)
 
         income = form.income_history[0]
-        assert_equal(income.month, "10/19")
         assert_equal(income.amount, "$300")
       end
 

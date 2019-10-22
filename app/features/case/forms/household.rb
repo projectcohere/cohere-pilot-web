@@ -3,8 +3,9 @@ class Case
     # A form object for an income history row
     class Income < ::Form
       # -- fields --
-      field(:month, :string, presence: true)
       field(:amount, :string, presence: true)
+      # deprecated: month is not used right now
+      field(:month, :string)
     end
 
     # A form object for household case info
@@ -35,7 +36,6 @@ class Case
           household_size: h&.size,
           income_history: h&.income_history&.map { |i|
             Income.new(
-              month: i.month,
               amount: i.amount
             )
           }
@@ -67,8 +67,10 @@ class Case
             household = Recipient::Household::Record.new
           end
 
-          household.size = household_size
-          household.income_history = income_history.map(&:attributes)
+          household.assign_attributes(
+            size: household_size,
+            income_history: income_history.map(&:attributes)
+          )
 
           @case.recipient.record.update!(
             dhs_number: dhs_number,
