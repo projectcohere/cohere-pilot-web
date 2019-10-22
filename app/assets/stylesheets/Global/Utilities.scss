@@ -2,36 +2,46 @@
 .u-title {
   font-size: $fontSize0;
   font-weight: $fontWeightBold;
+  color: $brandBlack;
 }
 
 .u-subtitle {
   font-size: $fontSize2;
   font-weight: $fontWeightThin;
+  color: $brandBlack;
 }
 
 .u-section {
   font-size: $fontSize3;
   font-weight: $fontWeightThin;
+  color: $brandBlack;
 }
 
 .u-body {
-  font-size: $fontSize4;
+  font-size: $fontSize5;
   font-weight: $fontWeightRegular;
 }
 
 .u-hint {
-  font-size: $fontSize5;
+  font-size: $fontSize6;
   font-weight: $fontWeightBold;
 }
 
 /* elements */
 .u-link {
-  color: $colorPrimaryBlack;
+  color: $brandBlack;
   text-decoration: underline;
-  text-decoration-color: $colorPrimary;
+  text-decoration-color: $brandPrimary;
   cursor: pointer;
 
   &:hover {
-    color: $colorPrimary;
+    color: $brandPrimary;
   }
+}
+
+.u-panel {
+  padding: $spacing1;
+  background-color: $white;
+  border-radius: $radius;
+  box-shadow: 0px 5px 5px $colorShadow;
 }

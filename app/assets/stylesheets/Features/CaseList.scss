@@ -1,25 +1,36 @@
 .CaseList {
-  max-width: $width1;
   display: grid;
   gap: $spacing1;
+  max-width: $width1;
 }
 
 .CaseCell {
+  @extend .u-panel;
   padding: $spacing2;
-  border-left: 1px solid $black;
-  border-bottom: 1px solid $black;
 
   &-name {
-    @extend .u-subtitle;
-
     display: inline-block;
+    font-size: $fontSize3;
+  }
+
+  &-enroller {
+    color: $gray1;
+  }
+
+  &-updateTime {
+    color: $gray1;
   }
 
   &-row {
     display: flex;
+    align-items: baseline;
 
     > * + * {
       margin-left: $spacing2;
     }
+  }
+
+  &-row:nth-child(2) {
+    justify-content: space-between;
   }
 }

@@ -1,8 +1,9 @@
-<main class="Main">
-  <h1><%= t(".title") %></h2>
-  <%= form_for(:session, url: session_path, html: { class: "SignIn Form" }) do |f| %>
+<main class="Main SignIn">
+  <div class="SignIn-title">
+    <%= image_tag("logo-large-full", class: "SignIn-logo") %>
     <h2><%= t(".prompt") %></h2>
-
+  </div>
+  <%= form_for(:session, url: session_path, html: { class: "SignIn-form Form" }) do |f| %>
     <% if flash.notice.present? %>
       <p class="SignIn-error">
         <%= flash.notice %>
@@ -17,6 +18,6 @@
       <% f.password_field(:password, placeholder: t(".password-placeholder")) %>
     <% end %>
 
-    <%= f.submit(class: "Button") %>
+    <%= f.submit(class: "SignIn-submit Button--action") %>
   <% end %>
 </main>

@@ -11,13 +11,13 @@
     <% end %>
 
     <%= f.section("MDHHS", class: "CaseForm-dhs") do %>
-      <%= f.field(:dhs_number, "MDHHS Number", class: "CaseForm-dhsNumber") do %>
+      <%= f.field(:dhs_number, "Case Number", class: "CaseForm-dhsNumber") do %>
         <%= f.text_field(:dhs_number) %>
       <% end %>
     <% end %>
 
     <%= f.section("Household", class: "CaseForm-household") do %>
-      <%= f.field(:household_size, class: "CaseForm-householdSize") do %>
+      <%= f.field(:household_size, "Size", class: "CaseForm-householdSize") do %>
         <%= f.text_field(:household_size) %>
       <% end %>
       <%= f.section("Monthly Income", :h3, class: "CaseForm-income") do %>
@@ -32,16 +32,16 @@
                 <%= f.field(:amount, class: "CaseForm-incomeAmount") do %>
                   <%= f.text_field(:amount) %>
                 <% end %>
-                <%= tag.a("✘", class: "CaseForm-incomeDelete") %>
+                <%= tag.a("✘", class: "CaseForm-deleteIncome") %>
               <% end %>
             <% end %>
           <% end %>
         <% end %>
-        <%= tag.a("Add Income", id: "add-income-link") %>
+        <%= tag.a("Add Income", id: "add-income-link", class: "CaseForm-addIncome Button") %>
       <% end %>
     <% end %>
 
-    <%= f.submit(class: "Button") %>
+    <%= f.submit(class: "Button--action") %>
   <% end %>
 </main>
 

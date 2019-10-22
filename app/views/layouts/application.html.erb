@@ -8,7 +8,9 @@
     <%= javascript_pack_tag("application", "data-turbolinks-track": "reload") %>
   </head>
   <body>
-    <%= render(partial: "layouts/header") %>
+    <% if signed_in? %>
+      <%= render(partial: "layouts/header") %>
+    <% end %>
     <%= yield %>
   </body>
 </html>

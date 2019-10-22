@@ -1,20 +1,18 @@
 <header class="Header">
-  <figure class="Header-logo">
-    <% if signed_in? %>
-      <%= link_to(t(".logo"), root_path_by_permissions) %>
-    <% else %>
-      <%= t(".logo") %>
-    <% end %>
-  </figure>
-  <% if signed_in? %>
-    <div class="Header-user">
-      <%= current_user.email %>
-      <%=
-        button_to(t(".sign-out"), sign_out_path,
-          method: :delete,
-          class: "Header-signOut Link"
-        )
-      %>
-    </div>
-  <% end %>
+  <%=
+    link_to(
+      image_tag("logo-small-full.svg", alt: t(".logo")),
+      root_path_by_permissions,
+      class: "Header-logo"
+    )
+  %>
+  <div class="Header-user">
+    <%= current_user.email %>
+    <%=
+      button_to(t(".sign-out"), sign_out_path,
+        method: :delete,
+        class: "Header-signOut Link"
+      )
+    %>
+  </div>
 </header>

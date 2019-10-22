@@ -6,11 +6,11 @@
   &-group {
     display: grid;
     gap: $spacing2;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr) $height1;
 
     > h2, h3 {
       grid-row: 1;
-      grid-column: 1 / 4;
+      grid-column: 1 / 5;
     }
   }
 }
@@ -22,17 +22,27 @@ $f: ".Field";
   #{$f}-hint {
     @extend .u-hint;
     display: block;
-    color: $colorPrimaryBlack;
+    color: $brandBlack;
+    margin-bottom: $spacing3;
   }
 
   input {
-    width: 100%;
     display: block;
+    width: 100%;
+    height: $height1;
+    padding: $spacing2;
     border: none;
-    border-bottom: 1px solid $black;
+    border-bottom: 2px solid $colorField;
+    border-top-left-radius: $radiusField;
+    border-top-right-radius: $radiusField;
+    background: $colorField;
 
     &::placeholder {
       color: $gray1;
+    }
+
+    &:focus {
+      border-bottom-color: $brandPrimary;
     }
   }
 }
@@ -44,11 +54,35 @@ $f: ".Field";
   }
 }
 
-/* button */
+/* buttons */
 .Button {
-  height: 42px;
-  border: 1px solid $colorPrimary;
-  color: $colorPrimary;
-  background: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: $width3;
+  height: $height2;
+  color: $brandPrimary;
+  border: 1px solid $brandPrimary;
+  border-radius: 5px;
+  text-decoration: none;
   cursor: pointer;
+
+  &:hover {
+    color: lighten($brandPrimary, 5%);
+    border-color: lighten($brandPrimary, 5%);
+  }
+}
+
+.Button--action {
+  max-width: $width3;
+  height: $height1;
+  margin-top: $spacing1;
+  color: $white;
+  background: $brandPrimary;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background: lighten($brandPrimary, 5%);
+  }
 }

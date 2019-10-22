@@ -3,10 +3,33 @@
   display: flex;
   justify-content: space-between;
   padding: $spacing2 $spacing1;
-  border-bottom: 1px solid $black;
+  background-color: $white;
+  font-size: $fontSize4;
+  box-shadow: 0px 2px 2px $colorShadow;
 
   &-logo {
+    position: relative;
+    display: block;
     font-size: $fontSize2;
+
+    img {
+      height: 36px;
+    }
+
+    &:after {
+      content: "";
+      position: absolute;
+      height: 1px;
+      bottom: -2px;
+      left: 3px;
+      right: 3px;
+    }
+
+    &:hover {
+      &:after {
+        background: $brandPrimary;
+      }
+    }
   }
 
   &-user {

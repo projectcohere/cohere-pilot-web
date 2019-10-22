@@ -1,12 +1,23 @@
-/* widths */
-$width1: 1000px;
+/* width */
+$width2: 1000px;
+$width1: 600px;
 $width2: 400px;
+$width3: 240px;
+
+/* height */
+$height1: 42px;
+$height2: 36px;
 
 /* spacing */
 $spacing0: 40px;
 $spacing1: 20px;
 $spacing2: 10px;
-$spacing3: 0px;
+$spacing3: 5px;
+$spacing4: 0px;
+
+/* styling */
+$radius: 8px;
+$radiusField: 5px;
 
 /* typography */
 $fontFamily: "Euclid Flex";
@@ -16,7 +27,8 @@ $fontSize1: 32px;
 $fontSize2: 24px;
 $fontSize3: 18px;
 $fontSize4: 16px;
-$fontSize5: 12px;
+$fontSize5: 14px;
+$fontSize6: 12px;
 
 $fontWeightThin: 100;
 $fontWeightRegular: normal;
@@ -27,14 +39,17 @@ $fontWeightBold: 600;
 $black: #000000;
 $white: #ffffff;
 $gray0: #777777;
-$gray1: #aaaaaa;
+$gray1: #cccccc;
 
 /* colors/brand */
-$colorPrimary: #807fff;
-$colorPrimaryBlack: #343434;
-$colorSecondary1: #ff6e61;
-$colorSecondary2: #d14252;
-$colorSecondary3: #1c004a;
+$brandPrimary: #807fff;
+$brandBlack: #343434;
+$brandSecondary1: #ff6e61;
+$brandSecondary2: #d14252;
+$brandSecondary3: #1c004a;
 
 /* colors/feature */
-$colorError: $colorSecondary2;
+$colorError: $brandSecondary2;
+$colorShadow: fade-out($brandBlack, 0.95);
+$colorField: fade-out($brandPrimary, 0.90);
+$colorBackground: fade-out($brandPrimary, 0.97);

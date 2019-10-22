@@ -1,5 +1,7 @@
 .CaseForm {
-  max-width: $width2;
+  @extend .u-panel;
+
+  max-width: $width1;
 
   /* CaseForm-name */
   &-firstName {
@@ -7,7 +9,7 @@
   }
 
   &-lastName {
-    grid-column: 2 / 4;
+    grid-column: 2 / 5;
   }
 
   /* CaseForm-contact */
@@ -17,11 +19,11 @@
 
   /* CaseForm-address */
   &-address.is-read {
-    gap: $spacing3;
+    gap: $spacing4;
   }
 
   &-addressLine {
-    grid-column: 1 / 4;
+    grid-column: 1 / 5;
   }
 
   &-street {
@@ -41,7 +43,7 @@
   }
 
   &-zip {
-    grid-column: 3 / 4;
+    grid-column: 3 / 5;
   }
 
   /* CaseForm-utilityAccount */
@@ -64,15 +66,15 @@
   }
 
   &-income {
-    grid-column: 1 / 4;
+    grid-column: 1 / 5;
   }
 
   &-incomeRows {
-    grid-column: 1 / 4;
+    grid-column: 1 / 5;
   }
 
   &-incomeRow {
-    grid-column: 1 / 4;
+    grid-column: 1 / 5;
     position: relative;
     align-items: end;
   }
@@ -85,12 +87,19 @@
     grid-column: 2 / 4;
   }
 
-  &-incomeDelete {
-    position: absolute;
-    right: -$spacing1;
+  &-addIncome {
+    margin-top: $spacing2;
   }
 
-  &-incomeRow:only-child &-incomeDelete {
+  &-deleteIncome {
+    display: flex;
+    align-items: center;
+    height: $height1;
+    font-size: $fontSize3;
+    margin-left: $spacing2;
+  }
+
+  &-incomeRow:only-child &-deleteIncome {
     display: none;
   }
 }

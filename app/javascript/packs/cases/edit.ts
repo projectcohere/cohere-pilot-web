@@ -101,7 +101,7 @@ class ShowEdit {
   }
 
   private isIncomeRowDeleteLink(element: Element | null): boolean {
-    return element != null && element.className.includes("CaseForm-incomeDelete")
+    return element != null && element.className.includes("CaseForm-deleteIncome")
   }
 
   private createTemplateFromIncomeRow(source: Element): Element {

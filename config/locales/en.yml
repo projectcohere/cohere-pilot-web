@@ -6,7 +6,7 @@ en:
   sessions:
     new:
       title: Sign In
-      prompt: Welcome to the Cohere Pilot
+      prompt: Welcome to the Cohere pilot, please sign in.
       email-label: E-mail
       email-placeholder: "you@work.com"
       password-label: Password

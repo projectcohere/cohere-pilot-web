@@ -2,8 +2,10 @@
   padding: $spacing1;
 
   &-title {
-    color: $colorPrimaryBlack;
+    display: inline-block;
+    color: $brandBlack;
     font-size: $fontSize0;
+    margin-bottom: $spacing1;
   }
 
   &-actions {

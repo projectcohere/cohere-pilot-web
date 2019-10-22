@@ -1,5 +1,30 @@
 .SignIn {
-  max-width: $width2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &-title {
+    max-width: $width2;
+    margin-top: 100px;
+    text-align: center;
+  }
+
+  &-logo {
+    width: $width2;
+    height: 113px;
+  }
+
+  &-form {
+    @extend .u-panel;
+
+    width: $width2;
+    max-width: $width2;
+    margin-top: 60px;
+  }
+
+  &-submit {
+    max-width: 100%;
+  }
 
   &-error {
     color: $colorError;

@@ -2,11 +2,11 @@
   <h1 class="Main-title">
     All Cases
   </h1>
-  <div class="Main-actions">
-    <% if policy.permit?(:create) %>
+  <% if policy.permit?(:create) %>
+    <div class="Main-actions">
       <%= link_to("Add a Case", new_case_path) %>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
   <ul class="CaseList">
     <% if @cases.blank? %>
       <p>No cases left!</p>
@@ -14,21 +14,23 @@
       <% @cases.each do |kase| %>
         <% policy.with_record(kase) do %>
           <li class="CaseCell">
-            <%- name = kase.recipient.name %>
-            <% if policy.permit?(:edit) %>
-              <%= link_to(name, edit_case_path(kase), action: :edit, class: "CaseCell-name") %>
-            <% else %>
-              <p class="CaseCell-name"><%= name %></p>
-            <% end %>
+            <div class="CaseCell-row">
+              <%- name = kase.recipient.name %>
+              <% if policy.permit?(:edit) %>
+                <%= link_to(name, edit_case_path(kase), action: :edit, class: "CaseCell-name") %>
+              <% else %>
+                <p class="CaseCell-name"><%= name %></p>
+              <% end %>
+              <p class="CaseCell-enroller">
+                @ <%= kase.enroller.name %>
+              </p>
+            </div>
             <div class="CaseCell-row">
               <% if @policy.permit?(:view_status) %>
-                <p class="CaseCell-enroller">
+                <p class="CaseCell-status">
                   <%= kase.status.to_s.camelize %>
                 </p>
               <% end %>
-              <p class="CaseCell-enroller">
-                <%= kase.enroller.name %>
-              </p>
               <p class="CaseCell-updateTime">
                 Updated <%= time_ago_in_words(kase.updated_at) %> ago
               </p>
