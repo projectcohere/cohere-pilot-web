@@ -24,7 +24,7 @@ module Cases
         deny_access
       end
 
-      @form = Case::Forms::Household.new(kase)
+      @form = Case::Forms::Opened.new(kase)
     end
 
     def update
@@ -35,10 +35,10 @@ module Cases
         deny_access
       end
 
-      @form = Case::Forms::Household.new(kase,
+      @form = Case::Forms::Opened.new(kase,
         params
           .require(:case)
-          .permit(Case::Forms::Household.params_shape)
+          .permit(Case::Forms::Opened.params_shape)
       )
 
       if @form.save

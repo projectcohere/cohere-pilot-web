@@ -29,10 +29,10 @@ class CasesController < ApplicationController
     @form = case user.role
     when :cohere
       kase = repo.find_one(params[:id])
-      Case::Forms::Household.new(kase) # TODO: use the Full form
+      Case::Forms::Opened.new(kase) # TODO: use the Full form
     when :enroller
       kase = repo.find_one_for_enroller(params[:id], user.organization.id)
-      Case::Forms::Household.new(kase) # TODO: use the Full form
+      Case::Forms::Opened.new(kase) # TODO: use the Full form
     end
 
     if @form.nil? || policy(@form.case).forbid?(:edit)
@@ -47,10 +47,10 @@ class CasesController < ApplicationController
     @form = case user.role
     when :cohere
       kase = repo.find_one(params[:id])
-      Case::Forms::Household.new(kase) # TODO: use the Full form
+      Case::Forms::Opened.new(kase) # TODO: use the Full form
     when :enroller
       kase = repo.find_one_for_enroller(params[:id], user.organization.id)
-      Case::Forms::Household.new(kase) # TODO: use the Full form
+      Case::Forms::Opened.new(kase) # TODO: use the Full form
     end
 
     if @form.nil? || policy(@form.case).forbid?(:edit)

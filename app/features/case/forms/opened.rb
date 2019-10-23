@@ -9,7 +9,7 @@ class Case
     end
 
     # A form object for household case info
-    class Household < ::Form
+    class Opened < ::Form
       use_entity_name!
 
       # -- props --

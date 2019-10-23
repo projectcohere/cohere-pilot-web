@@ -2,17 +2,17 @@ require "test_helper"
 
 class Case
   module Forms
-    class HouseholdTests < ActiveSupport::TestCase
+    class OpenedTests < ActiveSupport::TestCase
       test "stubs an income history" do
         kase = Case::from_record(cases(:opened_1))
-        form = Household.new(kase)
+        form = Opened.new(kase)
         assert_length(form.income_history, 1)
       end
 
       test "can be initialized from a case" do
         kase = Case::from_record(cases(:scorable_1))
 
-        form = Household.new(kase)
+        form = Opened.new(kase)
         assert_length(form.income_history, 1)
 
         income = form.income_history[0]
@@ -32,7 +32,7 @@ class Case
           }
         }
 
-        form = Household.new(kase, case_params)
+        form = Opened.new(kase, case_params)
         assert_length(form.income_history, 1)
 
         income = form.income_history[0]
@@ -42,7 +42,7 @@ class Case
 
       test "saves household updates" do
         kase = Case.from_record(cases(:opened_1))
-        form = Household.new(kase,
+        form = Opened.new(kase,
           dhs_number: "11111",
           household_size: "3",
           income_history: {
@@ -72,7 +72,7 @@ class Case
 
       test "does not save invalid household updates" do
         kase = Case.from_record(cases(:opened_1))
-        form = Household.new(kase,
+        form = Opened.new(kase,
           income_history: {
             "0": {
               month: "10/19",
@@ -89,7 +89,7 @@ class Case
 
       test "provides the address" do
         kase = Case.from_record(cases(:opened_1))
-        form = Household.new(kase)
+        form = Opened.new(kase)
         assert_length(form.address, 3)
       end
     end
