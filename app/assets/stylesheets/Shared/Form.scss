@@ -59,7 +59,7 @@ $f: ".Field";
   display: flex;
   justify-content: center;
   align-items: center;
-  max-width: $width3;
+  max-width: $width4;
   height: $height2;
   color: $brandPrimary;
   border: 1px solid $brandPrimary;
@@ -74,7 +74,7 @@ $f: ".Field";
 }
 
 .Button--action {
-  max-width: $width3;
+  max-width: $width4;
   height: $height1;
   margin-top: $spacing1;
   color: $white;
