@@ -11,6 +11,11 @@
     <% if signed_in? %>
       <%= render(partial: "layouts/header") %>
     <% end %>
-    <%= yield %>
+    <div class="Layout">
+      <% if flash.present? %>
+        <%= render(partial: "layouts/flash") %>
+      <% end %>
+      <%= yield %>
+    </div>
   </body>
 </html>

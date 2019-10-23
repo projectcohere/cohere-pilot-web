@@ -3,25 +3,22 @@
     Add a Case
   </h1>
   <%= form_for(@form, url: cases_inbound_index_path, html: { class: "CaseForm Form" }) do |f| %>
-    <div class="CaseForm-name Form-group">
-      <h2>Name</h2>
+    <%= f.section("Name", class: "CaseForm-name") do %>
       <%= f.field(:first_name, class: "CaseForm-firstName") do %>
         <%= f.text_field(:first_name) %>
       <% end %>
       <%= f.field(:last_name, class: "CaseForm-lastName") do %>
         <%= f.text_field(:last_name) %>
       <% end %>
-    </div>
+    <% end %>
 
-    <div class="CaseForm-contact Form-group">
-      <h2>Contact</h2>
+    <%= f.section("Contact", class: "CaseForm-contact") do %>
       <%= f.field(:phone_number, class: "CaseForm-phoneNumber") do %>
         <%= f.text_field(:phone_number) %>
       <% end %>
-    </div>
+    <% end %>
 
-    <div class="CaseForm-address Form-group">
-      <h2>Address</h2>
+    <%= f.section("Primary Residential Address", class: "CaseForm-address") do %>
       <%= f.field(:street, class: "CaseForm-street") do %>
         <%= f.text_field(:street) %>
       <% end %>
@@ -37,17 +34,16 @@
       <%= f.field(:zip, class: "CaseForm-zip") do %>
         <%= f.text_field(:zip) %>
       <% end %>
-    </div>
+    <% end %>
 
-    <div class="CaseForm-utilityAccount Form-group">
-      <h2>Utility Account</h2>
+    <%= f.section("Utility Account", class: "CaseForm-utilityAccount") do %>
       <%= f.field(:account_number, class: "CaseForm-accountNumber") do %>
         <%= f.text_field(:account_number) %>
       <% end %>
       <%= f.field(:arrears, class: "CaseForm-arrears") do %>
         <%= f.text_field(:arrears) %>
       <% end %>
-    </div>
+    <% end %>
 
     <%= f.submit(class: "Button--action") %>
   <% end %>

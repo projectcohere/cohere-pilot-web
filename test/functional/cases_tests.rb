@@ -105,6 +105,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     })
 
     assert_redirected_to("/cases/inbound")
+    assert_present(flash[:notice])
   end
 
   test "show errors for an invalid inbound case" do

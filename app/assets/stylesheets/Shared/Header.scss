@@ -16,7 +16,7 @@
       height: 36px;
     }
 
-    &:after {
+    &::after {
       content: "";
       position: absolute;
       height: 1px;
@@ -26,7 +26,7 @@
     }
 
     &:hover {
-      &:after {
+      &::after {
         background: $brandPrimary;
       }
     }

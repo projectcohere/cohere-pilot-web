@@ -1,15 +1,8 @@
-// -- types --
-interface IRailsPlugin {
-  start(): void
-}
+import { start } from "../src/Component"
 
 // -- main --
-const plugins: IRailsPlugin[] = [
+start(
   require("@rails/ujs"),
   require("@rails/activestorage"),
   require("turbolinks")
-]
-
-for (const plugin of plugins) {
-  plugin.start()
-}
+)

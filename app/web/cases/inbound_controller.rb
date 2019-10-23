@@ -38,7 +38,7 @@ module Cases
       enroller = Enroller::Repo.new.find_default
 
       if @form.save(supplier.id, enroller.id)
-        redirect_to(cases_inbound_index_path)
+        redirect_to(cases_inbound_index_path, notice: "Case created!")
       else
         render(:new)
       end
