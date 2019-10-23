@@ -13,7 +13,7 @@ Rails.application.routes.draw do
     ])
 
     # fallback
-    get("*path", to: redirect(sign_in_path))
+    # get("*path", to: redirect(sign_in_path))
   end
 
   constraints(Clearance::Constraints::SignedIn.new) do
@@ -48,6 +48,6 @@ Rails.application.routes.draw do
     end
 
     # fallback
-    get("*path", to: redirect(cases_path))
+    # get("*path", to: redirect(cases_path))
   end
 end

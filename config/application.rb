@@ -8,10 +8,6 @@ module CoherePilotWeb
   class Application < Rails::Application
     config.load_defaults(6.0)
 
-    # assets
-    config.assets.enabled = true
-    config.assets.paths << "#{Rails.root}/app/assets/fonts"
-
     # autoload
     config.autoload_paths += %w[
       app/features/base
