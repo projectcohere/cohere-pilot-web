@@ -26,7 +26,7 @@ module Cases
         deny_access
       end
 
-      @form = Case::Forms::Inbound.new(
+      @form = Case::Forms::Inbound.new(nil,
         params
           .require(:case)
           .permit(Case::Forms::Inbound.attribute_names)

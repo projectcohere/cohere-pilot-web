@@ -28,15 +28,15 @@ class Case
         @case = kase
 
         # set initial values from case
-        r = kase.recipient
-        h = r.household
+        recipient = kase.recipient
+        household = recipient.household
 
         assign_defaults!(attrs, {
-          dhs_number: r.dhs_number,
-          household_size: h&.size,
-          income_history: h&.income_history&.map { |i|
+          dhs_number: recipient.dhs_number,
+          household_size: household&.size,
+          income_history: household&.income_history&.map { |income|
             Income.new(
-              amount: i.amount
+              amount: income.amount
             )
           }
         })

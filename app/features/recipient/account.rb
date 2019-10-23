@@ -1,18 +1,13 @@
 class Recipient
   class Account < Entity
     # -- props --
-    prop(:id)
+    prop(:number)
+    prop(:arrears)
 
     # -- liftime --
-    def initialize(id:)
-      @id = id
-    end
-
-    # -- factories --
-    def self.from_record(record)
-      Account.new(
-        id: record.id
-      )
+    def initialize(number:, arrears:)
+      @number = number
+      @arrears = arrears
     end
   end
 end

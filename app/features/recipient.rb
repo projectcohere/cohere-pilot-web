@@ -5,24 +5,30 @@ class Recipient < ::Entity
   # -- props --
   prop(:id)
   prop(:name)
+  prop(:phone_number)
   prop(:dhs_number)
   prop(:address)
+  prop(:account)
   prop(:household)
 
   # -- lifetime --
   def initialize(
     record: nil,
     id:,
-    dhs_number: nil,
     name:,
+    phone_number:,
+    dhs_number: nil,
     address:,
+    account:,
     household: nil
   )
     @record = record
     @id = id
     @name = name
+    @phone_number = phone_number
     @dhs_number = dhs_number
     @address = address
+    @account = account
     @household = household
   end
 
@@ -31,6 +37,7 @@ class Recipient < ::Entity
     Recipient.new(
       record: r,
       id: r.id,
+      phone_number: r.phone_number,
       dhs_number: r.dhs_number,
       name: Name.new(
         first: r.first_name,
@@ -43,6 +50,12 @@ class Recipient < ::Entity
         state: r.state,
         zip: r.zip
       ),
+      account: r.account.then { |a|
+        Account.new(
+          number: a.number,
+          arrears: a.arrears
+        )
+      },
       household: r.household&.then { |h|
         Household.new(
           size: h.size,

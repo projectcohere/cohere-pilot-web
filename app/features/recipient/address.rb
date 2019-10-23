@@ -1,5 +1,12 @@
 class Recipient
-  class Address
+  class Address < ::Entity
+    # -- props --
+    prop(:street)
+    prop(:street2)
+    prop(:city)
+    prop(:state)
+    prop(:zip)
+
     # -- lifetime --
     def initialize(street:, street2:, city:, state:, zip:)
       @street = street
