@@ -4,7 +4,6 @@ class CasesTests < ActionDispatch::IntegrationTest
   # -- list --
   # -- list/root
   test "can't list cases if signed-out" do
-    skip
     get("/cases")
     assert_redirected_to("/sign-in")
   end
@@ -32,7 +31,6 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   # -- list/inbound
   test "can't list inbound cases if signed-out" do
-    skip
     get("/cases/inbound")
     assert_redirected_to("/sign-in")
   end
@@ -52,7 +50,6 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   # -- list/opened
   test "can't list opened cases if signed-out" do
-    skip
     get("/cases/opened")
     assert_redirected_to("/sign-in")
   end
@@ -74,7 +71,6 @@ class CasesTests < ActionDispatch::IntegrationTest
   # -- create --
   # -- create/inbound
   test "can't add an inbound case if signed-out" do
-    skip
     get("/cases/inbound/new")
     assert_redirected_to("/sign-in")
   end
@@ -133,7 +129,6 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   # -- edit/opened
   test "can't edit an opened case if signed-out" do
-    skip
     kase = cases(:opened_1)
     get("/cases/opened/#{kase.id}/edit")
     assert_redirected_to("/sign-in")

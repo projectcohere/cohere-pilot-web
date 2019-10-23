@@ -1,9 +1,8 @@
-/* fonts */
 @font-face {
   font-family: $fontFamily;
   src:
-    url("EuclidFlex-Thin.woff2") format("woff2"),
-    url("EuclidFlex-Thin.woff") format("woff");
+    font-url("EuclidFlex-Thin.woff2") format("woff2"),
+    font-url("EuclidFlex-Thin.woff") format("woff");
   font-weight: $fontWeightThin;
   font-style: normal;
 }
@@ -11,8 +10,8 @@
 @font-face {
   font-family: $fontFamily;
   src:
-    url("EuclidFlex-Regular.woff2") format("woff2"),
-    url("EuclidFlex-Regular.woff") format("woff");
+    font-url("EuclidFlex-Regular.woff2") format("woff2"),
+    font-url("EuclidFlex-Regular.woff") format("woff");
   font-weight: $fontWeightRegular;
   font-style: normal;
 }
@@ -20,8 +19,8 @@
 @font-face {
   font-family: $fontFamily;
   src:
-    url("EuclidFlex-Medium.woff2") format("woff2"),
-    url("EuclidFlex-Medium.woff") format("woff");
+    font-url("EuclidFlex-Medium.woff2") format("woff2"),
+    font-url("EuclidFlex-Medium.woff") format("woff");
   font-weight: $fontWeightMedium;
   font-style: normal;
 }
@@ -29,8 +28,8 @@
 @font-face {
   font-family: $fontFamily;
   src:
-    url("EuclidFlex-SemiBold.woff2") format("woff2"),
-    url("EuclidFlex-SemiBold.woff") format("woff");
+    font-url("EuclidFlex-SemiBold.woff2") format("woff2"),
+    font-url("EuclidFlex-SemiBold.woff") format("woff");
   font-weight: $fontWeightBold;
   font-style: normal;
 }

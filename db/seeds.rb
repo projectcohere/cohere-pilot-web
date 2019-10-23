@@ -14,7 +14,7 @@ enroller_0 = Enroller::Record.create!(
 # -- users --
 # TODO: add a diceware password generator to create accounts for everyone
 User::Record.create!(
-  email: "me@cohere.com",
+  email: "me@cohere.org",
   password: "password",
   organization_type: :cohere
 )
