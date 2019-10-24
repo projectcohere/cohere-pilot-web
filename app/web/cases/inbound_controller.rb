@@ -38,8 +38,9 @@ module Cases
       enroller = Enroller::Repo.new.find_default
 
       if @form.save(supplier.id, enroller.id)
-        redirect_to(cases_inbound_index_path, notice: "Case created!")
+        redirect_to(cases_inbound_index_path, notice: "Created case!")
       else
+        flash.now[:alert] = "Please check the case for errors."
         render(:new)
       end
     end

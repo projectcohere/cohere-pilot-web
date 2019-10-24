@@ -3,9 +3,13 @@
   top: $spacing1;
   right: $spacing1;
   padding: $spacing2;
-  background: $colorField;
+  background: $colorNotice;
   border-radius: $radius;
   transition: opacity 0.3s;
+
+  &.is-alert {
+    background: $colorAlert;
+  }
 
   &.is-hidden {
     opacity: 0.0;

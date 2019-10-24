@@ -1,5 +1,6 @@
-<p class="Flash" id="flash">
-  <%= flash[:notice] %>
+<%- alert_class = flash[:alert].present? ? "is-alert" : "" %>
+<p class="Flash <%= alert_class %>" id="flash">
+  <%= flash[:notice] || flash[:alert] %>
 </p>
 
 <%= javascript_pack_tag("flash", "data-turbolinks-track": "reload") %>

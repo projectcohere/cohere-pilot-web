@@ -50,7 +50,9 @@ $brandSecondary2: #d14252;
 $brandSecondary3: #1c004a;
 
 /* colors/feature */
-$colorError: $brandSecondary2;
-$colorShadow: fade-out($brandBlack, 0.95);
-$colorField: fade-out($brandPrimary, 0.90);
 $colorBackground: fade-out($brandPrimary, 0.97);
+$colorField: fade-out($brandPrimary, 0.90);
+$colorShadow: fade-out($brandBlack, 0.95);
+$colorError: $brandSecondary2;
+$colorNotice: $colorField;
+$colorAlert: fade-out($brandSecondary1, 0.50);

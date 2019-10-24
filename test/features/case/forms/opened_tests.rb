@@ -59,31 +59,11 @@ class Case
         did_save = form.save
         assert(did_save)
 
-        record = kase.record
-        assert_equal(record.status.to_sym, :scorable)
-
         record = kase.recipient.record
         assert_equal(record.dhs_number, "11111")
         assert_present(record.household)
         assert_equal(record.household.size, "3")
         assert_length(record.household.income_history, 2)
-      end
-
-      test "does not save invalid household updates" do
-        kase = Case.from_record(cases(:opened_1))
-        form = Opened.new(kase,
-          income_history: {
-            "0": {
-              month: "10/19",
-            }
-          }
-        )
-
-        did_save = form.save
-        assert_not(did_save)
-        assert_present(form.errors)
-        assert_present(form.errors[:income_history])
-        assert_present(form.income_history[0].errors)
       end
 
       test "provides the address" do

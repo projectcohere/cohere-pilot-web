@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_18_151759) do
+ActiveRecord::Schema.define(version: 2019_10_24_184806) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -48,8 +48,8 @@ ActiveRecord::Schema.define(version: 2019_10_18_151759) do
 
   create_table "households", force: :cascade do |t|
     t.bigint "recipient_id"
-    t.string "size", null: false
-    t.jsonb "income_history", null: false
+    t.string "size"
+    t.jsonb "income_history"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["recipient_id"], name: "index_households_on_recipient_id"

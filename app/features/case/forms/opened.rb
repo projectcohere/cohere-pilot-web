@@ -3,7 +3,10 @@ class Case
     # A form object for an income history row
     class Income < ::Form
       # -- fields --
-      field(:amount, :string, presence: true)
+      field(:amount, :string,
+        on: { pending: { presence: true } }
+      )
+
       # deprecated: month is not used right now
       field(:month, :string)
     end
@@ -14,11 +17,18 @@ class Case
 
       # -- fields --
       # -- fields/dhs
-      field(:dhs_number, :string, presence: true)
+      field(:dhs_number, :string,
+        on: { pending: { presence: true } }
+      )
 
       # -- fields/household
-      field(:household_size, :string, presence: true)
-      field(:income_history, ListField.new(Income), presence: true, list: true)
+      field(:household_size, :string,
+        on: { pending: { presence: true } }
+      )
+
+      field(:income_history, ListField.new(Income),
+        on: { pending: { presence: true, list: true } }
+      )
 
       # -- lifetime --
       def initialize(kase, attrs = {})
@@ -74,9 +84,7 @@ class Case
             household: household
           )
 
-          @model.record.update!(
-            status: :scorable
-          )
+          @model.record.touch
         end
 
         true

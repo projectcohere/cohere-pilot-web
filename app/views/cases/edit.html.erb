@@ -4,6 +4,10 @@
   </h1>
 
   <%= form_for(@form, url: case_path(@form.id), html: { class: "CaseForm Form" }) do |f| %>
+    <%= f.field(:status, class: "CaseForm-status") do %>
+      <%= f.select(:status, @form.statuses.map { |s| [s.to_s.capitalize, s] }) %>
+    <% end %>
+
     <%= f.section("Contact", class: "CaseForm-contact") do %>
       <%= f.field(:first_name, class: "CaseForm-firstName") do %>
         <%= f.text_field(:first_name) %>

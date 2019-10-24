@@ -38,6 +38,30 @@ class Case
         assert_not(did_save)
         assert_present(form.errors[:first_name])
       end
+
+      test "saves a pending case" do
+        kase = Case::from_record(cases(:scorable_1))
+        form = Full.new(kase)
+        form.status = "pending"
+
+        did_save = form.save
+        assert(did_save)
+
+        record = kase.record
+        assert(record.pending?)
+      end
+
+      test "does not save an invalid pending case" do
+        kase = Case::from_record(cases(:scorable_1))
+        form = Full.new(kase)
+        form.status = "pending"
+        form.dhs_number = nil
+
+        did_save = form.save
+        assert_not(did_save)
+        assert_present(form.errors)
+        assert_present(form.errors[:dhs_number])
+      end
     end
   end
 end

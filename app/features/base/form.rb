@@ -10,9 +10,22 @@ class Form
   prop(:model)
 
   # -- fields --
-  def self.field(name, type, *validations)
+  def self.field(name, type, **validations)
     attribute(name, type)
-    validates(name, *validations) if validations.present?
+
+    if validations.present?
+      # add context-dependent validations
+      by_context = validations.delete(:on)
+      by_context&.each do |context, validations|
+        validations[:on] = context
+        validates(name, validations)
+      end
+
+      # add context-independent validations
+      if validations.present?
+        validates(name, validations)
+      end
+    end
   end
 
   def self.fields_from(form_name, form_class)
@@ -52,16 +65,16 @@ class Form
 
   # -- fields/validators
   class ListValidator < ActiveModel::EachValidator
-    def validate_each(record, attribute, value)
-      if not value.all?(&:valid?)
-        record.errors.add(attribute, :invalid, list: value)
+    def validate_each(record, attribute, list)
+      if not list.all? { |v| v.valid?(record.validation_context) }
+        record.errors.add(attribute, :invalid, list: list)
       end
     end
   end
 
   class ChildValidator < ActiveModel::EachValidator
     def validate_each(record, attribute, value)
-      if not value.valid?
+      if not value.valid?(record.validation_context)
         record.errors.merge!(value.errors)
       end
     end

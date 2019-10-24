@@ -8,20 +8,35 @@ class Case
       prop(:case)
 
       # -- fields --
+      field(:status, :string)
       fields_from(:inbound, Inbound)
       fields_from(:opened, Opened)
 
       # -- lifetime --
       def initialize(kase, attrs = {})
         @model = kase
+
+        # construct subforms
         @inbound = Inbound.new(kase, attrs.slice(Inbound.attribute_names))
         @opened = Opened.new(kase, attrs.slice(Opened.attribute_names))
+
+        # set initial values from case
+        c = kase
+        assign_defaults!(attrs, {
+          status: c.status.to_s
+        })
+
         super(attrs)
       end
 
       # -- commands --
       def save
-        if not valid?
+        context = nil
+        if status == "pending"
+          context = :pending
+        end
+
+        if not valid?(context)
           return false
         end
 
@@ -70,7 +85,9 @@ class Case
           )
 
           # save case
-          @model.record.touch
+          @model.record.update!(
+            status: status
+          )
         end
 
         true
@@ -79,6 +96,15 @@ class Case
       # -- queries --
       def name
         @model.recipient.name
+      end
+
+      def statuses
+        [
+          :opened,
+          :pending,
+          :approved,
+          :rejected
+        ]
       end
     end
   end

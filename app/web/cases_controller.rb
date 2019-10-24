@@ -62,8 +62,9 @@ class CasesController < ApplicationController
     end
 
     if @form.save
-      redirect_to(cases_path, notice: "Case updated!")
+      redirect_to(cases_path, notice: "Updated #{@form.name}'s case!")
     else
+      flash.now[:alert] = "Please check #{@form.name}'s case for errors."
       render(:edit)
     end
   end

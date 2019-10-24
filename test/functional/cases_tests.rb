@@ -117,6 +117,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     })
 
     assert_response(:success)
+    assert_present(flash[:alert])
   end
 
   # -- edit --
@@ -169,6 +170,20 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
+  end
+
+  test "show errors for an invalid case" do
+    user = users(:cohere_1)
+    kase = cases(:incomplete_1)
+
+    patch(auth("/cases/#{kase.id}", as: user), params: {
+      case: {
+        status: "pending"
+      }
+    })
+
+    assert_response(:success)
+    assert_present(flash[:alert])
   end
 
   # -- update/opened
