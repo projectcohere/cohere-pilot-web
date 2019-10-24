@@ -4,9 +4,6 @@ class Case
     class Inbound < ::Form
       use_entity_name!
 
-      # -- props --
-      prop(:case)
-
       # -- fields --
       # -- fields/name
       field(:first_name, :string, presence: true)
@@ -26,27 +23,36 @@ class Case
       field(:account_number, :string, presence: true)
       field(:arrears, :string, presence: true)
 
+      # -- lifetime --
       def initialize(kase = nil, attrs = {})
-        @case = kase
+        @model = kase
 
         # set initial values from case
         if not kase.nil?
-          recipient = kase.recipient
-          name = recipient.name
-          address = recipient.address
-          account = recipient.account
-
+          r = kase.recipient
           assign_defaults!(attrs, {
-            phone_number: recipient.phone_number,
-            first_name: name.first,
-            last_name: name.last,
-            street: address.street,
-            street2: address.street2,
-            city: address.city,
-            state: address.state,
-            zip: address.zip,
-            account_number: account.number,
-            arrears: account.arrears
+            phone_number: r.phone_number
+          })
+
+          n = r.name
+          assign_defaults!(attrs, {
+            first_name: n.first,
+            last_name: n.last
+          })
+
+          a = r.address
+          assign_defaults!(attrs, {
+            street: a.street,
+            street2: a.street2,
+            city: a.city,
+            state: a.state,
+            zip: a.zip,
+          })
+
+          a = r.account
+          assign_defaults!(attrs, {
+            account_number: a.number,
+            arrears: a.arrears
           })
         end
 

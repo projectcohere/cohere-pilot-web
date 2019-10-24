@@ -42,7 +42,7 @@ module Cases
       )
 
       if @form.save
-        redirect_to(cases_path)
+        redirect_to(cases_path, notice: "Case updated!")
       else
         render(:edit)
       end

@@ -3,16 +3,13 @@
     Add a Case
   </h1>
   <%= form_for(@form, url: cases_inbound_index_path, html: { class: "CaseForm Form" }) do |f| %>
-    <%= f.section("Name", class: "CaseForm-name") do %>
+    <%= f.section("Contact", class: "CaseForm-contact") do %>
       <%= f.field(:first_name, class: "CaseForm-firstName") do %>
         <%= f.text_field(:first_name) %>
       <% end %>
       <%= f.field(:last_name, class: "CaseForm-lastName") do %>
         <%= f.text_field(:last_name) %>
       <% end %>
-    <% end %>
-
-    <%= f.section("Contact", class: "CaseForm-contact") do %>
       <%= f.field(:phone_number, class: "CaseForm-phoneNumber") do %>
         <%= f.text_field(:phone_number) %>
       <% end %>

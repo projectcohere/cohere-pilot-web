@@ -2,29 +2,30 @@ class Case
   module Forms
     # A form object for all the case info
     class Full < ::Form
+      use_entity_name!
+
       # -- props --
       prop(:case)
-      prop(:inbound)
-      prop(:opened)
+
+      # -- fields --
+      fields_from(:inbound, Inbound)
+      fields_from(:opened, Opened)
 
       # -- lifetime --
-      def initialize(kase)
-        @case = kase
-        @inbound = Inbound.new(kase)
-        @opened = Opened.new(kase)
+      def initialize(kase, attrs = {})
+        @model = kase
+        @inbound = Inbound.new(kase, attrs.slice(Inbound.attribute_names))
+        @opened = Opened.new(kase, attrs.slice(Opened.attribute_names))
+        super(attrs)
       end
 
       # -- commands --
       def save
       end
 
-      # -- ActiveModel::Model --
-      def id
-        @case.id
-      end
-
-      def persisted?
-        true
+      # -- queries --
+      def name
+        @model.recipient.name
       end
     end
   end

@@ -13,10 +13,9 @@ class Case
         kase = Case::from_record(cases(:scorable_1))
 
         form = Opened.new(kase)
-        assert_length(form.income_history, 1)
-
-        income = form.income_history[0]
-        assert_equal(income.amount, "$300")
+        assert_present(form.dhs_number)
+        assert_present(form.income_history)
+        assert_present(form.income_history[0].amount)
       end
 
       test "can be initialized from params" do

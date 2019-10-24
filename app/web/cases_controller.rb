@@ -35,7 +35,7 @@ class CasesController < ApplicationController
       Case::Forms::Full.new(kase)
     end
 
-    if @form.nil? || policy(@form.case).forbid?(:edit)
+    if @form.nil? || policy(@form.model).forbid?(:edit)
       deny_access
     end
   end
@@ -53,7 +53,7 @@ class CasesController < ApplicationController
       Case::Forms::Full.new(kase)
     end
 
-    if @form.nil? || policy(@form.case).forbid?(:edit)
+    if @form.nil? || policy(@form.model).forbid?(:edit)
       deny_access
     end
 

@@ -12,9 +12,6 @@ class Case
     class Opened < ::Form
       use_entity_name!
 
-      # -- props --
-      prop(:case)
-
       # -- fields --
       # -- fields/dhs
       field(:dhs_number, :string, presence: true)
@@ -25,18 +22,20 @@ class Case
 
       # -- lifetime --
       def initialize(kase, attrs = {})
-        @case = kase
+        @model = kase
 
         # set initial values from case
-        recipient = kase.recipient
-        household = recipient.household
-
+        r = kase.recipient
         assign_defaults!(attrs, {
-          dhs_number: recipient.dhs_number,
-          household_size: household&.size,
-          income_history: household&.income_history&.map { |income|
+          dhs_number: r.dhs_number
+        })
+
+        h = r.household
+        assign_defaults!(attrs, {
+          household_size: h&.size,
+          income_history: h&.income_history&.map { |i|
             Income.new(
-              amount: income.amount
+              amount: i.amount
             )
           }
         })
@@ -55,14 +54,14 @@ class Case
           return false
         end
 
-        if @case.record.nil? || @case.recipient.record.nil?
+        if @model.record.nil? || @model.recipient.record.nil?
           raise "case must be constructed from a db record!"
         end
 
         # TODO: need pattern for performing mutations through domain objects
         # and then serializing and saving to db.
-        @case.record.transaction do
-          household = @case.recipient.record.household
+        @model.record.transaction do
+          household = @model.recipient.record.household
           if household.nil?
             household = Recipient::Household::Record.new
           end
@@ -72,25 +71,29 @@ class Case
             income_history: income_history.map(&:attributes)
           )
 
-          @case.recipient.record.update!(
+          @model.recipient.record.update!(
             dhs_number: dhs_number,
             household: household
           )
 
-          @case.record.update!(
+          @model.record.update!(
             status: :scorable
           )
         end
       end
 
       # -- queries --
+      def name
+        @model.recipient.name
+      end
+
       def address
-        @case.recipient.address.to_lines
+        @model.recipient.address.to_lines
       end
 
       # -- ActiveModel::Model --
       def id
-        @case.id
+        @model.id
       end
 
       def persisted?

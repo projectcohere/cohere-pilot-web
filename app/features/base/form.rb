@@ -1,38 +1,30 @@
 # A form model for an entity. It expects to be nested inside of the entity
 # as a namespace.
 class Form
-  # -- ActiveModel --
-  # for form objects, it's helpful to have full attribute assignment and
-  # validation
-  include ActiveModel::Model
-  include ActiveModel::Attributes
-
-  # -- dsl --
+  # -- definition --
   def self.prop(name)
     attr_reader(name)
   end
 
+  # -- props --
+  prop(:model)
+
+  # -- fields --
   def self.field(name, type, *validations)
     attribute(name, type)
     validates(name, *validations) if validations.present?
   end
 
-  # -- queries --
-  def self.params_shape
-    child_keys, fields = attribute_names.partition do |name|
-      attribute_types[name].is_a?(ListField)
-    end
+  def self.fields_from(form_name, form_class)
+    prop(form_name)
 
-    children = child_keys.each_with_object({}) do |name, memo|
-      memo[name.to_sym] = attribute_types[name].form_type.params_shape
-    end
+    field_getters = form_class.attribute_names
+    field_setters = field_getters.map { |name| "#{name}=" }
 
-    fields.map!(&:to_sym)
-    fields << children if children.present?
-    fields
+    delegate(*field_getters, to: form_name)
+    delegate(*field_setters, to: form_name)
   end
 
-  # -- fields --
   # -- fields/types
   class ListField < ActiveModel::Type::Value
     attr_reader(:form_type)
@@ -58,7 +50,37 @@ class Form
     end
   end
 
-  # -- ActiveModel::Naming --
+  # -- queries --
+  def self.params_shape
+    child_keys, fields = attribute_names.partition do |name|
+      attribute_types[name].is_a?(ListField)
+    end
+
+    children = child_keys.each_with_object({}) do |name, memo|
+      memo[name.to_sym] = attribute_types[name].form_type.params_shape
+    end
+
+    fields.map!(&:to_sym)
+    fields << children if children.present?
+    fields
+  end
+
+  # -- ActiveModel --
+  # -- ActiveModel::Model
+  # for form objects, it's helpful to have full attribute assignment and
+  # validation
+  include ActiveModel::Model
+  include ActiveModel::Attributes
+
+  def id
+    @model&.id
+  end
+
+  def persisted?
+    id != nil
+  end
+
+  # -- ActiveModel::Naming
   extend ActiveModel::Naming
 
   def self.use_entity_name!

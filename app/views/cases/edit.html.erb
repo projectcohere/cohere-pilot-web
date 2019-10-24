@@ -1,69 +1,62 @@
 <main class="Main">
   <h1 class="Main-title">
-    <%= @form.case.recipient.name %>
+    <%= @form.name %>
   </h1>
 
   <%= form_for(@form, url: cases_path(@form.id), html: { class: "CaseForm Form" }) do |f| %>
-    <%= f.fields_for(@form.inbound) do |f| %>
-      <%= f.section("Name", class: "CaseForm-name") do %>
-        <%= f.field(:first_name, class: "CaseForm-firstName") do %>
-          <%= f.text_field(:first_name) %>
-        <% end %>
-        <%= f.field(:last_name, class: "CaseForm-lastName") do %>
-          <%= f.text_field(:last_name) %>
-        <% end %>
+    <%= f.section("Contact", class: "CaseForm-contact") do %>
+      <%= f.field(:first_name, class: "CaseForm-firstName") do %>
+        <%= f.text_field(:first_name) %>
       <% end %>
-
-      <%= f.section("Contact", class: "CaseForm-contact") do %>
-        <%= f.field(:phone_number, class: "CaseForm-phoneNumber") do %>
-          <%= f.text_field(:phone_number) %>
-        <% end %>
+      <%= f.field(:last_name, class: "CaseForm-lastName") do %>
+        <%= f.text_field(:last_name) %>
       <% end %>
-
-      <%= f.section("Primary Residential Address", class: "CaseForm-address") do %>
-        <%= f.field(:street, class: "CaseForm-street") do %>
-          <%= f.text_field(:street) %>
-        <% end %>
-        <%= f.field(:street2, "", class: "CaseForm-street2") do %>
-          <%= f.text_field(:street2) %>
-        <% end %>
-        <%= f.field(:city, class: "CaseForm-city") do %>
-          <%= f.text_field(:city) %>
-        <% end %>
-        <%= f.field(:state, class: "CaseForm-state") do %>
-          <%= f.text_field(:state) %>
-        <% end %>
-        <%= f.field(:zip, class: "CaseForm-zip") do %>
-          <%= f.text_field(:zip) %>
-        <% end %>
-      <% end %>
-
-      <%= f.section("Utility Account", class: "CaseForm-utilityAccount") do %>
-        <%= f.field(:account_number, class: "CaseForm-accountNumber") do %>
-          <%= f.text_field(:account_number) %>
-        <% end %>
-        <%= f.field(:arrears, class: "CaseForm-arrears") do %>
-          <%= f.text_field(:arrears) %>
-        <% end %>
+      <%= f.field(:phone_number, class: "CaseForm-phoneNumber") do %>
+        <%= f.text_field(:phone_number) %>
       <% end %>
     <% end %>
 
-    <%= f.fields_for(@form.opened) do |f| %>
-      <%= f.section("MDHHS", class: "CaseForm-dhs") do %>
-        <%= f.field(:dhs_number, "Case Number", class: "CaseForm-dhsNumber") do %>
-          <%= f.text_field(:dhs_number) %>
-        <% end %>
+    <%= f.section("Primary Residential Address", class: "CaseForm-address") do %>
+      <%= f.field(:street, class: "CaseForm-street") do %>
+        <%= f.text_field(:street) %>
       <% end %>
+      <%= f.field(:street2, "", class: "CaseForm-street2") do %>
+        <%= f.text_field(:street2) %>
+      <% end %>
+      <%= f.field(:city, class: "CaseForm-city") do %>
+        <%= f.text_field(:city) %>
+      <% end %>
+      <%= f.field(:state, class: "CaseForm-state") do %>
+        <%= f.text_field(:state) %>
+      <% end %>
+      <%= f.field(:zip, class: "CaseForm-zip") do %>
+        <%= f.text_field(:zip) %>
+      <% end %>
+    <% end %>
 
-      <%= f.section("Household", class: "CaseForm-household") do %>
-        <%= f.field(:household_size, "Size", class: "CaseForm-householdSize") do %>
-          <%= f.text_field(:household_size) %>
-        <% end %>
-        <%- income = @form.opened.income_history[0] %>
-        <%= f.fields_for(:income_history, income, index: 0) do |f| %>
-          <%= f.field(:amount, "Monthly Income", class: "CaseForm-monthlyIncome") do %>
-            <%= f.text_field(:amount) %>
-          <% end %>
+    <%= f.section("Utility Account", class: "CaseForm-utilityAccount") do %>
+      <%= f.field(:account_number, class: "CaseForm-accountNumber") do %>
+        <%= f.text_field(:account_number) %>
+      <% end %>
+      <%= f.field(:arrears, class: "CaseForm-arrears") do %>
+        <%= f.text_field(:arrears) %>
+      <% end %>
+    <% end %>
+
+    <%= f.section("MDHHS", class: "CaseForm-dhs") do %>
+      <%= f.field(:dhs_number, "Case Number", class: "CaseForm-dhsNumber") do %>
+        <%= f.text_field(:dhs_number) %>
+      <% end %>
+    <% end %>
+
+    <%= f.section("Household", class: "CaseForm-household") do %>
+      <%= f.field(:household_size, "Size", class: "CaseForm-householdSize") do %>
+        <%= f.text_field(:household_size) %>
+      <% end %>
+      <%- income = @form.opened.income_history[0] %>
+      <%= f.fields_for(:income_history, income, index: 0) do |f| %>
+        <%= f.field(:amount, "Monthly Income", class: "CaseForm-monthlyIncome") do %>
+          <%= f.text_field(:amount) %>
         <% end %>
       <% end %>
     <% end %>
