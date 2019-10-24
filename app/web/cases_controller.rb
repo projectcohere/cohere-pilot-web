@@ -47,7 +47,11 @@ class CasesController < ApplicationController
     @form = case user.role
     when :cohere
       kase = repo.find_one(params[:id])
-      Case::Forms::Full.new(kase)
+      Case::Forms::Full.new(kase,
+        params
+          .require(:case)
+          .permit(Case::Forms::Full.params_shape)
+      )
     when :enroller
       kase = repo.find_one_for_enroller(params[:id], user.organization.id)
       Case::Forms::Full.new(kase)
@@ -58,7 +62,7 @@ class CasesController < ApplicationController
     end
 
     if @form.save
-      redirect_to(cases_path)
+      redirect_to(cases_path, notice: "Case updated!")
     else
       render(:edit)
     end

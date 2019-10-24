@@ -30,7 +30,8 @@ class Case
     def find_incomplete
       records = Case::Record
         .where(completed_at: nil)
-        .includes(:recipient, :enroller)
+        .order(updated_at: :desc)
+        .includes(:enroller, recipient: [:account, :household])
 
       entities_from(records)
     end
@@ -39,7 +40,8 @@ class Case
       records = Case::Record
         .where(enroller_id: enroller_id)
         .pending
-        .includes(:recipient, :enroller)
+        .order(updated_at: :desc)
+        .includes(:enroller, recipient: [:account, :household])
 
       entities_from(records)
     end
@@ -47,7 +49,8 @@ class Case
     def find_opened
       records = Case::Record
         .opened
-        .includes(:recipient, :enroller)
+        .order(updated_at: :desc)
+        .includes(:enroller, recipient: [:account, :household])
 
       entities_from(records)
     end

@@ -25,6 +25,15 @@ scorable_1:
   updated_at: <%= Time.zone.now - 1.hours %>
   completed_at: null
 
+incomplete_1:
+  status: scorable
+  recipient: recipient_3
+  enroller: enroller_2
+  supplier: supplier_1
+  created_at: <%= Time.zone.now - 1.days %>
+  updated_at: <%= Time.zone.now - 1.hours %>
+  completed_at: null
+
 pending_1:
   status: pending
   recipient: recipient_2

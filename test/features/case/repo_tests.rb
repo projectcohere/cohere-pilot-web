@@ -62,7 +62,7 @@ class Case
     test "finds all incomplete cases" do
       repo = Case::Repo.new
       cases = repo.find_incomplete
-      assert_length(cases, 5)
+      assert_length(cases, 6)
       assert_all(cases, ->(c) { c.completed_at.nil? })
     end
 

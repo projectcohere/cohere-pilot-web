@@ -18,7 +18,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases"))
     assert_response(:success)
     assert_select(".Main-title", text: /Cases/)
-    assert_select(".CaseCell", 5)
+    assert_select(".CaseCell", 6)
   end
 
   test "can list pending cases for my org as an enroller" do
@@ -120,9 +120,15 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   # -- edit --
-  test "can edit an in-org, pending case as an enroller" do
-    user = users(:enroller_1)
-    kase = Case.from_record(cases(:pending_1))
+  test "can't edit a case if signed-out" do
+    kase = cases(:opened_1)
+    get("/cases/#{kase.id}/edit")
+    assert_redirected_to("/sign-in")
+  end
+
+  test "can edit a case" do
+    user = users(:cohere_1)
+    kase = Case.from_record(cases(:scorable_1))
     get(auth("/cases/#{kase.id}/edit", as: user))
     assert_response(:success)
     assert_select(".Main-title", text: /#{kase.recipient.name}/)
@@ -151,10 +157,26 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   # -- update --
-  test "can update an opened case's dhs info" do
+  test "can update a case" do
+    user = users(:cohere_1)
+    kase = cases(:incomplete_1)
+
+    patch(auth("/cases/#{kase.id}", as: user), params: {
+      case: {
+        dhs_number: "1A2B3C"
+      }
+    })
+
+    assert_redirected_to("/cases")
+    assert_present(flash[:notice])
+  end
+
+  # -- update/opened
+  test "can update an opened case" do
     user = users(:dhs_1)
     kase = Case.from_record(cases(:opened_1))
-    put(auth("/cases/opened/#{kase.id}", as: user), params: {
+
+    patch(auth("/cases/opened/#{kase.id}", as: user), params: {
       case: {
         dhs_number: "12345",
         household_size: "5",
@@ -167,6 +189,7 @@ class CasesTests < ActionDispatch::IntegrationTest
       }
     })
 
-    assert_redirected_to("/cases")
+    assert_redirected_to("/cases/opened")
+    assert_present(flash[:notice])
   end
 end

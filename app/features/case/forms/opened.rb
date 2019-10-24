@@ -58,8 +58,6 @@ class Case
           raise "case must be constructed from a db record!"
         end
 
-        # TODO: need pattern for performing mutations through domain objects
-        # and then serializing and saving to db.
         @model.record.transaction do
           household = @model.recipient.record.household
           if household.nil?
@@ -80,6 +78,8 @@ class Case
             status: :scorable
           )
         end
+
+        true
       end
 
       # -- queries --
@@ -89,15 +89,6 @@ class Case
 
       def address
         @model.recipient.address.to_lines
-      end
-
-      # -- ActiveModel::Model --
-      def id
-        @model.id
-      end
-
-      def persisted?
-        true
       end
     end
   end

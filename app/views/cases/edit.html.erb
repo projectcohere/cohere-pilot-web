@@ -3,7 +3,7 @@
     <%= @form.name %>
   </h1>
 
-  <%= form_for(@form, url: cases_path(@form.id), html: { class: "CaseForm Form" }) do |f| %>
+  <%= form_for(@form, url: case_path(@form.id), html: { class: "CaseForm Form" }) do |f| %>
     <%= f.section("Contact", class: "CaseForm-contact") do %>
       <%= f.field(:first_name, class: "CaseForm-firstName") do %>
         <%= f.text_field(:first_name) %>

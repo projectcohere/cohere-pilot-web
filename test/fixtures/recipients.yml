@@ -11,11 +11,22 @@ recipient_1:
 
 recipient_2:
   first_name: Johnice
-  last_name: Simple
+  last_name: Sample
   phone_number: 222-333-4444
-  street: 111 Sample St.
+  street: 444 Sample St.
   street2: Apt. 2
   city: New Sampleton
   state: Sample Carolina
   zip: 44444
   dhs_number: 88888
+
+recipient_3:
+  first_name: Danice
+  last_name: Sample
+  phone_number: 444-555-6666
+  street: 123 Sample St.
+  street2: Apt. 2
+  city: New Sampleton
+  state: Sample Dakota
+  zip: 22222
+  dhs_number: null
