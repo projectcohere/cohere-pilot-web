@@ -16,15 +16,15 @@ class Case
       end
     end
 
-    test "finds a pending case by id for an enroller" do
+    test "finds a submitted case by id for an enroller" do
       repo = Case::Repo.new
-      record = cases(:pending_1)
+      record = cases(:submitted_1)
       kase = repo.find_one_for_enroller(record.id, record.enroller_id)
       assert_not_nil(kase)
-      assert_equal(kase.status, :pending)
+      assert_equal(kase.status, :submitted)
     end
 
-    test "can't find a non-pending case for an enroller" do
+    test "can't find a non-submitted case for an enroller" do
       repo = Case::Repo.new
       record = cases(:opened_1)
 
@@ -35,8 +35,8 @@ class Case
 
     test "can't find another enroller's case" do
       repo = Case::Repo.new
-      record1 = cases(:pending_1)
-      record2 = cases(:pending_2)
+      record1 = cases(:submitted_1)
+      record2 = cases(:submitted_2)
       assert_raises(ActiveRecord::RecordNotFound) do
         repo.find_one_for_enroller(record1.id, record2.enroller_id)
       end
@@ -52,7 +52,7 @@ class Case
 
     test "can't find an opened case by id" do
       repo = Case::Repo.new
-      record = cases(:pending_1)
+      record = cases(:submitted_1)
 
       assert_raises(ActiveRecord::RecordNotFound) do
         repo.find_one_opened(record.id)
@@ -66,19 +66,19 @@ class Case
       assert_all(cases, ->(c) { c.completed_at.nil? })
     end
 
-    test "finds all pending cases for an enroller" do
+    test "finds all submitted cases for an enroller" do
       repo = Case::Repo.new
-      enroller_id = cases(:pending_1).enroller_id
+      enroller_id = cases(:submitted_1).enroller_id
       cases = repo.find_for_enroller(enroller_id)
       assert_length(cases, 1)
-      assert_all(cases, ->(c) { c.status == :pending })
+      assert_all(cases, ->(c) { c.status == :submitted })
     end
 
     test "finds all opened cases" do
       repo = Case::Repo.new
       cases = repo.find_opened
-      assert_length(cases, 2)
-      assert_all(cases, ->(c) { c.status == :opened })
+      assert_length(cases, 4)
+      assert_all(cases, ->(c) { c.status == :opened || c.status == :pending })
     end
   end
 end

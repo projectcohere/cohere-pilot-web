@@ -12,7 +12,7 @@ class Case
     def find_one_for_enroller(id, enroller_id)
       record = Case::Record
         .where(enroller_id: enroller_id)
-        .pending
+        .submitted
         .find(id)
 
       entity_from(record)
@@ -20,7 +20,7 @@ class Case
 
     def find_one_opened(id)
       record = Case::Record
-        .opened
+        .where(status: [:opened, :pending])
         .find(id)
 
       entity_from(record)
@@ -39,7 +39,7 @@ class Case
     def find_for_enroller(enroller_id)
       records = Case::Record
         .where(enroller_id: enroller_id)
-        .pending
+        .submitted
         .order(updated_at: :desc)
         .includes(:enroller, recipient: [:account, :household])
 
@@ -48,7 +48,7 @@ class Case
 
     def find_opened
       records = Case::Record
-        .opened
+        .where(status: [:opened, :pending])
         .order(updated_at: :desc)
         .includes(:enroller, recipient: [:account, :household])
 

@@ -16,8 +16,8 @@ opened_2:
   updated_at: <%= Time.zone.now - 1.hours %>
   completed_at: null
 
-scorable_1:
-  status: scorable
+pending_1:
+  status: pending
   recipient: recipient_2
   enroller: enroller_2
   supplier: supplier_1
@@ -25,8 +25,8 @@ scorable_1:
   updated_at: <%= Time.zone.now - 1.hours %>
   completed_at: null
 
-incomplete_1:
-  status: scorable
+pending_2:
+  status: pending
   recipient: recipient_3
   enroller: enroller_2
   supplier: supplier_1
@@ -34,8 +34,8 @@ incomplete_1:
   updated_at: <%= Time.zone.now - 1.hours %>
   completed_at: null
 
-pending_1:
-  status: pending
+submitted_1:
+  status: submitted
   recipient: recipient_2
   enroller: enroller_1
   supplier: supplier_1
@@ -43,8 +43,8 @@ pending_1:
   updated_at: <%= Time.zone.now - 2.hours %>
   completed_at: null
 
-pending_2:
-  status: pending
+submitted_2:
+  status: submitted
   recipient: recipient_2
   enroller: enroller_2
   supplier: supplier_1

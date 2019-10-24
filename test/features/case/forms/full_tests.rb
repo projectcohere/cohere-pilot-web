@@ -4,7 +4,7 @@ class Case
   module Forms
     class FullTests < ActiveSupport::TestCase
       test "can be initialized from a case" do
-        kase = Case::from_record(cases(:scorable_1))
+        kase = Case::from_record(cases(:pending_1))
 
         form = Full.new(kase)
         assert_present(form.dhs_number)
@@ -18,7 +18,7 @@ class Case
       end
 
       test "saves a case" do
-        kase = Case::from_record(cases(:scorable_1))
+        kase = Case::from_record(cases(:pending_1))
         form = Full.new(kase)
         form.first_name = "Edith"
 
@@ -30,7 +30,7 @@ class Case
       end
 
       test "does not save an invalid case" do
-        kase = Case::from_record(cases(:scorable_1))
+        kase = Case::from_record(cases(:pending_1))
         form = Full.new(kase)
         form.first_name = ""
 
@@ -39,22 +39,22 @@ class Case
         assert_present(form.errors[:first_name])
       end
 
-      test "saves a pending case" do
-        kase = Case::from_record(cases(:scorable_1))
+      test "saves a submitted case" do
+        kase = Case::from_record(cases(:pending_1))
         form = Full.new(kase)
-        form.status = "pending"
+        form.status = "submitted"
 
         did_save = form.save
         assert(did_save)
 
         record = kase.record
-        assert(record.pending?)
+        assert(record.submitted?)
       end
 
-      test "does not save an invalid pending case" do
-        kase = Case::from_record(cases(:scorable_1))
+      test "does not save an invalid submitted case" do
+        kase = Case::from_record(cases(:pending_1))
         form = Full.new(kase)
-        form.status = "pending"
+        form.status = "submitted"
         form.dhs_number = nil
 
         did_save = form.save

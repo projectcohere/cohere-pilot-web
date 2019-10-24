@@ -32,8 +32,8 @@ class Case
       # -- commands --
       def save
         context = nil
-        if status == "pending"
-          context = :pending
+        if status == "submitted"
+          context = :submitted
         end
 
         if not valid?(context)
@@ -102,6 +102,7 @@ class Case
         [
           :opened,
           :pending,
+          :submitted,
           :approved,
           :rejected
         ]

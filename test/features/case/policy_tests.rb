@@ -77,7 +77,7 @@ class Case
 
     test "permits enrollers to edit a case" do
       user = User::new(id: nil, role: :enroller)
-      kase = cases(:pending_1)
+      kase = cases(:submitted_1)
       policy = Case::Policy.new(user, kase)
       assert(policy.permit?(:edit))
     end
@@ -91,7 +91,7 @@ class Case
 
     test "forbids others from editing a case" do
       user = User::new(id: nil, role: :supplier)
-      kase = cases(:pending_1)
+      kase = cases(:submitted_1)
       policy = Case::Policy.new(user, kase, scope: :inbound)
       assert(policy.forbid?(:edit))
     end
@@ -119,7 +119,7 @@ class Case
 
     test "forbids others from viewing the case status" do
       user = User::new(id: nil, role: :enroller)
-      kase = cases(:pending_1)
+      kase = cases(:submitted_1)
       policy = Case::Policy.new(user, kase)
       assert(policy.forbid?(:view_status))
     end

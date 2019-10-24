@@ -10,7 +10,7 @@ class Case
       end
 
       test "can be initialized from a case" do
-        kase = Case::from_record(cases(:scorable_1))
+        kase = Case::from_record(cases(:pending_1))
 
         form = Opened.new(kase)
         assert_present(form.dhs_number)
@@ -58,6 +58,9 @@ class Case
 
         did_save = form.save
         assert(did_save)
+
+        record = kase.record
+        assert_equal(record.status, "pending")
 
         record = kase.recipient.record
         assert_equal(record.dhs_number, "11111")

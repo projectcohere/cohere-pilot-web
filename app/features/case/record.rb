@@ -8,6 +8,6 @@ class Case
     belongs_to(:supplier, class_name: "::Supplier::Record")
 
     # -- status --
-    enum(status: %i[opened scorable pending approved rejected])
+    enum(status: %i[opened pending submitted approved rejected])
   end
 end

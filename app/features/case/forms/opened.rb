@@ -4,7 +4,7 @@ class Case
     class Income < ::Form
       # -- fields --
       field(:amount, :string,
-        on: { pending: { presence: true } }
+        on: { submitted: { presence: true } }
       )
 
       # deprecated: month is not used right now
@@ -18,16 +18,16 @@ class Case
       # -- fields --
       # -- fields/dhs
       field(:dhs_number, :string,
-        on: { pending: { presence: true } }
+        on: { submitted: { presence: true } }
       )
 
       # -- fields/household
       field(:household_size, :string,
-        on: { pending: { presence: true } }
+        on: { submitted: { presence: true } }
       )
 
       field(:income_history, ListField.new(Income),
-        on: { pending: { presence: true, list: true } }
+        on: { submitted: { presence: true, list: true } }
       )
 
       # -- lifetime --
@@ -84,7 +84,7 @@ class Case
             household: household
           )
 
-          @model.record.touch
+          @model.record.pending!
         end
 
         true

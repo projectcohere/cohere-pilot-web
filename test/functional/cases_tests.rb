@@ -21,7 +21,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 6)
   end
 
-  test "can list pending cases for my org as an enroller" do
+  test "can list submitted cases for my org as an enroller" do
     user = users(:enroller_1)
     get(auth("/cases", as: user))
     assert_response(:success)
@@ -65,7 +65,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases/opened", as: user))
     assert_response(:success)
     assert_select(".Main-title", text: /Cases/)
-    assert_select(".CaseCell", 2)
+    assert_select(".CaseCell", 4)
   end
 
   # -- create --
@@ -129,7 +129,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "can edit a case" do
     user = users(:cohere_1)
-    kase = Case.from_record(cases(:scorable_1))
+    kase = Case.from_record(cases(:pending_1))
     get(auth("/cases/#{kase.id}/edit", as: user))
     assert_response(:success)
     assert_select(".Main-title", text: /#{kase.recipient.name}/)
@@ -144,7 +144,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "can't edit an opened case without permission" do
     user = users(:supplier_1)
-    kase = Case.from_record(cases(:pending_1))
+    kase = Case.from_record(cases(:submitted_1))
     get(auth("/cases/opened/#{kase.id}/edit", as: user))
     assert_redirected_to("/cases/inbound")
   end
@@ -160,7 +160,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   # -- update --
   test "can update a case" do
     user = users(:cohere_1)
-    kase = cases(:incomplete_1)
+    kase = cases(:pending_2)
 
     patch(auth("/cases/#{kase.id}", as: user), params: {
       case: {
@@ -174,11 +174,11 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "show errors for an invalid case" do
     user = users(:cohere_1)
-    kase = cases(:incomplete_1)
+    kase = cases(:pending_2)
 
     patch(auth("/cases/#{kase.id}", as: user), params: {
       case: {
-        status: "pending"
+        status: "submitted"
       }
     })
 
