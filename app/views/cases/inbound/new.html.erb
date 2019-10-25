@@ -11,7 +11,7 @@
       <%= f.field(:last_name, class: "CaseForm-lastName") do %>
         <%= f.text_field(:last_name) %>
       <% end %>
-      <%= f.field(:phone_number, class: "CaseForm-phoneNumber") do %>
+      <%= f.field(:phone_number, "Phone #", class: "CaseForm-phoneNumber") do %>
         <%= f.text_field(:phone_number) %>
       <% end %>
     <% end %>
@@ -35,7 +35,7 @@
     <% end %>
 
     <%= f.section("Utility Account", class: "CaseForm-utilityAccount") do %>
-      <%= f.field(:account_number, class: "CaseForm-accountNumber") do %>
+      <%= f.field(:account_number, "Account #", class: "CaseForm-accountNumber") do %>
         <%= f.text_field(:account_number) %>
       <% end %>
       <%= f.field(:arrears, class: "CaseForm-arrears") do %>
