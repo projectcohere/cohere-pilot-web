@@ -10,12 +10,14 @@
       </p>
     <% end %>
 
-    <%= f.field(:email, t(".email-label")) do %>
-      <% f.text_field(:email, type: "email", placeholder: t(".email-placeholder")) %>
-    <% end %>
+    <%= f.group do %>
+      <%= f.field(:email, t(".email-label"), class: "SignIn-email") do %>
+        <% f.text_field(:email, type: "email", placeholder: t(".email-placeholder")) %>
+      <% end %>
 
-    <%= f.field(:password, t(".password-label")) do %>
-      <% f.password_field(:password, placeholder: t(".password-placeholder")) %>
+      <%= f.field(:password, t(".password-label"), class: "SignIn-password") do %>
+        <% f.password_field(:password, placeholder: t(".password-placeholder")) %>
+      <% end %>
     <% end %>
 
     <%= f.submit(class: "SignIn-submit Button--action") %>

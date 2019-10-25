@@ -1,0 +1,13 @@
+.DetailField {
+  &-hint {
+    @extend .u-hint;
+    display: block;
+    color: $brandBlack;
+    margin-bottom: $spacing3;
+  }
+
+  &-text {
+    display: block;
+    width: 100%;
+  }
+}

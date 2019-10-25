@@ -1,0 +1,18 @@
+.Case {
+  @extend .u-panel;
+  max-width: $width1;
+
+  /* Case-contact */
+  &-phoneNumber {
+    grid-column: 1 / 5;
+  }
+
+  &-address {
+    grid-column: 1 / 5;
+  }
+
+  /* Case-utilityAccount */
+  &-supplier {
+    grid-column: 1 / 5;
+  }
+}

@@ -1,0 +1,15 @@
+.Detail {
+  display: grid;
+  gap: $spacing1;
+
+  &-group {
+    display: grid;
+    gap: $spacing2;
+    grid-template-columns: repeat(3, 1fr) $height1;
+
+    > h2, h3 {
+      grid-row: 1;
+      grid-column: 1 / 5;
+    }
+  }
+}

@@ -1,88 +1,35 @@
-/* form */
 .Form {
   display: grid;
-  gap: $spacing1;
+  gap: 50px;
 
   &-group {
     display: grid;
     gap: $spacing2;
-    grid-template-columns: repeat(3, 1fr) $height1;
+    grid-template-columns: repeat(8, 1fr) $height1;
+
+    > h2 {
+      margin-bottom: $spacing3;
+
+      > span {
+        position: relative;
+        display: inline-block;
+        padding-bottom: $spacing2;
+
+        &:after {
+          content: "";
+          position: absolute;
+          display: block;
+          bottom: 0;
+          width: 100%;
+          height: 3px;
+          background-color: fade-out($brandPrimary, 0.7);
+        }
+      }
+    }
 
     > h2, h3 {
       grid-row: 1;
-      grid-column: 1 / 5;
+      grid-column: 1 / 10;
     }
-  }
-}
-
-/* field */
-$f: ".Field";
-
-#{$f} {
-  #{$f}-hint {
-    @extend .u-hint;
-    display: block;
-    color: $brandBlack;
-    margin-bottom: $spacing3;
-  }
-
-  input {
-    display: block;
-    width: 100%;
-    height: $height1;
-    padding: $spacing2;
-    border: none;
-    border-bottom: 1px solid $brandBlack;
-    border-top-left-radius: $radiusField;
-    border-top-right-radius: $radiusField;
-    background: $colorField;
-
-    &::placeholder {
-      color: $gray1;
-    }
-
-    &:focus {
-      border-bottom-color: $brandPrimary;
-    }
-  }
-}
-
-#{$f}.is-error {
-  #{$f}-errors {
-    color: $colorError;
-    font-weight: $fontWeightRegular;
-  }
-}
-
-/* buttons */
-.Button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  max-width: $width4;
-  height: $height2;
-  color: $brandPrimary;
-  border: 1px solid $brandPrimary;
-  border-radius: 5px;
-  text-decoration: none;
-  cursor: pointer;
-
-  &:hover {
-    color: lighten($brandPrimary, 5%);
-    border-color: lighten($brandPrimary, 5%);
-  }
-}
-
-.Button--action {
-  max-width: $width4;
-  height: $height1;
-  margin-top: $spacing1;
-  color: $white;
-  background: $brandPrimary;
-  border-radius: 5px;
-  cursor: pointer;
-
-  &:hover {
-    background: lighten($brandPrimary, 5%);
   }
 }

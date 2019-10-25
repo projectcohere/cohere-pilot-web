@@ -7,7 +7,7 @@ class ApplicationFormBuilder < ::ActionView::Helpers::FormBuilder
     content = @template.capture(&children)
 
     group(*args, class: f_class, **kwargs) do
-      @template.content_tag(header_tag, title) +
+      @template.content_tag(header_tag) { @template.tag.span(title) } +
       content
     end
   end
@@ -39,13 +39,13 @@ class ApplicationFormBuilder < ::ActionView::Helpers::FormBuilder
     end
 
     # render the children & tag
-    f_class = "#{a_class} Field #{has_errors ? "is-error" : ""}"
+    f_class = "#{a_class} FormField #{has_errors ? "is-error" : ""}"
     content = @template.capture(&children)
 
     label(name, *args, class: f_class, **kwargs) do
-      hint = @template.tag.p(class: "Field-hint") do
+      hint = @template.tag.p(class: "FormField-hint") do
         hint_text = @template.tag.span(title || name.to_s.titlecase)
-        hint_error = has_errors ? @template.tag.span(" #{errors}", class: "Field-errors") : ""
+        hint_error = has_errors ? @template.tag.span(" #{errors}", class: "FormField-errors") : ""
         hint_text + hint_error
       end
 

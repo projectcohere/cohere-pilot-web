@@ -12,7 +12,6 @@ module Cases
         deny_access
       end
 
-      repo = Case::Repo.new
       @cases = Case::Repo.new.find_opened
     end
 

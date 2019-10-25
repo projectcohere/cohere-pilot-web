@@ -22,6 +22,8 @@ module Authentication
       cases_inbound_index_path
     when :opened
       cases_opened_index_path
+    when :submitted
+      cases_submitted_index_path
     when :root
       cases_path
     end

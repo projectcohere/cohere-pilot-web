@@ -27,9 +27,11 @@ class Case
       when :list
         true
       when :edit
-        role != :supplier
+        role != :supplier && role != :enroller
       when :create
         role == :supplier
+      when :view
+        role == :enroller
       when :view_status
         role == :cohere
       else
@@ -50,7 +52,9 @@ class Case
         :inbound
       when :dhs
         :opened
-      when :cohere, :enroller
+      when :enroller
+        :submitted
+      when :cohere
         :root
       else
         nil

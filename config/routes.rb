@@ -45,6 +45,11 @@ Rails.application.routes.draw do
         edit
         update
       ])
+
+      resources(:submitted, only: %i[
+        index
+        show
+      ])
     end
 
     # fallback

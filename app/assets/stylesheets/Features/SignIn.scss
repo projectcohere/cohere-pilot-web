@@ -2,10 +2,23 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 100%;
 
+  /* spacers */
+  &:before {
+    content: "";
+    flex: 1;
+    max-height: 100px;
+  }
+
+  &:after {
+    content: "";
+    flex: 1;
+  }
+
+  /* SignIn-title */
   &-title {
     max-width: $width2;
-    margin-top: 100px;
     text-align: center;
   }
 
@@ -14,12 +27,22 @@
     height: 113px;
   }
 
+  /* SignIn-form */
   &-form {
     @extend .u-panel;
 
     width: $width3;
     max-width: $width3;
     margin-top: 60px;
+    padding: $spacing0;
+  }
+
+  &-email {
+    grid-column: 1 / 10;
+  }
+
+  &-password {
+    grid-column: 1 / 10;
   }
 
   &-submit {

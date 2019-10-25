@@ -1,0 +1,29 @@
+.CaseCell {
+  @extend .u-panel;
+
+  &-name {
+    display: inline-block;
+    font-size: $fontSize3;
+  }
+
+  &-enroller {
+    color: $gray1;
+  }
+
+  &-updateTime {
+    color: $gray1;
+  }
+
+  &-row {
+    display: flex;
+    align-items: baseline;
+
+    > * + * {
+      margin-left: $spacing2;
+    }
+  }
+
+  &-row:nth-child(2) {
+    justify-content: space-between;
+  }
+}

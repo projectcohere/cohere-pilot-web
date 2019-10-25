@@ -1,0 +1,37 @@
+$f: ".FormField";
+
+#{$f} {
+  #{$f}-hint {
+    @extend .u-hint;
+    display: block;
+    color: $brandBlack;
+    margin-bottom: $spacing3;
+  }
+
+  input {
+    display: block;
+    width: 100%;
+    height: $height1;
+    padding: $spacing2;
+    border: none;
+    border-bottom: 1px solid $brandBlack;
+    border-top-left-radius: $radiusField;
+    border-top-right-radius: $radiusField;
+    background: $colorField;
+
+    &::placeholder {
+      color: $gray1;
+    }
+
+    &:focus {
+      border-bottom-color: $brandPrimary;
+    }
+  }
+}
+
+#{$f}.is-error {
+  #{$f}-errors {
+    color: $colorError;
+    font-weight: $fontWeightRegular;
+  }
+}

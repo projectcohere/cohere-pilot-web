@@ -21,12 +21,24 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 6)
   end
 
+  # -- list/submitted
+  test "can't list submitted cases if signed-out" do
+    get("/cases/submitted")
+    assert_redirected_to("/sign-in")
+  end
+
+  test "can't list submitted cases without permission" do
+    user = users(:cohere_1)
+    get(auth("/cases/submitted", as: user))
+    assert_redirected_to("/cases")
+  end
+
   test "can list submitted cases for my org as an enroller" do
     user = users(:enroller_1)
-    get(auth("/cases", as: user))
+    get(auth("/cases/submitted", as: user))
     assert_response(:success)
     assert_select(".Main-title", text: /Cases/)
-    assert_select(".CaseCell", 1)
+    assert_select(".CaseCell", 2)
   end
 
   # -- list/inbound
@@ -120,6 +132,29 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:alert])
   end
 
+  # -- view --
+  # -- view/submitted
+  test "can't view a submitted case if signed-out" do
+    kase = cases(:submitted_1)
+    get("/cases/submitted/#{kase.id}")
+    assert_redirected_to("/sign-in")
+  end
+
+  test "can't view a submitted case without permission" do
+    user = users(:cohere_1)
+    kase = cases(:submitted_1)
+    get(auth("/cases/submitted/#{kase.id}", as: user))
+    assert_redirected_to("/cases")
+  end
+
+  test "can view a submitted case" do
+    user = users(:enroller_1)
+    kase = Case.from_record(cases(:submitted_1))
+    get(auth("/cases/submitted/#{kase.id}", as: user))
+    assert_response(:success)
+    assert_select(".Main-title", text: /#{kase.recipient.name}/)
+  end
+
   # -- edit --
   test "can't edit a case if signed-out" do
     kase = cases(:opened_1)
@@ -157,7 +192,6 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".Main-title", text: /#{kase.recipient.name}/)
   end
 
-  # -- update --
   test "can update a case" do
     user = users(:cohere_1)
     kase = cases(:pending_2)
@@ -186,7 +220,6 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:alert])
   end
 
-  # -- update/opened
   test "can update an opened case" do
     user = users(:dhs_1)
     kase = Case.from_record(cases(:opened_1))

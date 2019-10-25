@@ -11,8 +11,10 @@ class Case
 
     def find_one_for_enroller(id, enroller_id)
       record = Case::Record
-        .where(enroller_id: enroller_id)
-        .submitted
+        .where(
+          enroller_id: enroller_id,
+          status: [:submitted, :approved, :rejected]
+        )
         .find(id)
 
       entity_from(record)
@@ -31,17 +33,19 @@ class Case
       records = Case::Record
         .where(completed_at: nil)
         .order(updated_at: :desc)
-        .includes(:enroller, recipient: [:account, :household])
+        .includes(:enroller, recipient: [:household, { account: :supplier }])
 
       entities_from(records)
     end
 
     def find_for_enroller(enroller_id)
       records = Case::Record
-        .where(enroller_id: enroller_id)
-        .submitted
+        .where(
+          enroller_id: enroller_id,
+          status: [:submitted, :approved, :rejected]
+        )
         .order(updated_at: :desc)
-        .includes(:enroller, recipient: [:account, :household])
+        .includes(:enroller, recipient: [:household, { account: :supplier }])
 
       entities_from(records)
     end
@@ -50,7 +54,7 @@ class Case
       records = Case::Record
         .where(status: [:opened, :pending])
         .order(updated_at: :desc)
-        .includes(:enroller, recipient: [:account, :household])
+        .includes(:enroller, recipient: [:household, { account: :supplier }])
 
       entities_from(records)
     end

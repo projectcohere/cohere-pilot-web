@@ -53,7 +53,13 @@ class Recipient < ::Entity
       account: r.account.then { |a|
         Account.new(
           number: a.number,
-          arrears: a.arrears
+          arrears: a.arrears,
+          supplier: a.supplier.then { |s|
+            Supplier.new(
+              id: s.id,
+              name: s.name
+            )
+          }
         )
       },
       household: r.household&.then { |h|

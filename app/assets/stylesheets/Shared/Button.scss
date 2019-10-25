@@ -1,0 +1,30 @@
+.Button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: $width4;
+  height: $height2;
+  color: $brandPrimary;
+  border: 1px solid $brandPrimary;
+  border-radius: 5px;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover {
+    color: lighten($brandPrimary, 5%);
+    border-color: lighten($brandPrimary, 5%);
+  }
+}
+
+.Button--action {
+  max-width: $width4;
+  height: $height1;
+  color: $white;
+  background: $brandPrimary;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background: lighten($brandPrimary, 5%);
+  }
+}
