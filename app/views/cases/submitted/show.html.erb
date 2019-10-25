@@ -1,14 +1,14 @@
 <main class="Main">
   <%- recipient = @case.recipient %></p>
   <h1 class="Main-title">
-    <%= recipient.name %>
+    <%= recipient.name %>'s case
   </h1>
 
   <article class="Case Detail">
-    <section class="Case-contact Detail-group">
-      <h3>Contact</h3>
+    <section class="Case-contact Detail-section">
+      <h1><span>Contact</span></h1>
       <label class="Case-phoneNumber DetailField">
-        <span class="DetailField-hint">Phone Number</span>
+        <span class="DetailField-hint">Phone #</span>
         <p class="DetailField-text"><%= recipient.phone_number %></p>
       </label>
       <label class="Case-address DetailField">
@@ -22,15 +22,15 @@
       </section>
     </section>
 
-    <section class="Case-utilityAccount Detail-group">
+    <section class="Case-utilityAccount Detail-section">
       <%- account = recipient.account %>
-      <h3>Utility Account</h3>
+      <h1><span>Utility Account</span></h1>
       <label class="Case-supplier DetailField">
         <span class="DetailField-hint">Supplier</span>
         <p class="DetailField-text"><%= account.supplier.name %></p>
       </label>
       <label class="Case-accountNumber DetailField">
-        <span class="DetailField-hint">Account Number</span>
+        <span class="DetailField-hint">Account #</span>
         <p class="DetailField-text"><%= account.number %></p>
       </label>
       <label class="Case-arrears DetailField">
@@ -39,17 +39,17 @@
       </label>
     </section>
 
-    <section class="Case-dhs Detail-group">
-      <h3>MDHHS</h3>
+    <section class="Case-dhs Detail-section">
+      <h1><span>MDHHS</span></h1>
       <label class="Case-dhsNumber DetailField">
-        <span class="DetailField-hint">Case Number</span>
+        <span class="DetailField-hint">Case #</span>
         <p class="DetailField-text"><%= recipient.dhs_number %></p>
       </label>
     </section>
 
-    <section class="Case-household Detail-group">
+    <section class="Case-household Detail-section">
       <%- household = recipient.household %>
-      <h3>Household</h3>
+      <h1><span>Household</span></h1>
       <label class="Case-householdSize DetailField">
         <span class="DetailField-hint">Size</span>
         <p class="DetailField-text"><%= household.size %></p>

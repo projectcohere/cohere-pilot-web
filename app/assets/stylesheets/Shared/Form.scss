@@ -1,20 +1,24 @@
 .Form {
   display: grid;
-  gap: 50px;
+  gap: $spacing1;
+  padding: $spacing1;
 
-  &-group {
+  &-section {
     display: grid;
-    gap: $spacing2;
+    gap: $spacing4;
     grid-template-columns: repeat(8, 1fr) $height1;
 
-    > h2 {
-      margin-bottom: $spacing3;
+    > h1 {
+      @extend .u-section;
+      grid-column: 1 / 10;
+      margin-bottom: $spacing5;
 
       > span {
         position: relative;
         display: inline-block;
-        padding-bottom: $spacing2;
+        padding-bottom: $spacing4;
 
+        /* bottom-border */
         &:after {
           content: "";
           position: absolute;
@@ -25,11 +29,6 @@
           background-color: fade-out($brandPrimary, 0.7);
         }
       }
-    }
-
-    > h2, h3 {
-      grid-row: 1;
-      grid-column: 1 / 10;
     }
   }
 }

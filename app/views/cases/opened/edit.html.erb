@@ -1,6 +1,6 @@
 <main class="Main">
   <h1 class="Main-title">
-    <%= @form.name %>
+    <%= @form.name %>'s case
   </h1>
 
   <%= form_for(@form, url: cases_opened_path(@form.id), html: { class: "CaseForm Form" }) do |f| %>

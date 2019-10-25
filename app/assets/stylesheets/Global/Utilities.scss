@@ -12,8 +12,8 @@
 }
 
 .u-section {
-  font-size: $fontSize3;
-  font-weight: $fontWeightThin;
+  font-size: $fontSize4;
+  font-weight: $fontWeightBold;
   color: $brandBlack;
 }
 
@@ -24,7 +24,9 @@
 
 .u-hint {
   font-size: $fontSize6;
-  font-weight: $fontWeightBold;
+  font-weight: $fontWeightRegular;
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
 /* elements */
@@ -40,7 +42,7 @@
 }
 
 .u-panel {
-  padding: $spacing1;
+  padding: $spacing3;
   background-color: $white;
   border-radius: $radius;
   box-shadow: 0px 0px 10px $colorShadow;

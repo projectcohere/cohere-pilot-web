@@ -5,14 +5,14 @@ $f: ".FormField";
     @extend .u-hint;
     display: block;
     color: $brandBlack;
-    margin-bottom: $spacing3;
+    margin-bottom: $spacing5;
   }
 
   input {
     display: block;
     width: 100%;
     height: $height1;
-    padding: $spacing2;
+    padding: $spacing4;
     border: none;
     border-bottom: 1px solid $brandBlack;
     border-top-left-radius: $radiusField;

@@ -1,12 +1,12 @@
 .Main {
-  padding: 80px;
-  padding-top: $spacing1;z
+  padding: $spacing0;
+  padding-top: $spacing3;
 
   &-title {
     display: inline-block;
     color: $brandBlack;
     font-size: $fontSize0;
-    margin-bottom: $spacing1;
+    margin-bottom: $spacing3;
   }
 
   &-actions {

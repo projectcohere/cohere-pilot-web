@@ -1,26 +1,21 @@
 class ApplicationFormBuilder < ::ActionView::Helpers::FormBuilder
-  def section(title, header_tag = :h2, *args, **kwargs, &children)
+  def section(title = nil, header_tag = :h2, *args, **kwargs, &children)
     a_class = kwargs.delete(:class)
 
     # render the children & tag
     f_class = "#{a_class} Form-section"
     content = @template.capture(&children)
 
-    group(*args, class: f_class, **kwargs) do
-      @template.content_tag(header_tag) { @template.tag.span(title) } +
-      content
-    end
-  end
+    @template.tag.section(*args, class: f_class, **kwargs) do
+      section_title = "".html_safe
 
-  def group(tag = :div, *args, **kwargs, &children)
-    a_class = kwargs.delete(:class)
+      if title.present?
+        section_title = @template.tag.h1 do
+          @template.tag.span(title)
+        end
+      end
 
-    # render the children & tag
-    f_class = "#{a_class} Form-group"
-    content = @template.capture(&children)
-
-    @template.content_tag(tag, *args, class: f_class, **kwargs) do
-      content
+      section_title + content
     end
   end
 

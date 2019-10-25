@@ -2,6 +2,7 @@
   <h1 class="Main-title">
     Add a Case
   </h1>
+
   <%= form_for(@form, url: cases_inbound_index_path, html: { class: "CaseForm Form" }) do |f| %>
     <%= f.section("Contact", class: "CaseForm-contact") do %>
       <%= f.field(:first_name, class: "CaseForm-firstName") do %>

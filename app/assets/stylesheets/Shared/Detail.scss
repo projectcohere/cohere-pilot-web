@@ -1,15 +1,34 @@
 .Detail {
   display: grid;
-  gap: $spacing1;
+  gap: $spacing2;
+  padding: $spacing1;
+  font-size: $fontSize4;
 
-  &-group {
+  &-section {
     display: grid;
-    gap: $spacing2;
-    grid-template-columns: repeat(3, 1fr) $height1;
+    gap: $spacing3;
+    grid-template-columns: repeat(8, 1fr) $height1;
 
-    > h2, h3 {
-      grid-row: 1;
-      grid-column: 1 / 5;
+    > h1 {
+      @extend .u-section;
+      grid-column: 1 / 10;
+
+      > span {
+        position: relative;
+        display: inline-block;
+        padding-bottom: $spacing4;
+
+        /* bottom-border */
+        &:after {
+          content: "";
+          position: absolute;
+          display: block;
+          bottom: 0;
+          width: 100%;
+          height: 3px;
+          background-color: fade-out($brandPrimary, 0.7);
+        }
+      }
     }
   }
 }

@@ -1,7 +1,6 @@
 .CaseForm {
   @extend .u-panel;
   max-width: $width1;
-  padding: $spacing0;
 
   /* CaseForm-name */
   &-firstName {
@@ -19,7 +18,7 @@
 
   /* CaseForm-address */
   &-address.is-read {
-    gap: $spacing4;
+    gap: $spacing6;
   }
 
   &-addressLine {

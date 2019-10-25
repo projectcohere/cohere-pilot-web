@@ -1,7 +1,7 @@
 <main class="Main SignIn">
   <div class="SignIn-title">
     <%= image_tag("logo-large-full.svg", class: "SignIn-logo") %>
-    <h2><%= t(".prompt") %></h2>
+    <h2><%= t(".prompt").html_safe %></h2>
   </div>
   <%= form_for(:session, url: session_path, html: { class: "SignIn-form Form" }) do |f| %>
     <% if flash.notice.present? %>
@@ -10,7 +10,7 @@
       </p>
     <% end %>
 
-    <%= f.group do %>
+    <%= f.section do %>
       <%= f.field(:email, t(".email-label"), class: "SignIn-email") do %>
         <% f.text_field(:email, type: "email", placeholder: t(".email-placeholder")) %>
       <% end %>
