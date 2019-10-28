@@ -21,7 +21,6 @@ class FrontController < ApplicationController
       ENV["FRONT_API_SECRET"],
       request.raw_post
     ))
-    binding.pry
 
     signature == evaluated
   end
