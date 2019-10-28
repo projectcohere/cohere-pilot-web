@@ -12,6 +12,11 @@ Rails.application.routes.draw do
       create
     ])
 
+    # front-webhooks
+    namespace(:front) do
+      post(:messages, constraints: { format: :json })
+    end
+
     # fallback
     get("*path", to: redirect(sign_in_path))
   end
