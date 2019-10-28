@@ -218,7 +218,6 @@ DEPENDENCIES
   pry-rescue (~> 1.5)
   puma (~> 3.11)
   rails (~> 6.0.0)
-  redis (~> 4.1)
   sass-rails (~> 5)
   sidekiq (~> 6.0)
   spring
