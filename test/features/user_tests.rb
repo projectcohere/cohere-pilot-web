@@ -1,3 +1,5 @@
+require "test_helper"
+
 class UserTests < ActiveSupport::TestCase
   test "an operator can be constructed from a record" do
     user = User.from_record(users(:cohere_1))

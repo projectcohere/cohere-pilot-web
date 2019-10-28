@@ -1,3 +1,5 @@
+require "test_helper"
+
 class Case
   # TODO: randomize scope/role pairs for catch-all forbid tests
   class PolicyTests < ActiveSupport::TestCase

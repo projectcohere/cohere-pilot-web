@@ -1,2 +1,8 @@
 #!/bin/sh
+# verify no lingering prys
+if command find -X . -name "*.rb" | xargs grep "binding.pry"; then
+  exit 1
+fi
+
+# verify tests pass
 make t/all

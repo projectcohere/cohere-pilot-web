@@ -1,3 +1,5 @@
+require "test_helper"
+
 class RecipientTests < ActiveSupport::TestCase
   test "can be constructed from a record" do
     recipient = Recipient.from_record(recipients(:recipient_2))
