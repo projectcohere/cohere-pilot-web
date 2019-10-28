@@ -45,17 +45,15 @@ module Cases
       end
     end
 
-    private
-
     # -- commands --
-    def check_scope
+    private def check_scope
       if policy.forbid?(:some)
         deny_access
       end
     end
 
     # -- queries --
-    def policy(kase = nil)
+    private def policy(kase = nil)
       @policy ||= Case::Policy.new(
         Current.user,
         kase,

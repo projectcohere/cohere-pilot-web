@@ -59,13 +59,13 @@ class Case
       entities_from(records)
     end
 
-    private
+    # -- helpers --
 
-    def entity_from(record)
+    private def entity_from(record)
       Case.from_record(record)
     end
 
-    def entities_from(records)
+    private def entities_from(records)
       records.map do |record|
         entity_from(record)
       end

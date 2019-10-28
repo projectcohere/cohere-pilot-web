@@ -29,17 +29,15 @@ module Cases
       @case = repo.find_one_for_enroller(params[:id], user.organization.id)
     end
 
-    private
-
     # -- commands --
-    def check_scope
+    private def check_scope
       if policy.forbid?(:some)
         deny_access
       end
     end
 
     # -- queries --
-    def policy(kase = nil)
+    private def policy(kase = nil)
       @policy ||= Case::Policy.new(
         Current.user,
         kase,

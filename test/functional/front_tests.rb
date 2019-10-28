@@ -3,8 +3,17 @@ require "test_helper"
 class FrontTests < ActionDispatch::IntegrationTest
   # -- index --
   test "rejects improperly signed requests" do
-    post("/front/messages",
-      params: '{"test": "body"}',
+    body = '{
+      "target": {
+        "data": {
+          "recipients": [
+            {"handle": "1", "role": "from"}
+          ]
+        }
+      }
+    }'
+
+    post("/front/messages", params: body,
       headers: {
         "X-Front-Signature" => "invalid-signature"
       },
@@ -14,12 +23,22 @@ class FrontTests < ActionDispatch::IntegrationTest
   end
 
   test "processes messages" do
-    body =
+    # if you change the body, the signature will also change. you'll
+    # need to copy the `evaluated` signature from FrontController#is_signed?
+    # into the headers below.
+    body = '{
+      "target": {
+        "data": {
+          "recipients": [
+            {"handle": "1", "role": "from"}
+          ]
+        }
+      }
+    }'
 
-    post("/front/messages",
-      params: '{"test": "body"}',
+    post("/front/messages", params: body,
       headers: {
-        "X-Front-Signature" => "MQQkiJRgC+UCPeqX2hQVXOylpVg="
+        "X-Front-Signature" => "7ACjXHlDc0Oks0gt9pEEDOYCbrk="
       }
     )
 

@@ -3,16 +3,19 @@ class FrontController < ApplicationController
     except: [:messages]
   )
 
+  # -- actions --
   def messages
     if not is_signed?
       render(json: "", status: :unauthorized)
       return
     end
+
+    message_decode = Message::DecodeFrontJson.new
+    message = message_decode.(request.raw_post)
   end
 
-  private
-
-  def is_signed?
+  # -- queries --
+  private def is_signed?
     algorithm = "sha1"
 
     signature = request.headers["X-Front-Signature"]

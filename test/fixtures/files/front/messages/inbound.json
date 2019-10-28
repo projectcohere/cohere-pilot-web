@@ -1,0 +1,183 @@
+{
+  "_links": {
+    "self": "https://api2.frontapp.com/events/evt_abcdefg"
+  },
+  "id": "evt_abcdefg",
+  "type": "inbound",
+  "emitted_at": 1572278582.464,
+  "conversation": {
+    "_links": {
+      "self": "https://api2.frontapp.com/conversations/cnv_3pirnbb",
+      "related": {
+        "events": "https://api2.frontapp.com/conversations/cnv_3pirnbb/events",
+        "followers": "https://api2.frontapp.com/conversations/cnv_3pirnbb/followers",
+        "messages": "https://api2.frontapp.com/conversations/cnv_3pirnbb/messages",
+        "comments": "https://api2.frontapp.com/conversations/cnv_3pirnbb/comments",
+        "inboxes": "https://api2.frontapp.com/conversations/cnv_3pirnbb/inboxes"
+      }
+    },
+    "id": "cnv_3pirnbb",
+    "subject": "",
+    "status": "assigned",
+    "assignee": {
+      "_links": {
+        "self": "https://api2.frontapp.com/teammates/tea_1gps7",
+        "related": {
+          "inboxes": "https://api2.frontapp.com/teammates/tea_1gps7/inboxes",
+          "conversations": "https://api2.frontapp.com/teammates/tea_1gps7/conversations"
+        }
+      },
+      "id": "tea_1gps7",
+      "email": "test@website.com",
+      "username": "test",
+      "first_name": "Test",
+      "last_name": "Sample",
+      "is_admin": true,
+      "is_available": true,
+      "is_blocked": false
+    },
+    "recipient": {
+      "_links": {
+        "related": {
+          "contact": "https://api2.frontapp.com/contacts/crd_i8nmfb"
+        }
+      },
+      "handle": "+12223334444",
+      "role": "from"
+    },
+    "tags": [],
+    "last_message": {
+      "_links": {
+        "self": "https://api2.frontapp.com/messages/msg_7iaf4w7",
+        "related": {
+          "conversation": "https://api2.frontapp.com/conversations/cnv_3pirnbb"
+        }
+      },
+      "id": "msg_7iaf4w7",
+      "type": "sms",
+      "is_inbound": true,
+      "created_at": 1572278582.464,
+      "blurb": "Testing This.",
+      "body": "<div>Testing This.</div><div><img class=\"front-inline-img\" src=\"/api/1/companies/civilla2/attachments/91a6b0c1bd168b28ccaa595df235f865ad1e0592?resource_link_id=23554431943\"></div>",
+      "text": "Testing This.",
+      "is_draft": false,
+      "error_type": null,
+      "metadata": {},
+      "author": null,
+      "recipients": [
+        {
+          "_links": {
+            "related": {
+              "contact": null
+            }
+          },
+          "handle": "+19998887777",
+          "role": "to"
+        },
+        {
+          "_links": {
+            "related": {
+              "contact": "https://api2.frontapp.com/contacts/crd_i8nmfb"
+            }
+          },
+          "handle": "+12223334444",
+          "role": "from"
+        }
+      ],
+      "attachments": [
+        {
+          "url": "https://api2.frontapp.com/download/fil_atjp807",
+          "filename": "0.jpeg",
+          "content_type": "image/jpeg",
+          "size": 39053,
+          "metadata": {
+            "is_inline": true,
+            "cid": "ac55cdfae0fc31fca4497d14e3b0a48f"
+          }
+        }
+      ]
+    },
+    "created_at": 1570299349.06,
+    "is_private": false
+  },
+  "source": {
+    "_meta": {
+      "type": "inboxes"
+    },
+    "data": [
+      {
+        "_links": {
+          "self": "https://api2.frontapp.com/inboxes/inb_ms13",
+          "related": {
+            "channels": "https://api2.frontapp.com/inboxes/inb_ms13/channels",
+            "conversations": "https://api2.frontapp.com/inboxes/inb_ms13/conversations",
+            "teammates": "https://api2.frontapp.com/inboxes/inb_ms13/teammates",
+            "owner": "https://api2.frontapp.com/teams/tim_7vtr"
+          }
+        },
+        "id": "inb_ms13",
+        "name": "Test Inbox",
+        "is_private": false,
+        "address": "+19998887777",
+        "send_as": "+19998887777",
+        "type": "twilio"
+      }
+    ]
+  },
+  "target": {
+    "_meta": {
+      "type": "message"
+    },
+    "data": {
+      "_links": {
+        "self": "https://api2.frontapp.com/messages/msg_7iaf4w7",
+        "related": {
+          "conversation": "https://api2.frontapp.com/conversations/cnv_3pirnbb"
+        }
+      },
+      "id": "msg_7iaf4w7",
+      "type": "sms",
+      "is_inbound": true,
+      "created_at": 1572278582.464,
+      "blurb": "Testing This.",
+      "body": "<div>Testing This.</div><div><img class=\"front-inline-img\" src=\"/api/1/companies/civilla2/attachments/91a6b0c1bd168b28ccaa595df235f865ad1e0592?resource_link_id=23554431943\"></div>",
+      "text": "Testing This.",
+      "is_draft": false,
+      "error_type": null,
+      "metadata": {},
+      "author": null,
+      "recipients": [
+        {
+          "_links": {
+            "related": {
+              "contact": null
+            }
+          },
+          "handle": "+19998887777",
+          "role": "to"
+        },
+        {
+          "_links": {
+            "related": {
+              "contact": "https://api2.frontapp.com/contacts/crd_i8nmfb"
+            }
+          },
+          "handle": "+12223334444",
+          "role": "from"
+        }
+      ],
+      "attachments": [
+        {
+          "url": "https://api2.frontapp.com/download/fil_atjp807",
+          "filename": "0.jpeg",
+          "content_type": "image/jpeg",
+          "size": 39053,
+          "metadata": {
+            "is_inline": true,
+            "cid": "ac55cdfae0fc31fca4497d14e3b0a48f"
+          }
+        }
+      ]
+    }
+  }
+}
