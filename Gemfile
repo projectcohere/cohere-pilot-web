@@ -5,6 +5,7 @@ ruby "~> 2.6.3"
 
 gem "bootsnap", ">= 1.4.2", require: false
 gem "clearance", "~> 1.17"
+gem "openssl", "~> 2.1"
 gem "pg", ">= 0.18", "< 2.0"
 gem "puma", "~> 3.11"
 gem "rails", "~> 6.0.0"
@@ -21,6 +22,7 @@ group :development do
 end
 
 group :development, :test do
+  gem "dotenv-rails", "~> 2.7"
   gem "pry-rails", "~> 0.3.9"
   gem "pry-byebug"
   gem "pry-rescue", "~> 1.5"

@@ -19,7 +19,7 @@ tools-redis-start = brew services start redis
 init: i
 .PHONY: init
 
-i: i/pre i/base i/deps i/services i/db i/hooks
+i: .env i/pre i/base i/deps i/services i/db i/hooks
 .PHONY: i
 
 ## installs the ruby/js deps
@@ -29,6 +29,9 @@ i/deps:
 .PHONY: i/pre
 
 # -- init/helpers
+.env:
+	cp .env.sample .env
+
 i/pre:
 ifeq ("$(shell command -v brew)", "")
 	$(info ✘ brew is not installed, please see:)

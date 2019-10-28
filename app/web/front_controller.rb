@@ -1,15 +1,28 @@
 class FrontController < ApplicationController
-  protect_from_forgery(except: [:messages])
+  protect_from_forgery(
+    except: [:messages]
+  )
 
   def messages
-    logger.debug("POST /front/messages")
-
-    logger.debug("headers\n-------")
-    request.headers.each do |(key, value)|
-      logger.debug("#{key}=#{value}")
+    if not is_signed?
+      render(json: "", status: :unauthorized)
+      return
     end
+  end
 
-    logger.debug("body\n----")
-    logger.debug(request.raw_post)
+  private
+
+  def is_signed?
+    algorithm = "sha1"
+
+    signature = request.headers["X-Front-Signature"]
+    evaluated = Base64.strict_encode64(OpenSSL::HMAC.digest(
+      algorithm,
+      ENV["FRONT_API_SECRET"],
+      request.raw_post
+    ))
+    binding.pry
+
+    signature == evaluated
   end
 end
