@@ -55,4 +55,10 @@ Rails.application.routes.draw do
     # fallback
     get("*path", to: redirect(cases_path))
   end
+
+  # development
+  if Rails.env.development?
+    require "sidekiq/web"
+    mount Sidekiq::Web => "/sidekiq"
+  end
 end
