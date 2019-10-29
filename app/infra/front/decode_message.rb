@@ -1,5 +1,5 @@
-class Message
-  class DecodeFrontJson
+module Front
+  class DecodeMessage
     # -- command --
     def call(json_string)
       json = ActiveSupport::JSON.decode(json_string)
@@ -16,7 +16,7 @@ class Message
       json = json["recipients"]
         .find { |j| j["role"] == "from" }
 
-      Sender::new(
+      Message::Sender::new(
         phone_number: json["handle"]
       )
     end
@@ -24,7 +24,7 @@ class Message
     private def decode_attachments(json)
       json = json["attachments"]
       json.map do |j|
-        Attachment.new(url: j["url"])
+        Message::Attachment.new(url: j["url"])
       end
     end
   end

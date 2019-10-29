@@ -1,10 +1,10 @@
 require "test_helper"
 
-class Message
-  class DecodeFrontJsonTests < ActiveSupport::TestCase
+module Front
+  class DecodeMessageTests < ActiveSupport::TestCase
     test "decodes a message from front json" do
       data = file_fixture("front/messages/inbound.json").read
-      decode = DecodeFrontJson.new
+      decode = DecodeMessage.new
 
       message = decode.(data)
       assert_equal(message.sender.phone_number, "+12223334444")

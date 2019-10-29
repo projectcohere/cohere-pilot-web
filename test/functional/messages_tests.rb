@@ -1,7 +1,7 @@
 require "test_helper"
 require "sidekiq/testing"
 
-class FrontTests < ActionDispatch::IntegrationTest
+class MessagesTests < ActionDispatch::IntegrationTest
   def setup
     # if you change the json, the signature will also change. you'll need
     # to copy the `evaluated` signature from FrontController#is_signed?
@@ -24,7 +24,7 @@ class FrontTests < ActionDispatch::IntegrationTest
 
   # -- messages --
   test "rejects improperly signed requests" do
-    post("/front/messages", params: @json,
+    post("/messages/front", params: @json,
       headers: {
         "X-Front-Signature" => "invalid-signature"
       },
@@ -37,7 +37,7 @@ class FrontTests < ActionDispatch::IntegrationTest
     Sidekiq::Testing.inline!
 
     act = -> do
-      post("/front/messages", params: @json,
+      post("/messages/front", params: @json,
         headers: {
           "X-Front-Signature" => "8RfkwzcQMyV3AEqpRKDDPuhk3ps="
         }

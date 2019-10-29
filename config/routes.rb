@@ -13,8 +13,8 @@ Rails.application.routes.draw do
     ])
 
     # front-webhooks
-    namespace(:front) do
-      post(:messages, constraints: { format: :json })
+    namespace(:messages) do
+      post(:front, constraints: { format: :json })
     end
 
     # fallback

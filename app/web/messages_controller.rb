@@ -1,24 +1,24 @@
-class FrontController < ApplicationController
+class MessagesController < ApplicationController
   protect_from_forgery(
     except: [:messages]
   )
 
   # -- actions --
-  def messages
+  def front
     if not is_signed?
       render(json: "", status: :unauthorized)
       return
     end
 
     receive_message = Message::ReceiveFromRecipient.new(
-      decode: Message::DecodeFrontJson.new
+      decode: Front::DecodeMessage.new
     )
 
     receive_message.(request.raw_post)
     receive_message.recipient.documents.each do |d|
       if d.url.nil?
         # TODO: filter out documents that already have scheduled jobs?
-        Front::SyncDocumentWorker.perform_async(d.id)
+        Messages::SyncDocumentWorker.perform_async(d.id)
       end
     end
   end

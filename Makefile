@@ -6,6 +6,7 @@ help-column-width = 10
 # -- context --
 tools-rb          = ./bin
 tools-rails       = $(tools-rb)/rails
+tools-spring      = $(tools-rb)/spring
 tools-wds         = $(tools-rb)/webpack-dev-server
 tools-bundle      = $(tools-rb)/bundle
 tools-yarn        = yarn
@@ -110,8 +111,8 @@ t/a/rescue:
 .PHONY: t/dbg
 
 # -- test/helpers
-test-base     = $(tools-rails) test $$(command find test/features -name "*_tests.rb")
-test-base-all = $(tools-rails) test $$(command find test -name "*_tests.rb")
+test-base     = $(tools-rails) test $$(find test/features test/infra -name "*_tests.rb")
+test-base-all = $(tools-rails) test $$(find test -name "*_tests.rb")
 
 # -- utilties --
 ## no-op, group utitlies
@@ -122,6 +123,11 @@ utils:
 u/routes:
 	$(tools-rails) routes
 .PHONY: u/routes
+
+## stops spring
+u/unspring:
+	$(tools-spring) stop
+.PHONY: u/unspring
 
 # -- db --
 ## alias for d/console
