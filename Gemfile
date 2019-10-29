@@ -29,3 +29,8 @@ group :development, :test do
   gem "pry-rescue", "~> 1.5"
   gem "awesome_print", "~> 1.8"
 end
+
+group :test do
+  gem "vcr", "~> 5.0"
+  gem "webmock", "~> 3.7"
+end
