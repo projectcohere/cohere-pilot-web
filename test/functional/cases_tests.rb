@@ -106,7 +106,7 @@ class CasesTests < ActionDispatch::IntegrationTest
       case: {
         first_name: "Janice",
         last_name: "Sample",
-        phone_number: "111-222-3333",
+        phone_number: Faker::PhoneNumber.phone_number,
         street: "123 Test Street",
         city: "Testopolis",
         state: "Testissippi",

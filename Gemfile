@@ -23,6 +23,7 @@ end
 
 group :development, :test do
   gem "dotenv-rails", "~> 2.7"
+  gem "faker", "~> 2.6"
   gem "pry-rails", "~> 0.3.9"
   gem "pry-byebug"
   gem "pry-rescue", "~> 1.5"

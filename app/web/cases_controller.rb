@@ -14,52 +14,33 @@ class CasesController < ApplicationController
     user = Current.user
     repo = Case::Repo.new
 
-    @cases = case user.role
-    when :cohere
-      repo.find_incomplete
-    when :enroller
-      repo.find_for_enroller(user.organization.id)
-    end
+    @cases = repo.find_incomplete
   end
 
   def edit
-    user = Current.user
     repo = Case::Repo.new
+    kase = repo.find_one(params[:id])
 
-    @form = case user.role
-    when :cohere
-      kase = repo.find_one(params[:id])
-      Case::Forms::Full.new(kase)
-    when :enroller
-      kase = repo.find_one_for_enroller(params[:id], user.organization.id)
-      Case::Forms::Full.new(kase)
-    end
-
-    if @form.nil? || policy(@form.model).forbid?(:edit)
+    if policy(kase).forbid?(:edit)
       deny_access
     end
+
+    @form = Case::Forms::Full.new(kase)
   end
 
   def update
-    user = Current.user
     repo = Case::Repo.new
+    kase = repo.find_one(params[:id])
 
-    @form = case user.role
-    when :cohere
-      kase = repo.find_one(params[:id])
-      Case::Forms::Full.new(kase,
-        params
-          .require(:case)
-          .permit(Case::Forms::Full.params_shape)
-      )
-    when :enroller
-      kase = repo.find_one_for_enroller(params[:id], user.organization.id)
-      Case::Forms::Full.new(kase)
-    end
-
-    if @form.nil? || policy(@form.model).forbid?(:edit)
+    if policy(kase).forbid?(:edit)
       deny_access
     end
+
+    @form = Case::Forms::Full.new(kase,
+      params
+        .require(:case)
+        .permit(Case::Forms::Full.params_shape)
+    )
 
     if @form.save
       redirect_to(cases_path, notice: "Updated #{@form.name}'s case!")
