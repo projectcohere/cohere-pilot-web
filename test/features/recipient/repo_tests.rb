@@ -14,11 +14,11 @@ class Recipient
     test "saves new documents" do
       recipient = Recipient.from_record(recipients(:recipient_1))
       recipient.documents << Recipient::Document.new(
-        source_url: "https://website.com/image.jpg"
+        source_url: Faker::Internet.url
       )
 
       act = -> do
-      repo = Recipient::Repo.new
+        repo = Recipient::Repo.new
         repo.save_new_documents(recipient)
       end
 

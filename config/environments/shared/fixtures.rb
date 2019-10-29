@@ -2,17 +2,18 @@ require "active_record/fixtures"
 
 module Environment
   module Fixtures
-    # provide the namespace paths to our active record models
+    # provide the namespaced paths to our active record models
     # TODO: generate this from a list of descendants of ApplicationRecord
     # named Record.
     K_ClassMap = {
-      users: User::Record,
-      suppliers: Supplier::Record,
-      enrollers: Enroller::Record,
-      cases: Case::Record,
-      recipients: Recipient::Record,
-      accounts: Recipient::Account::Record,
-      households: Recipient::Household::Record
+      users: "User::Record",
+      suppliers: "Supplier::Record",
+      enrollers: "Enroller::Record",
+      cases: "Case::Record",
+      recipients: "Recipient::Record",
+      accounts: "Recipient::Account::Record",
+      households: "Recipient::Household::Record",
+      documents: "Recipient::Document::Record"
     }
 
     # we have to monkey patch the fixture class cache to namespace our fixture
@@ -23,7 +24,7 @@ module Environment
     # the class map.
     module ClassCacheExt
       def initialize(class_names, *args, **kwargs, &block)
-        class_names.merge!(K_ClassMap)
+        class_names.merge!(K_ClassMap.transform_values(&:constantize))
         super(class_names, *args, **kwargs, &block)
       end
     end

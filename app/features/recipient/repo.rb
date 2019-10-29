@@ -25,7 +25,7 @@ class Recipient
       })
 
       records.each_with_index do |r, i|
-        documents[i].did_save(r.id)
+        documents[i].did_save(r)
       end
     end
 
