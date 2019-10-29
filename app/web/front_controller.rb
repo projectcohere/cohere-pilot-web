@@ -10,8 +10,17 @@ class FrontController < ApplicationController
       return
     end
 
-    message_decode = Message::DecodeFrontJson.new
-    message = message_decode.(request.raw_post)
+    receive_message = Message::ReceiveFromRecipient.new(
+      decode: Message::DecodeFrontJson.new
+    )
+
+    receive_message.(request.raw_post)
+    receive_message.recipient.documents.each do |d|
+      if d.url.nil?
+        # TODO: filter out documents that already have scheduled jobs?
+        Front::SyncDocumentWorker.perform_async(d.id)
+      end
+    end
   end
 
   # -- queries --

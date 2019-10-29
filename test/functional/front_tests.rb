@@ -1,19 +1,30 @@
 require "test_helper"
+require "sidekiq/testing"
 
 class FrontTests < ActionDispatch::IntegrationTest
-  # -- index --
-  test "rejects improperly signed requests" do
-    body = '{
-      "target": {
-        "data": {
-          "recipients": [
-            {"handle": "1", "role": "from"}
-          ]
+  def setup
+    # if you change the json, the signature will also change. you'll need
+    # to copy the `evaluated` signature from FrontController#is_signed?
+    # into the headers below.
+    @json = <<-JSON.chomp
+      {
+        "target": {
+          "data": {
+            "recipients": [
+              { "handle": "#{recipients(:recipient_1).phone_number}", "role": "from" }
+            ],
+            "attachments": [
+              { "url": "https://website.com/image.jpg" }
+            ]
+          }
         }
       }
-    }'
+    JSON
+  end
 
-    post("/front/messages", params: body,
+  # -- messages --
+  test "rejects improperly signed requests" do
+    post("/front/messages", params: @json,
       headers: {
         "X-Front-Signature" => "invalid-signature"
       },
@@ -22,24 +33,20 @@ class FrontTests < ActionDispatch::IntegrationTest
     assert_response(:unauthorized)
   end
 
-  test "processes messages" do
-    # if you change the body, the signature will also change. you'll
-    # need to copy the `evaluated` signature from FrontController#is_signed?
-    # into the headers below.
-    body = '{
-      "target": {
-        "data": {
-          "recipients": [
-            {"handle": "1", "role": "from"}
-          ]
-        }
-      }
-    }'
+  test "processes message attachments" do
+    Sidekiq::Testing.inline!
 
-    post("/front/messages", params: body,
-      headers: {
-        "X-Front-Signature" => "7ACjXHlDc0Oks0gt9pEEDOYCbrk="
-      }
+    act = -> do
+      post("/front/messages", params: @json,
+        headers: {
+          "X-Front-Signature" => "8RfkwzcQMyV3AEqpRKDDPuhk3ps="
+        }
+      )
+    end
+
+    assert_difference(
+      -> { Recipient::Document::Record.count } => 1,
+      &act
     )
 
     assert_response(:no_content)

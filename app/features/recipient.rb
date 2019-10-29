@@ -10,6 +10,7 @@ class Recipient < ::Entity
   prop(:address)
   prop(:account)
   prop(:household)
+  prop(:documents)
 
   # -- lifetime --
   def initialize(
@@ -20,7 +21,8 @@ class Recipient < ::Entity
     dhs_number: nil,
     address:,
     account:,
-    household: nil
+    household: nil,
+    documents: []
   )
     @record = record
     @id = id
@@ -30,6 +32,19 @@ class Recipient < ::Entity
     @address = address
     @account = account
     @household = household
+    @documents = documents
+  end
+
+  # -- commands --
+  def add_documents_from_message(message)
+    message.attachments.each do |attachment|
+      @documents << Document.new(source_url: attachment.url)
+    end
+  end
+
+  # -- queries --
+  def new_documents
+    @documents.filter { |d| d.id.nil? }
   end
 
   # -- factories --

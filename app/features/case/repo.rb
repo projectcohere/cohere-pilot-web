@@ -60,7 +60,6 @@ class Case
     end
 
     # -- helpers --
-
     private def entity_from(record)
       Case.from_record(record)
     end

@@ -9,7 +9,7 @@ module CoherePilotWeb
     config.load_defaults(6.0)
 
     # autoload
-    config.autoload_paths += %w[
+    config.eager_load_paths += %w[
       app/features/base
       app/web/base
       app/web/concerns
