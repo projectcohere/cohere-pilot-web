@@ -1,3 +1,7 @@
-document_2:
-  source_url: https://website.com/image.jpg
+document_2_1:
+  source_url: https://website.com/image1.jpg
+  recipient: recipient_2
+
+document_2_2:
+  source_url: https://website.com/image2.jpg
   recipient: recipient_2

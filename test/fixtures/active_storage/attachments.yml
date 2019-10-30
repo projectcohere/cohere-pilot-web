@@ -1,4 +1,4 @@
-attachment_2:
+attachment_2_1:
   name: file
-  record: document_2 (Recipient::Document::Record)
-  blob: blob_2
+  record: document_2_1 (Recipient::Document::Record)
+  blob: blob_2_1

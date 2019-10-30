@@ -16,4 +16,9 @@ h2 {
 
 a {
   @extend .u-link;
+
+  &[href=""] {
+    opacity: 0.5;
+    pointer-events: none;
+  }
 }

@@ -2,7 +2,7 @@
   display: flex;
 
   &-documents {
-    max-width: $width3;
+    width: $width4;
     padding-left: $spacing2;
     padding-right: $spacing2;
 
@@ -19,9 +19,25 @@
     }
   }
 
+  $documentImageHeight: 140px;
+
   &-document {
-    > img {
-      border-radius: $radius;
+    > a {
+      display: block;
+      margin-top: $spacing4;
+      margin-left: $radius;
     }
+  }
+
+  &-documentPlaceholder {
+    height: $documentImageHeight;
+    padding: $spacing3;
+    border-radius: $radius;
+    background-color: $colorField;
+  }
+
+  &-documentImage {
+    height: $documentImageHeight;
+    border-radius: $radius;
   }
 }

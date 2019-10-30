@@ -9,7 +9,7 @@ class SessionsTests < ActionDispatch::IntegrationTest
   test "can sign in as an operator" do
     post("/session", params: {
       session: {
-        email: "me@cohere.com",
+        email: "me@cohere.org",
         password: "password"
       }
     })
@@ -45,7 +45,7 @@ class SessionsTests < ActionDispatch::IntegrationTest
   test "can sign in as a dhs partner" do
     post("/session", params: {
       session: {
-        email: "me@dhs.gov",
+        email: "me@michigan.gov",
         password: "password"
       }
     })

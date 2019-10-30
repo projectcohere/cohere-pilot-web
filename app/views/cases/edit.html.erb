@@ -76,10 +76,14 @@
           <p>This case has no documents yet.</p>
         <% else %>
           <% @form.documents.each do |d| %>
-            <%- file_url = url_for(d.file) %>
             <li class="EditCase-document">
-              <%= image_tag(file_url, height: 140) %>
-              <%= link_to("View Document", file_url, target: "_blank", rel: "noopener noreferrer") %>
+              <%- file_url = d.file.attached? ? url_for(d.file) : nil %>
+              <% if file_url.nil? %>
+                <p class="EditCase-documentPlaceholder">This file is being processed.</p>
+              <% else %>
+                <%= image_tag(file_url, height: 140, class: "EditCase-documentImage") %>
+              <% end %>
+              <%= link_to("View Document", file_url || "", target: "_blank", rel: "noopener noreferrer") %>
             </li>
           <% end %>
         <% end %>
