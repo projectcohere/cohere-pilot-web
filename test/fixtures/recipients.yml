@@ -1,7 +1,7 @@
 recipient_1:
   first_name: Janice
   last_name: Sample
-  phone_number: 111-222-3333
+  phone_number: "+11112223333"
   street: 111 Sample St.
   street2: Apt. 2
   city: New Sampleton
@@ -12,7 +12,7 @@ recipient_1:
 recipient_2:
   first_name: Johnice
   last_name: Sample
-  phone_number: 222-333-4444
+  phone_number: "+12223334444"
   street: 444 Sample St.
   street2: Apt. 2
   city: New Sampleton
@@ -23,7 +23,7 @@ recipient_2:
 recipient_3:
   first_name: Danice
   last_name: Sample
-  phone_number: 444-555-6666
+  phone_number: "+13334445555"
   street: 123 Sample St.
   street2: Apt. 2
   city: New Sampleton
