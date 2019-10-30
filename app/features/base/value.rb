@@ -1,3 +1,3 @@
 class Value
-  include Initializable
+  include ::Initializable
 end

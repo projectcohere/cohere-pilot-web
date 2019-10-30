@@ -164,7 +164,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "can edit a case" do
     user = users(:cohere_1)
-    kase = Case.from_record(cases(:pending_1))
+    kase = Case.from_record(cases(:submitted_1))
     get(auth("/cases/#{kase.id}/edit", as: user))
     assert_response(:success)
     assert_select(".Main-title", text: /#{kase.recipient.name}/)

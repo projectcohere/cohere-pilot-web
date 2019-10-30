@@ -1,0 +1,4 @@
+attachment_2:
+  name: file
+  record: document_2 (Recipient::Document::Record)
+  blob: blob_2

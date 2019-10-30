@@ -16,7 +16,7 @@ class MessagesController < ApplicationController
 
     receive_message.(request.raw_post)
     receive_message.recipient.documents.each do |d|
-      if d.url.nil?
+      if d.file.nil?
         # TODO: filter out documents that already have scheduled jobs?
         Messages::SyncDocumentWorker.perform_async(d.id)
       end

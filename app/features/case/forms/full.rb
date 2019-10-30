@@ -107,6 +107,10 @@ class Case
           :rejected
         ]
       end
+
+      def documents
+        @model.recipient.documents
+      end
     end
   end
 end

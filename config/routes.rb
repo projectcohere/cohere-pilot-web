@@ -58,7 +58,9 @@ Rails.application.routes.draw do
     end
 
     # fallback
-    get("*path", to: redirect(cases_path))
+    get("*path", to: redirect(cases_path), constraints: ->(req) {
+      req.path.exclude? "rails/active_storage"
+    })
   end
 
   # development

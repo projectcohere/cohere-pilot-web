@@ -9,6 +9,7 @@ class RecipientTests < ActiveSupport::TestCase
     assert_not_nil(recipient.address)
     assert_not_nil(recipient.household)
     assert_length(recipient.household.income_history, 1)
+    assert_length(recipient.documents, 1)
   end
 
   test "adds documents from a message" do

@@ -3,7 +3,7 @@ require "test_helper"
 class IntializableTests < ActiveSupport::TestCase
   # -- test classes --
   class Color
-    include Initializable
+    include ::Initializable
 
     prop(:r)
     prop(:g)
@@ -12,7 +12,7 @@ class IntializableTests < ActiveSupport::TestCase
   end
 
   class Cart < ::Value
-    include Initializable
+    include ::Initializable
 
     prop(:items, default: [])
     props_end!

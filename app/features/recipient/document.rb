@@ -4,7 +4,7 @@ class Recipient
 
     # -- props --
     prop(:id, default: nil)
-    prop(:url, default: nil)
+    prop(:file, default: nil)
     prop(:source_url)
     props_end!
 
@@ -12,10 +12,10 @@ class Recipient
     attr(:new_file)
 
     # -- lifetime --
-    def initialize(record: nil, id: nil, url: nil, source_url:)
+    def initialize(record: nil, id: nil, file: nil, source_url:)
       @record = record
       @id = id
-      @url = url
+      @file = file
       @source_url = source_url
     end
 
@@ -35,7 +35,7 @@ class Recipient
       Document.new(
         record: r,
         id: r.id,
-        url: nil,
+        file: r.file,
         source_url: r.source_url
       )
     end

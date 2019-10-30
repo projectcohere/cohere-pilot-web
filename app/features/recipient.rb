@@ -62,6 +62,9 @@ class Recipient < ::Entity
             Income.new(**a.symbolize_keys)
           }
         )
+      },
+      documents: r.documents.map { |d|
+        Document::from_record(d)
       }
     )
   end

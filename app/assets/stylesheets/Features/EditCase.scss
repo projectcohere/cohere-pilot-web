@@ -1,0 +1,27 @@
+.EditCase {
+  display: flex;
+
+  &-documents {
+    max-width: $width3;
+    padding-left: $spacing2;
+    padding-right: $spacing2;
+
+    > h1 {
+      @extend .u-subtitle;
+      margin-bottom: $spacing4;
+    }
+
+  }
+
+  &-documentList {
+    > * + * {
+      margin-top: $spacing3;
+    }
+  }
+
+  &-document {
+    > img {
+      border-radius: $radius;
+    }
+  }
+}

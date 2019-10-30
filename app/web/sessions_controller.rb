@@ -1,5 +1,5 @@
 class SessionsController < Clearance::SessionsController
-  include Authentication
+  include ::Authentication
 
   protected
 

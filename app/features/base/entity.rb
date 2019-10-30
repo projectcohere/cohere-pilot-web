@@ -1,5 +1,5 @@
 class Entity
-  include Initializable
+  include ::Initializable
 
   # -- equality --
   def ==(other)
