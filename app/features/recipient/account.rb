@@ -1,15 +1,8 @@
 class Recipient
-  class Account < Entity
-    # -- props --
+  class Account < ::Entity
     prop(:supplier)
     prop(:number)
     prop(:arrears)
-
-    # -- liftime --
-    def initialize(supplier:, number:, arrears:)
-      @supplier = supplier
-      @number = number
-      @arrears = arrears
-    end
+    props_end!
   end
 end

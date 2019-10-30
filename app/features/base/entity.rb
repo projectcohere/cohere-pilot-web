@@ -1,8 +1,5 @@
 class Entity
-  # -- definition --
-  def self.prop(name)
-    attr_reader(name)
-  end
+  include Initializable
 
   # -- equality --
   def ==(other)

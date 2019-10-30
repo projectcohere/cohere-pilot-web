@@ -4,8 +4,8 @@ class Recipient
   class RepoTests < ActiveSupport::TestCase
     test "finds a recipient by phone number" do
       record = recipients(:recipient_1)
-
       repo = Recipient::Repo.new
+
       recipient = repo.find_one_by_phone_number(record.phone_number)
       assert_not_nil(recipient)
       assert_equal(recipient.phone_number, record.phone_number)

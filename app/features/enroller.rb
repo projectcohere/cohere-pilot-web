@@ -4,10 +4,7 @@ class Enroller < ::Entity
   prop(:name)
 
   # -- lifetime --
-  def initialize(id:, name:)
-    @id = id
-    @name = name
-  end
+  define_initialize!
 
   # -- factories --
   def self.from_record(r)

@@ -1,14 +1,15 @@
 class Recipient
   class Document < ::Entity
-    attr_reader(:record)
+    prop(:record, default: nil)
 
     # -- props --
-    prop(:id)
-    prop(:url)
+    prop(:id, default: nil)
+    prop(:url, default: nil)
     prop(:source_url)
+    props_end!
 
     # -- props/temp
-    prop(:new_file)
+    attr(:new_file)
 
     # -- lifetime --
     def initialize(record: nil, id: nil, url: nil, source_url:)

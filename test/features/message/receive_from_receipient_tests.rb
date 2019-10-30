@@ -3,7 +3,7 @@ require "minitest/mock"
 
 class Message
   class ReceiveFromRecipientTests < ActiveSupport::TestCase
-    test "adds message attachments to a recipient" do
+    test "adds message attachments to a recipient's documents" do
       recipient = Recipient.new(
         id: nil,
         name: nil,

@@ -2,13 +2,8 @@ class User < ::Entity
   # -- props --
   prop(:id)
   prop(:role)
-  prop(:organization)
-
-  # -- liftime --
-  def initialize(id:, role:, organization: nil)
-    @role = role
-    @organization = organization
-  end
+  prop(:organization, default: nil)
+  props_end!
 
   # -- factories --
   def self.from_record(r)

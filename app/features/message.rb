@@ -1,32 +1,16 @@
-class Message < ::Entity
-  # -- props --
+class Message < ::Value
   prop(:sender)
   prop(:attachments)
-
-  # -- liftime --
-  def initialize(sender:, attachments:)
-    @sender = sender
-    @attachments = attachments
-  end
+  props_end!
 
   # -- children --
-  class Sender < :: Entity
-    # -- props --
+  class Sender < ::Value
     prop(:phone_number)
-
-    # -- lifetime --
-    def initialize(phone_number:)
-      @phone_number = phone_number
-    end
+    props_end!
   end
 
   class Attachment < :: Entity
-    # -- props --
     prop(:url)
-
-    # -- lifetime --
-    def initialize(url:)
-      @url = url
-    end
+    props_end!
   end
 end

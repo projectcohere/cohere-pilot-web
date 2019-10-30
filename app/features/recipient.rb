@@ -1,39 +1,17 @@
 class Recipient < ::Entity
   # TODO: should this be generalized for the aggregate root?
-  attr_reader(:record)
+  prop(:record, default: nil)
 
   # -- props --
   prop(:id)
   prop(:name)
   prop(:phone_number)
-  prop(:dhs_number)
+  prop(:dhs_number, default: nil)
   prop(:address)
   prop(:account)
-  prop(:household)
-  prop(:documents)
-
-  # -- lifetime --
-  def initialize(
-    record: nil,
-    id:,
-    name:,
-    phone_number:,
-    dhs_number: nil,
-    address:,
-    account:,
-    household: nil,
-    documents: []
-  )
-    @record = record
-    @id = id
-    @name = name
-    @phone_number = phone_number
-    @dhs_number = dhs_number
-    @address = address
-    @account = account
-    @household = household
-    @documents = documents
-  end
+  prop(:household, default: nil)
+  prop(:documents, default: [])
+  props_end!
 
   # -- commands --
   def add_documents_from_message(message)

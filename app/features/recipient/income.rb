@@ -1,13 +1,7 @@
 class Recipient
   class Income < ::Entity
-    # -- props --
-    prop(:month)
+    prop(:month, default: nil)
     prop(:amount)
-
-    # -- lifetime --
-    def initialize(month: nil, amount:)
-      @month = month
-      @amount = amount
-    end
+    props_end!
   end
 end
