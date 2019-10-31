@@ -4,90 +4,112 @@
     <%= recipient.name %>'s case
   </h1>
 
-  <article class="Case Detail">
-    <section class="Case-contact Detail-section">
-      <h1><span>Contact</span></h1>
-      <label class="Case-phoneNumber DetailField">
-        <span class="DetailField-hint">
-          Phone #
-        </span>
-        <p class="DetailField-text">
-          <%= recipient.phone_number %>
-        </p>
-      </label>
-      <label class="Case-address DetailField">
-        <span class="DetailField-hint">
-          Primary Residential Address
-        </span>
-        <p class="DetailField-text">
-          <% recipient.address.to_lines.each do |line| %>
-            <%= line %>
-            <br>
-          <% end %>
-        </p>
+  <div class ="ShowCase">
+    <article class="ShowCase-case Detail">
+      <section class="ShowCase-contact Detail-section">
+        <h1><span>Contact</span></h1>
+        <label class="ShowCase-phoneNumber DetailField">
+          <span class="DetailField-hint">
+            Phone #
+          </span>
+          <p class="DetailField-text">
+            <%= recipient.phone_number %>
+          </p>
+        </label>
+        <label class="ShowCase-address DetailField">
+          <span class="DetailField-hint">
+            Primary Residential Address
+          </span>
+          <p class="DetailField-text">
+            <% recipient.address.to_lines.each do |line| %>
+              <%= line %>
+              <br>
+            <% end %>
+          </p>
+        </section>
       </section>
-    </section>
 
-    <section class="Case-utilityAccount Detail-section">
-      <%- account = recipient.account %>
-      <h1><span>Utility Account</span></h1>
-      <label class="Case-supplier DetailField">
-        <span class="DetailField-hint">
-          Supplier
-        </span>
-        <p class="DetailField-text">
-          <%= account.supplier.name %>
-        </p>
-      </label>
-      <label class="Case-accountNumber DetailField">
-        <span class="DetailField-hint">
-          Account #
-        </span>
-        <p class="DetailField-text">
-          <%= account.number %>
-        </p>
-      </label>
-      <label class="Case-arrears DetailField">
-        <span class="DetailField-hint">
-          Arrears
-        </span>
-        <p class="DetailField-text">
-          <%= account.arrears %>
-        </p>
-      </label>
-    </section>
+      <section class="ShowCase-utilityAccount Detail-section">
+        <%- account = recipient.account %>
+        <h1><span>Utility Account</span></h1>
+        <label class="ShowCase-supplier DetailField">
+          <span class="DetailField-hint">
+            Supplier
+          </span>
+          <p class="DetailField-text">
+            <%= account.supplier.name %>
+          </p>
+        </label>
+        <label class="ShowCase-accountNumber DetailField">
+          <span class="DetailField-hint">
+            Account #
+          </span>
+          <p class="DetailField-text">
+            <%= account.number %>
+          </p>
+        </label>
+        <label class="ShowCase-arrears DetailField">
+          <span class="DetailField-hint">
+            Arrears
+          </span>
+          <p class="DetailField-text">
+            <%= account.arrears %>
+          </p>
+        </label>
+      </section>
 
-    <section class="Case-dhs Detail-section">
-      <h1><span>MDHHS</span></h1>
-      <label class="Case-dhsNumber DetailField">
-        <span class="DetailField-hint">
-          Case #
-        </span>
-        <p class="DetailField-text">
-          <%= recipient.dhs_number %>
-        </p>
-      </label>
-    </section>
+      <section class="ShowCase-dhs Detail-section">
+        <h1><span>MDHHS</span></h1>
+        <label class="ShowCase-dhsNumber DetailField">
+          <span class="DetailField-hint">
+            Case #
+          </span>
+          <p class="DetailField-text">
+            <%= recipient.dhs_number %>
+          </p>
+        </label>
+      </section>
 
-    <section class="Case-household Detail-section">
-      <%- household = recipient.household %>
-      <h1><span>Household</span></h1>
-      <label class="Case-householdSize DetailField">
-        <span class="DetailField-hint">
-          Size
-        </span>
-        <p class="DetailField-text">
-          <%= household.size %>
-        </p>
-      </label>
-      <label class="Case-monthlyIncome DetailField">
-        <span class="DetailField-hint">
-          Monthly Income
-        </span>
-        <p class="DetailField-text">
-          <%= household.income_history[0].amount %>
-        </p>
-      </label>
+      <section class="ShowCase-household Detail-section">
+        <%- household = recipient.household %>
+        <h1><span>Household</span></h1>
+        <label class="ShowCase-householdSize DetailField">
+          <span class="DetailField-hint">
+            Size
+          </span>
+          <p class="DetailField-text">
+            <%= household.size %>
+          </p>
+        </label>
+        <label class="ShowCase-monthlyIncome DetailField">
+          <span class="DetailField-hint">
+            Monthly Income
+          </span>
+          <p class="DetailField-text">
+            <%= household.income_history[0].amount %>
+          </p>
+        </label>
+      </section>
+    </article>
+    <section class="CaseDocuments">
+      <h1>Documents</h1>
+      <ul class="CaseDocuments-list">
+        <% if recipient.documents.blank? %>
+          <p>This case has no documents yet.</p>
+        <% else %>
+          <% recipient.documents.each do |d| %>
+            <li class="CaseDocument">
+              <%- file_url = d.file.attached? ? url_for(d.file) : nil %>
+              <% if file_url.nil? %>
+                <p class="CaseDocument-placeholder">This file is being processed.</p>
+              <% else %>
+                <%= image_tag(file_url, height: 140, class: "CaseDocument-image") %>
+              <% end %>
+              <%= link_to("View Document", file_url || "", target: "_blank", rel: "noopener noreferrer") %>
+            </li>
+          <% end %>
+        <% end %>
+      </ul>
     </section>
-  </article>
+  </div>
 </main>

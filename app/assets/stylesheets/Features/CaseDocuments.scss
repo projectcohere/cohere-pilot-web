@@ -1,0 +1,16 @@
+.CaseDocuments {
+  width: $width4;
+  padding-left: $spacing2;
+  padding-right: $spacing2;
+
+  > h1 {
+    @extend .u-subtitle;
+    margin-bottom: $spacing4;
+  }
+
+  &-list {
+    > * + * {
+      margin-top: $spacing3;
+    }
+  }
+}

@@ -98,6 +98,10 @@ class Case
       def address
         @model.recipient.address.to_lines
       end
+
+      def documents
+        @model.recipient.documents
+      end
     end
   end
 end

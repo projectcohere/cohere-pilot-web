@@ -106,6 +106,10 @@ class Case
         @model.supplier.name
       end
 
+      def documents
+        @model.recipient.documents
+      end
+
       def statuses
         [
           :opened,
@@ -114,10 +118,6 @@ class Case
           :approved,
           :rejected
         ]
-      end
-
-      def documents
-        @model.recipient.documents
       end
     end
   end

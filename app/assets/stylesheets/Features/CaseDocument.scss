@@ -1,0 +1,21 @@
+.CaseDocument {
+  $height: 140px;
+
+  > a {
+    display: block;
+    margin-top: $spacing4;
+    margin-left: $radius;
+  }
+
+  &-placeholder {
+    height: $height;
+    padding: $spacing3;
+    border-radius: $radius;
+    background-color: $colorField;
+  }
+
+  &-image {
+    height: $height;
+    border-radius: $radius;
+  }
+}

@@ -87,19 +87,19 @@
       <%= f.submit(class: "Button--action") %>
     <% end %>
 
-    <section class="EditCase-documents">
+    <section class="CaseDocuments">
       <h1>Documents</h1>
-      <ul class="EditCase-documentList">
+      <ul class="CaseDocuments-list">
         <% if @form.documents.blank? %>
           <p>This case has no documents yet.</p>
         <% else %>
           <% @form.documents.each do |d| %>
-            <li class="EditCase-document">
+            <li class="CaseDocument">
               <%- file_url = d.file.attached? ? url_for(d.file) : nil %>
               <% if file_url.nil? %>
-                <p class="EditCase-documentPlaceholder">This file is being processed.</p>
+                <p class="CaseDocument-placeholder">This file is being processed.</p>
               <% else %>
-                <%= image_tag(file_url, height: 140, class: "EditCase-documentImage") %>
+                <%= image_tag(file_url, height: 140, class: "CaseDocument-image") %>
               <% end %>
               <%= link_to("View Document", file_url || "", target: "_blank", rel: "noopener noreferrer") %>
             </li>
