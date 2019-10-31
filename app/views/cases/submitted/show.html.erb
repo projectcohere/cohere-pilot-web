@@ -8,11 +8,17 @@
     <section class="Case-contact Detail-section">
       <h1><span>Contact</span></h1>
       <label class="Case-phoneNumber DetailField">
-        <span class="DetailField-hint">Phone #</span>
-        <p class="DetailField-text"><%= recipient.phone_number %></p>
+        <span class="DetailField-hint">
+          Phone #
+        </span>
+        <p class="DetailField-text">
+          <%= recipient.phone_number %>
+        </p>
       </label>
       <label class="Case-address DetailField">
-        <span class="DetailField-hint">Primary Residential Address</span>
+        <span class="DetailField-hint">
+          Primary Residential Address
+        </span>
         <p class="DetailField-text">
           <% recipient.address.to_lines.each do |line| %>
             <%= line %>
@@ -26,24 +32,40 @@
       <%- account = recipient.account %>
       <h1><span>Utility Account</span></h1>
       <label class="Case-supplier DetailField">
-        <span class="DetailField-hint">Supplier</span>
-        <p class="DetailField-text"><%= account.supplier.name %></p>
+        <span class="DetailField-hint">
+          Supplier
+        </span>
+        <p class="DetailField-text">
+          <%= account.supplier.name %>
+        </p>
       </label>
       <label class="Case-accountNumber DetailField">
-        <span class="DetailField-hint">Account #</span>
-        <p class="DetailField-text"><%= account.number %></p>
+        <span class="DetailField-hint">
+          Account #
+        </span>
+        <p class="DetailField-text">
+          <%= account.number %>
+        </p>
       </label>
       <label class="Case-arrears DetailField">
-        <span class="DetailField-hint">Arrears</span>
-        <p class="DetailField-text"><%= account.arrears %></p>
+        <span class="DetailField-hint">
+          Arrears
+        </span>
+        <p class="DetailField-text">
+          <%= account.arrears %>
+        </p>
       </label>
     </section>
 
     <section class="Case-dhs Detail-section">
       <h1><span>MDHHS</span></h1>
       <label class="Case-dhsNumber DetailField">
-        <span class="DetailField-hint">Case #</span>
-        <p class="DetailField-text"><%= recipient.dhs_number %></p>
+        <span class="DetailField-hint">
+          Case #
+        </span>
+        <p class="DetailField-text">
+          <%= recipient.dhs_number %>
+        </p>
       </label>
     </section>
 
@@ -51,12 +73,20 @@
       <%- household = recipient.household %>
       <h1><span>Household</span></h1>
       <label class="Case-householdSize DetailField">
-        <span class="DetailField-hint">Size</span>
-        <p class="DetailField-text"><%= household.size %></p>
+        <span class="DetailField-hint">
+          Size
+        </span>
+        <p class="DetailField-text">
+          <%= household.size %>
+        </p>
       </label>
       <label class="Case-monthlyIncome DetailField">
-        <span class="DetailField-hint">Monthly Income</span>
-        <p class="DetailField-text"><%= household.income_history[0].amount %></p>
+        <span class="DetailField-hint">
+          Monthly Income
+        </span>
+        <p class="DetailField-text">
+          <%= household.income_history[0].amount %>
+        </p>
       </label>
     </section>
   </article>

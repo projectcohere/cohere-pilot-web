@@ -4,7 +4,7 @@
   </h1>
 
   <%= form_for(@form, url: cases_opened_path(@form.id), html: { class: "CaseForm Form" }) do |f| %>
-    <%= f.section("Primary Residential Address", class: "CaseForm-address is-read") do %>
+    <%= f.section("Primary Residential Address", class: "CaseForm-address--read") do %>
       <% @form.address.each do |line| %>
         <p class="CaseForm-addressLine"><%= line %></p>
       <% end %>

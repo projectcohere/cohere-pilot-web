@@ -33,7 +33,7 @@ class Case
       records = Case::Record
         .where(completed_at: nil)
         .order(updated_at: :desc)
-        .includes(:enroller, recipient: [:household, :documents, { account: :supplier }])
+        .includes(:supplier, :enroller, recipient: [:household, :documents, { account: :supplier }])
 
       entities_from(records)
     end
@@ -45,7 +45,7 @@ class Case
           status: [:submitted, :approved, :rejected]
         )
         .order(updated_at: :desc)
-        .includes(:enroller, recipient: [:household, :documents, { account: :supplier }])
+        .includes(:supplier, :enroller, recipient: [:household, :documents, { account: :supplier }])
 
       entities_from(records)
     end
@@ -54,7 +54,7 @@ class Case
       records = Case::Record
         .where(status: [:opened, :pending])
         .order(updated_at: :desc)
-        .includes(:enroller, recipient: [:household, :documents, { account: :supplier }])
+        .includes(:supplier, :enroller, recipient: [:household, :documents, { account: :supplier }])
 
       entities_from(records)
     end

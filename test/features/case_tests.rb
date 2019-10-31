@@ -6,6 +6,7 @@ class CaseTests < ActiveSupport::TestCase
     assert_not_nil(kase.record)
     assert_not_nil(kase.id)
     assert_not_nil(kase.recipient)
+    assert_not_nil(kase.supplier)
     assert_not_nil(kase.enroller)
     assert_equal(kase.status, :opened)
   end

@@ -13,6 +13,9 @@
               <%= link_to(kase.recipient.name, cases_submitted_path(kase), class: "CaseCell-name") %>
             </div>
             <div class="CaseCell-row">
+              <p class="CaseCell-organizations">
+                <%= kase.supplier.name %>
+              </p>
               <p class="CaseCell-updateTime">
                 Updated <%= time_ago_in_words(kase.updated_at) %> ago
               </p>

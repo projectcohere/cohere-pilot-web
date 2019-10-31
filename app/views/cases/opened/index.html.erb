@@ -16,9 +16,6 @@
               <% else %>
                 <p class="CaseCell-name"><%= name %></p>
               <% end %>
-              <p class="CaseCell-enroller">
-                @ <%= kase.enroller.name %>
-              </p>
             </div>
             <div class="CaseCell-row">
               <% if @policy.permit?(:view_status) %>

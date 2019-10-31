@@ -2,6 +2,16 @@
   @extend .u-panel;
   max-width: $width1;
 
+  /* CaseForm-case */
+  &-status {
+    grid-column: 1 / 10;
+  }
+
+  &-enroller {
+    grid-column: 1 / 4;
+    margin-top: $spacing4;
+  }
+
   /* CaseForm-name */
   &-firstName {
     grid-column: 1 / 4;
@@ -17,7 +27,7 @@
   }
 
   /* CaseForm-address */
-  &-address.is-read {
+  &-address--read {
     gap: $spacing6;
   }
 
@@ -30,7 +40,7 @@
   }
 
   &-street2 {
-    grid-column: 1 / 7;
+    grid-column: 1 / 6;
   }
 
   &-city {
@@ -38,20 +48,25 @@
   }
 
   &-state {
-    grid-column: 4 / 6;
+    grid-column: 4 / 7;
   }
 
   &-zip {
-    grid-column: 6 / 8;
+    grid-column: 7 / 9;
   }
 
   /* CaseForm-utilityAccount */
+  &-accountSupplier {
+    grid-column: 1 / 10;
+    margin-bottom: $spacing4;
+  }
+
   &-accountNumber {
     grid-column: 1 / 5;
   }
 
   &-arrears {
-    grid-column: 1 / 4;
+    grid-column: 5 / 8;
   }
 
   /* CaseForm-dhs */

@@ -98,6 +98,14 @@ class Case
         @model.recipient.name
       end
 
+      def enroller_name
+        @model.supplier.name
+      end
+
+      def supplier_name
+        @model.supplier.name
+      end
+
       def statuses
         [
           :opened,

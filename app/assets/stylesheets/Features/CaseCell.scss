@@ -6,14 +6,6 @@
     font-size: $fontSize3;
   }
 
-  &-enroller {
-    color: $gray1;
-  }
-
-  &-updateTime {
-    color: $gray1;
-  }
-
   &-row {
     display: flex;
     align-items: baseline;
@@ -23,7 +15,15 @@
     }
   }
 
-  &-row:nth-child(2) {
+  &-row:last-child {
     justify-content: space-between;
+  }
+
+  &-organizations {
+    color: $gray1;
+  }
+
+  &-updateTime {
+    color: $gray1;
   }
 }

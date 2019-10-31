@@ -16,8 +16,10 @@
               <% else %>
                 <p class="CaseCell-name"><%= name %></p>
               <% end %>
-              <p class="CaseCell-enroller">
-                @ <%= kase.enroller.name %>
+            </div>
+            <div class="CaseCell-row">
+              <p class="CaseCell-organizations">
+                <%= kase.supplier.name %>, <%= kase.enroller.name %>
               </p>
             </div>
             <div class="CaseCell-row">
