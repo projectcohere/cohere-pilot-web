@@ -5,7 +5,7 @@ cohere_1:
   remember_token: "test-token"
 
 enroller_1:
-  email: me@testmetro.com
+  email: me@testmetro.org
   encrypted_password: <%= password("password") %>
   organization: enroller_1 (Enroller::Record)
   remember_token: "test-token"

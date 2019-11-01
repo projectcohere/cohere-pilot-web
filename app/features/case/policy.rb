@@ -62,8 +62,12 @@ class Case
     end
 
     # -- commands --
+    def case=(kase)
+      @case = kase
+    end
+
     # changes the policy's record for the duration of the block
-    def with_record(kase)
+    def with_case(kase)
       previous = @case
       @case = kase
       result = yield

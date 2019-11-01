@@ -6,6 +6,6 @@ class SessionsController < Clearance::SessionsController
   # -- Clearance::SessionsController --
   def url_after_create
     build_user
-    root_path_by_permissions
+    case_scope.scoped_path(cases_path)
   end
 end

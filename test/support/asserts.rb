@@ -12,6 +12,10 @@ module Support
     def assert_all(collection, predicate)
       assert(collection.all?(predicate), "Expected all elements to match predicate.")
     end
+
+    def assert_same_elements(actual, expected)
+      assert_equal(actual.sort, expected.sort)
+    end
   end
 end
 

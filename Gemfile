@@ -17,6 +17,7 @@ gem "turbolinks", "~> 5"
 gem "webpacker", "~> 4.0"
 
 group :development do
+  gem "letter_opener", "~> 1.7"
   gem "listen", ">= 3.0.5", "< 3.2"
   gem "spring"
   gem "spring-watcher-listen", "~> 2.0.0"

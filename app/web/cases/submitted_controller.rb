@@ -19,30 +19,31 @@ module Cases
     end
 
     def show
-      if policy.forbid?(:view)
-        deny_access
-      end
-
       user = Current.user
       repo = Case::Repo.new
 
       @case = repo.find_one_for_enroller(params[:id], user.organization.id)
+
+      policy.case = @case
+      if policy.forbid?(:view)
+        deny_access
+      end
     end
 
     # -- commands --
     private def check_scope
-      if policy.forbid?(:some)
+      if not case_scope.scoped?
         deny_access
       end
     end
 
     # -- queries --
-    private def policy(kase = nil)
-      @policy ||= Case::Policy.new(
-        Current.user,
-        kase,
-        scope: :submitted
-      )
+    private def policy
+      case_scope.policy
+    end
+
+    private def case_scope
+      @case_scope ||= CaseScope.new(:submitted, Current.user)
     end
   end
 end

@@ -3,6 +3,7 @@ require_relative "../config/environment"
 require "rails/test_help"
 require "minitest/pride"
 require "config/vcr"
+require "sidekiq/testing"
 require "support/session"
 require "support/asserts"
 

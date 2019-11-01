@@ -19,7 +19,8 @@ module Cases
       repo = Case::Repo.new
       kase = repo.find_one_opened(params[:id])
 
-      if policy(kase).forbid?(:edit)
+      policy.case = kase
+      if policy.forbid?(:edit)
         deny_access
       end
 
@@ -30,7 +31,8 @@ module Cases
       repo = Case::Repo.new
       kase = repo.find_one_opened(params[:id])
 
-      if policy(kase).forbid?(:edit)
+      policy.case = kase
+      if policy.forbid?(:edit)
         deny_access
       end
 
@@ -49,18 +51,18 @@ module Cases
 
     # -- commands --
     private def check_scope
-      if policy.forbid?(:some)
+      if not case_scope.scoped?
         deny_access
       end
     end
 
     # -- queries --
-    private def policy(kase = nil)
-      @policy ||= Case::Policy.new(
-        Current.user,
-        kase,
-        scope: :opened
-      )
+    private def policy
+      case_scope.policy
+    end
+
+    def case_scope
+      @case_scope ||= CaseScope.new(:opened, Current.user)
     end
   end
 end

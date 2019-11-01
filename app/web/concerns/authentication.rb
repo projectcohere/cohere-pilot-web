@@ -1,10 +1,15 @@
 module Authentication
   extend ActiveSupport::Concern
 
+  # -- hooks --
   included do
+    # -- helpers
+    helper_method(:case_scope)
+    # -- callbacks
     before_action(:build_user)
   end
 
+  # -- commands --
   # builds a user entity from the current_user record fetched
   # by clearance
   def build_user
@@ -13,19 +18,8 @@ module Authentication
     end
   end
 
-  # determines the root path based on the authenticatd user's
-  # permissions
-  def root_path_by_permissions
-    case_policy = Case::Policy.new(Current.user)
-    case case_policy.scope_for_user
-    when :inbound
-      cases_inbound_index_path
-    when :opened
-      cases_opened_index_path
-    when :submitted
-      cases_submitted_index_path
-    when :root
-      cases_path
-    end
+  # -- queries --
+  def case_scope
+    @case_scope ||= CaseScope.new(:root, Current.user)
   end
 end

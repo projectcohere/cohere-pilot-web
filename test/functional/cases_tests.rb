@@ -116,8 +116,16 @@ class CasesTests < ActionDispatch::IntegrationTest
       }
     })
 
-    assert_redirected_to("/cases/inbound")
     assert_present(flash[:notice])
+    assert_redirected_to("/cases/inbound")
+
+    perform_enqueued_jobs(queue: :mailers)
+    assert_emails(2)
+    assert_select_email do
+      assert_select("a", text: /Janice Sample/) do |el|
+        assert_match(/http:\/\/localhost\:3000\/cases\/(opened\/)?\d+\/edit/, el[0][:href])
+      end
+    end
   end
 
   test "show errors for an invalid inbound case" do

@@ -2,7 +2,7 @@
   <%=
     link_to(
       image_tag("logo-small-full.svg", alt: t(".logo")),
-      root_path_by_permissions,
+      case_scope.scoped_path(cases_path),
       class: "Header-logo"
     )
   %>

@@ -21,7 +21,8 @@ class CasesController < ApplicationController
     repo = Case::Repo.new
     kase = repo.find_one(params[:id])
 
-    if policy(kase).forbid?(:edit)
+    policy.case = kase
+    if policy.forbid?(:edit)
       deny_access
     end
 
@@ -32,7 +33,8 @@ class CasesController < ApplicationController
     repo = Case::Repo.new
     kase = repo.find_one(params[:id])
 
-    if policy(kase).forbid?(:edit)
+    policy.case = kase
+    if policy.forbid?(:edit)
       deny_access
     end
 
@@ -52,16 +54,13 @@ class CasesController < ApplicationController
 
   # -- commands --
   private def check_scope
-    if policy.forbid?(:some)
+    if not case_scope.scoped?
       deny_access
     end
   end
 
   # -- queries --
-  private def policy(kase = nil)
-    @policy ||= Case::Policy.new(
-      Current.user,
-      kase
-    )
+  private def policy
+    case_scope.policy
   end
 end

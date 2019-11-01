@@ -1,4 +1,11 @@
 Rails.application.routes.draw do
+  # development
+  if Rails.env.development?
+    require "sidekiq/web"
+    mount(Sidekiq::Web => "/sidekiq")
+  end
+
+  # -- signed-out --
   constraints(Clearance::Constraints::SignedOut.new) do
     sign_in_path = "/sign-in"
 
@@ -21,6 +28,7 @@ Rails.application.routes.draw do
     get("*path", to: redirect(sign_in_path))
   end
 
+  # -- signed-in --
   constraints(Clearance::Constraints::SignedIn.new) do
     cases_path = "/cases"
 
@@ -61,11 +69,5 @@ Rails.application.routes.draw do
     get("*path", to: redirect(cases_path), constraints: ->(req) {
       req.path.exclude? "rails/active_storage"
     })
-  end
-
-  # development
-  if Rails.env.development?
-    require "sidekiq/web"
-    mount Sidekiq::Web => "/sidekiq"
   end
 end

@@ -1,6 +1,7 @@
 class User < ::Entity
   # -- props --
   prop(:id)
+  prop(:email)
   prop(:role)
   prop(:organization, default: nil)
   props_end!
@@ -23,6 +24,7 @@ class User < ::Entity
     # create entity
     User.new(
       id: r.id,
+      email: r.email,
       role: role,
       organization: org
     )

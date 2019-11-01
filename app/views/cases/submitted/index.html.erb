@@ -7,7 +7,7 @@
       <p>No cases left!</p>
     <% else %>
       <% @cases.each do |kase| %>
-        <% policy.with_record(kase) do %>
+        <% policy.with_case(kase) do %>
           <li class="CaseCell">
             <div class="CaseCell-row">
               <%= link_to(kase.recipient.name, cases_submitted_path(kase), class: "CaseCell-name") %>

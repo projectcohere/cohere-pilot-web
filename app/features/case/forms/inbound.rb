@@ -65,7 +65,7 @@ class Case
           return false
         end
 
-        Case::Record.transaction do
+        @model = Case::Record.transaction do
           new_recipient = Recipient::Record.create!(
             first_name: first_name,
             last_name: last_name,
@@ -89,9 +89,16 @@ class Case
             supplier_id: supplier_id,
             enroller_id: enroller_id
           )
+
+          Case.from_record(new_case)
         end
 
         true
+      end
+
+      # -- queries --
+      def case_id
+        @model&.id
       end
     end
   end

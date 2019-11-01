@@ -7,6 +7,7 @@ help-column-width = 10
 tools-rb          = ./bin
 tools-rails       = $(tools-rb)/rails
 tools-spring      = $(tools-rb)/spring
+tools-sidekiq     = $(tools-rb)/sidekiq
 tools-wds         = $(tools-rb)/webpack-dev-server
 tools-bundle      = $(tools-rb)/bundle
 tools-yarn        = yarn
@@ -82,6 +83,11 @@ s/js:
 	$(tools-wds)
 .PHONY: s/dev
 
+## starts the sidekiq process
+s/sk:
+	$(tools-sidekiq) -c 1 -q default -q mailers
+.PHONY: s/dev
+
 # -- test --
 ## alias for t/unit
 test: t
@@ -111,7 +117,7 @@ t/a/rescue:
 .PHONY: t/dbg
 
 # -- test/helpers
-test-base     = $(tools-rails) test $$(find test/features test/infra -name "*_tests.rb")
+test-base     = $(tools-rails) test $$(find test/infra test/features test/web -name "*_tests.rb")
 test-base-all = $(tools-rails) test $$(find test -name "*_tests.rb")
 
 # -- utilties --

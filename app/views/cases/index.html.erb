@@ -7,7 +7,7 @@
       <p>No cases left!</p>
     <% else %>
       <% @cases.each do |kase| %>
-        <% policy.with_record(kase) do %>
+        <% policy.with_case(kase) do %>
           <li class="CaseCell">
             <div class="CaseCell-row">
               <%- name = kase.recipient.name %>
@@ -23,7 +23,7 @@
               </p>
             </div>
             <div class="CaseCell-row">
-              <% if @policy.permit?(:view_status) %>
+              <% if policy.permit?(:view_status) %>
                 <p class="CaseCell-status">
                   <%= kase.status.to_s.camelize %>
                 </p>
