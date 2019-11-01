@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
   layout("mailer")
-  default(from: ENV["MAILERS_SEND_AS"])
+  default(from: ENV["SEND_AS_EMAIL"])
 end
