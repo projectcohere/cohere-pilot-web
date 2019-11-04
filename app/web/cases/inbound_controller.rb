@@ -46,9 +46,9 @@ module Cases
         return
       end
 
-      note = Case::Notes::NewCase::Broadcast.new
+      note = Case::Notes::OpenedCase::Broadcast.new
       note.receiver_ids.each do |receiver_id|
-        InboundMailer.new_case(@form.case_id, receiver_id).deliver_later
+        InboundMailer.opened_case(@form.case_id, receiver_id).deliver_later
       end
 
       redirect_to(cases_inbound_index_path, notice: "Created case!")

@@ -4,8 +4,8 @@ module Cases
     helper_method(:case_scope)
 
     # -- actions --
-    def new_case(case_id, user_id)
-      @note = Case::Notes::NewCase.new(case_id, user_id)
+    def opened_case(case_id, user_id)
+      @note = Case::Notes::OpenedCase.new(case_id, user_id)
 
       mail(
         subject: @note.title,

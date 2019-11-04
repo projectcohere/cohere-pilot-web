@@ -1,6 +1,6 @@
 class Case
   module Notes
-    class NewCase
+    class OpenedCase
       def initialize(
         case_id,
         user_id,
@@ -46,7 +46,7 @@ class Case
 
         # -- broadcast/queries
         def receiver_ids
-          @users.find_for_new_case_notification.map(&:id)
+          @users.find_opened_case_contributors.map(&:id)
         end
       end
     end

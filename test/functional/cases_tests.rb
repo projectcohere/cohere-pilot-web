@@ -228,6 +228,28 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:alert])
   end
 
+  # -- edit/opened
+  test "can't edit an opened case if signed-out" do
+    kase = cases(:opened_1)
+    get("/cases/opened/#{kase.id}/edit")
+    assert_redirected_to("/sign-in")
+  end
+
+  test "can't edit an opened case without permission" do
+    user = users(:supplier_1)
+    kase = Case.from_record(cases(:submitted_1))
+    get(auth("/cases/opened/#{kase.id}/edit", as: user))
+    assert_redirected_to("/cases/inbound")
+  end
+
+  test "can edit an opened case with permission" do
+    user = users(:dhs_1)
+    kase = Case.from_record(cases(:opened_1))
+    get(auth("/cases/opened/#{kase.id}/edit", as: user))
+    assert_response(:success)
+    assert_select(".Main-title", text: /#{kase.recipient.name}/)
+  end
+
   test "can update an opened case" do
     user = users(:dhs_1)
     kase = Case.from_record(cases(:opened_1))

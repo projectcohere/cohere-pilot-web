@@ -10,7 +10,7 @@ class User
     end
 
     # -- queries/many
-    def find_for_new_case_notification
+    def find_opened_case_contributors
       records = User::Record
         .where(organization_type: [:cohere, :dhs])
 
