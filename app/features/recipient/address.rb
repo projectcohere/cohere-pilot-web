@@ -10,11 +10,13 @@ class Recipient
 
     # -- queries --
     def to_lines
-      [
+      lines = [
         "#{@street}",
         "#{@street2}",
         "#{@city}, #{@state} #{@zip}"
       ]
+
+      lines.select(&:present?)
     end
   end
 end
