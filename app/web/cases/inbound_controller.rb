@@ -26,21 +26,16 @@ module Cases
         deny_access
       end
 
-      @form = Case::Forms::Inbound.new(nil,
+      supplier_id = Current.user.organization.id
+
+      @form = Case::Forms::Inbound.new(nil, supplier_id,
         params
           .require(:case)
           .permit(Case::Forms::Inbound.attribute_names)
       )
 
-      # TODO: make form form responsible for fetching
-      # this information
-      # require that the user be a supplier right now
-      supplier = Current.user.organization
-      # and add every case to the default enroller
-      enroller = Enroller::Repo.new.find_default
-
       # render errors if form failed to save
-      if not @form.save(supplier.id, enroller.id)
+      if not @form.save
         flash.now[:alert] = "Please check the case for errors."
         render(:new)
         return

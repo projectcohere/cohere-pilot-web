@@ -10,7 +10,7 @@
         <% policy.with_case(kase) do %>
           <li class="CaseCell">
             <div class="CaseCell-row">
-              <%- name = kase.recipient.name %>
+              <%- name = kase.recipient.profile.name %>
               <% if policy.permit?(:edit) %>
                 <%= link_to(name, edit_case_path(kase), action: :edit, class: "CaseCell-name") %>
               <% else %>

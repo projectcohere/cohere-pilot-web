@@ -31,21 +31,29 @@ class Case
       )
 
       # -- lifetime --
-      def initialize(kase, attrs = {})
+      def initialize(
+        kase,
+        attrs = {},
+        cases: Case::Repo.new
+      )
+        # set dependencies
+        @cases = cases
+
+        # set underlying model(s)
         @model = kase
 
         # set initial values from case
         r = kase.recipient
         assign_defaults!(attrs, {
-          dhs_number: r.dhs_number
+          dhs_number: r.dhs_account&.number
         })
 
-        h = r.household
+        h = r.dhs_account&.household
         assign_defaults!(attrs, {
           household_size: h&.size,
-          income_history: h&.income_history&.map { |i|
+          income_history: h&.income&.map { |i|
             Income.new(
-              amount: i.amount
+              amount: i
             )
           }
         })
@@ -64,30 +72,40 @@ class Case
           return false
         end
 
-        if @model.record.nil? || @model.recipient.record.nil?
-          raise "case must be constructed from a db record!"
-        end
+        @model.attach_dhs_account(map_dhs_account)
+        @cases.save_dhs_account(@model)
 
-        @model.record.transaction do
-          household = @model.recipient.record.household
-          if household.nil?
-            household = Recipient::Household::Record.new
-          end
+        # @model.record.transaction do
+        #   household = @model.recipient.record.household
+        #   if household.nil?
+        #     household = Recipient::Household::Record.new
+        #   end
 
-          household.assign_attributes(
-            size: household_size,
-            income_history: income_history.map(&:attributes)
-          )
+        #   household.assign_attributes(
+        #     size: household_size,
+        #     income_history: income_history.map(&:attributes)
+        #   )
 
-          @model.recipient.record.update!(
-            dhs_number: dhs_number,
-            household: household
-          )
+        #   @model.recipient.record.update!(
+        #     dhs_number: dhs_number,
+        #     household: household
+        #   )
 
-          @model.record.pending!
-        end
+        #   @model.record.pending!
+        # end
 
         true
+      end
+
+      # -- commands/helpers
+      def map_dhs_account
+        Recipient::DhsAccount.new(
+          number: dhs_number,
+          household: Recipient::Household.new(
+            size: household_size,
+            income: income_history[0]&.amount
+          )
+        )
       end
 
       # -- queries --

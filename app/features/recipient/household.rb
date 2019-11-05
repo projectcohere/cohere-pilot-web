@@ -1,7 +1,7 @@
 class Recipient
   class Household < ::Value
     prop(:size)
-    prop(:income_history)
+    prop(:income)
     props_end!
   end
 end

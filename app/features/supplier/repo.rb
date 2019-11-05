@@ -1,10 +1,10 @@
-class Enroller
+class Supplier
   class Repo
     # -- queries --
     # -- queries/one
-    def find_default
-      record = Enroller::Record
-        .first
+    def find_one(id)
+      record = Supplier::Record
+        .find(id)
 
       entity_from(record)
     end
@@ -15,7 +15,7 @@ class Enroller
         return nil
       end
 
-      Enroller.from_record(record)
+      Supplier.from_record(record)
     end
 
     private def entities_from(records)

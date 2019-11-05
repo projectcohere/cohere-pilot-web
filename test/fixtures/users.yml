@@ -10,6 +10,12 @@ enroller_1:
   organization: enroller_1 (Enroller::Record)
   remember_token: "test-token"
 
+enroller_2:
+  email: me@testunited.org
+  encrypted_password: <%= password("password") %>
+  organization: enroller_2 (Enroller::Record)
+  remember_token: "test-token"
+
 supplier_1:
   email: me@testenergy.com
   encrypted_password: <%= password("password") %>

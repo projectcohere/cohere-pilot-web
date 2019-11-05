@@ -10,7 +10,8 @@
         <% policy.with_case(kase) do %>
           <li class="CaseCell">
             <div class="CaseCell-row">
-              <%= link_to(kase.recipient.name, cases_submitted_path(kase), class: "CaseCell-name") %>
+              <%- name = kase.recipient.profile.name %>
+              <%= link_to(name, cases_submitted_path(kase), class: "CaseCell-name") %>
             </div>
             <div class="CaseCell-row">
               <p class="CaseCell-organizations">

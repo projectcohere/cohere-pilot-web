@@ -16,7 +16,7 @@ class Recipient
         "#{@city}, #{@state} #{@zip}"
       ]
 
-      lines.select(&:present?)
+      lines.reject(&:blank?)
     end
   end
 end

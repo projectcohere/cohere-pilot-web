@@ -178,40 +178,27 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".Main-title", text: /#{kase.recipient.name}/)
   end
 
-  # -- edit/opened
-  test "can't edit an opened case if signed-out" do
-    kase = cases(:opened_1)
-    get("/cases/opened/#{kase.id}/edit")
-    assert_redirected_to("/sign-in")
-  end
-
-  test "can't edit an opened case without permission" do
-    user = users(:supplier_1)
-    kase = Case.from_record(cases(:submitted_1))
-    get(auth("/cases/opened/#{kase.id}/edit", as: user))
-    assert_redirected_to("/cases/inbound")
-  end
-
-  test "can edit an opened case with permission" do
-    user = users(:dhs_1)
-    kase = Case.from_record(cases(:opened_1))
-    get(auth("/cases/opened/#{kase.id}/edit", as: user))
-    assert_response(:success)
-    assert_select(".Main-title", text: /#{kase.recipient.name}/)
-  end
-
   test "can update a case" do
     user = users(:cohere_1)
     kase = cases(:pending_2)
 
     patch(auth("/cases/#{kase.id}", as: user), params: {
       case: {
+        status: :submitted,
         dhs_number: "1A2B3C"
       }
     })
 
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
+
+    # perform_enqueued_jobs(queue: :mailers)
+    # assert_emails(1)
+    # assert_select_email do
+    #   assert_select("a", text: /Janice Sample/) do |el|
+    #     assert_match(/http:\/\/localhost\:3000\/cases\/submitted\/\d+\/edit/, el[0][:href])
+    #   end
+    # end
   end
 
   test "show errors for an invalid case" do
@@ -252,7 +239,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "can update an opened case" do
     user = users(:dhs_1)
-    kase = Case.from_record(cases(:opened_1))
+    kase = Case::Repo.map_entity(cases(:opened_1))
 
     patch(auth("/cases/opened/#{kase.id}", as: user), params: {
       case: {

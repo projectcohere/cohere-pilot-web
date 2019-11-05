@@ -1,11 +1,11 @@
 class Case
   module Notes
-    class OpenedCase
+    class SubmittedCase
       def initialize(
         case_id,
         user_id,
-        users: User::Repo.new,
-        cases: Case::Repo.new
+        cases: Case::Repo.new,
+        users: User::Repo.new
       )
         # dependencies
         @users = users
@@ -18,7 +18,7 @@ class Case
 
       # -- queries --
       def title
-        "Cohere Pilot -- A new case was opened!"
+        "Cohere Pilot -- A case was submitted!"
       end
 
       # -- queries/entities
@@ -27,7 +27,7 @@ class Case
       end
 
       def recipient_name
-        @case.recipient.profile.name
+        self.case.recipient.name
       end
 
       def receiver
@@ -46,7 +46,7 @@ class Case
 
         # -- broadcast/queries
         def receiver_ids
-          @users.find_opened_case_contributors.map(&:id)
+          @users.find_submitted_case_contributors.map(&:id)
         end
       end
     end

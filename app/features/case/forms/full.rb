@@ -4,21 +4,41 @@ class Case
     class Full < ::Form
       use_entity_name!
 
-      # -- props --
-      prop(:case)
-
       # -- fields --
       field(:status, :string)
       fields_from(:inbound, Inbound)
       fields_from(:opened, Opened)
 
       # -- lifetime --
-      def initialize(kase, attrs = {})
+      def initialize(
+        kase,
+        attrs = {},
+        cases: Case::Repo.new,
+        suppliers: Supplier::Repo.new,
+        enrollers: Enroller::Repo.new
+      )
+        # set dependencies
+        @cases = cases
+        @suppliers = suppliers
+        @enrollers = enrollers
+
+        # set underlying model
         @model = kase
 
         # construct subforms
-        @inbound = Inbound.new(kase, attrs.slice(Inbound.attribute_names))
-        @opened = Opened.new(kase, attrs.slice(Opened.attribute_names))
+        @inbound = Inbound.new(
+          kase,
+          attrs.slice(Inbound.attribute_names),
+          cases: cases,
+          suppliers: suppliers,
+          enrollers: enrollers
+        )
+
+        @opened = Opened.new(
+          kase,
+          attrs.slice(Opened.attribute_names),
+          cases: cases
+        )
 
         # set initial values from case
         c = kase
@@ -31,79 +51,45 @@ class Case
 
       # -- commands --
       def save
-        context = nil
-        if status == "submitted"
-          context = :submitted
-        end
-
-        if not valid?(context)
+        if not valid?(submitted? ? :submitted : nil)
           return false
         end
 
-        if @model.record.nil? || @model.recipient.record.nil?
-          raise "case must be constructed from a db record!"
+        @model.update_supplier_account(inbound.map_supplier_account)
+        @model.update_recipient_profile(inbound.map_recipient_profile)
+        @model.attach_dhs_account(opened.map_dhs_account)
+
+        if submitted?
+          @model.submit()
         end
 
-        # TODO: need pattern for performing mutations through domain objects
-        # and then serializing and saving to db.
-        @model.record.transaction do
-          # update account
-          account = @model.recipient.record.account
-          if account.nil?
-            account = Recipient::Account::Record.new
-          end
-
-          account.assign_attributes(
-            number: account_number,
-            arrears: arrears
-          )
-
-          # update household
-          household = @model.recipient.record.household
-          if household.nil?
-            household = Recipient::Household::Record.new
-          end
-
-          household.assign_attributes(
-            size: household_size,
-            income_history: income_history.map(&:attributes)
-          )
-
-          # save recipient
-          @model.recipient.record.update!(
-            first_name: first_name,
-            last_name: last_name,
-            phone_number: phone_number,
-            street: street,
-            street2: street2,
-            city: city,
-            state: state,
-            zip: zip,
-            account: account,
-            dhs_number: dhs_number,
-            household: household
-          )
-
-          # save case
-          @model.record.update!(
-            status: status
-          )
-        end
+        @cases.save_all_fields(@model)
 
         true
       end
 
+      # -- commands/helpers
+      private def submitted?
+        status == "submitted"
+      end
+
       # -- queries --
       def name
-        @model.recipient.name
+        @model.recipient.profile.name
       end
 
       def enroller_name
-        @model.supplier.name
+        @enroller_name ||= begin
+          enroller = @enrollers.find_one(@model.enroller_id)
+          enroller.name
+        end
       end
 
       def supplier_name
-        @model.supplier.name
+        @supplier_name ||= begin
+          supplier = @suppliers.find_one(@model.supplier_id)
+          supplier.name
+        end
       end
 
       def documents

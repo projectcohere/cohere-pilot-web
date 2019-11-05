@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_29_161057) do
+ActiveRecord::Schema.define(version: 2019_11_05_164727) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -55,6 +55,8 @@ ActiveRecord::Schema.define(version: 2019_10_29_161057) do
     t.bigint "enroller_id", null: false
     t.integer "status", default: 0
     t.bigint "supplier_id", null: false
+    t.string "account_number", null: false
+    t.string "account_arrears", null: false
     t.index ["enroller_id"], name: "index_cases_on_enroller_id"
     t.index ["recipient_id"], name: "index_cases_on_recipient_id"
     t.index ["status"], name: "index_cases_on_status"
@@ -95,6 +97,8 @@ ActiveRecord::Schema.define(version: 2019_10_29_161057) do
     t.string "state", null: false
     t.string "zip", null: false
     t.string "dhs_number"
+    t.string "dhs_household_size"
+    t.string "dhs_household_income"
     t.index ["phone_number"], name: "index_recipients_on_phone_number", unique: true
   end
 

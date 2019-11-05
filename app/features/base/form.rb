@@ -1,13 +1,8 @@
 # A form model for an entity. It expects to be nested inside of the entity
 # as a namespace.
 class Form
-  # -- definition --
-  def self.prop(name)
-    attr_reader(name)
-  end
-
-  # -- props --
-  prop(:model)
+  # -- attrs --
+  attr(:model)
 
   # -- fields --
   def self.field(name, type, **validations)
@@ -33,8 +28,8 @@ class Form
     @subform_classes ||= []
     @subform_classes << form_class
 
-    # declare prop
-    prop(form_name)
+    # declare attr
+    attr(form_name)
 
     # delegate attributes to the child form
     field_getters = form_class.attribute_names
@@ -49,7 +44,7 @@ class Form
 
   # -- fields/types
   class ListField < ActiveModel::Type::Value
-    attr_reader(:form_type)
+    attr(:form_type)
 
     def initialize(form_type)
       @form_type = form_type

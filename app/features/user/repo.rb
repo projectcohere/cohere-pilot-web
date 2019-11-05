@@ -17,6 +17,16 @@ class User
       entities_from(records)
     end
 
+    def find_submitted_case_contributors(enroller_id)
+      records = User::Record
+        .where(
+          organization_type: Enroller::Record.name,
+          organization_id: enroller_id
+        )
+
+      entities_from(records)
+    end
+
     # -- helpers --
     private def entity_from(record)
       User.from_record(record)
