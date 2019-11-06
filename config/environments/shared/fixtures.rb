@@ -11,8 +11,6 @@ module Environment
       enrollers: "Enroller::Record",
       cases: "Case::Record",
       recipients: "Recipient::Record",
-      accounts: "Recipient::Account::Record",
-      households: "Recipient::Household::Record",
       documents: "Document::Record"
     }
 

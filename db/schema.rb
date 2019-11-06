@@ -10,21 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_06_163414) do
+ActiveRecord::Schema.define(version: 2019_11_06_203340) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "accounts", force: :cascade do |t|
-    t.bigint "supplier_id"
-    t.bigint "recipient_id"
-    t.string "number", null: false
-    t.string "arrears", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["recipient_id"], name: "index_accounts_on_recipient_id"
-    t.index ["supplier_id"], name: "index_accounts_on_supplier_id"
-  end
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -76,15 +65,6 @@ ActiveRecord::Schema.define(version: 2019_11_06_163414) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "households", force: :cascade do |t|
-    t.bigint "recipient_id"
-    t.string "size"
-    t.jsonb "income_history"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["recipient_id"], name: "index_households_on_recipient_id"
-  end
-
   create_table "recipients", force: :cascade do |t|
     t.string "first_name", null: false
     t.string "last_name", null: false
@@ -97,8 +77,8 @@ ActiveRecord::Schema.define(version: 2019_11_06_163414) do
     t.string "state", null: false
     t.string "zip", null: false
     t.string "dhs_number"
-    t.string "dhs_household_size"
-    t.string "dhs_household_income"
+    t.string "household_size"
+    t.string "household_income"
     t.index ["phone_number"], name: "index_recipients_on_phone_number", unique: true
   end
 

@@ -130,8 +130,8 @@ class Case
 
       record = kase.record.recipient
       assert_equal(record.dhs_number, "11111")
-      assert_equal(record.dhs_household_size, "3")
-      assert_equal(record.dhs_household_income, "$999")
+      assert_equal(record.household_size, "3")
+      assert_equal(record.household_income, "$999")
     end
 
     test "saves all fields" do

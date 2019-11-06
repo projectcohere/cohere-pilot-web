@@ -47,7 +47,7 @@ class Case
       records = Case::Record
         .where(completed_at: nil)
         .order(updated_at: :desc)
-        .includes(:supplier, :enroller, :documents, recipient: [:household, { account: :supplier }])
+        .includes(:supplier, :enroller, :documents, :recipient)
 
       entities_from(records)
     end
@@ -59,7 +59,7 @@ class Case
           status: [:submitted, :approved, :rejected]
         )
         .order(updated_at: :desc)
-        .includes(:supplier, :enroller, :documents, recipient: [:household, { account: :supplier }])
+        .includes(:supplier, :enroller, :documents, :recipient)
 
       entities_from(records)
     end
@@ -68,7 +68,7 @@ class Case
       records = Case::Record
         .where(status: [:opened, :pending])
         .order(updated_at: :desc)
-        .includes(:supplier, :enroller, :documents, recipient: [:household, { account: :supplier }])
+        .includes(:supplier, :enroller, :documents, :recipient)
 
       entities_from(records)
     end
@@ -188,8 +188,8 @@ class Case
 
       h = a.household
       recipient_record.assign_attributes(
-        dhs_household_size: a.household.size,
-        dhs_household_income: a.household.income
+        household_size: a.household.size,
+        household_income: a.household.income
       )
     end
 
@@ -234,8 +234,8 @@ class Case
         dhs_account: Recipient::DhsAccount.new(
           number: r.dhs_number,
           household: Recipient::Household.new(
-            size: r.dhs_household_size,
-            income: r.dhs_household_income
+            size: r.household_size,
+            income: r.household_income
           )
         )
       )
