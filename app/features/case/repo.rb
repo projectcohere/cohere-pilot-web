@@ -201,11 +201,11 @@ class Case
         status: r.status.to_sym,
         enroller_id: r.enroller_id,
         supplier_id: r.supplier_id,
-        recipient: map_recipient(r.recipient),
         account: Case::Account.new(
           number: r.account_number,
           arrears: r.account_arrears,
         ),
+        recipient: map_recipient(r.recipient),
         updated_at: r.updated_at,
         completed_at: r.completed_at
       )

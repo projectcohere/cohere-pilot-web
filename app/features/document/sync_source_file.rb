@@ -13,7 +13,7 @@ class Document
       @document = @documents.find_one(document_id)
       file = @download_file.(@document.source_url)
       @document.attach_file(file)
-      @documents.save_new_file(@document)
+      @documents.save_attached_file(@document)
     end
   end
 end

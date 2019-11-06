@@ -6,9 +6,9 @@ class Case < ::Entity
   prop(:id, default: nil)
   prop(:status)
   prop(:recipient)
+  prop(:account)
   prop(:enroller_id)
   prop(:supplier_id)
-  prop(:account)
   prop(:updated_at, default: nil)
   prop(:completed_at, default: nil)
 
@@ -45,12 +45,6 @@ class Case < ::Entity
     @recipient.attach_dhs_account(dhs_account)
   end
 
-  def upload_documents_from_message(message)
-    message.attachments.map do |attachment|
-      Document.new(case_id: id, source_url: attachment.url)
-    end
-  end
-
   def submit
     if not (@status == :opened || @status == :pending)
       return
@@ -59,9 +53,11 @@ class Case < ::Entity
     @status = :submitted
   end
 
-  # -- queries --
-  def new_documents
-    @documents.filter { |d| d.id.nil? }
+  # -- commands/factories
+  def upload_documents_from_message(message)
+    message.attachments.map do |attachment|
+      Document.new(case_id: id, source_url: attachment.url)
+    end
   end
 
   # -- events --

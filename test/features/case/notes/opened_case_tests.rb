@@ -5,25 +5,32 @@ class Case
   module Notes
     class OpenedCaseTests < ActiveSupport::TestCase
       test "has all message data" do
-        kase = Case.new(id: 1, recipient: nil, supplier: nil, enroller: nil, status: nil, updated_at: nil, completed_at: nil)
         cases = Minitest::Mock.new
-          .expect(:find_one, kase, [1])
+          .expect(
+            :find_one,
+            Case.new(status: :testing, account: nil, recipient: nil, supplier_id: nil, enroller_id: nil),
+            [1]
+          )
 
-        user = User.new(id: 2, email: nil, role: nil)
         users = Minitest::Mock.new
-          .expect(:find_one, user, [2])
+          .expect(
+            :find_one,
+            User.new(id: nil, email: "test@website.com", role: nil),
+            [2]
+          )
 
         note = OpenedCase.new(1, 2, users: users, cases: cases)
         assert_match(/opened/, note.title)
-        assert_equal(note.case, kase)
-        assert_equal(note.receiver, user)
+        assert_equal(note.case.status, :testing)
+        assert_equal(note.receiver.email, "test@website.com")
       end
 
       test "broadcasts to many users" do
         users = Minitest::Mock.new
-          .expect(:find_opened_case_contributors, [
-            User.new(id: 2, email: nil, role: nil),
-          ])
+          .expect(
+            :find_opened_case_contributors,
+            [User.new(id: 2, email: nil, role: nil)]
+          )
 
         broadcast = OpenedCase::Broadcast.new(users: users)
         assert_equal(broadcast.receiver_ids, [2])

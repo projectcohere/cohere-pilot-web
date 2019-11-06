@@ -69,7 +69,7 @@ class Case
             income: income
           )
         )
-    end
+      end
 
       # -- queries --
       def name

@@ -42,7 +42,7 @@ class Document
       end
     end
 
-    def save_new_file(document)
+    def save_attached_file(document)
       if document.record.nil?
         raise "unsaved document can't be updated with a new file!"
       end

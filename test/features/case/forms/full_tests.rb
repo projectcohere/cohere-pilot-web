@@ -4,7 +4,7 @@ class Case
   module Forms
     class FullTests < ActiveSupport::TestCase
       test "can be initialized from a case" do
-        kase = Case::from_record(cases(:pending_1))
+        kase = Case::Repo.map_record(cases(:pending_1))
 
         form = Full.new(kase)
         assert_present(form.dhs_number)
@@ -13,12 +13,11 @@ class Case
         assert_present(form.street)
         assert_present(form.account_number)
         assert_present(form.dhs_number)
-        assert_present(form.income_history)
-        assert_present(form.income_history[0].amount)
+        assert_present(form.income)
       end
 
       test "saves a case" do
-        kase = Case::from_record(cases(:pending_1))
+        kase = Case::Repo.map_record(cases(:pending_1))
         form = Full.new(kase)
         form.first_name = "Edith"
 
@@ -30,7 +29,7 @@ class Case
       end
 
       test "does not save an invalid case" do
-        kase = Case::from_record(cases(:pending_1))
+        kase = Case::Repo.map_record(cases(:pending_1))
         form = Full.new(kase)
         form.first_name = ""
 
@@ -40,7 +39,7 @@ class Case
       end
 
       test "saves a submitted case" do
-        kase = Case::from_record(cases(:pending_1))
+        kase = Case::Repo.map_record(cases(:pending_1))
         form = Full.new(kase)
         form.status = "submitted"
 
@@ -52,7 +51,7 @@ class Case
       end
 
       test "does not save an invalid submitted case" do
-        kase = Case::from_record(cases(:pending_1))
+        kase = Case::Repo.map_record(cases(:pending_1))
         form = Full.new(kase)
         form.status = "submitted"
         form.dhs_number = nil
