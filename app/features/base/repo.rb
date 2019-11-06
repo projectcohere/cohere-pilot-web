@@ -11,11 +11,13 @@ class Repo
 
     # evaluate and cache the result
     result = query.()
-    @cache[key] = result
+    if not key.nil?
+      @cache[key] = result
+    end
 
     # also cache the entities in the result by id
     if result.is_a?(Entity) && result.id != key
-      @cache[result.id] = entity
+      @cache[result.id] = result
     elsif result.respond_to?(:each)
       result.each do |entity|
         @cache[entity.id] = entity

@@ -16,6 +16,18 @@ class Supplier
       end
     end
 
+    # -- queries/many
+    def find_many(ids)
+      ids = ids.uniq
+
+      find_cached(ids.join(",")) do
+        records = Supplier::Record
+          .where(id: ids)
+
+        entities_from(records)
+      end
+    end
+
     # -- factories --
     def self.map_record(r)
       Supplier.new(

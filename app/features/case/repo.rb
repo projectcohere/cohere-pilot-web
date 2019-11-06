@@ -5,6 +5,14 @@ class Case
       Repo.new
     end
 
+    def initialize(
+      supplier_repo: Supplier::Repo.get,
+      enroller_repo: Enroller::Repo.get
+    )
+      @supplier_repo = supplier_repo
+      @enroller_repo = enroller_repo
+    end
+
     # -- queries --
     # -- queries/one
     def find(id)
@@ -47,7 +55,11 @@ class Case
       records = Case::Record
         .where(completed_at: nil)
         .order(updated_at: :desc)
-        .includes(:supplier, :enroller, :documents, :recipient)
+        .includes(:recipient)
+
+      # pre-fetch associations
+      @supplier_repo.find_many(records.map(&:supplier_id))
+      @enroller_repo.find_many(records.map(&:enroller_id))
 
       entities_from(records)
     end
@@ -59,7 +71,11 @@ class Case
           status: [:submitted, :approved, :rejected]
         )
         .order(updated_at: :desc)
-        .includes(:supplier, :enroller, :documents, :recipient)
+        .includes(:recipient)
+
+      # pre-fetch associations
+      @enroller_repo.find(enroller_id)
+      @supplier_repo.find_many(records.map(&:supplier_id))
 
       entities_from(records)
     end
@@ -68,7 +84,7 @@ class Case
       records = Case::Record
         .where(status: [:opened, :pending])
         .order(updated_at: :desc)
-        .includes(:supplier, :enroller, :documents, :recipient)
+        .includes(:recipient)
 
       entities_from(records)
     end

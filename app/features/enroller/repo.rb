@@ -17,10 +17,24 @@ class Enroller
     end
 
     def find_default
-      record = Enroller::Record
-        .first
+      find_cached(:default) do
+        record = Enroller::Record
+          .first
 
-      entity_from(record)
+        entity_from(record)
+      end
+    end
+
+    # -- queries/many
+    def find_many(ids)
+      ids = ids.uniq
+
+      find_cached(ids.join(",")) do
+        records = Enroller::Record
+          .where(id: ids)
+
+        entities_from(records)
+      end
     end
 
     # -- factories --
