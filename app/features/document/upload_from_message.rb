@@ -16,7 +16,7 @@ class Document
       message = @decode_message.(data)
       message_phone_number = message.sender.phone_number
 
-      kase = @case_repo.find_one_by_phone_number(message_phone_number)
+      kase = @case_repo.find_by_phone_number(message_phone_number)
       if kase.nil?
         raise "No case found for phone number #{message_phone_number}"
       end

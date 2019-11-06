@@ -86,7 +86,7 @@ class Case
 
         # open a new case for the recipient
         enroller = @enrollers.find_default()
-        supplier = @suppliers.find_one(@supplier_id)
+        supplier = @suppliers.find(@supplier_id)
 
         new_case = supplier.open_case(enroller,
           account: map_supplier_account,

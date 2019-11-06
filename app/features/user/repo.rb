@@ -7,7 +7,7 @@ class User
 
     # -- queries --
     # -- queries/one
-    def find_one(id)
+    def find(id)
       record = User::Record
         .find(id)
 
@@ -15,14 +15,14 @@ class User
     end
 
     # -- queries/many
-    def find_opened_case_contributors
+    def find_all_opened_case_contributors
       records = User::Record
         .where(organization_type: [:cohere, :dhs])
 
       entities_from(records)
     end
 
-    def find_submitted_case_contributors(enroller_id)
+    def find_all_submitted_case_contributors(enroller_id)
       records = User::Record
         .where(
           organization_type: Enroller::Record.name,

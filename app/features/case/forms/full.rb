@@ -77,15 +77,15 @@ class Case
       end
 
       def enroller_name
-        @enrollers.find_one(@model.enroller_id).name
+        @enrollers.find(@model.enroller_id).name
       end
 
       def supplier_name
-        @suppliers.find_one(@model.supplier_id).name
+        @suppliers.find(@model.supplier_id).name
       end
 
       def documents
-        @documents.find_for_case(@model.id)
+        @documents.find_all_for_case(@model.id)
       end
 
       def statuses

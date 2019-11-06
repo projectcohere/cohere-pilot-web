@@ -58,16 +58,16 @@ module Cases
 
     # -- queries/documents
     def documents
-      @documents.find_for_case(@case.id)
+      @documents.find_all_for_case(@case.id)
     end
 
     # -- queries/associations
     def supplier_name
-      @suppliers.find_one(@case.supplier_id).name
+      @suppliers.find(@case.supplier_id).name
     end
 
     def enroller_name
-      @enrollers.find_one(@case.enroller_id).name
+      @enrollers.find(@case.enroller_id).name
     end
 
     # -- queries/timestamps

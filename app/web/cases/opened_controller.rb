@@ -12,12 +12,12 @@ module Cases
         deny_access
       end
 
-      @cases = Case::Repo.get.find_opened
+      @cases = Case::Repo.get.find_all_opened
     end
 
     def edit
       repo = Case::Repo.get
-      kase = repo.find_one_opened(params[:id])
+      kase = repo.find_opened(params[:id])
 
       policy.case = kase
       if policy.forbid?(:edit)
@@ -29,7 +29,7 @@ module Cases
 
     def update
       repo = Case::Repo.get
-      kase = repo.find_one_opened(params[:id])
+      kase = repo.find_opened(params[:id])
 
       policy.case = kase
       if policy.forbid?(:edit)

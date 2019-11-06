@@ -28,7 +28,7 @@ class Case
 
         suppliers = Minitest::Mock.new
           .expect(
-            :find_one,
+            :find,
             Supplier.new(id: "supplier-id", name: nil),
             [13]
           )

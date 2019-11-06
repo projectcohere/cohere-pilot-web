@@ -11,11 +11,11 @@ class CasesController < ApplicationController
       deny_access
     end
 
-    @cases = Case::Repo.get.find_incomplete
+    @cases = Case::Repo.get.find_all_incomplete
   end
 
   def edit
-    kase = Case::Repo.get.find_one(params[:id])
+    kase = Case::Repo.get.find(params[:id])
 
     policy.case = kase
     if policy.forbid?(:edit)
@@ -26,7 +26,7 @@ class CasesController < ApplicationController
   end
 
   def update
-    kase = Case::Repo.get.find_one(params[:id])
+    kase = Case::Repo.get.find(params[:id])
 
     policy.case = kase
     if policy.forbid?(:edit)

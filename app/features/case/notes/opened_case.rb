@@ -23,7 +23,7 @@ class Case
 
       # -- queries/entities
       def case
-        @case ||= @cases.find_one(@case_id)
+        @case ||= @cases.find(@case_id)
       end
 
       def recipient_name
@@ -31,7 +31,7 @@ class Case
       end
 
       def receiver
-        @receiver ||= @users.find_one(@user_id)
+        @receiver ||= @users.find(@user_id)
       end
 
       def receiver_email
@@ -46,7 +46,7 @@ class Case
 
         # -- broadcast/queries
         def receiver_ids
-          @users.find_opened_case_contributors.map(&:id)
+          @users.find_all_opened_case_contributors.map(&:id)
         end
       end
     end

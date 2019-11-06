@@ -7,7 +7,7 @@ class Supplier
 
     # -- queries --
     # -- queries/one
-    def find_one(id)
+    def find(id)
       find_cached(id) do
         record = Supplier::Record
           .find(id)

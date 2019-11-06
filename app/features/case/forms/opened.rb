@@ -81,7 +81,7 @@ class Case
       end
 
       def documents
-        @documents.find_for_case(@model.id)
+        @documents.find_all_for_case(@model.id)
       end
     end
   end

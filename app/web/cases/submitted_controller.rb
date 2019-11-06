@@ -12,13 +12,13 @@ module Cases
         deny_access
       end
 
-      @cases = Case::Repo.get.find_for_enroller(
+      @cases = Case::Repo.get.find_all_for_enroller(
         Current.user.organization.id
       )
     end
 
     def show
-      @case = Case::Repo.get.find_one_for_enroller(
+      @case = Case::Repo.get.find_for_enroller(
         params[:id],
         Current.user.organization.id
       )

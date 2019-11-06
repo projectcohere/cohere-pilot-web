@@ -7,7 +7,7 @@ class Document
 
     # -- queries --
     # -- queries/one
-    def find_one(id)
+    def find(id)
       find_cached(id) do
         record = Document::Record
           .find(id)
@@ -16,7 +16,7 @@ class Document
       end
     end
 
-    def find_for_case(case_id)
+    def find_all_for_case(case_id)
       find_cached("case=#{case_id}") do
         records = Document::Record
           .where(case_id: case_id)

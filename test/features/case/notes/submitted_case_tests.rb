@@ -7,14 +7,14 @@ class Case
       test "has all message data" do
         cases = Minitest::Mock.new
           .expect(
-            :find_one,
+            :find,
             Case.new(status: :testing, account: nil, recipient: nil, supplier_id: nil, enroller_id: nil),
             [1]
           )
 
         users = Minitest::Mock.new
           .expect(
-            :find_one,
+            :find,
             User.new(id: nil, email: "test@website.com", role: nil),
             [2]
           )
@@ -36,7 +36,7 @@ class Case
 
         users = Minitest::Mock.new
           .expect(
-            :find_submitted_case_contributors,
+            :find_all_submitted_case_contributors,
             [User.new(id: 2, email: nil, role: nil)],
             [7]
           )

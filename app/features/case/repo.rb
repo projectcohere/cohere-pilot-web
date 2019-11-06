@@ -7,14 +7,14 @@ class Case
 
     # -- queries --
     # -- queries/one
-    def find_one(id)
+    def find(id)
       record = Case::Record
         .find(id)
 
       entity_from(record)
     end
 
-    def find_one_by_phone_number(phone_number)
+    def find_by_phone_number(phone_number)
       record = Case::Record
         .includes(:recipient)
         .references(:recipients)
@@ -23,7 +23,7 @@ class Case
       entity_from(record)
     end
 
-    def find_one_for_enroller(id, enroller_id)
+    def find_for_enroller(id, enroller_id)
       record = Case::Record
         .where(
           enroller_id: enroller_id,
@@ -34,7 +34,7 @@ class Case
       entity_from(record)
     end
 
-    def find_one_opened(id)
+    def find_opened(id)
       record = Case::Record
         .where(status: [:opened, :pending])
         .find(id)
@@ -43,7 +43,7 @@ class Case
     end
 
     # -- queries/many
-    def find_incomplete
+    def find_all_incomplete
       records = Case::Record
         .where(completed_at: nil)
         .order(updated_at: :desc)
@@ -52,7 +52,7 @@ class Case
       entities_from(records)
     end
 
-    def find_for_enroller(enroller_id)
+    def find_all_for_enroller(enroller_id)
       records = Case::Record
         .where(
           enroller_id: enroller_id,
@@ -64,7 +64,7 @@ class Case
       entities_from(records)
     end
 
-    def find_opened
+    def find_all_opened
       records = Case::Record
         .where(status: [:opened, :pending])
         .order(updated_at: :desc)
