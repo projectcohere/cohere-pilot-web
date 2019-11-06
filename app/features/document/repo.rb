@@ -1,5 +1,5 @@
 class Document
-  class Repo
+  class Repo < ::Repo
     # -- lifetime --
     def self.get
       Repos.documents ||= Repo.new
@@ -57,42 +57,6 @@ class Document
         filename: new_file.name,
         content_type: new_file.mime_type
       )
-    end
-
-    # -- helpers --
-    private def entity_from(record)
-      record.nil? ? nil : Repo.map_record(record)
-    end
-
-    private def entities_from(records)
-      records.map do |record|
-        entity_from(record)
-      end
-    end
-
-    private def find_cached(key, &find)
-      @cache ||= {}
-
-      # check for a cache hit
-      hit = @cache[key]
-      if not hit.nil?
-        return hit
-      end
-
-      # evaluate and cache the result
-      result = find.()
-      @cache[key] = result
-
-      # also cache the entities in the result by id
-      if result.is_a?(Entity) && result.id != key
-        @cache[result.id] = entity
-      elsif result.respond_to?(:each)
-        result.each do |entity|
-          @cache[entity.id] = entity
-        end
-      end
-
-      result
     end
 
     # -- factories --

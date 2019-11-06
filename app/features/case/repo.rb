@@ -1,5 +1,5 @@
 class Case
-  class Repo
+  class Repo < ::Repo
     # -- lifetime --
     def self.get
       Repo.new
@@ -138,9 +138,6 @@ class Case
       end
     end
 
-    def save_uploaded_documents(kase)
-    end
-
     # -- commands/helpers
     private def assign_status(kase, case_record)
       c = kase
@@ -196,17 +193,6 @@ class Case
       )
     end
 
-    # -- helpers --
-    private def entity_from(record)
-      record.nil? ? nil : Repo.map_record(record)
-    end
-
-    private def entities_from(records)
-      records.map do |record|
-        entity_from(record)
-      end
-    end
-
     # -- factories --
     def self.map_record(r)
       Case.new(
@@ -254,34 +240,5 @@ class Case
         )
       )
     end
-
-    #   # -- queries --
-    # # -- queries/one
-    # def find_one(id)
-    #   record = Recipient::Record
-    #     .find(id)
-
-    #   entity_from(record)
-    # end
-
-    # # -- commands --
-    # def save_new_documents(recipient)
-    #   if recipient.record.nil?
-    #     raise "unsaved recipient can't be updated with new doucments!"
-    #   end
-
-    #   documents = recipient.new_documents
-    #   if documents.empty?
-    #     return
-    #   end
-
-    #   records = recipient.record.documents.create!(documents.map { |d|
-    #     { source_url: d.source_url }
-    #   })
-
-    #   records.each_with_index do |r, i|
-    #     documents[i].did_save(r)
-    #   end
-    # end
   end
 end

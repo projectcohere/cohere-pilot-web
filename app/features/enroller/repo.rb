@@ -1,5 +1,5 @@
 class Enroller
-  class Repo
+  class Repo < ::Repo
     # -- lifetime --
     def self.get
       Repos.enrollers ||= Repo.new
@@ -21,28 +21,6 @@ class Enroller
         .first
 
       entity_from(record)
-    end
-
-    # -- helpers --
-    private def entity_from(record)
-      record.nil? ? nil : Repo.map_record(record)
-    end
-
-    private def entities_from(records)
-      records.map do |record|
-        entity_from(record)
-      end
-    end
-
-    private def find_cached(key, &find)
-      @cache ||= {}
-
-      hit = @cache[key]
-      if not hit.nil?
-        return hit
-      end
-
-      @cache[key] = find.()
     end
 
     # -- factories --
