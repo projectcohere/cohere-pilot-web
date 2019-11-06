@@ -12,7 +12,7 @@ class Recipient
     end
 
     test "saves new documents" do
-      recipient = Recipient.from_record(recipients(:recipient_1))
+      recipient = Recipient::Repo.map_record(recipients(:recipient_1))
       recipient.documents << Recipient::Document.new(
         source_url: Faker::Internet.url
       )

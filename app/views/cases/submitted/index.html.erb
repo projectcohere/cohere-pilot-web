@@ -7,18 +7,18 @@
       <p>No cases left!</p>
     <% else %>
       <% @cases.each do |kase| %>
+        <%- view = Cases::View.new(kase) %>
         <% policy.with_case(kase) do %>
           <li class="CaseCell">
             <div class="CaseCell-row">
-              <%- name = kase.recipient.profile.name %>
-              <%= link_to(name, cases_submitted_path(kase), class: "CaseCell-name") %>
+              <%= link_to(view.recipient_name, cases_submitted_path(kase), class: "CaseCell-name") %>
             </div>
             <div class="CaseCell-row">
               <p class="CaseCell-organizations">
-                <%= kase.supplier.name %>
+                <%= view.supplier_name %>
               </p>
               <p class="CaseCell-updateTime">
-                Updated <%= time_ago_in_words(kase.updated_at) %> ago
+                Updated <%= time_ago_in_words(view.updated_at) %> ago
               </p>
             </div>
           </li>

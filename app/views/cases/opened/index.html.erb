@@ -7,24 +7,24 @@
       <p>No cases left!</p>
     <% else %>
       <% @cases.each do |kase| %>
+        <%- view = Cases::View.new(kase) %>
         <% policy.with_case(kase) do %>
           <li class="CaseCell">
             <div class="CaseCell-row">
-              <%- name = kase.recipient.name %>
               <% if policy.permit?(:edit) %>
-                <%= link_to(name, edit_cases_opened_path(kase), action: :edit, class: "CaseCell-name") %>
+                <%= link_to(view.recipient_name, edit_cases_opened_path(kase), action: :edit, class: "CaseCell-name") %>
               <% else %>
-                <p class="CaseCell-name"><%= name %></p>
+                <p class="CaseCell-name"><%= view.recipient_name %></p>
               <% end %>
             </div>
             <div class="CaseCell-row">
               <% if policy.permit?(:view_status) %>
                 <p class="CaseCell-status">
-                  <%= kase.status.to_s.camelize %>
+                  <%= view.status %>
                 </p>
               <% end %>
               <p class="CaseCell-updateTime">
-                Updated <%= time_ago_in_words(kase.updated_at) %> ago
+                Updated <%= time_ago_in_words(view.updated_at) %> ago
               </p>
             </div>
           </li>

@@ -30,7 +30,17 @@ class Recipient
 
       # -- helpers --
       private def entity_from(record)
-        Document.from_record(record)
+        record.nil? ? nil : Repo.map_record(record)
+      end
+
+      # -- factories --
+      def self.map_record(r)
+        Document.new(
+          record: r,
+          id: r.id,
+          file: r.file,
+          source_url: r.source_url
+        )
       end
     end
   end

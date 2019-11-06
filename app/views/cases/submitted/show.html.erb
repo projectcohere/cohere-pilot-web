@@ -1,7 +1,7 @@
 <main class="Main">
-  <%- recipient = @case.recipient %></p>
+  <%- view = Cases::View.new(@case) %>
   <h1 class="Main-title">
-    <%= recipient.name %>'s case
+    <%= view.recipient_name %>'s case
   </h1>
 
   <div class ="ShowCase">
@@ -13,7 +13,7 @@
             Phone #
           </span>
           <p class="DetailField-text">
-            <%= recipient.phone_number %>
+            <%= view.phone_number %>
           </p>
         </label>
         <label class="ShowCase-address DetailField">
@@ -21,7 +21,7 @@
             Primary Residential Address
           </span>
           <p class="DetailField-text">
-            <% recipient.address.to_lines.each do |line| %>
+            <% view.address.each do |line| %>
               <%= line %>
               <br>
             <% end %>
@@ -30,14 +30,13 @@
       </section>
 
       <section class="ShowCase-utilityAccount Detail-section">
-        <%- account = recipient.account %>
         <h1><span>Utility Account</span></h1>
         <label class="ShowCase-supplier DetailField">
           <span class="DetailField-hint">
             Supplier
           </span>
           <p class="DetailField-text">
-            <%= account.supplier.name %>
+            <%= view.supplier_name %>
           </p>
         </label>
         <label class="ShowCase-accountNumber DetailField">
@@ -45,7 +44,7 @@
             Account #
           </span>
           <p class="DetailField-text">
-            <%= account.number %>
+            <%= view.account_number %>
           </p>
         </label>
         <label class="ShowCase-arrears DetailField">
@@ -53,7 +52,7 @@
             Arrears
           </span>
           <p class="DetailField-text">
-            <%= account.arrears %>
+            <%= view.account_arrears %>
           </p>
         </label>
       </section>
@@ -65,20 +64,19 @@
             Case #
           </span>
           <p class="DetailField-text">
-            <%= recipient.dhs_number %>
+            <%= view.dhs_number %>
           </p>
         </label>
       </section>
 
       <section class="ShowCase-household Detail-section">
-        <%- household = recipient.household %>
         <h1><span>Household</span></h1>
         <label class="ShowCase-householdSize DetailField">
           <span class="DetailField-hint">
             Size
           </span>
           <p class="DetailField-text">
-            <%= household.size %>
+            <%= view.household_size %>
           </p>
         </label>
         <label class="ShowCase-monthlyIncome DetailField">
@@ -86,7 +84,7 @@
             Monthly Income
           </span>
           <p class="DetailField-text">
-            <%= household.income_history[0].amount %>
+            <%= view.household_income %>
           </p>
         </label>
       </section>
@@ -94,10 +92,10 @@
     <section class="CaseDocuments">
       <h1>Documents</h1>
       <ul class="CaseDocuments-list">
-        <% if recipient.documents.blank? %>
+        <% if view.documents.blank? %>
           <p>This case has no documents yet.</p>
         <% else %>
-          <% recipient.documents.each do |d| %>
+          <% view.documents.each do |d| %>
             <li class="CaseDocument">
               <%- file_url = d.file.attached? ? url_for(d.file) : nil %>
               <% if file_url.nil? %>

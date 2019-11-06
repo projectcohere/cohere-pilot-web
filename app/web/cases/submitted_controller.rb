@@ -12,17 +12,16 @@ module Cases
         deny_access
       end
 
-      user = Current.user
-      repo = Case::Repo.new
-
-      @cases = repo.find_for_enroller(user.organization.id)
+      @cases = Case::Repo.get.find_for_enroller(
+        Current.user.organization.id
+      )
     end
 
     def show
-      user = Current.user
-      repo = Case::Repo.new
-
-      @case = repo.find_one_for_enroller(params[:id], user.organization.id)
+      @case = Case::Repo.get.find_one_for_enroller(
+        params[:id],
+        Current.user.organization.id
+      )
 
       policy.case = @case
       if policy.forbid?(:view)

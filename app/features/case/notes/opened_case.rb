@@ -5,7 +5,7 @@ class Case
         case_id,
         user_id,
         users: User::Repo.new,
-        cases: Case::Repo.new
+        cases: Case::Repo.get
       )
         # dependencies
         @users = users

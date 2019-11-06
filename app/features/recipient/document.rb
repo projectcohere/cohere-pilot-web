@@ -29,15 +29,5 @@ class Recipient
       @record = record
       @id = record.id
     end
-
-    # -- factories --
-    def self.from_record(r)
-      Document.new(
-        record: r,
-        id: r.id,
-        file: r.file,
-        source_url: r.source_url
-      )
-    end
   end
 end

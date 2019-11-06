@@ -1,5 +1,10 @@
 class Case
   class Repo
+    # -- lifetime --
+    def self.get
+      Repo.new
+    end
+
     # -- queries --
     # -- queries/one
     def find_one(id)
@@ -181,7 +186,7 @@ class Case
 
     # -- helpers --
     private def entity_from(record)
-      record.nil? ? nil : Repo.map_entity(record)
+      record.nil? ? nil : Repo.map_record(record)
     end
 
     private def entities_from(records)
@@ -191,7 +196,7 @@ class Case
     end
 
     # -- factories --
-    def self.map_entity(r)
+    def self.map_record(r)
       Case.new(
         record: r,
         id: r.id,
@@ -230,15 +235,13 @@ class Case
         ),
         dhs_account: Recipient::DhsAccount.new(
           number: r.dhs_number,
-          household: r.household&.then { |h|
-            Recipient::Household.new(
-              size: h.size,
-              income: h.income_history[0]&.[](:amount)
-            )
-          }
+          household: Recipient::Household.new(
+            size: r.dhs_household_size,
+            income: r.dhs_household_income
+          )
         ),
         documents: r.documents.map { |d|
-          Recipient::Document::from_record(d)
+          Recipient::Document::Repo.map_record(d)
         }
       )
     end

@@ -14,7 +14,7 @@ module Authentication
   # by clearance
   def build_user
     if not current_user.nil?
-      Current.user = User::from_record(current_user)
+      Current.user = User::Repo.map_record(current_user)
     end
   end
 

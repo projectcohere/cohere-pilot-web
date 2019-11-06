@@ -10,7 +10,7 @@ class User
     end
 
     test "finds enrollers for a submitted case" do
-      enroller = Enroller.from_record(enrollers(:enroller_1))
+      enroller = Enroller::Repo.map_record(enrollers(:enroller_1))
       repo = User::Repo.new
       users = repo.find_submitted_case_contributors(enroller.id)
       assert_length(users, 1)

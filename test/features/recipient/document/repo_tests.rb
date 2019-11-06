@@ -4,7 +4,7 @@ class Recipient
   class Document
     class RepoTests < ActiveSupport::TestCase
       test "saves a new file" do
-        document = Recipient::Document.from_record(documents(:document_2_2))
+        document = Recipient::Document::Repo.map_record(documents(:document_2_2))
         document.attach_file(FileData.new(
           data: StringIO.new("test-data"),
           name: "test.txt",

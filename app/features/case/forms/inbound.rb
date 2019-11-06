@@ -28,9 +28,9 @@ class Case
         kase = nil,
         supplier_id = nil,
         attrs = {},
-        cases: Case::Repo.new,
-        suppliers: Supplier::Repo.new,
-        enrollers: Enroller::Repo.new
+        cases: Case::Repo.get,
+        suppliers: Supplier::Repo.get,
+        enrollers: Enroller::Repo.get
       )
         # set dependencies
         @cases = cases

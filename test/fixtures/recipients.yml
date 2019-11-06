@@ -19,6 +19,8 @@ recipient_2:
   state: Sample Carolina
   zip: 44444
   dhs_number: 88888
+  dhs_household_size: 3
+  dhs_household_income: "$300"
 
 recipient_3:
   first_name: Danice
@@ -30,3 +32,5 @@ recipient_3:
   state: Sample Dakota
   zip: 22222
   dhs_number: null
+  dhs_household_size: 2
+  dhs_household_income: "$400"

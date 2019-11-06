@@ -13,9 +13,9 @@ class Case
       def initialize(
         kase,
         attrs = {},
-        cases: Case::Repo.new,
-        suppliers: Supplier::Repo.new,
-        enrollers: Enroller::Repo.new
+        cases: Case::Repo.get,
+        suppliers: Supplier::Repo.get,
+        enrollers: Enroller::Repo.get
       )
         # set dependencies
         @cases = cases
@@ -28,16 +28,12 @@ class Case
         # construct subforms
         @inbound = Inbound.new(
           kase,
-          attrs.slice(Inbound.attribute_names),
-          cases: cases,
-          suppliers: suppliers,
-          enrollers: enrollers
+          attrs.slice(Inbound.attribute_names)
         )
 
         @opened = Opened.new(
           kase,
-          attrs.slice(Opened.attribute_names),
-          cases: cases
+          attrs.slice(Opened.attribute_names)
         )
 
         # set initial values from case
@@ -79,17 +75,11 @@ class Case
       end
 
       def enroller_name
-        @enroller_name ||= begin
-          enroller = @enrollers.find_one(@model.enroller_id)
-          enroller.name
-        end
+        @enrollers.find_one(@model.enroller_id).name
       end
 
       def supplier_name
-        @supplier_name ||= begin
-          supplier = @suppliers.find_one(@model.supplier_id)
-          supplier.name
-        end
+        @suppliers.find_one(@model.supplier_id).name
       end
 
       def documents

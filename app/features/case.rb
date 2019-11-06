@@ -53,23 +53,14 @@ class Case < ::Entity
     status = :submitted
   end
 
+  # -- queries --
+  def recipient_name
+    @recipient.profile.name
+  end
+
   # -- events --
   def did_save(record)
     @record = record
     @id = record.id
-  end
-
-  # -- factories --
-  def self.from_record(r)
-    Case.new(
-      record: r,
-      id: r.id,
-      recipient: Recipient.from_record(r.recipient),
-      supplier: Supplier.from_record(r.supplier),
-      enroller: Enroller.from_record(r.enroller),
-      status: r.status.to_sym,
-      updated_at: r.updated_at,
-      completed_at: r.completed_at
-    )
   end
 end

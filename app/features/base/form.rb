@@ -173,8 +173,9 @@ class Form
   # a version of with_defaults! that overwrites nils
   def assign_defaults!(attrs, defaults)
     defaults.each do |key, value|
+      key = key.to_s
       if attrs[key].nil?
-        attrs[key] = defaults[key]
+        attrs[key] = value
       end
     end
   end

@@ -13,11 +13,4 @@ class Supplier < ::Entity
       supplier: self
     )
   end
-
-  def self.from_record(r)
-    Supplier.new(
-      id: r.id,
-      name: r.name
-    )
-  end
 end

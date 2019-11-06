@@ -1,16 +1,5 @@
 class Case
   module Forms
-    # A form object for an income history row
-    class Income < ::Form
-      # -- fields --
-      field(:amount, :string,
-        on: { submitted: { presence: true } }
-      )
-
-      # deprecated: month is not used right now
-      field(:month, :string)
-    end
-
     # A form object for household case info
     class Opened < ::Form
       use_entity_name!
@@ -26,15 +15,15 @@ class Case
         on: { submitted: { presence: true } }
       )
 
-      field(:income_history, ListField.new(Income),
-        on: { submitted: { presence: true, list: true } }
+      field(:income, :string,
+        on: { submitted: { presence: true } }
       )
 
       # -- lifetime --
       def initialize(
         kase,
         attrs = {},
-        cases: Case::Repo.new
+        cases: Case::Repo.get
       )
         # set dependencies
         @cases = cases
@@ -51,16 +40,7 @@ class Case
         h = r.dhs_account&.household
         assign_defaults!(attrs, {
           household_size: h&.size,
-          income_history: h&.income&.map { |i|
-            Income.new(
-              amount: i
-            )
-          }
-        })
-
-        # stub income history if necessary
-        assign_defaults!(attrs, {
-          income_history: [Income.new]
+          income: h&.income
         })
 
         super(attrs)
@@ -75,25 +55,6 @@ class Case
         @model.attach_dhs_account(map_dhs_account)
         @cases.save_dhs_account(@model)
 
-        # @model.record.transaction do
-        #   household = @model.recipient.record.household
-        #   if household.nil?
-        #     household = Recipient::Household::Record.new
-        #   end
-
-        #   household.assign_attributes(
-        #     size: household_size,
-        #     income_history: income_history.map(&:attributes)
-        #   )
-
-        #   @model.recipient.record.update!(
-        #     dhs_number: dhs_number,
-        #     household: household
-        #   )
-
-        #   @model.record.pending!
-        # end
-
         true
       end
 
@@ -103,18 +64,18 @@ class Case
           number: dhs_number,
           household: Recipient::Household.new(
             size: household_size,
-            income: income_history[0]&.amount
+            income: income
           )
         )
-      end
+    end
 
       # -- queries --
       def name
-        @model.recipient.name
+        @model.recipient.profile.name
       end
 
       def address
-        @model.recipient.address.to_lines
+        @model.recipient.profile.address.to_lines
       end
 
       def documents

@@ -4,7 +4,7 @@ class Case
       def initialize(
         case_id,
         user_id,
-        cases: Case::Repo.new,
+        cases: Case::Repo.get,
         users: User::Repo.new
       )
         # dependencies

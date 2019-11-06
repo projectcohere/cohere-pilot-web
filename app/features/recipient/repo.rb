@@ -17,43 +17,6 @@ class Recipient
     end
 
     # -- commands --
-    def save_registered(recipient)
-      # create or update the db record
-      record = recipient.record
-      if record.nil?
-        record = Recipient::Record.new
-      end
-
-      # write to the record
-      recipient.profile.tap do |p|
-        record.assign_attributes(
-          phone_number: p.phone.number,
-        )
-      end
-
-      recipient.profile.name.tap do |n|
-        record.assign_attributes(
-          first_name: n.first,
-          last_name: n.last,
-        )
-      end
-
-      recipient.profile.address.tap do |a|
-        record.assign_attributes(
-          street: a.street,
-          street2: a.street2,
-          city: a.city,
-          state: a.state,
-          zip: a.zip
-        )
-      end
-
-      record.save!
-
-      # send save events back to the domain object
-      recipient.did_save(record)
-    end
-
     def save_new_documents(recipient)
       if recipient.record.nil?
         raise "unsaved recipient can't be updated with new doucments!"
@@ -75,7 +38,7 @@ class Recipient
 
     # -- helpers --
     private def entity_from(record)
-      record.nil? ? nil : Repo.map_entity(record)
+      record.nil? ? nil : Repo.map_record(record)
     end
 
     private def entities_from(records)
@@ -85,7 +48,7 @@ class Recipient
     end
 
     # -- factories --
-    def self.map_entity(r)
+    def self.map_record(r)
       Recipient.new(
         record: r,
         id: r.id,
@@ -117,7 +80,7 @@ class Recipient
           }
         ),
         documents: r.documents.map { |d|
-          Document::from_record(d)
+          Document::Repo.map_record(d)
         }
       )
     end

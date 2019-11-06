@@ -20,27 +20,19 @@ class Case
 
       test "can be initialized from params" do
         kase = Case::from_record(cases(:opened_1))
-        case_params = {
+        form = Opened.new(kase, {
           dhs_number: "11111",
           household_size: "5",
-          income_history: {
-            "0": {
-              month: "10/19",
-              amount: "$111"
-            }
-          }
+          income: "$111"
         }
 
-        form = Opened.new(kase, case_params)
-        assert_length(form.income_history, 1)
-
-        income = form.income_history[0]
-        assert_equal(income.month, "10/19")
-        assert_equal(income.amount, "$111")
+        assert_equal(form.dhs_number, "11111")
+        assert_equal(form.household_size, "5")
+        assert_equal(form.income, "$111")
       end
 
       test "saves household updates" do
-        kase = Case.from_record(cases(:opened_1))
+        kase = Case::Repo.map_record(cases(:opened_1))
         form = Opened.new(kase,
           dhs_number: "11111",
           household_size: "3",
@@ -70,7 +62,7 @@ class Case
       end
 
       test "provides the address" do
-        kase = Case.from_record(cases(:opened_1))
+        kase = Case::Repo.map_record(cases(:opened_1))
         form = Opened.new(kase)
         assert_length(form.address, 3)
       end

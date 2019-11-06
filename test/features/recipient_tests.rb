@@ -2,7 +2,7 @@ require "test_helper"
 
 class RecipientTests < ActiveSupport::TestCase
   test "can be constructed from a record" do
-    recipient = Recipient.from_record(recipients(:recipient_2))
+    recipient = Recipient::Repo.map_record(recipients(:recipient_2))
     assert_not_nil(recipient.record)
     assert_not_nil(recipient.id)
     assert_not_nil(recipient.name)
