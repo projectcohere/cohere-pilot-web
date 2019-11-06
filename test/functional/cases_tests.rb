@@ -165,7 +165,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   # -- edit --
   test "can't edit a case if signed-out" do
-    kase = cases(:opened_1)
+    kase = cases(:submitted_1)
     get("/cases/#{kase.id}/edit")
     assert_redirected_to("/sign-in")
   end

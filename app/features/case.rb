@@ -45,17 +45,23 @@ class Case < ::Entity
     @recipient.attach_dhs_account(dhs_account)
   end
 
+  def upload_documents_from_message(message)
+    message.attachments.map do |attachment|
+      Document.new(case_id: id, source_url: attachment.url)
+    end
+  end
+
   def submit
-    if not (status == :opened || @status == :pending)
+    if not (@status == :opened || @status == :pending)
       return
     end
 
-    status = :submitted
+    @status = :submitted
   end
 
   # -- queries --
-  def recipient_name
-    @recipient.profile.name
+  def new_documents
+    @documents.filter { |d| d.id.nil? }
   end
 
   # -- events --

@@ -32,7 +32,7 @@ class RecipientTests < ActiveSupport::TestCase
       ]
     )
 
-    recipient.add_documents_from_message(message)
+    recipient.upload_documents_from_message(message)
     assert_length(recipient.new_documents, 1)
     assert_equal(recipient.new_documents[0].source_url, "https://website.com/image.jpg")
   end

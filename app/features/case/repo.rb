@@ -14,6 +14,15 @@ class Case
       entity_from(record)
     end
 
+    def find_one_by_phone_number(phone_number)
+      record = Case::Record
+        .includes(:recipient)
+        .references(:recipients)
+        .find_by(recipients: { phone_number: phone_number })
+
+      entity_from(record)
+    end
+
     def find_one_for_enroller(id, enroller_id)
       record = Case::Record
         .where(
@@ -38,7 +47,7 @@ class Case
       records = Case::Record
         .where(completed_at: nil)
         .order(updated_at: :desc)
-        .includes(:supplier, :enroller, recipient: [:household, :documents, { account: :supplier }])
+        .includes(:supplier, :enroller, :documents, recipient: [:household, { account: :supplier }])
 
       entities_from(records)
     end
@@ -50,7 +59,7 @@ class Case
           status: [:submitted, :approved, :rejected]
         )
         .order(updated_at: :desc)
-        .includes(:supplier, :enroller, recipient: [:household, :documents, { account: :supplier }])
+        .includes(:supplier, :enroller, :documents, recipient: [:household, { account: :supplier }])
 
       entities_from(records)
     end
@@ -59,7 +68,7 @@ class Case
       records = Case::Record
         .where(status: [:opened, :pending])
         .order(updated_at: :desc)
-        .includes(:supplier, :enroller, recipient: [:household, :documents, { account: :supplier }])
+        .includes(:supplier, :enroller, :documents, recipient: [:household, { account: :supplier }])
 
       entities_from(records)
     end
@@ -127,6 +136,9 @@ class Case
         kase.record.save!
         kase.recipient.record.save!
       end
+    end
+
+    def save_uploaded_documents(kase)
     end
 
     # -- commands/helpers
@@ -201,13 +213,13 @@ class Case
         record: r,
         id: r.id,
         status: r.status.to_sym,
+        enroller_id: r.enroller_id,
+        supplier_id: r.supplier_id,
+        recipient: map_recipient(r.recipient),
         account: Case::Account.new(
           number: r.account_number,
           arrears: r.account_arrears,
         ),
-        recipient: map_recipient(r.recipient),
-        enroller_id: r.enroller_id,
-        supplier_id: r.supplier_id,
         updated_at: r.updated_at,
         completed_at: r.completed_at
       )
@@ -239,11 +251,37 @@ class Case
             size: r.dhs_household_size,
             income: r.dhs_household_income
           )
-        ),
-        documents: r.documents.map { |d|
-          Recipient::Document::Repo.map_record(d)
-        }
+        )
       )
     end
+
+    #   # -- queries --
+    # # -- queries/one
+    # def find_one(id)
+    #   record = Recipient::Record
+    #     .find(id)
+
+    #   entity_from(record)
+    # end
+
+    # # -- commands --
+    # def save_new_documents(recipient)
+    #   if recipient.record.nil?
+    #     raise "unsaved recipient can't be updated with new doucments!"
+    #   end
+
+    #   documents = recipient.new_documents
+    #   if documents.empty?
+    #     return
+    #   end
+
+    #   records = recipient.record.documents.create!(documents.map { |d|
+    #     { source_url: d.source_url }
+    #   })
+
+    #   records.each_with_index do |r, i|
+    #     documents[i].did_save(r)
+    #   end
+    # end
   end
 end

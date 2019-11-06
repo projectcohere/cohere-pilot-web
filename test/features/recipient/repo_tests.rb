@@ -13,7 +13,7 @@ class Recipient
 
     test "saves new documents" do
       recipient = Recipient::Repo.map_record(recipients(:recipient_1))
-      recipient.documents << Recipient::Document.new(
+      recipient.documents << Document.new(
         source_url: Faker::Internet.url
       )
 

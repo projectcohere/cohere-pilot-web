@@ -5,7 +5,7 @@ class Case
         case_id,
         user_id,
         cases: Case::Repo.get,
-        users: User::Repo.new
+        users: User::Repo.get
       )
         # dependencies
         @users = users
@@ -40,13 +40,20 @@ class Case
 
       # -- broadcast --
       class Broadcast
-        def initialize(users: User::Repo.new)
+        def initialize(
+          kase,
+          users: User::Repo.get
+        )
+          # dependencies
           @users = users
+
+          # params
+          @enroller_id = kase.enroller_id
         end
 
         # -- broadcast/queries
         def receiver_ids
-          @users.find_submitted_case_contributors.map(&:id)
+          @users.find_submitted_case_contributors(@enroller_id).map(&:id)
         end
       end
     end

@@ -13,7 +13,7 @@ module Environment
       recipients: "Recipient::Record",
       accounts: "Recipient::Account::Record",
       households: "Recipient::Household::Record",
-      documents: "Recipient::Document::Record"
+      documents: "Document::Record"
     }
 
     # we have to monkey patch the fixture class cache to namespace our fixture

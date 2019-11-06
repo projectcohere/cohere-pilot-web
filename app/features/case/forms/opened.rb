@@ -23,10 +23,12 @@ class Case
       def initialize(
         kase,
         attrs = {},
-        cases: Case::Repo.get
+        cases: Case::Repo.get,
+        documents: Document::Repo.get
       )
         # set dependencies
         @cases = cases
+        @documents = documents
 
         # set underlying model(s)
         @model = kase
@@ -79,7 +81,7 @@ class Case
       end
 
       def documents
-        @model.recipient.documents
+        @documents.find_for_case(@model.id)
       end
     end
   end

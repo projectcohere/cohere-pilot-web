@@ -4,7 +4,7 @@ class Case
       def initialize(
         case_id,
         user_id,
-        users: User::Repo.new,
+        users: User::Repo.get,
         cases: Case::Repo.get
       )
         # dependencies
@@ -40,7 +40,7 @@ class Case
 
       # -- broadcast --
       class Broadcast
-        def initialize(users: User::Repo.new)
+        def initialize(users: User::Repo.get)
           @users = users
         end
 

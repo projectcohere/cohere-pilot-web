@@ -47,7 +47,7 @@ class MessagesTests < ActionDispatch::IntegrationTest
       end
 
       assert_difference(
-        -> { Recipient::Document::Record.count } => 1,
+        -> { Document::Record.count } => 1,
         &act
       )
 

@@ -15,12 +15,14 @@ class Case
         attrs = {},
         cases: Case::Repo.get,
         suppliers: Supplier::Repo.get,
-        enrollers: Enroller::Repo.get
+        enrollers: Enroller::Repo.get,
+        documents: Document::Repo.get
       )
         # set dependencies
         @cases = cases
         @suppliers = suppliers
         @enrollers = enrollers
+        @documents = documents
 
         # set underlying model
         @model = kase
@@ -83,7 +85,7 @@ class Case
       end
 
       def documents
-        @model.recipient.documents
+        @documents.find_for_case(@model.id)
       end
 
       def statuses

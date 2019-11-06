@@ -3,4 +3,5 @@
 class Repos < ActiveSupport::CurrentAttributes
   attribute(:enrollers)
   attribute(:suppliers)
+  attribute(:documents)
 end

@@ -1,5 +1,10 @@
 class User
   class Repo
+    # -- lifetime --
+    def self.get
+      Repo.new
+    end
+
     # -- queries --
     # -- queries/one
     def find_one(id)

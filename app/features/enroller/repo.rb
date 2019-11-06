@@ -8,7 +8,7 @@ class Enroller
     # -- queries --
     # -- queries/one
     def find_one(id)
-      find_lazy(id) do
+      find_cached(id) do
         record = Enroller::Record
           .find(id)
 
@@ -34,7 +34,7 @@ class Enroller
       end
     end
 
-    private def find_lazy(key, &find)
+    private def find_cached(key, &find)
       @cache ||= {}
 
       hit = @cache[key]

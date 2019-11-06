@@ -10,16 +10,12 @@ class MessagesController < ApplicationController
       return
     end
 
-    receive_message = Message::ReceiveFromRecipient.new(
-      decode: Front::DecodeMessage.new
+    upload_documents = Document::UploadFromMessage.new(
+      decode_message: Front::DecodeMessage.new
     )
 
-    receive_message.(request.raw_post)
-    receive_message.recipient.documents.each do |d|
-      if d.file.nil?
-        # TODO: filter out documents that already have scheduled jobs?
-        Messages::SyncDocumentWorker.perform_async(d.id)
-      end
+    upload_documents.(request.raw_post).each do |d|
+      Messages::SyncDocumentWorker.perform_async(d.id)
     end
   end
 
