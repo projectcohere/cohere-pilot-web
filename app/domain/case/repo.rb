@@ -6,9 +6,11 @@ class Case
     end
 
     def initialize(
-      supplier_repo: Supplier::Repo.get,
-      enroller_repo: Enroller::Repo.get
+      events: ::Events.get,
+      supplier_repo: ::Supplier::Repo.get,
+      enroller_repo: ::Enroller::Repo.get
     )
+      @events = events
       @supplier_repo = supplier_repo
       @enroller_repo = enroller_repo
     end
@@ -118,6 +120,11 @@ class Case
       # send creation events back to the domain objects
       kase.did_save(case_record)
       kase.recipient.did_save(recipient_record)
+
+      # consume and push any events
+      kase.events.reject! do |event|
+        @events << event
+      end
     end
 
     def save_dhs_account(kase)
@@ -134,9 +141,14 @@ class Case
         kase.record.save!
         kase.recipient.record.save!
       end
+
+      # consume and push any events
+      kase.events.reject! do |event|
+        @events << event
+      end
     end
 
-    def save_all_fields(kase)
+    def save(kase)
       if kase.record.nil? || kase.recipient.record.nil?
         raise "case and recipient must be fetched from the db!"
       end
@@ -151,6 +163,11 @@ class Case
       kase.record.transaction do
         kase.record.save!
         kase.recipient.record.save!
+      end
+
+      # consume and push any events
+      kase.events.reject! do |event|
+        @events << event
       end
     end
 
@@ -213,7 +230,7 @@ class Case
     def self.map_record(r)
       Case.new(
         record: r,
-        id: r.id,
+        id: Id.new(r.id),
         status: r.status.to_sym,
         enroller_id: r.enroller_id,
         supplier_id: r.supplier_id,

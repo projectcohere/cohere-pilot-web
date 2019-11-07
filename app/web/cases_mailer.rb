@@ -1,28 +1,28 @@
 class CasesMailer < ApplicationMailer
-  # -- helpers --
-  helper_method(:case_scope)
-
   # -- actions --
-  def opened_case(case_id, user_id)
-    @note = Case::Notes::OpenedCase.new(case_id, user_id)
+  def did_open(case_id)
+    @case = Case::Repo.get.find(case_id)
+
+    emails = User::Repo.get
+      .find_all_opened_case_contributors
+      .map(&:email)
 
     mail(
-      subject: @note.title,
-      to: @note.receiver_email
+      subject: "Cohere Pilot -- A new case was opened!",
+      bcc: emails
     )
   end
 
-  def submitted_case(case_id, user_id)
-    @note = Case::Notes::SubmittedCase.new(case_id, user_id)
+  def did_submit(case_id)
+    @case = Case::Repo.get.find(case_id)
+
+    emails = User::Repo.get
+      .find_all_submitted_case_contributors(@case.enroller_id)
+      .map(&:email)
 
     mail(
-      subject: @note.title,
-      to: @note.receiver_email
+      subject: "Cohere Pilot -- A case was submitted!",
+      bcc: emails
     )
-  end
-
-  # -- queries --
-  private def case_scope
-    @case_scope ||= CaseScope.new(nil, @note.receiver)
   end
 end

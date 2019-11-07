@@ -2,7 +2,7 @@ class Supplier
   class Repo < ::Repo
     # -- lifetime --
     def self.get
-      Repos.suppliers ||= Repo.new
+      Services.suppliers ||= Repo.new
     end
 
     # -- queries --

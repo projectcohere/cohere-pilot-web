@@ -58,7 +58,7 @@ module Cases
         @model.submit()
       end
 
-      @cases.save_all_fields(@model)
+      @cases.save(@model)
 
       true
     end

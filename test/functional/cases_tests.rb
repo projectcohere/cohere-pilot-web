@@ -120,10 +120,10 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/supplier")
 
     perform_enqueued_jobs(queue: :mailers)
-    assert_emails(2)
+    assert_emails(1)
     assert_select_email do
       assert_select("a", text: /Janice Sample/) do |el|
-        assert_match(/http:\/\/localhost\:3000\/cases\/(dhs\/)?\d+\/edit/, el[0][:href])
+        assert_match(%r[#{ENV["HOST"]}/cases/\d+/edit], el[0][:href])
       end
     end
   end
@@ -192,13 +192,13 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
 
-    # perform_enqueued_jobs(queue: :mailers)
-    # assert_emails(1)
-    # assert_select_email do
-    #   assert_select("a", text: /Janice Sample/) do |el|
-    #     assert_match(/http:\/\/localhost\:3000\/cases\/submitted\/\d+\/edit/, el[0][:href])
-    #   end
-    # end
+    perform_enqueued_jobs(queue: :mailers)
+    assert_emails(1)
+    assert_select_email do
+      assert_select("a", text: /Danice Sample/) do |el|
+        assert_match(%r[#{ENV["HOST"]}/cases/\d+], el[0][:href])
+      end
+    end
   end
 
   test "show errors for an invalid case" do

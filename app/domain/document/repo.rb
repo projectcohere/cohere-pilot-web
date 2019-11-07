@@ -2,7 +2,7 @@ class Document
   class Repo < ::Repo
     # -- lifetime --
     def self.get
-      Repos.documents ||= Repo.new
+      Services.documents ||= Repo.new
     end
 
     # -- queries --
@@ -19,7 +19,7 @@ class Document
     def find_all_for_case(case_id)
       find_cached("case=#{case_id}") do
         records = Document::Record
-          .where(case_id: case_id)
+          .where(case_id: case_id.val)
 
         entities_from(records)
       end
@@ -33,7 +33,7 @@ class Document
 
       records = Document::Record.transaction do
         Document::Record.create!(documents.map { |d|
-          { case_id: d.case_id, source_url: d.source_url }
+          { case_id: d.case_id.val, source_url: d.source_url }
         })
       end
 

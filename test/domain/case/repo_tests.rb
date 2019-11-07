@@ -141,7 +141,7 @@ class Case
     test "maps a record" do
       kase = Case::Repo.map_record(cases(:submitted_1))
       assert_not_nil(kase.record)
-      assert_not_nil(kase.id)
+      assert_not_nil(kase.id.val)
       assert_not_nil(kase.status)
       assert_not_nil(kase.supplier_id)
       assert_not_nil(kase.enroller_id)

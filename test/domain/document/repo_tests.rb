@@ -7,7 +7,7 @@ class Document
 
       documents = [
         Document.new(
-          case_id: kase.id,
+          case_id: Id.new(kase.id),
           source_url: Faker::Internet.url
         )
       ]

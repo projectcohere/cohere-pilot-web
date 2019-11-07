@@ -1,9 +1,10 @@
 class Case < ::Entity
-  # TODO: should this be generalized for the aggregate root?
+  # TODO: should these be generalized for entity/ar?
   prop(:record, default: nil)
+  prop(:events, default: [])
 
   # -- props --
-  prop(:id, default: nil)
+  prop(:id, default: Id::None)
   prop(:status)
   prop(:recipient)
   prop(:account)
@@ -11,21 +12,24 @@ class Case < ::Entity
   prop(:supplier_id)
   prop(:updated_at, default: nil)
   prop(:completed_at, default: nil)
-
-  # -- lifetime --
-  define_initialize!
+  props_end!
 
   # -- creation --
   def self.open(profile:, account:, enroller:, supplier:)
-    Case.new(
+    recipient = Recipient.new(
+      profile: profile
+    )
+
+    kase = Case.new(
       status: :opened,
       account: account,
-      recipient: Recipient.new(
-        profile: profile
-      ),
+      recipient: recipient,
       enroller_id: enroller.id,
-      supplier_id: supplier.id,
+      supplier_id: supplier.id
     )
+
+    kase.events << Events::DidOpen.from_case(kase)
+    kase
   end
 
   # -- commands --
@@ -51,6 +55,7 @@ class Case < ::Entity
     end
 
     @status = :submitted
+    @events << Events::DidSubmit.from_case(self)
   end
 
   # -- commands/factories
@@ -62,7 +67,7 @@ class Case < ::Entity
 
   # -- events --
   def did_save(record)
+    @id.set(record.id)
     @record = record
-    @id = record.id
   end
 end

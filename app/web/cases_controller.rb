@@ -45,13 +45,6 @@ class CasesController < ApplicationController
       return
     end
 
-    if @form.model.status == :submitted
-      note = Case::Notes::SubmittedCase::Broadcast.new(kase)
-      note.receiver_ids.each do |receiver_id|
-        CasesMailer.submitted_case(kase.id, receiver_id).deliver_later
-      end
-    end
-
     redirect_to(cases_path, notice: "Updated #{@form.name}'s case!")
   end
 

@@ -9,6 +9,9 @@ class ApplicationController < ActionController::Base
   # -- helpers --
   helper_method(:case_scope)
 
+  # -- filters --
+  after_action(:handle_events)
+
   # -- case-scope --
   # -- case-scope/queries
   protected def case_scope
@@ -19,6 +22,19 @@ class ApplicationController < ActionController::Base
   protected def check_case_scope
     if case_scope.reject?
       deny_access
+    end
+  end
+
+  # -- events --
+  private def handle_events
+    events = Events.get
+    events.consume do |event|
+      case event
+      when Case::Events::DidOpen
+        CasesMailer.did_open(event.case_id.val).deliver_later
+      when Case::Events::DidSubmit
+        CasesMailer.did_submit(event.case_id.val).deliver_later
+      end
     end
   end
 

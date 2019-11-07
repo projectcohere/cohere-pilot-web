@@ -41,11 +41,6 @@ module Cases
         return
       end
 
-      note = Case::Notes::OpenedCase::Broadcast.new
-      note.receiver_ids.each do |receiver_id|
-        CasesMailer.opened_case(@form.case_id, receiver_id).deliver_later
-      end
-
       redirect_to(cases_supplier_index_path, notice: "Created case!")
     end
 
