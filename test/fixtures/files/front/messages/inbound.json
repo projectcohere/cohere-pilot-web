@@ -3,7 +3,7 @@
     "self": "https://api2.frontapp.com/events/evt_abcdefg"
   },
   "id": "evt_abcdefg",
-  "type": "inbound",
+  "type": "supplier",
   "emitted_at": 1572278582.464,
   "conversation": {
     "_links": {
@@ -55,7 +55,7 @@
       },
       "id": "msg_7iaf4w7",
       "type": "sms",
-      "is_inbound": true,
+      "is_supplier": true,
       "created_at": 1572278582.464,
       "blurb": "Testing This.",
       "body": "<div>Testing This.</div><div><img class=\"front-inline-img\" src=\"/api/1/companies/civilla2/attachments/91a6b0c1bd168b28ccaa595df235f865ad1e0592?resource_link_id=23554431943\"></div>",
@@ -137,7 +137,7 @@
       },
       "id": "msg_7iaf4w7",
       "type": "sms",
-      "is_inbound": true,
+      "is_supplier": true,
       "created_at": 1572278582.464,
       "blurb": "Testing This.",
       "body": "<div>Testing This.</div><div><img class=\"front-inline-img\" src=\"/api/1/companies/civilla2/attachments/91a6b0c1bd168b28ccaa595df235f865ad1e0592?resource_link_id=23554431943\"></div>",

@@ -3,7 +3,7 @@
     Add a Case
   </h1>
 
-  <%= form_for(@form, url: cases_inbound_index_path, html: { class: "CaseForm Form" }) do |f| %>
+  <%= form_for(@form, url: cases_supplier_index_path, html: { class: "CaseForm Form" }) do |f| %>
     <%= f.section("Contact", class: "CaseForm-contact") do %>
       <%= f.field(:first_name, class: "CaseForm-firstName") do %>
         <%= f.text_field(:first_name) %>

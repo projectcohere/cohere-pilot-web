@@ -49,11 +49,11 @@ class Case
     def scope_for_user
       case @user.role
       when :supplier
-        :inbound
+        :supplier
       when :dhs
-        :opened
+        :dhs
       when :enroller
-        :submitted
+        :enroller
       when :cohere
         :root
       else

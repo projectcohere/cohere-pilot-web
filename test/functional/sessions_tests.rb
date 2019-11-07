@@ -27,7 +27,7 @@ class SessionsTests < ActionDispatch::IntegrationTest
     })
 
     assert(current_session.signed_in?)
-    assert_redirected_to("/cases/submitted")
+    assert_redirected_to("/cases/enroller")
   end
 
   test "can sign in as a supplier" do
@@ -39,7 +39,7 @@ class SessionsTests < ActionDispatch::IntegrationTest
     })
 
     assert(current_session.signed_in?)
-    assert_redirected_to("/cases/inbound")
+    assert_redirected_to("/cases/supplier")
   end
 
   test "can sign in as a dhs partner" do
@@ -51,7 +51,7 @@ class SessionsTests < ActionDispatch::IntegrationTest
     })
 
     assert(current_session.signed_in?)
-    assert_redirected_to("/cases/opened")
+    assert_redirected_to("/cases/dhs")
   end
 
   test "can sign out" do

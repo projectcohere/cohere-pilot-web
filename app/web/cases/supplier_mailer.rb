@@ -1,5 +1,5 @@
 module Cases
-  class InboundMailer < ApplicationMailer
+  class SupplierMailer < ApplicationMailer
     # -- helpers --
     helper_method(:case_scope)
 

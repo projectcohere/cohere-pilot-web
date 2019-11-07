@@ -1,5 +1,5 @@
 module Cases
-  class OpenedController < ApplicationController
+  class DhsController < ApplicationController
     # -- filters --
     before_action(:check_scope)
 
@@ -24,7 +24,7 @@ module Cases
         deny_access
       end
 
-      @form = Cases::OpenedForm.new(kase)
+      @form = Cases::DhsForm.new(kase)
     end
 
     def update
@@ -36,14 +36,14 @@ module Cases
         deny_access
       end
 
-      @form = Cases::OpenedForm.new(kase,
+      @form = Cases::DhsForm.new(kase,
         params
           .require(:case)
-          .permit(Cases::OpenedForm.params_shape)
+          .permit(Cases::DhsForm.params_shape)
       )
 
       if @form.save
-        redirect_to(cases_opened_index_path, notice: "Case updated!")
+        redirect_to(cases_dhs_index_path, notice: "Case updated!")
       else
         render(:edit)
       end
@@ -62,7 +62,7 @@ module Cases
     end
 
     def case_scope
-      @case_scope ||= CaseScope.new(:opened, Current.user)
+      @case_scope ||= CaseScope.new(:dhs, Current.user)
     end
   end
 end

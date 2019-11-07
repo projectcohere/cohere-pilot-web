@@ -5,7 +5,7 @@ module Messages
         download_file: Front::DownloadAttachment.new
       )
 
-      sync_source_file.call(document_id)
+      sync_source_file.(document_id)
     end
   end
 end

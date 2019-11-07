@@ -2,11 +2,11 @@ require "test_helper"
 require "minitest/mock"
 
 module Cases
-  class OpenedFormTests < ActiveSupport::TestCase
+  class DhsFormTests < ActiveSupport::TestCase
     test "can be initialized from a case" do
       kase = Case::Repo.map_record(cases(:pending_1))
 
-      form = OpenedForm.new(kase)
+      form = DhsForm.new(kase)
       assert_present(form.dhs_number)
       assert_present(form.income)
     end
@@ -20,7 +20,7 @@ module Cases
         "income" => "$111"
       }
 
-      form = OpenedForm.new(
+      form = DhsForm.new(
         kase,
         form_attrs,
       )
@@ -41,7 +41,7 @@ module Cases
         "income" => "$999"
       }
 
-      form = OpenedForm.new(
+      form = DhsForm.new(
         kase,
         form_attrs,
         cases: case_repo
@@ -53,7 +53,7 @@ module Cases
 
     test "has an address" do
       kase = Case::Repo.map_record(cases(:opened_1))
-      form = OpenedForm.new(kase)
+      form = DhsForm.new(kase)
       assert_length(form.address, 3)
     end
   end

@@ -47,19 +47,19 @@ Rails.application.routes.draw do
 
     # cases/role-scoped
     namespace(:cases) do
-      resources(:inbound, only: %i[
+      resources(:supplier, only: %i[
         index
         new
         create
       ])
 
-      resources(:opened, only: %i[
+      resources(:dhs, only: %i[
         index
         edit
         update
       ])
 
-      resources(:submitted, only: %i[
+      resources(:enroller, only: %i[
         index
         show
       ])

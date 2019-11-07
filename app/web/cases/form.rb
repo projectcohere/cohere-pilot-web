@@ -3,8 +3,8 @@ module Cases
   class Form < ::ApplicationForm
     # -- fields --
     field(:status, :string)
-    fields_from(:inbound, InboundForm)
-    fields_from(:opened, OpenedForm)
+    fields_from(:supplier, SupplierForm)
+    fields_from(:opened, DhsForm)
 
     # -- lifetime --
     def initialize(
@@ -25,14 +25,14 @@ module Cases
       @model = kase
 
       # construct subforms
-      @inbound = InboundForm.new(
+      @supplier = SupplierForm.new(
         kase,
-        attrs.slice(InboundForm.attribute_names)
+        attrs.slice(SupplierForm.attribute_names)
       )
 
-      @opened = OpenedForm.new(
+      @opened = DhsForm.new(
         kase,
-        attrs.slice(OpenedForm.attribute_names)
+        attrs.slice(DhsForm.attribute_names)
       )
 
       # set initial values from case
@@ -50,8 +50,8 @@ module Cases
         return false
       end
 
-      @model.update_supplier_account(inbound.map_to_supplier_account)
-      @model.update_recipient_profile(inbound.map_to_recipient_profile)
+      @model.update_supplier_account(supplier.map_to_supplier_account)
+      @model.update_recipient_profile(supplier.map_to_recipient_profile)
       @model.attach_dhs_account(opened.map_to_dhs_account)
 
       if submitted?

@@ -2,18 +2,18 @@ require "test_helper"
 require "minitest/mock"
 
 module Cases
-  class InboundFormTests < ActiveSupport::TestCase
+  class SupplierFormTests < ActiveSupport::TestCase
     test "can be initialized from a case" do
       kase = Case::Repo.map_record(cases(:opened_1))
 
-      form = InboundForm.new(kase)
+      form = SupplierForm.new(kase)
       assert_present(form.first_name)
       assert_present(form.phone_number)
       assert_present(form.street)
       assert_present(form.account_number)
     end
 
-    test "saves an inbound case" do
+    test "saves an supplier case" do
       cases = Minitest::Mock.new
         .expect(
           :save_opened, nil, [Case]
@@ -44,7 +44,7 @@ module Cases
         "arrears" => "$1000.0"
       }
 
-      form = InboundForm.new(
+      form = SupplierForm.new(
         nil,
         13,
         form_params,
@@ -57,8 +57,8 @@ module Cases
       assert(did_save)
     end
 
-    test "does not save an invalid inbound case" do
-      form = InboundForm.new(nil, nil, {
+    test "does not save an invalid supplier case" do
+      form = SupplierForm.new(nil, nil, {
         "first_name" => "Janice"
       })
 

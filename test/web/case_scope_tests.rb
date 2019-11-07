@@ -5,7 +5,7 @@ class CaseScopeTests < ActiveSupport::TestCase
     user = User.new(id: nil, email: nil, role: :dhs)
     scope = CaseScope.new(:root, user)
     scoped = scope.scoped_path("/cases/1")
-    assert_equal(scoped, "/cases/opened/1")
+    assert_equal(scoped, "/cases/dhs/1")
   end
 
   test "does not scope paths for root-scoped users" do

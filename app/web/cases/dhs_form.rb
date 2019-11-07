@@ -1,5 +1,5 @@
 module Cases
-  class OpenedForm < ::ApplicationForm
+  class DhsForm < ::ApplicationForm
     # -- fields --
     # -- fields/dhs
     field(:dhs_number, :string,

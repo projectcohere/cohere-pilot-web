@@ -10,34 +10,34 @@ class Case
       policy = Case::Policy.new(user)
       assert(policy.permit?(:some))
 
-      policy = Case::Policy.new(user, scope: :opened)
+      policy = Case::Policy.new(user, scope: :dhs)
       assert(policy.forbid?(:any))
     end
 
-    test "restricts enrollers to submitted cases" do
+    test "restricts enrollers' cases" do
       user = User.new(id: nil, email: nil, role: :enroller)
 
-      policy = Case::Policy.new(user, scope: :submitted)
+      policy = Case::Policy.new(user, scope: :enroller)
       assert(policy.permit?(:some))
 
       policy = Case::Policy.new(user)
       assert(policy.forbid?(:any))
     end
 
-    test "restricts suppliers to inbound cases" do
+    test "restricts suppliers' cases" do
       user = User.new(id: nil, email: nil, role: :supplier)
 
-      policy = Case::Policy.new(user, scope: :inbound)
+      policy = Case::Policy.new(user, scope: :supplier)
       assert(policy.permit?(:some))
 
       policy = Case::Policy.new(user)
       assert(policy.forbid?(:any))
     end
 
-    test "restricts dhs partners to opened cases" do
+    test "restricts dhs partners' cases" do
       user = User.new(id: nil, email: nil, role: :dhs)
 
-      policy = Case::Policy.new(user, scope: :opened)
+      policy = Case::Policy.new(user, scope: :dhs)
       assert(policy.permit?(:some))
 
       policy = Case::Policy.new(user)
@@ -53,19 +53,19 @@ class Case
 
     test "permits enrollers to list cases" do
       user = User.new(id: nil, email: nil, role: :enroller)
-      policy = Case::Policy.new(user, scope: :submitted)
+      policy = Case::Policy.new(user, scope: :enroller)
       assert(policy.permit?(:list))
     end
 
     test "permits dhs partners to list cases" do
       user = User.new(id: nil, email: nil, role: :dhs)
-      policy = Case::Policy.new(user, scope: :opened)
+      policy = Case::Policy.new(user, scope: :dhs)
       assert(policy.permit?(:list))
     end
 
     test "permits suppliers to list cases" do
       user = User.new(id: nil, email: nil, role: :supplier)
-      policy = Case::Policy.new(user, scope: :inbound)
+      policy = Case::Policy.new(user, scope: :supplier)
       assert(policy.permit?(:list))
     end
 
@@ -73,7 +73,7 @@ class Case
     test "permits enrollers to view a case" do
       user = User.new(id: nil, email: nil, role: :enroller)
       kase = cases(:submitted_1)
-      policy = Case::Policy.new(user, kase, scope: :submitted)
+      policy = Case::Policy.new(user, kase, scope: :enroller)
       assert(policy.permit?(:view))
     end
 
@@ -87,14 +87,14 @@ class Case
     test "forbids dhs partners from viewing a case" do
       user = User.new(id: nil, email: nil, role: :dhs)
       kase = cases(:opened_1)
-      policy = Case::Policy.new(user, kase, scope: :opened)
+      policy = Case::Policy.new(user, kase, scope: :dhs)
       assert(policy.forbid?(:view))
     end
 
     test "forbids suppliers from viewing a case" do
       user = User.new(id: nil, email: nil, role: :supplier)
       kase = cases(:opened_1)
-      policy = Case::Policy.new(user, kase, scope: :inbound)
+      policy = Case::Policy.new(user, kase, scope: :supplier)
       assert(policy.forbid?(:view))
     end
 
@@ -109,28 +109,28 @@ class Case
     test "permits dhs partners to edit a case" do
       user = User.new(id: nil, email: nil, role: :dhs)
       kase = cases(:opened_1)
-      policy = Case::Policy.new(user, kase, scope: :opened)
+      policy = Case::Policy.new(user, kase, scope: :dhs)
       assert(policy.permit?(:edit))
     end
 
     test "forbids enrollers from editing a case" do
       user = User.new(id: nil, email: nil, role: :enroller)
       kase = cases(:submitted_1)
-      policy = Case::Policy.new(user, kase, scope: :submitted)
+      policy = Case::Policy.new(user, kase, scope: :enroller)
       assert(policy.forbid?(:edit))
     end
 
     test "forbids suppliers from editing a case" do
       user = User.new(id: nil, email: nil, role: :supplier)
       kase = cases(:opened_1)
-      policy = Case::Policy.new(user, kase, scope: :inbound)
+      policy = Case::Policy.new(user, kase, scope: :supplier)
       assert(policy.forbid?(:edit))
     end
 
     # -- create --
     test "permits suppliers to create cases" do
       user = User.new(id: nil, email: nil, role: :supplier)
-      policy = Case::Policy.new(user, scope: :inbound)
+      policy = Case::Policy.new(user, scope: :supplier)
       assert(policy.permit?(:create))
     end
 
@@ -151,7 +151,7 @@ class Case
     test "forbids others from viewing the case status" do
       user = User.new(id: nil, email: nil, role: :enroller)
       kase = cases(:submitted_1)
-      policy = Case::Policy.new(user, kase, scope: :submitted)
+      policy = Case::Policy.new(user, kase, scope: :enroller)
       assert(policy.forbid?(:view_status))
     end
   end

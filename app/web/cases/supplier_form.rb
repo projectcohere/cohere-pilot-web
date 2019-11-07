@@ -1,5 +1,5 @@
 module Cases
-  class InboundForm < ::ApplicationForm
+  class SupplierForm < ::ApplicationForm
     # -- fields --
     # -- fields/name
     field(:first_name, :string, presence: true)

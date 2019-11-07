@@ -1,5 +1,5 @@
 module Cases
-  class SubmittedController < ApplicationController
+  class EnrollerController < ApplicationController
     # -- filters --
     before_action(:check_scope)
 
@@ -42,7 +42,7 @@ module Cases
     end
 
     private def case_scope
-      @case_scope ||= CaseScope.new(:submitted, Current.user)
+      @case_scope ||= CaseScope.new(:enroller, Current.user)
     end
   end
 end
