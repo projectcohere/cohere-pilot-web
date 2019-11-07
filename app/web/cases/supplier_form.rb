@@ -24,14 +24,14 @@ module Cases
       kase = nil,
       supplier_id = nil,
       attrs = {},
-      cases: Case::Repo.get,
-      suppliers: Supplier::Repo.get,
-      enrollers: Enroller::Repo.get
+      case_repo: Case::Repo.get,
+      supplier_repo: Supplier::Repo.get,
+      enroller_repo: Enroller::Repo.get
     )
       # set dependencies
-      @cases = cases
-      @suppliers = suppliers
-      @enrollers = enrollers
+      @case_repo = case_repo
+      @supplier_repo = supplier_repo
+      @enroller_repo = enroller_repo
 
       # set params
       @supplier_id = supplier_id
@@ -81,15 +81,15 @@ module Cases
       end
 
       # open a new case for the recipient
-      enroller = @enrollers.find_default()
-      supplier = @suppliers.find(@supplier_id)
+      enroller = @enroller_repo.find_default()
+      supplier = @supplier_repo.find(@supplier_id)
 
       new_case = supplier.open_case(enroller,
         account: map_to_supplier_account,
         profile: map_to_recipient_profile,
       )
 
-      @cases.save_opened(new_case)
+      @case_repo.save_opened(new_case)
 
       # set underlying model
       @model = new_case

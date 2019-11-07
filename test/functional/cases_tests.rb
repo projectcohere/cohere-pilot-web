@@ -9,8 +9,9 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "can't list cases without permission" do
-    user = users(:supplier_1)
-    get(auth("/cases", as: user))
+    user_rec = users(:supplier_1)
+
+    get(auth("/cases", as: user_rec))
     assert_redirected_to(%r[/cases/supplier])
   end
 
@@ -28,14 +29,16 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "can't list enroller cases without permission" do
-    user = users(:cohere_1)
-    get(auth("/cases/enroller", as: user))
+    user_rec = users(:cohere_1)
+
+    get(auth("/cases/enroller", as: user_rec))
     assert_redirected_to(%r[/cases(?!/enroller)])
   end
 
   test "can list enroller cases for my org as an enroller" do
-    user = users(:enroller_1)
-    get(auth("/cases/enroller", as: user))
+    user_rec = users(:enroller_1)
+
+    get(auth("/cases/enroller", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /Cases/)
     assert_select(".CaseCell", 2)
@@ -48,14 +51,16 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "can't list supplier cases without permission" do
-    user = users(:cohere_1)
-    get(auth("/cases/supplier", as: user))
+    user_rec = users(:cohere_1)
+
+    get(auth("/cases/supplier", as: user_rec))
     assert_redirected_to(%r[/cases(?!/supplier)])
   end
 
   test "can list supplier cases with permission" do
-    user = users(:supplier_1)
-    get(auth("/cases/supplier", as: user))
+    user_rec = users(:supplier_1)
+
+    get(auth("/cases/supplier", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /Supplier Cases/)
   end
@@ -67,14 +72,16 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "can't list dhs cases without permission" do
-    user = users(:cohere_1)
-    get(auth("/cases/dhs", as: user))
+    user_rec = users(:cohere_1)
+
+    get(auth("/cases/dhs", as: user_rec))
     assert_redirected_to(%r[/cases(?!/dhs)])
   end
 
   test "can list dhs cases with permission" do
-    user = users(:dhs_1)
-    get(auth("/cases/dhs", as: user))
+    user_rec = users(:dhs_1)
+
+    get(auth("/cases/dhs", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /Cases/)
     assert_select(".CaseCell", 4)
@@ -88,21 +95,24 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "can't open a case without permission" do
-    user = users(:cohere_1)
-    get(auth("/cases/supplier/new", as: user))
+    user_rec = users(:cohere_1)
+
+    get(auth("/cases/supplier/new", as: user_rec))
     assert_redirected_to(%r[/cases(?!/supplier)])
   end
 
   test "open a case with permission" do
-    user = users(:supplier_1)
-    get(auth("/cases/supplier/new", as: user))
+    user_rec = users(:supplier_1)
+
+    get(auth("/cases/supplier/new", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /Add a Case/)
   end
 
   test "save an opened case with permission" do
-    user = users(:supplier_1)
-    post(auth("/cases/supplier", as: user), params: {
+    user_rec = users(:supplier_1)
+
+    post(auth("/cases/supplier", as: user_rec), params: {
       case: {
         first_name: "Janice",
         last_name: "Sample",
@@ -129,8 +139,9 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "show errors when opening an invalid case" do
-    user = users(:supplier_1)
-    post(auth("/cases/supplier", as: user), params: {
+    user_rec = users(:supplier_1)
+
+    post(auth("/cases/supplier", as: user_rec), params: {
       case: {
         first_name: "Janice",
       }
@@ -143,46 +154,53 @@ class CasesTests < ActionDispatch::IntegrationTest
   # -- view --
   # -- view/submitted
   test "can't view a submitted case if signed-out" do
-    kase = cases(:submitted_1)
-    get("/cases/enroller/#{kase.id}")
+    case_rec = cases(:submitted_1)
+
+    get("/cases/enroller/#{case_rec.id}")
     assert_redirected_to("/sign-in")
   end
 
   test "can't view an submitted case without permission" do
-    user = users(:cohere_1)
-    kase = cases(:submitted_1)
-    get(auth("/cases/enroller/#{kase.id}", as: user))
+    user_rec = users(:cohere_1)
+    case_rec = cases(:submitted_1)
+
+    get(auth("/cases/enroller/#{case_rec.id}", as: user_rec))
     assert_redirected_to(%r[/cases(?!/enroller)])
   end
 
   test "view a submitted case" do
-    user = users(:enroller_1)
-    kase = Case::Repo.map_record(cases(:submitted_1))
-    get(auth("/cases/enroller/#{kase.id}", as: user))
+    user_rec = users(:enroller_1)
+    case_rec = cases(:submitted_1)
+    kase = Case::Repo.map_record(case_rec)
+
+    get(auth("/cases/enroller/#{kase.id}", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /#{kase.recipient.profile.name}/)
   end
 
   # -- edit --
   test "can't edit a case if signed-out" do
-    kase = cases(:submitted_1)
-    get("/cases/#{kase.id}/edit")
+    case_rec = cases(:submitted_1)
+
+    get("/cases/#{case_rec.id}/edit")
     assert_redirected_to("/sign-in")
   end
 
   test "edit a case" do
-    user = users(:cohere_1)
-    kase = Case::Repo.map_record(cases(:submitted_1))
-    get(auth("/cases/#{kase.id}/edit", as: user))
+    user_rec = users(:cohere_1)
+    case_rec = cases(:submitted_1)
+    kase = Case::Repo.map_record(case_rec)
+
+    get(auth("/cases/#{kase.id}/edit", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /#{kase.recipient.profile.name}/)
   end
 
   test "save an edited case" do
-    user = users(:cohere_1)
-    kase = cases(:pending_2)
+    user_rec = users(:cohere_1)
+    case_rec = cases(:pending_2)
 
-    patch(auth("/cases/#{kase.id}", as: user), params: {
+    patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
       case: {
         status: :submitted,
         dhs_number: "1A2B3C"
@@ -202,10 +220,10 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "show errors for an invalid case" do
-    user = users(:cohere_1)
-    kase = cases(:pending_2)
+    user_rec = users(:cohere_1)
+    case_rec = cases(:pending_2)
 
-    patch(auth("/cases/#{kase.id}", as: user), params: {
+    patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
       case: {
         status: "submitted",
         dhs_number: nil
@@ -218,31 +236,35 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   # -- edit/dhs
   test "can't edit a dhs case if signed-out" do
-    kase = cases(:opened_1)
-    get("/cases/dhs/#{kase.id}/edit")
+    case_rec = cases(:opened_1)
+
+    get("/cases/dhs/#{case_rec.id}/edit")
     assert_redirected_to("/sign-in")
   end
 
   test "can't edit a dhs case without permission" do
-    user = users(:supplier_1)
-    kase = Case::Repo.map_record(cases(:submitted_1))
-    get(auth("/cases/dhs/#{kase.id}/edit", as: user))
+    user_rec = users(:supplier_1)
+    case_rec = cases(:submitted_1)
+
+    get(auth("/cases/dhs/#{case_rec.id}/edit", as: user_rec))
     assert_redirected_to(%r[/cases(?!/dhs)])
   end
 
   test "can edit an opened case with permission" do
-    user = users(:dhs_1)
-    kase = Case::Repo.map_record(cases(:opened_1))
-    get(auth("/cases/dhs/#{kase.id}/edit", as: user))
+    user_rec = users(:dhs_1)
+    case_rec = cases(:opened_1)
+    kase = Case::Repo.map_record(case_rec)
+
+    get(auth("/cases/dhs/#{kase.id}/edit", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /#{kase.recipient.profile.name}/)
   end
 
   test "can update an opened case" do
-    user = users(:dhs_1)
+    user_rec = users(:dhs_1)
     kase = Case::Repo.map_record(cases(:opened_1))
 
-    patch(auth("/cases/dhs/#{kase.id}", as: user), params: {
+    patch(auth("/cases/dhs/#{kase.id}", as: user_rec), params: {
       case: {
         dhs_number: "12345",
         household_size: "5",

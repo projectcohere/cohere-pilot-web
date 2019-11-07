@@ -4,93 +4,100 @@ require "minitest/mock"
 class Case
   class RepoTests < ActiveSupport::TestCase
     test "finds a case by id" do
-      repo = Case::Repo.new
-      kase_rec = cases(:approved_1)
-      kase = repo.find(kase_rec.id)
+      case_repo = Case::Repo.new
+      case_rec = cases(:approved_1)
+
+      kase = case_repo.find(case_rec.id)
       assert_not_nil(kase)
     end
 
     test "finds a case by phone number" do
-      record = recipients(:recipient_1)
-      repo = Case::Repo.new
-      kase = repo.find_by_phone_number(record.phone_number)
+      case_repo = Case::Repo.new
+      recipient_rec = recipients(:recipient_1)
+
+      kase = case_repo.find_by_phone_number(recipient_rec.phone_number)
       assert_not_nil(kase)
-      assert_equal(kase.recipient.profile.phone.number, record.phone_number)
+      assert_equal(kase.recipient.profile.phone.number, recipient_rec.phone_number)
     end
 
     test "can't find a case with an unknown id" do
-      repo = Case::Repo.new
+      case_repo = Case::Repo.new
+
       assert_raises(ActiveRecord::RecordNotFound) do
-        kase = repo.find(1)
+        case_repo.find(1)
       end
     end
 
     test "finds a submitted case by id for an enroller" do
-      repo = Case::Repo.new
-      record = cases(:submitted_1)
-      kase = repo.find_for_enroller(record.id, record.enroller_id)
+      case_repo = Case::Repo.new
+      case_rec = cases(:submitted_1)
+
+      kase = case_repo.find_for_enroller(case_rec.id, case_rec.enroller_id)
       assert_not_nil(kase)
       assert_equal(kase.status, :submitted)
     end
 
     test "can't find a non-submitted case for an enroller" do
-      repo = Case::Repo.new
-      record = cases(:opened_1)
+      case_repo = Case::Repo.new
+      case_rec = cases(:opened_1)
 
       assert_raises(ActiveRecord::RecordNotFound) do
-        repo.find_for_enroller(record.id, record.enroller_id)
+        case_repo.find_for_enroller(case_rec.id, case_rec.enroller_id)
       end
     end
 
     test "can't find another enroller's case" do
-      repo = Case::Repo.new
-      record1 = cases(:submitted_1)
-      record2 = cases(:submitted_2)
+      case_repo = Case::Repo.new
+      case_rec1 = cases(:submitted_1)
+      case_rec2 = cases(:submitted_2)
+
       assert_raises(ActiveRecord::RecordNotFound) do
-        repo.find_for_enroller(record1.id, record2.enroller_id)
+        case_repo.find_for_enroller(case_rec1.id, case_rec2.enroller_id)
       end
     end
 
     test "finds an opened case by id" do
-      repo = Case::Repo.new
-      record = cases(:opened_1)
-      kase = repo.find_opened(record.id)
+      case_repo = Case::Repo.new
+      case_rec = cases(:opened_1)
+
+      kase = case_repo.find_opened(case_rec.id)
       assert_not_nil(kase)
       assert_equal(kase.status, :opened)
     end
 
     test "can't find an opened case by id" do
-      repo = Case::Repo.new
-      record = cases(:submitted_1)
+      case_repo = Case::Repo.new
+      case_rec = cases(:submitted_1)
 
       assert_raises(ActiveRecord::RecordNotFound) do
-        repo.find_opened(record.id)
+        case_repo.find_opened(case_rec.id)
       end
     end
 
     test "finds all incomplete cases" do
-      repo = Case::Repo.new
-      cases = repo.find_all_incomplete
+      case_repo = Case::Repo.new
+      cases = case_repo.find_all_incomplete
       assert_length(cases, 6)
     end
 
     test "finds all submitted cases for an enroller" do
-      repo = Case::Repo.new
-      enroller_id = cases(:submitted_1).enroller_id
-      cases = repo.find_all_for_enroller(enroller_id)
+      case_repo = Case::Repo.new
+      case_rec = cases(:submitted_1)
+
+      cases = case_repo.find_all_for_enroller(case_rec.enroller_id)
       assert_length(cases, 2)
     end
 
     test "finds all opened cases" do
-      repo = Case::Repo.new
-      cases = repo.find_all_opened
+      case_repo = Case::Repo.new
+      cases = case_repo.find_all_opened
       assert_length(cases, 4)
     end
 
     test "saves an opened case" do
-      repo_events = ::Events.new
-      repo = Case::Repo.new(
-        events: repo_events
+      event_bus = ::Events.new
+      case_repo = Case::Repo.new(
+        events: event_bus
       )
 
       kase = Case.open(
@@ -118,29 +125,28 @@ class Case
       )
 
       act = -> do
-        repo.save_opened(kase)
+        case_repo.save_opened(kase)
       end
 
       assert_difference(
         -> { Case::Record.count } => 1,
         -> { Recipient::Record.count } => 1,
-      ) do
-        act.()
+        &act
+      )
 
-        assert_not_nil(kase.record)
-        assert_not_nil(kase.id.val)
-        assert_not_nil(kase.recipient.record)
-        assert_not_nil(kase.recipient.id)
+      assert_not_nil(kase.record)
+      assert_not_nil(kase.id.val)
+      assert_not_nil(kase.recipient.record)
+      assert_not_nil(kase.recipient.id)
 
-        assert_length(kase.events, 0)
-        assert_length(repo_events, 1)
-      end
+      assert_length(kase.events, 0)
+      assert_length(event_bus, 1)
     end
 
     test "saves an opened case for an existing recipient" do
-      repo_events = ::Events.new
-      repo = Case::Repo.new(
-        events: repo_events
+      event_bus = ::Events.new
+      case_repo = Case::Repo.new(
+        events: event_bus
       )
 
       kase = Case.open(
@@ -168,23 +174,22 @@ class Case
       )
 
       act = -> do
-        repo.save_opened(kase)
+        case_repo.save_opened(kase)
       end
 
       assert_difference(
         -> { Case::Record.count } => 1,
         -> { Recipient::Record.count } => 0,
-      ) do
-        act.()
+        &act
+      )
 
-        assert_not_nil(kase.record)
-        assert_not_nil(kase.id.val)
-        assert_not_nil(kase.recipient.record)
-        assert_not_nil(kase.recipient.id)
+      assert_not_nil(kase.record)
+      assert_not_nil(kase.id.val)
+      assert_not_nil(kase.recipient.record)
+      assert_not_nil(kase.recipient.id)
 
-        assert_length(kase.events, 0)
-        assert_length(repo_events, 1)
-      end
+      assert_length(kase.events, 0)
+      assert_length(event_bus, 1)
     end
 
     test "saves a dhs account" do
@@ -199,40 +204,45 @@ class Case
         )
       )
 
-      repo = Case::Repo.new
-      repo.save_dhs_account(kase)
+      case_repo = Case::Repo.new
+      case_repo.save_dhs_account(kase)
 
-      record = kase.record
-      assert_equal(record.status, "pending")
+      case_rec = kase.record
+      assert_equal(case_rec.status, "pending")
 
-      record = kase.record.recipient
-      assert_equal(record.dhs_number, "11111")
-      assert_equal(record.household_size, "3")
-      assert_equal(record.household_income, "$999")
+      recipient_rec = case_rec.recipient
+      assert_equal(recipient_rec.dhs_number, "11111")
+      assert_equal(recipient_rec.household_size, "3")
+      assert_equal(recipient_rec.household_income, "$999")
     end
 
     test "saves all fields" do
-      kase = Case::Repo.map_record(cases(:pending_2))
-      kase.attach_dhs_account(Recipient::DhsAccount.new(
+      case_rec = cases(:pending_2)
+      account = Recipient::DhsAccount.new(
         number: "11111",
         household: Recipient::Household.new(size: "3", income: "$999")
-      ))
+      )
+
+      kase = Case::Repo.map_record(case_rec)
+      kase.attach_dhs_account(account)
       kase.submit
 
-      repo = Case::Repo.new
-      repo.save(kase)
+      case_repo = Case::Repo.new
+      case_repo.save(kase)
 
-      record = kase.record
-      assert_equal(record.status, "submitted")
+      case_rec = kase.record
+      assert_equal(case_rec.status, "submitted")
 
-      record = record.recipient
-      assert_equal(record.dhs_number, "11111")
-      assert_equal(record.household_size, "3")
-      assert_equal(record.household_income, "$999")
+      recipient_rec = case_rec.recipient
+      assert_equal(recipient_rec.dhs_number, "11111")
+      assert_equal(recipient_rec.household_size, "3")
+      assert_equal(recipient_rec.household_income, "$999")
     end
 
     test "maps a record" do
-      kase = Case::Repo.map_record(cases(:submitted_1))
+      case_rec = cases(:submitted_1)
+
+      kase = Case::Repo.map_record(case_rec)
       assert_not_nil(kase.record)
       assert_not_nil(kase.id.val)
       assert_not_nil(kase.status)

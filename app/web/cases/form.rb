@@ -10,16 +10,16 @@ module Cases
     def initialize(
       kase,
       attrs = {},
-      cases: Case::Repo.get,
-      suppliers: Supplier::Repo.get,
-      enrollers: Enroller::Repo.get,
-      documents: Document::Repo.get
+      case_repo: Case::Repo.get,
+      supplier_repo: Supplier::Repo.get,
+      enroller_repo: Enroller::Repo.get,
+      document_repo: Document::Repo.get
     )
       # set dependencies
-      @cases = cases
-      @suppliers = suppliers
-      @enrollers = enrollers
-      @documents = documents
+      @case_repo = case_repo
+      @supplier_repo = supplier_repo
+      @enroller_repo = enroller_repo
+      @document_repo = document_repo
 
       # set underlying model
       @model = kase
@@ -58,7 +58,7 @@ module Cases
         @model.submit()
       end
 
-      @cases.save(@model)
+      @case_repo.save(@model)
 
       true
     end
@@ -74,15 +74,15 @@ module Cases
     end
 
     def enroller_name
-      @enrollers.find(@model.enroller_id).name
+      @enroller_repo.find(@model.enroller_id).name
     end
 
     def supplier_name
-      @suppliers.find(@model.supplier_id).name
+      @supplier_repo.find(@model.supplier_id).name
     end
 
     def documents
-      @documents.find_all_for_case(@model.id)
+      @document_repo.find_all_for_case(@model.id)
     end
 
     def statuses

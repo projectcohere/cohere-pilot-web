@@ -2,7 +2,7 @@ class Document
   class Repo < ::Repo
     # -- lifetime --
     def self.get
-      Services.documents ||= Repo.new
+      Services.document_repo ||= Repo.new
     end
 
     # -- queries --

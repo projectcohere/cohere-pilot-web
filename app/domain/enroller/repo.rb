@@ -3,7 +3,7 @@ class Enroller
   class Repo < ::Repo
     # -- lifetime --
     def self.get
-      Services.enrollers ||= Repo.new
+      Services.enroller_repo ||= Repo.new
     end
 
     # -- queries --

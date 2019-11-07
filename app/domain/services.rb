@@ -2,7 +2,7 @@
 # accessor, e.g. `Case::Repo.get`.
 class Services < ActiveSupport::CurrentAttributes
   attribute(:events)
-  attribute(:enrollers)
-  attribute(:suppliers)
-  attribute(:documents)
+  attribute(:enroller_repo)
+  attribute(:supplier_repo)
+  attribute(:document_repo)
 end

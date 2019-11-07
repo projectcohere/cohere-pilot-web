@@ -53,7 +53,7 @@ class Document
 
       upload = UploadFromMessage.new(
         decode_message: ->(_) { message },
-        case_repo: cases
+        case_repo: case_repo
       )
 
       act = -> do

@@ -44,7 +44,7 @@ module Cases
       form = DhsForm.new(
         kase,
         form_attrs,
-        cases: case_repo
+        case_repo: case_repo
       )
 
       did_save = form.save

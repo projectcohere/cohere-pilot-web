@@ -19,12 +19,12 @@ module Cases
     def initialize(
       kase,
       attrs = {},
-      cases: Case::Repo.get,
-      documents: Document::Repo.get
+      case_repo: Case::Repo.get,
+      document_repo: Document::Repo.get
     )
       # set dependencies
-      @cases = cases
-      @documents = documents
+      @case_repo = case_repo
+      @document_repo = document_repo
 
       # set underlying model(s)
       @model = kase
@@ -51,7 +51,7 @@ module Cases
       end
 
       @model.attach_dhs_account(map_to_dhs_account)
-      @cases.save_dhs_account(@model)
+      @case_repo.save_dhs_account(@model)
 
       true
     end
@@ -77,7 +77,7 @@ module Cases
     end
 
     def documents
-      @documents.find_all_for_case(@model.id)
+      @document_repo.find_all_for_case(@model.id)
     end
 
     # -- ApplicationForm --

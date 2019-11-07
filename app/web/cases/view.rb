@@ -6,14 +6,14 @@ module Cases
     # -- lifetime --
     def initialize(
       kase,
-      enrollers: Enroller::Repo.get,
-      suppliers: Supplier::Repo.get,
-      documents: Document::Repo.get
+      enroller_repo: Enroller::Repo.get,
+      supplier_repo: Supplier::Repo.get,
+      document_repo: Document::Repo.get
     )
       @case = kase
-      @enrollers = enrollers
-      @suppliers = suppliers
-      @documents = documents
+      @enroller_repo = enroller_repo
+      @supplier_repo = supplier_repo
+      @document_repo = document_repo
     end
 
     # -- queries --
@@ -58,16 +58,16 @@ module Cases
 
     # -- queries/documents
     def documents
-      @documents.find_all_for_case(@case.id)
+      @document_repo.find_all_for_case(@case.id)
     end
 
     # -- queries/associations
     def supplier_name
-      @suppliers.find(@case.supplier_id).name
+      @supplier_repo.find(@case.supplier_id).name
     end
 
     def enroller_name
-      @enrollers.find(@case.enroller_id).name
+      @enroller_repo.find(@case.enroller_id).name
     end
 
     # -- queries/timestamps
