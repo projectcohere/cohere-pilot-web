@@ -1,6 +1,6 @@
 # A form model for an entity. It expects to be nested inside of the entity
 # as a namespace.
-class Form
+class ApplicationForm
   # -- attrs --
   attr(:model)
 
@@ -130,40 +130,19 @@ class Form
   # -- ActiveModel::Naming
   extend ActiveModel::Naming
 
-  def self.use_entity_name!
-    @use_entity_name = true
-  end
-
   # a form normally uses its own name stripped of any namespacing.
   #
-  # if `use_entity_name!` is called, the form returns the name of the nearest entity
-  # in its module ancestry. this allows Rails helpers to deduce paths based on the
-  # entity name (not sure if desireable)
+  # if `.entity_type` is defined, the form returns the name of that entity, allowing
+  # Rails helpers to infer paths based on the entity's name.
   def self.model_name
     @_model_name ||= begin
-      if self == ::Form
-        return super
+      if self == ::ApplicationForm
+        super
+      elsif respond_to?(:entity_type)
+        entity_type.model_name
+      else
+        ActiveModel::Name.new(self)
       end
-
-      # normal forms
-      if not @use_entity_name
-        return ActiveModel::Name.new(self)
-      end
-
-      # entity-named forms
-      parent_type = module_parent
-      until parent_type < ::Entity || parent_type.nil?
-        parent_type = parent_type.module_parent
-      end
-
-      env = ENV["RAILS_ENV"]
-      if env == "development" || env == "test"
-        if parent_type.nil?
-          raise "#{self} must be nested in a subclass of Entity"
-        end
-      end
-
-      parent_type.model_name
     end
   end
 

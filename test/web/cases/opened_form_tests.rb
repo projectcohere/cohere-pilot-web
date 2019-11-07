@@ -1,0 +1,60 @@
+require "test_helper"
+require "minitest/mock"
+
+module Cases
+  class OpenedFormTests < ActiveSupport::TestCase
+    test "can be initialized from a case" do
+      kase = Case::Repo.map_record(cases(:pending_1))
+
+      form = OpenedForm.new(kase)
+      assert_present(form.dhs_number)
+      assert_present(form.income)
+    end
+
+    test "can be initialized from params" do
+      kase = Case::Repo.map_record(cases(:opened_1))
+
+      form_attrs = {
+        "dhs_number" => "11111",
+        "household_size" => "5",
+        "income" => "$111"
+      }
+
+      form = OpenedForm.new(
+        kase,
+        form_attrs,
+      )
+
+      assert_equal(form.dhs_number, "11111")
+      assert_equal(form.household_size, "5")
+      assert_equal(form.income, "$111")
+    end
+
+    test "saves household updates" do
+      kase = Case::Repo.map_record(cases(:opened_1))
+      case_repo = Minitest::Mock.new
+      case_repo.expect(:save_dhs_account, nil, [kase])
+
+      form_attrs = {
+        "dhs_number" => "11111",
+        "household_size" => "3",
+        "income" => "$999"
+      }
+
+      form = OpenedForm.new(
+        kase,
+        form_attrs,
+        cases: case_repo
+      )
+
+      did_save = form.save
+      assert(did_save)
+    end
+
+    test "has an address" do
+      kase = Case::Repo.map_record(cases(:opened_1))
+      form = OpenedForm.new(kase)
+      assert_length(form.address, 3)
+    end
+  end
+end

@@ -18,7 +18,7 @@ module Cases
         deny_access
       end
 
-      @form = Case::Forms::Inbound.new
+      @form = Cases::InboundForm.new
     end
 
     def create
@@ -28,10 +28,10 @@ module Cases
 
       supplier_id = Current.user.organization.id
 
-      @form = Case::Forms::Inbound.new(nil, supplier_id,
+      @form = Cases::InboundForm.new(nil, supplier_id,
         params
           .require(:case)
-          .permit(Case::Forms::Inbound.attribute_names)
+          .permit(Cases::InboundForm.attribute_names)
       )
 
       # render errors if form failed to save
