@@ -10,9 +10,8 @@ module CoherePilotWeb
 
     # autoload
     config.eager_load_paths += %w[
-      app/domain/base
-      app/web/base
-      app/web/concerns
+      app/domain/shared
+      app/web/shared
     ]
   end
 end
