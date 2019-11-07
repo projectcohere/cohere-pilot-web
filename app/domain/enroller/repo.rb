@@ -1,3 +1,4 @@
+
 class Enroller
   class Repo < ::Repo
     # -- lifetime --

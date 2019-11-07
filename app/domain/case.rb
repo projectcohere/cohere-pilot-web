@@ -1,7 +1,7 @@
 class Case < ::Entity
   # TODO: should these be generalized for entity/ar?
   prop(:record, default: nil)
-  prop(:events, default: [])
+  prop(:events, default: ::Events::Empty)
 
   # -- props --
   prop(:id, default: Id::None)
@@ -50,12 +50,11 @@ class Case < ::Entity
   end
 
   def submit
-    if not (@status == :opened || @status == :pending)
-      return
+    case @status
+    when :opened, :pending
+      @status = :submitted
+      @events << Events::DidSubmit.from_case(self)
     end
-
-    @status = :submitted
-    @events << Events::DidSubmit.from_case(self)
   end
 
   # -- commands/factories

@@ -2,7 +2,7 @@ class Recipient
   class Address < ::Value
     # -- props --
     prop(:street)
-    prop(:street2)
+    prop(:street2, default: nil)
     prop(:city)
     prop(:state)
     prop(:zip)

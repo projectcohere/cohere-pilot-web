@@ -28,7 +28,7 @@ class ApplicationController < ActionController::Base
   # -- events --
   private def handle_events
     events = Events.get
-    events.consume do |event|
+    events.drain do |event|
       case event
       when Case::Events::DidOpen
         CasesMailer.did_open(event.case_id.val).deliver_later

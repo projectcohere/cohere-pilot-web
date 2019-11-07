@@ -121,10 +121,8 @@ class Case
       kase.did_save(case_record)
       kase.recipient.did_save(recipient_record)
 
-      # consume and push any events
-      kase.events.reject! do |event|
-        @events << event
-      end
+      # consume all entity events
+      @events.consume(kase.events)
     end
 
     def save_dhs_account(kase)
@@ -142,10 +140,8 @@ class Case
         kase.recipient.record.save!
       end
 
-      # consume and push any events
-      kase.events.reject! do |event|
-        @events << event
-      end
+      # consume all entity events
+      @events.consume(kase.events)
     end
 
     def save(kase)
@@ -165,10 +161,8 @@ class Case
         kase.recipient.record.save!
       end
 
-      # consume and push any events
-      kase.events.reject! do |event|
-        @events << event
-      end
+      # consume all entity events
+      @events.consume(kase.events)
     end
 
     # -- commands/helpers

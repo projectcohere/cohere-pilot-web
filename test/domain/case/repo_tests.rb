@@ -1,4 +1,5 @@
 require "test_helper"
+require "minitest/mock"
 
 class Case
   class RepoTests < ActiveSupport::TestCase
@@ -87,26 +88,102 @@ class Case
     end
 
     test "saves an opened case" do
-      skip
+      repo_events = ::Events.new
+      repo = Case::Repo.new(
+        events: repo_events
+      )
+
+      kase = Case.open(
+        profile: Recipient::Profile.new(
+          phone: Recipient::Phone.new(
+            number: Faker::PhoneNumber.phone_number
+          ),
+          name: Recipient::Name.new(
+            first: "Janice",
+            last: "Sample"
+          ),
+          address: Recipient::Address.new(
+            street: "123 Test St.",
+            city: "Testburg",
+            state: "Testissippi",
+            zip: "12345"
+          )
+        ),
+        account: Case::Account.new(
+          number: "12345",
+          arrears: "$1000"
+        ),
+        enroller: Enroller::Repo.map_record(enrollers(:enroller_1)),
+        supplier: Supplier::Repo.map_record(suppliers(:supplier_1))
+      )
+
+      act = -> do
+        repo.save_opened(kase)
+      end
 
       assert_difference(
         -> { Case::Record.count } => 1,
         -> { Recipient::Record.count } => 1,
       ) do
-        did_save = act.()
-        assert(did_save)
+        act.()
+
+        assert_not_nil(kase.record)
+        assert_not_nil(kase.id.val)
+        assert_not_nil(kase.recipient.record)
+        assert_not_nil(kase.recipient.id)
+
+        assert_length(kase.events, 0)
+        assert_length(repo_events, 1)
       end
     end
 
     test "saves an opened case for an existing recipient" do
-      skip
+      repo_events = ::Events.new
+      repo = Case::Repo.new(
+        events: repo_events
+      )
+
+      kase = Case.open(
+        profile: Recipient::Profile.new(
+          phone: Recipient::Phone.new(
+            number: recipients(:recipient_1).phone_number
+          ),
+          name: Recipient::Name.new(
+            first: "Janice",
+            last: "Sample"
+          ),
+          address: Recipient::Address.new(
+            street: "123 Test St.",
+            city: "Testburg",
+            state: "Testissippi",
+            zip: "12345"
+          )
+        ),
+        account: Case::Account.new(
+          number: "12345",
+          arrears: "$1000"
+        ),
+        enroller: Enroller::Repo.map_record(enrollers(:enroller_1)),
+        supplier: Supplier::Repo.map_record(suppliers(:supplier_1))
+      )
+
+      act = -> do
+        repo.save_opened(kase)
+      end
 
       assert_difference(
         -> { Case::Record.count } => 1,
         -> { Recipient::Record.count } => 0,
       ) do
-        did_save = act.()
-        assert(did_save)
+        act.()
+
+        assert_not_nil(kase.record)
+        assert_not_nil(kase.id.val)
+        assert_not_nil(kase.recipient.record)
+        assert_not_nil(kase.recipient.id)
+
+        assert_length(kase.events, 0)
+        assert_length(repo_events, 1)
       end
     end
 
@@ -135,7 +212,23 @@ class Case
     end
 
     test "saves all fields" do
-      skip
+      kase = Case::Repo.map_record(cases(:pending_2))
+      kase.attach_dhs_account(Recipient::DhsAccount.new(
+        number: "11111",
+        household: Recipient::Household.new(size: "3", income: "$999")
+      ))
+      kase.submit
+
+      repo = Case::Repo.new
+      repo.save(kase)
+
+      record = kase.record
+      assert_equal(record.status, "submitted")
+
+      record = record.recipient
+      assert_equal(record.dhs_number, "11111")
+      assert_equal(record.household_size, "3")
+      assert_equal(record.household_income, "$999")
     end
 
     test "maps a record" do
