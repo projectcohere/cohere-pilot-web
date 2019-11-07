@@ -117,7 +117,7 @@ t/a/rescue:
 .PHONY: t/dbg
 
 # -- test/helpers
-test-base     = $(tools-rails) test $$(find test/infra test/features test/web -name "*_tests.rb")
+test-base     = $(tools-rails) test $$(find test/infra test/domain test/web -name "*_tests.rb")
 test-base-all = $(tools-rails) test $$(find test -name "*_tests.rb")
 
 # -- utilties --
