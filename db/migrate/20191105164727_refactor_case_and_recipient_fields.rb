@@ -6,8 +6,8 @@ class RefactorCaseAndRecipientFields < ActiveRecord::Migration[6.0]
     end
 
     change_table(:recipients) do |t|
-      t.string(:household_size)
-      t.string(:household_income)
+      t.string(:dhs_household_size)
+      t.string(:dhs_household_income)
     end
   end
 end
