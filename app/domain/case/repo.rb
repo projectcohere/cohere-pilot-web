@@ -6,11 +6,11 @@ class Case
     end
 
     def initialize(
-      events: ::Events.get,
+      event_queue: EventQueue.get,
       supplier_repo: ::Supplier::Repo.get,
       enroller_repo: ::Enroller::Repo.get
     )
-      @events = events
+      @event_queue = event_queue
       @supplier_repo = supplier_repo
       @enroller_repo = enroller_repo
     end
@@ -122,7 +122,7 @@ class Case
       kase.recipient.did_save(recipient_record)
 
       # consume all entity events
-      @events.consume(kase.events)
+      @event_queue.consume(kase.events)
     end
 
     def save_dhs_account(kase)
@@ -141,7 +141,7 @@ class Case
       end
 
       # consume all entity events
-      @events.consume(kase.events)
+      @event_queue.consume(kase.events)
     end
 
     def save(kase)
@@ -162,7 +162,7 @@ class Case
       end
 
       # consume all entity events
-      @events.consume(kase.events)
+      @event_queue.consume(kase.events)
     end
 
     # -- commands/helpers

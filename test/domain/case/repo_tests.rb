@@ -95,9 +95,9 @@ class Case
     end
 
     test "saves an opened case" do
-      event_bus = ::Events.new
+      event_queue = EventQueue.new
       case_repo = Case::Repo.new(
-        events: event_bus
+        event_queue: event_queue
       )
 
       kase = Case.open(
@@ -140,13 +140,13 @@ class Case
       assert_not_nil(kase.recipient.id)
 
       assert_length(kase.events, 0)
-      assert_length(event_bus, 1)
+      assert_length(event_queue, 1)
     end
 
     test "saves an opened case for an existing recipient" do
-      event_bus = ::Events.new
+      event_queue = EventQueue.new
       case_repo = Case::Repo.new(
-        events: event_bus
+        event_queue: event_queue
       )
 
       kase = Case.open(
@@ -189,7 +189,7 @@ class Case
       assert_not_nil(kase.recipient.id)
 
       assert_length(kase.events, 0)
-      assert_length(event_bus, 1)
+      assert_length(event_queue, 1)
     end
 
     test "saves a dhs account" do

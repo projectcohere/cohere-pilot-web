@@ -1,7 +1,7 @@
-class Events
+class EventQueue
   # -- lifetime --
   def self.get
-    Services.events ||= Events.new
+    Services.event_queue ||= EventQueue.new
   end
 
   def initialize
@@ -40,5 +40,5 @@ class Events
   end
 
   # -- constants --
-  Empty = Events.new
+  Empty = EventQueue.new
 end
