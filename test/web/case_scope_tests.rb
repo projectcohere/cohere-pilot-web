@@ -1,17 +1,43 @@
 require "test_helper"
 
 class CaseScopeTests < ActiveSupport::TestCase
-  test "scopes paths by user scope" do
+  test "permits matched url and user scopes" do
     user = User.new(id: nil, email: nil, role: :dhs)
-    scope = CaseScope.new(:root, user)
-    scoped = scope.scoped_path("/cases/1")
+    scope = CaseScope.new("/cases/dhs/1/edit", user)
+    assert(scope.permit?)
+  end
+
+  test "rejects unmatched url and user scopes" do
+    user = User.new(id: nil, email: nil, role: :cohere)
+    scope = CaseScope.new("/cases/dhs/1", user)
+    assert(scope.reject?)
+  end
+
+  test "rewrites paths with no path" do
+    user = User.new(id: nil, email: nil, role: :dhs)
+    scope = CaseScope.new(nil, user)
+    scoped = scope.rewrite_path("/cases?test=1")
+    assert_equal(scoped, "/cases/dhs?test=1")
+  end
+
+  test "rewrites paths from a non-case path" do
+    user = User.new(id: nil, email: nil, role: :dhs)
+    scope = CaseScope.new("/sessions", user)
+    scoped = scope.rewrite_path("/cases?test=1")
+    assert_equal(scoped, "/cases/dhs?test=1")
+  end
+
+  test "rewrites scoped paths to the user's scope" do
+    user = User.new(id: nil, email: nil, role: :dhs)
+    scope = CaseScope.new("/cases/supplier/1", user)
+    scoped = scope.rewrite_path("/cases/supplier/1")
     assert_equal(scoped, "/cases/dhs/1")
   end
 
-  test "does not scope paths for root-scoped users" do
+  test "rewrites scoped paths to a root user's scope" do
     user = User.new(id: nil, email: nil, role: :cohere)
-    scope = CaseScope.new(:opened, user)
-    scoped = scope.scoped_path("/cases/1")
+    scope = CaseScope.new("/cases/enroller/1", user)
+    scoped = scope.rewrite_path("/cases/enroller/1")
     assert_equal(scoped, "/cases/1")
   end
 end

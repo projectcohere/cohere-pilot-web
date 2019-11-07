@@ -1,7 +1,7 @@
 module Cases
   class DhsController < ApplicationController
     # -- filters --
-    before_action(:check_scope)
+    before_action(:check_case_scope)
 
     # -- helpers --
     helper_method(:policy)
@@ -49,20 +49,9 @@ module Cases
       end
     end
 
-    # -- commands --
-    private def check_scope
-      if not case_scope.scoped?
-        deny_access
-      end
-    end
-
     # -- queries --
     private def policy
-      case_scope.policy
-    end
-
-    def case_scope
-      @case_scope ||= CaseScope.new(:dhs, Current.user)
+      @policy ||= Case::Policy.new(Current.user)
     end
   end
 end

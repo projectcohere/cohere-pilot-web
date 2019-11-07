@@ -23,6 +23,6 @@ class CasesMailer < ApplicationMailer
 
   # -- queries --
   private def case_scope
-    @case_scope ||= CaseScope.new(:root, @note.receiver)
+    @case_scope ||= CaseScope.new(nil, @note.receiver)
   end
 end

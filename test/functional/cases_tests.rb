@@ -11,7 +11,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   test "can't list cases without permission" do
     user = users(:supplier_1)
     get(auth("/cases", as: user))
-    assert_redirected_to("/cases/supplier")
+    assert_redirected_to(%r[/cases/supplier])
   end
 
   test "can list incomplete cases as an operator" do
@@ -21,19 +21,19 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 6)
   end
 
-  # -- list/submitted
-  test "can't list submitted cases if signed-out" do
+  # -- list/enroller
+  test "can't list enroller cases if signed-out" do
     get("/cases/enroller")
     assert_redirected_to("/sign-in")
   end
 
-  test "can't list submitted cases without permission" do
+  test "can't list enroller cases without permission" do
     user = users(:cohere_1)
     get(auth("/cases/enroller", as: user))
-    assert_redirected_to("/cases")
+    assert_redirected_to(%r[/cases(?!/enroller)])
   end
 
-  test "can list submitted cases for my org as an enroller" do
+  test "can list enroller cases for my org as an enroller" do
     user = users(:enroller_1)
     get(auth("/cases/enroller", as: user))
     assert_response(:success)
@@ -50,7 +50,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   test "can't list supplier cases without permission" do
     user = users(:cohere_1)
     get(auth("/cases/supplier", as: user))
-    assert_redirected_to("/cases")
+    assert_redirected_to(%r[/cases(?!/supplier)])
   end
 
   test "can list supplier cases with permission" do
@@ -60,19 +60,19 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".Main-title", text: /Supplier Cases/)
   end
 
-  # -- list/opened
-  test "can't list opened cases if signed-out" do
+  # -- list/dhs
+  test "can't list dhs cases if signed-out" do
     get("/cases/dhs")
     assert_redirected_to("/sign-in")
   end
 
-  test "can't list opened cases without permission" do
+  test "can't list dhs cases without permission" do
     user = users(:cohere_1)
     get(auth("/cases/dhs", as: user))
-    assert_redirected_to("/cases")
+    assert_redirected_to(%r[/cases(?!/dhs)])
   end
 
-  test "can list opened cases with permission" do
+  test "can list dhs cases with permission" do
     user = users(:dhs_1)
     get(auth("/cases/dhs", as: user))
     assert_response(:success)
@@ -82,25 +82,25 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   # -- create --
   # -- create/supplier
-  test "can't add an supplier case if signed-out" do
+  test "can't open a case if signed-out" do
     get("/cases/supplier/new")
     assert_redirected_to("/sign-in")
   end
 
-  test "can't add an supplier case without permission" do
+  test "can't open a case without permission" do
     user = users(:cohere_1)
     get(auth("/cases/supplier/new", as: user))
-    assert_redirected_to("/cases")
+    assert_redirected_to(%r[/cases(?!/supplier)])
   end
 
-  test "can add a supplier case with permission" do
+  test "open a case with permission" do
     user = users(:supplier_1)
     get(auth("/cases/supplier/new", as: user))
     assert_response(:success)
     assert_select(".Main-title", text: /Add a Case/)
   end
 
-  test "can create an supplier case with permission" do
+  test "save an opened case with permission" do
     user = users(:supplier_1)
     post(auth("/cases/supplier", as: user), params: {
       case: {
@@ -128,7 +128,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "show errors for an invalid supplier case" do
+  test "show errors when opening an invalid case" do
     user = users(:supplier_1)
     post(auth("/cases/supplier", as: user), params: {
       case: {
@@ -148,14 +148,14 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/sign-in")
   end
 
-  test "can't view a submitted case without permission" do
+  test "can't view an submitted case without permission" do
     user = users(:cohere_1)
     kase = cases(:submitted_1)
     get(auth("/cases/enroller/#{kase.id}", as: user))
-    assert_redirected_to("/cases")
+    assert_redirected_to(%r[/cases(?!/enroller)])
   end
 
-  test "can view a submitted case" do
+  test "view a submitted case" do
     user = users(:enroller_1)
     kase = Case::Repo.map_record(cases(:submitted_1))
     get(auth("/cases/enroller/#{kase.id}", as: user))
@@ -170,7 +170,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/sign-in")
   end
 
-  test "can edit a case" do
+  test "edit a case" do
     user = users(:cohere_1)
     kase = Case::Repo.map_record(cases(:submitted_1))
     get(auth("/cases/#{kase.id}/edit", as: user))
@@ -178,7 +178,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".Main-title", text: /#{kase.recipient.profile.name}/)
   end
 
-  test "can update a case" do
+  test "save an edited case" do
     user = users(:cohere_1)
     kase = cases(:pending_2)
 
@@ -217,17 +217,17 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   # -- edit/dhs
-  test "can't edit an opened case if signed-out" do
+  test "can't edit a dhs case if signed-out" do
     kase = cases(:opened_1)
     get("/cases/dhs/#{kase.id}/edit")
     assert_redirected_to("/sign-in")
   end
 
-  test "can't edit an opened case without permission" do
+  test "can't edit a dhs case without permission" do
     user = users(:supplier_1)
     kase = Case::Repo.map_record(cases(:submitted_1))
     get(auth("/cases/dhs/#{kase.id}/edit", as: user))
-    assert_redirected_to("/cases/supplier")
+    assert_redirected_to(%r[/cases(?!/dhs)])
   end
 
   test "can edit an opened case with permission" do

@@ -1,32 +1,67 @@
 class CaseScope
-  # the underlying policy for this scope
-  attr(:policy)
-
   # -- lifetime --
-  def initialize(scope, user)
-    @policy ||= Case::Policy.new(
-      user,
-      scope: scope
-    )
+  def initialize(path, user)
+    @path_scope = extract_scope_from_path(path)
+    @user_scope = whitelist_scope(user.role)
   end
 
   # -- queries --
-  def scoped?
-    @policy.permit?(:some)
+  def permit?
+    @path_scope.present? && @path_scope == @user_scope
   end
 
-  def scoped_path(path)
-    scope = @policy.scope_for_user
-    if scope == :root
-      return path
+  def reject?
+    not permit?
+  end
+
+  # rewrites the path using the user's scope. replaces the existing
+  # scope, if necessary.
+  def rewrite_path(path)
+    uri = URI(path)
+
+    # remove existing scope
+    if not @path_scope.nil?
+      uri.path = uri.path.gsub(/#{@path_scope}\/?/, "")
     end
 
-    parts = path.split("/")
-    parts.insert(2, scope.to_s)
-    parts.join("/")
+    # don't rescope if root
+    if @user_scope == :root
+      return uri.to_s
+    end
+
+    # otherwise, add user's scope
+    parts = uri.path.split("/")
+    parts.insert(2, @user_scope.to_s)
+    uri.path = parts.join("/")
+
+    uri.to_s
   end
 
-  def scoped_url(url)
-    ENV["HOST"] + scoped_path(url.delete_prefix(ENV["HOST"]))
+  # -- helpers --
+  private def extract_scope_from_path(path)
+    if path.nil?
+      return nil
+    end
+
+    uri = URI(path)
+
+    parts = uri.path.split("/")
+    if parts[1] != "cases"
+      return nil
+    end
+
+    whitelist_scope(parts[2], :root)
+  end
+
+  private def whitelist_scope(value, default = nil)
+    scope = value&.to_sym
+    case scope
+    when :supplier, :dhs, :enroller
+      scope
+    when :cohere
+      :root
+    else
+      default
+    end
   end
 end

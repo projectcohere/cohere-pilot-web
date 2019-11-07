@@ -3,8 +3,6 @@ module Authentication
 
   # -- hooks --
   included do
-    # -- helpers
-    helper_method(:case_scope)
     # -- callbacks
     before_action(:build_user)
   end
@@ -16,10 +14,5 @@ module Authentication
     if not current_user.nil?
       Current.user = User::Repo.map_record(current_user)
     end
-  end
-
-  # -- queries --
-  def case_scope
-    @case_scope ||= CaseScope.new(:root, Current.user)
   end
 end

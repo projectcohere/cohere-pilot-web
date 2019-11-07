@@ -1,6 +1,6 @@
 class CasesController < ApplicationController
   # -- filters --
-  before_action(:check_scope)
+  before_action(:check_case_scope)
 
   # -- helpers --
   helper_method(:policy)
@@ -55,15 +55,8 @@ class CasesController < ApplicationController
     redirect_to(cases_path, notice: "Updated #{@form.name}'s case!")
   end
 
-  # -- commands --
-  private def check_scope
-    if not case_scope.scoped?
-      deny_access
-    end
-  end
-
   # -- queries --
   private def policy
-    case_scope.policy
+    @policy ||= Case::Policy.new(Current.user)
   end
 end

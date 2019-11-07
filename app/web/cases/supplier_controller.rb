@@ -1,7 +1,7 @@
 module Cases
   class SupplierController < ApplicationController
     # -- filters --
-    before_action(:check_scope)
+    before_action(:check_case_scope)
 
     # -- helpers --
     helper_method(:policy)
@@ -49,20 +49,9 @@ module Cases
       redirect_to(cases_supplier_index_path, notice: "Created case!")
     end
 
-    # -- commands --
-    private def check_scope
-      if not case_scope.scoped?
-        deny_access
-      end
-    end
-
     # -- queries --
     private def policy
-      case_scope.policy
-    end
-
-    def case_scope
-      @case_scope ||= CaseScope.new(:supplier, Current.user)
+      @policy ||= Case::Policy.new(Current.user)
     end
   end
 end
