@@ -1,6 +1,6 @@
 class Document
   class Record < ApplicationRecord
-    self.table_name = :documents
+    set_table_name!
 
     # -- associations --
     belongs_to(:case, class_name: "::Case::Record")

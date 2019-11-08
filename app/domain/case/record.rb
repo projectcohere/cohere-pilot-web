@@ -1,6 +1,6 @@
 class Case
   class Record < ::ApplicationRecord
-    self.table_name = :cases
+    set_table_name!
 
     # -- associations --
     belongs_to(:recipient, class_name: "::Recipient::Record")

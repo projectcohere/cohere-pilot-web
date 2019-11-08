@@ -18,11 +18,11 @@
 
   /* SignIn-title */
   &-title {
-    max-width: $width2;
     text-align: center;
   }
 
   &-logo {
+    max-width: $width2;
     width: $width2;
     height: 113px;
   }
@@ -45,11 +45,16 @@
   }
 
   &-submit {
-    max-width: 100%;
+    grid-column: 1 / 10;
+    max-width: initial;
   }
 
-  &-error {
-    color: $colorError;
+  &-resetPassword {
+    grid-column: 1 / 10;
+    text-align: center;
+  }
+
+  &-message {
     text-align: center;
   }
 }

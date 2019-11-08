@@ -2,28 +2,28 @@ cohere_1:
   email: me@cohere.org
   encrypted_password: <%= password("password") %>
   organization_type: cohere
-  remember_token: "test-token"
+  remember_token: <%= SecureRandom.uuid %>
 
 enroller_1:
   email: me@testmetro.org
   encrypted_password: <%= password("password") %>
   organization: enroller_1 (Enroller::Record)
-  remember_token: "test-token"
+  remember_token: <%= SecureRandom.uuid %>
 
 enroller_2:
   email: me@testunited.org
   encrypted_password: <%= password("password") %>
   organization: enroller_2 (Enroller::Record)
-  remember_token: "test-token"
+  remember_token: <%= SecureRandom.uuid %>
 
 supplier_1:
   email: me@testenergy.com
   encrypted_password: <%= password("password") %>
   organization: supplier_1 (Supplier::Record)
-  remember_token: "test-token"
+  remember_token: <%= SecureRandom.uuid %>
 
 dhs_1:
   email: me@michigan.gov
   encrypted_password: <%= password("password") %>
   organization_type: dhs
-  remember_token: "test-token"
+  remember_token: <%= SecureRandom.uuid %>

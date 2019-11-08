@@ -3,7 +3,7 @@ class User
     include Clearance::User
 
     # -- config --
-    self.table_name = :users
+    set_table_name!
 
     # -- associations --
     belongs_to(:organization, polymorphic: true, optional: true)

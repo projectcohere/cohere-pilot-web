@@ -1,7 +1,6 @@
 class Recipient
   class Record < ::ApplicationRecord
-    # TODO: generalize this for feature-namespaced records?
-    self.table_name = :recipients
+    set_table_name!
 
     # -- callbacks --
     before_validation(:normalize_phone_number)

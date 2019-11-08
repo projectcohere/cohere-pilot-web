@@ -1,6 +1,6 @@
 class Enroller
   class Record < ::ApplicationRecord
-    self.table_name = :enrollers
+    set_table_name!
 
     # -- associations --
     has_many(:cases, class_name: "::Case::Record")

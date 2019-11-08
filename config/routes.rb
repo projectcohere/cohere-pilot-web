@@ -15,9 +15,22 @@ Rails.application.routes.draw do
     # auth
     get(sign_in_path, to: "sessions#new")
 
-    resource(:session, only: %i[
+    resources(:sessions, only: %i[
       create
     ])
+
+    get("/forgot-password", to: "passwords#new")
+
+    resources(:passwords, only: %i[
+      create
+    ])
+
+    resources(:user, only: []) do
+      resource(:password, controller: "passwords", only: %i[
+        edit
+        update
+      ])
+    end
 
     # front-webhooks
     namespace(:messages) do
