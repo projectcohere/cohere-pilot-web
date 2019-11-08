@@ -1,4 +1,6 @@
 en:
+  flashes:
+    failure_after_create: Your e-mail and password did not match.
   layouts:
     header:
       logo: Cohere
