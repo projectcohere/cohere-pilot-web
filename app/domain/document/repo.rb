@@ -37,6 +37,7 @@ class Document
         })
       end
 
+      # send creation events back to entities
       records.each_with_index do |r, i|
         documents[i].did_save(r)
       end

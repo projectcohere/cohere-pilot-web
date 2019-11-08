@@ -11,12 +11,20 @@ class Document < ::Entity
   # -- props/temp
   attr(:new_file)
 
+  # -- lifetime
+  def self.upload(case_id:, source_url:)
+    Document.new(
+      case_id: case_id,
+      source_url: source_url
+    )
+  end
+
   # -- commands --
   def attach_file(file)
     @new_file = file
   end
 
-  # -- events --
+  # -- callbacks --
   def did_save(record)
     @record = record
     @id = record.id

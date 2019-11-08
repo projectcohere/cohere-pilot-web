@@ -13,14 +13,14 @@ module Cases
       end
 
       @cases = Case::Repo.get.find_all_for_enroller(
-        Current.user.organization.id
+        Current.user.role.organization_id
       )
     end
 
     def show
       @case = Case::Repo.get.find_for_enroller(
         params[:id],
-        Current.user.organization.id
+        Current.user.role.organization_id
       )
 
       policy.case = @case

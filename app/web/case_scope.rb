@@ -2,7 +2,7 @@ class CaseScope
   # -- lifetime --
   def initialize(path, user)
     @path_scope = extract_scope_from_path(path)
-    @user_scope = whitelist_scope(user.role)
+    @user_scope = whitelist_scope(user.role_name)
   end
 
   # -- queries --

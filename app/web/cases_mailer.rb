@@ -4,7 +4,7 @@ class CasesMailer < ApplicationMailer
     @case = Case::Repo.get.find(case_id)
 
     emails = User::Repo.get
-      .find_all_opened_case_contributors
+      .find_all_for_opened_case
       .map(&:email)
 
     mail(
@@ -17,7 +17,7 @@ class CasesMailer < ApplicationMailer
     @case = Case::Repo.get.find(case_id)
 
     emails = User::Repo.get
-      .find_all_submitted_case_contributors(@case.enroller_id)
+      .find_all_for_submitted_case(@case)
       .map(&:email)
 
     mail(

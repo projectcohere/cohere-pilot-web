@@ -94,32 +94,32 @@ class Case
     # -- commands --
     def save_opened(kase)
       # start a new case record
-      case_record = Case::Record.new
+      case_rec = Case::Record.new
 
       # update the case record
-      case_record.assign_attributes(
+      case_rec.assign_attributes(
         enroller_id: kase.enroller_id,
         supplier_id: kase.supplier_id,
       )
 
-      assign_account(kase, case_record)
+      assign_account(kase, case_rec)
 
       # find or update a recipient with a matching phone number
-      recipient_record = Recipient::Record.find_or_initialize_by(
+      recipient_rec = Recipient::Record.find_or_initialize_by(
         phone_number: kase.recipient.profile.phone.number
       )
 
-      assign_recipient_profile(kase, recipient_record)
+      assign_recipient_profile(kase, recipient_rec)
 
       # save the records
-      case_record.transaction do
-        case_record.recipient = recipient_record
-        case_record.save!
+      case_rec.transaction do
+        case_rec.recipient = recipient_rec
+        case_rec.save!
       end
 
-      # send creation events back to the domain objects
-      kase.did_save(case_record)
-      kase.recipient.did_save(recipient_record)
+      # send creation events back to entities
+      kase.did_save(case_rec)
+      kase.recipient.did_save(recipient_rec)
 
       # consume all entity events
       @event_queue.consume(kase.events)
@@ -166,37 +166,37 @@ class Case
     end
 
     # -- commands/helpers
-    private def assign_status(kase, case_record)
+    private def assign_status(kase, case_rec)
       c = kase
-      case_record.assign_attributes(
+      case_rec.assign_attributes(
         status: c.status
       )
     end
 
-    private def assign_account(kase, case_record)
+    private def assign_account(kase, case_rec)
       a = kase.account
-      case_record.assign_attributes(
+      case_rec.assign_attributes(
         account_number: a.number,
         account_arrears: a.arrears
       )
     end
 
-    private def assign_recipient_profile(kase, recipient_record)
+    private def assign_recipient_profile(kase, recipient_rec)
       r = kase.recipient
 
       p = r.profile.phone
-      recipient_record.assign_attributes(
+      recipient_rec.assign_attributes(
         phone_number: p.number
       )
 
       n = r.profile.name
-      recipient_record.assign_attributes(
+      recipient_rec.assign_attributes(
         first_name: n.first,
         last_name: n.last,
       )
 
       a = r.profile.address
-      recipient_record.assign_attributes(
+      recipient_rec.assign_attributes(
         street: a.street,
         street2: a.street2,
         city: a.city,
@@ -205,16 +205,16 @@ class Case
       )
     end
 
-    private def assign_dhs_account(kase, recipient_record)
+    private def assign_dhs_account(kase, recipient_rec)
       r = kase.recipient
 
       a = r.dhs_account
-      recipient_record.assign_attributes(
+      recipient_rec.assign_attributes(
         dhs_number: a.number,
       )
 
       h = a.household
-      recipient_record.assign_attributes(
+      recipient_rec.assign_attributes(
         household_size: a.household.size,
         household_income: a.household.income
       )

@@ -60,11 +60,11 @@ class Case < ::Entity
   # -- commands/factories
   def upload_documents_from_message(message)
     message.attachments.map do |attachment|
-      Document.new(case_id: id, source_url: attachment.url)
+      Document.upload(case_id: id, source_url: attachment.url)
     end
   end
 
-  # -- events --
+  # -- callbacks --
   def did_save(record)
     @id.set(record.id)
     @record = record

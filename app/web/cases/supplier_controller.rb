@@ -26,7 +26,7 @@ module Cases
         deny_access
       end
 
-      supplier_id = Current.user.organization.id
+      supplier_id = Current.user.role.organization_id
 
       @form = Cases::SupplierForm.new(nil, supplier_id,
         params

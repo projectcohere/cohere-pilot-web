@@ -9,7 +9,7 @@ class Case
     # -- queries --
     # checks if the given user/case is allowed to perform an action.
     def permit?(action)
-      role = @user.role
+      role = @user.role_name
 
       # then check action permissions
       case action

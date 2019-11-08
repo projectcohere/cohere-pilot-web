@@ -96,6 +96,7 @@ class Case
 
     test "saves an opened case" do
       event_queue = EventQueue.new
+
       case_repo = Case::Repo.new(
         event_queue: event_queue
       )
