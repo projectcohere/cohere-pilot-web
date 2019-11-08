@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   helper_method(:case_scope)
 
   # -- filters --
-  after_action(:handle_events)
+  after_action(:process_event_queue)
 
   # -- case-scope --
   # -- case-scope/queries
@@ -26,16 +26,8 @@ class ApplicationController < ActionController::Base
   end
 
   # -- events --
-  private def handle_events
-    event_queue = EventQueue.get
-    event_queue.drain do |event|
-      case event
-      when Case::Events::DidOpen
-        CasesMailer.did_open(event.case_id.val).deliver_later
-      when Case::Events::DidSubmit
-        CasesMailer.did_submit(event.case_id.val).deliver_later
-      end
-    end
+  private def process_event_queue
+    ProcessEventQueue.get.()
   end
 
   # -- Clearance::Authentication --

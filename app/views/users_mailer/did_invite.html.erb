@@ -1,0 +1,7 @@
+<p>You've been invited to the Cohere Pilot!<p>
+<p>
+  Please follow this link to
+  <%- link_url = edit_user_password_url(@user, invited: true, token: @user.confirmation_token) %>
+  <%= link_to("create a password", link_url) %>
+  and finish setting up your account.
+</p>

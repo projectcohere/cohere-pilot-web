@@ -42,8 +42,8 @@ class User
       )
 
       assert_not_nil(user.id.val)
+      assert_not_nil(user.confirmation_token)
       assert_not_nil(user.record)
-      assert_not_nil(user.record.confirmation_token)
 
       assert_length(user.events, 0)
       assert_length(event_queue, 1)
@@ -68,10 +68,12 @@ class User
     # -- factories --
     test "maps a operator record" do
       user_rec = users(:cohere_1)
+      user_rec.confirmation_token = "test-token"
 
       user = User::Repo.map_record(user_rec)
       assert_equal(user.email, "me@cohere.org")
       assert_equal(user.role.name, :cohere)
+      assert_equal(user.confirmation_token, "test-token")
     end
 
     test "maps an enroller record" do

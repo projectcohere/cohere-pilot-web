@@ -84,7 +84,7 @@ class AuthenticationTests < ActionDispatch::IntegrationTest
     post("/passwords", params: password_params)
     assert_response(:success)
 
-    perform_enqueued_jobs(queue: :mailers)
+    send_all_emails!
     assert_emails(1)
     assert_select_email do
       assert_select("a", text: /Change my password/) do |el|
@@ -103,7 +103,7 @@ class AuthenticationTests < ActionDispatch::IntegrationTest
     post("/passwords", params: password_params)
     assert_response(:success)
 
-    perform_enqueued_jobs(queue: :mailers)
+    send_all_emails!
     assert_emails(0)
   end
 
@@ -141,5 +141,21 @@ class AuthenticationTests < ActionDispatch::IntegrationTest
 
     patch("/user/#{user_rec.id}/password", params: reset_params)
     assert_redirected_to(root_path)
+  end
+
+  # -- invitation --
+  test "invites the user" do
+    invite_user = Users::InviteUser.new
+    invite_user.("test@cohere.org",
+      role: User::Role.named(:cohere)
+    )
+
+    send_all_emails!
+    assert_emails(1)
+    assert_select_email do
+      assert_select("a", text: /create a password/) do |el|
+        assert_match(%r[#{ENV["HOST"]}/user/\d+/password/edit\?invited=true&token=\w+], el[0][:href])
+      end
+    end
   end
 end

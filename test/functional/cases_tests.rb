@@ -129,7 +129,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:notice])
     assert_redirected_to("/cases/supplier")
 
-    perform_enqueued_jobs(queue: :mailers)
+    send_all_emails!
     assert_emails(1)
     assert_select_email do
       assert_select("a", text: /Janice Sample/) do |el|
@@ -210,7 +210,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
 
-    perform_enqueued_jobs(queue: :mailers)
+    send_all_emails!
     assert_emails(1)
     assert_select_email do
       assert_select("a", text: /Danice Sample/) do |el|

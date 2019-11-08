@@ -4,8 +4,9 @@ require "rails/test_help"
 require "minitest/pride"
 require "config/vcr"
 require "sidekiq/testing"
-require "support/session"
 require "support/asserts"
+require "support/session"
+require "support/mailers"
 
 # load pry-rescue if the flag is set
 if ENV["PRY_RESCUE"]

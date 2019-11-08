@@ -64,6 +64,7 @@ class User
       # save record
       user_rec.save!
       user_rec.forgot_password!
+      user.forget_password(user_rec.confirmation_token)
 
       # send creation events back to entities
       user.did_save(user_rec)
@@ -91,7 +92,8 @@ class User
       User.new(
         id: r.id,
         email: r.email,
-        role: role
+        role: role,
+        confirmation_token: r.confirmation_token
       )
     end
   end

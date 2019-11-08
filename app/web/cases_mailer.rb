@@ -1,5 +1,4 @@
 class CasesMailer < ApplicationMailer
-  # -- actions --
   def did_open(case_id)
     @case = Case::Repo.get.find(case_id)
 
