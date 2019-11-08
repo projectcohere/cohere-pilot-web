@@ -22,5 +22,9 @@ en:
     create:
       message: If you are registered for the pilot, you will receive an e-mail in the next few minutes with instructions for creating a new password.
     edit:
-      title: Reset Your Password
-      prompt: Please enter a new password.
+      invite:
+        title: Create Your Password
+        prompt: Please enter a password.
+      reset:
+        title: Reset Your Password
+        prompt: Please enter a new password.

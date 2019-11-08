@@ -107,17 +107,19 @@ class AuthenticationTests < ActionDispatch::IntegrationTest
     assert_emails(0)
   end
 
-  test "views the reset password page" do
+  test "follows the reset password link" do
     user_rec = users(:cohere_1)
     user_rec.forgot_password! # this generates a confirmation token
-
-    reset_path = "/user/#{user_rec.id}/password/edit"
     reset_params = {
       token: user_rec.confirmation_token
     }
 
-    get(reset_path, params: reset_params)
-    assert_redirected_to(reset_path)
+    get("/user/#{user_rec.id}/password/edit", params: reset_params)
+    assert_redirected_to("/user/#{user_rec.id}/password/edit")
+
+    get("/user/#{user_rec.id}/password/edit")
+    assert_response(:success)
+    assert_select(".SignIn-title h1", text: "Reset Your Password")
   end
 
   test "does not view the reset password page if the user has not asked for a reset" do
@@ -145,7 +147,16 @@ class AuthenticationTests < ActionDispatch::IntegrationTest
 
   # -- invitation --
   test "invites the user" do
-    invite_user = Users::InviteUser.new
+    event_queue = EventQueue.new
+    invite_user = Users::InviteUser.new(
+      user_repo: User::Repo.new(
+        event_queue: event_queue
+      ),
+      process_event_queue: ProcessEventQueue.new(
+        event_queue: event_queue
+      )
+    )
+
     invite_user.("test@cohere.org",
       role: User::Role.named(:cohere)
     )
@@ -157,5 +168,21 @@ class AuthenticationTests < ActionDispatch::IntegrationTest
         assert_match(%r[#{ENV["HOST"]}/user/\d+/password/edit\?invited=true&token=\w+], el[0][:href])
       end
     end
+  end
+
+  test "follows the create password link" do
+    user_rec = users(:cohere_1)
+    user_rec.forgot_password! # this generates a confirmation token
+    reset_params = {
+      token: user_rec.confirmation_token,
+      invited: true
+    }
+
+    get("/user/#{user_rec.id}/password/edit", params: reset_params)
+    assert_redirected_to("/user/#{user_rec.id}/password/edit")
+
+    get("/user/#{user_rec.id}/password/edit")
+    assert_response(:success)
+    assert_select(".SignIn-title h1", text: "Create Your Password")
   end
 end

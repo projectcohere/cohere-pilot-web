@@ -1,7 +1,8 @@
 <main class="Main SignIn">
   <div class="SignIn-title">
-    <h1><%= t(".title") %></h1>
-    <h2><%= t(".prompt").html_safe %></h2>
+    <%- scope = @invited ? ".invite" : ".reset" %>
+    <h1><%= t("#{scope}.title") %></h1>
+    <h2><%= t("#{scope}.prompt").html_safe %></h2>
   </div>
 
   <%- form_url = user_password_path(@user, token: @user.confirmation_token) %>
