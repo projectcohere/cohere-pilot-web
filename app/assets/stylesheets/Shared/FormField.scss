@@ -30,6 +30,12 @@
     }
   }
 
+  &-value {
+    height: $height1;
+    padding-top: $spacing4;
+    padding-bottom: $spacing4;
+  }
+
   &-prefix {
     margin-right: $spacing5;
     color: $gray1;
@@ -39,11 +45,6 @@
     color: $colorError;
     font-weight: $fontWeightRegular;
     background-color: $white;
-
-    // &:hover {
-    //   position: absolute;
-    //   transform: translateX($spacing5);
-    // }
   }
 
   &.is-error:hover &-errors {

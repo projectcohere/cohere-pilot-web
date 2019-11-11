@@ -26,8 +26,8 @@
       <%= f.field(:city, class: "CaseForm-city") do %>
         <%= f.text_field(:city) %>
       <% end %>
-      <%= f.field(:state, class: "CaseForm-state") do %>
-        <%= f.text_field(:state) %>
+      <%= f.field(:state, hide_wrapper: true, class: "CaseForm-state--read") do %>
+        <p class="FormField-value">MI</p>
       <% end %>
       <%= f.field(:zip, class: "CaseForm-zip") do %>
         <%= f.text_field(:zip) %>

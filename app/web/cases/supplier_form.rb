@@ -15,7 +15,6 @@ module Cases
     field(:street, :string, presence: true)
     field(:street2, :string)
     field(:city, :string, presence: true)
-    field(:state, :string, presence: true)
     field(:zip, :string, presence: true,
       numericality: true
     )
@@ -73,7 +72,6 @@ module Cases
           street: a.street,
           street2: a.street2,
           city: a.city,
-          state: a.state,
           zip: a.zip,
         })
       end
@@ -136,7 +134,7 @@ module Cases
           street: street,
           street2: street2,
           city: city,
-          state: state,
+          state: "MI",
           zip: zip
         )
       )
