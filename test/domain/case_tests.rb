@@ -91,7 +91,7 @@ class CaseTests < ActiveSupport::TestCase
   test "calcuates an fpl percentage from the household" do
     household = Recipient::Household.new(
       size: 5,
-      income: 2493_33
+      income_cents: 2493_33
     )
 
     kase = Case.new(
@@ -115,6 +115,29 @@ class CaseTests < ActiveSupport::TestCase
     kase = Case.new(
       status: nil,
       recipient: nil,
+      account: nil,
+      enroller_id: nil,
+      supplier_id: nil
+    )
+
+    assert_nil(kase.fpl_percentage)
+  end
+
+  test "has no fpl percentage with an incomplete household" do
+    household = Recipient::Household.new(
+      size: nil,
+      income_cents: 2493_33
+    )
+
+    kase = Case.new(
+      status: nil,
+      recipient: Recipient.new(
+        profile: nil,
+        dhs_account: Recipient::DhsAccount.new(
+          number: nil,
+          household: household
+        )
+      ),
       account: nil,
       enroller_id: nil,
       supplier_id: nil

@@ -177,7 +177,7 @@ class Case
       a = kase.account
       case_rec.assign_attributes(
         account_number: a.number,
-        account_arrears: a.arrears
+        account_arrears_cents: a.arrears_cents
       )
     end
 
@@ -216,7 +216,7 @@ class Case
       h = a.household
       recipient_rec.assign_attributes(
         household_size: a.household.size,
-        household_income: a.household.income
+        household_income_cents: a.household.income_cents
       )
     end
 
@@ -230,7 +230,7 @@ class Case
         supplier_id: r.supplier_id,
         account: Case::Account.new(
           number: r.account_number,
-          arrears: r.account_arrears,
+          arrears_cents: r.account_arrears_cents,
         ),
         recipient: map_recipient(r.recipient),
         updated_at: r.updated_at,
@@ -258,13 +258,15 @@ class Case
             zip: r.zip
           ),
         ),
-        dhs_account: Recipient::DhsAccount.new(
-          number: r.dhs_number,
-          household: Recipient::Household.new(
-            size: r.household_size,
-            income: r.household_income
+        dhs_account: r.dhs_number&.then { |number|
+          Recipient::DhsAccount.new(
+            number: number,
+            household: Recipient::Household.new(
+              size: r.household_size,
+              income_cents: r.household_income_cents
+            )
           )
-        )
+        }
       )
     end
   end

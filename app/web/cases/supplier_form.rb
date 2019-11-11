@@ -51,7 +51,7 @@ module Cases
         a = c.account
         assign_defaults!(attrs, {
           account_number: a.number,
-          arrears: a.arrears
+          arrears: a.arrears_dollars.to_s
         })
 
         # set initial values from recipient
@@ -117,7 +117,7 @@ module Cases
     def map_to_supplier_account
       Case::Account.new(
         number: account_number,
-        arrears: arrears
+        arrears_cents: (arrears.to_i * 100.0).to_i
       )
     end
 

@@ -119,7 +119,7 @@ class Case
         ),
         account: Case::Account.new(
           number: "12345",
-          arrears: "1000"
+          arrears_cents: 1000_00
         ),
         enroller: Enroller::Repo.map_record(enrollers(:enroller_1)),
         supplier: Supplier::Repo.map_record(suppliers(:supplier_1))
@@ -168,7 +168,7 @@ class Case
         ),
         account: Case::Account.new(
           number: "12345",
-          arrears: "$1000"
+          arrears_cents: 1000_00
         ),
         enroller: Enroller::Repo.map_record(enrollers(:enroller_1)),
         supplier: Supplier::Repo.map_record(suppliers(:supplier_1))
@@ -199,8 +199,8 @@ class Case
         Recipient::DhsAccount.new(
           number: "11111",
           household: Recipient::Household.new(
-            size: "3",
-            income: "$999"
+            size: 3,
+            income_cents: 999_00
           )
         )
       )
@@ -213,15 +213,15 @@ class Case
 
       recipient_rec = case_rec.recipient
       assert_equal(recipient_rec.dhs_number, "11111")
-      assert_equal(recipient_rec.household_size, "3")
-      assert_equal(recipient_rec.household_income, "$999")
+      assert_equal(recipient_rec.household_size, 3)
+      assert_equal(recipient_rec.household_income_cents, 999_00)
     end
 
     test "saves all fields" do
       case_rec = cases(:pending_2)
       account = Recipient::DhsAccount.new(
         number: "11111",
-        household: Recipient::Household.new(size: "3", income: "$999")
+        household: Recipient::Household.new(size: 3, income_cents: 999_00)
       )
 
       kase = Case::Repo.map_record(case_rec)
@@ -236,8 +236,8 @@ class Case
 
       recipient_rec = case_rec.recipient
       assert_equal(recipient_rec.dhs_number, "11111")
-      assert_equal(recipient_rec.household_size, "3")
-      assert_equal(recipient_rec.household_income, "$999")
+      assert_equal(recipient_rec.household_size, 3)
+      assert_equal(recipient_rec.household_income_cents, 999_00)
     end
 
     test "maps a record" do

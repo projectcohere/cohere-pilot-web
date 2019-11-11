@@ -39,8 +39,8 @@ module Cases
 
       h = r.dhs_account&.household
       assign_defaults!(attrs, {
-        household_size: h&.size,
-        income: h&.income
+        household_size: h&.size&.to_s,
+        income: h&.income_dollars&.to_s
       })
 
       super(attrs)
@@ -69,8 +69,8 @@ module Cases
       Recipient::DhsAccount.new(
         number: dhs_number,
         household: Recipient::Household.new(
-          size: household_size,
-          income: income
+          size: household_size.to_i,
+          income_cents: (income.to_f * 100.0).to_i
         )
       )
     end

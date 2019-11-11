@@ -202,7 +202,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
       case: {
         status: :submitted,
-        dhs_number: "1A2B3C"
+        income: "$300.00"
       }
     })
 
@@ -267,7 +267,7 @@ class CasesTests < ActionDispatch::IntegrationTest
       case: {
         dhs_number: "12345",
         household_size: "5",
-        income: "500"
+        income: "$500.00"
       }
     })
 

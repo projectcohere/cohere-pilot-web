@@ -72,7 +72,11 @@ class Case < ::Entity
     end
 
     hh_size = household.size
-    hh_month_cents = household.income
+    hh_month_cents = household.income_cents
+    if hh_size.nil? || hh_month_cents.nil?
+      return nil
+    end
+
     hh_year_cents = hh_month_cents * 12
 
     fpl_month_cents = 1580_00 + (hh_size - 1) * 540_00
