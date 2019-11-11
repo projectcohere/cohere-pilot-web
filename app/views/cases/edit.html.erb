@@ -79,6 +79,18 @@
         <%= f.field(:income, "Monthly Income", prefix: "$", class: "CaseForm-monthlyIncome") do %>
           <%= f.text_field(:income) %>
         <% end %>
+        <%= f.field(:fpl, "FPL Percentage", hide_wrapper: true, class: "CaseForm-fpl") do %>
+          <%- fpl = @form.fpl_percentage %>
+          <% if fpl.nil? %>
+            <p class="FormField-value is-fallback">
+              Unknown. Please add household info.
+            </p>
+          <% else %>
+            <p class="FormField-value">
+              <%= fpl %>%
+            </p>
+          <% end %>
+        <% end %>
       <% end %>
 
       <%= f.submit(class: "Button--action") %>

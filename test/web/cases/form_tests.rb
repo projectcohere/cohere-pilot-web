@@ -60,5 +60,11 @@ module Cases
       assert_present(form.errors)
       assert_present(form.errors[:dhs_number])
     end
+
+    test "has an fpl percentage" do
+      kase = Case::Repo.map_record(cases(:pending_1))
+      form = Form.new(kase)
+      assert_not_nil(form.fpl_percentage)
+    end
   end
 end

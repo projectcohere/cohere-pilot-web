@@ -87,4 +87,39 @@ class CaseTests < ActiveSupport::TestCase
     assert_equal(documents[0].case_id, 4)
     assert_equal(documents[0].source_url, "https://website.com/image.jpg")
   end
+
+  test "calcuates an fpl percentage from the household" do
+    household = Recipient::Household.new(
+      size: 5,
+      income: 2493_33
+    )
+
+    kase = Case.new(
+      status: nil,
+      recipient: Recipient.new(
+        profile: nil,
+        dhs_account: Recipient::DhsAccount.new(
+          number: nil,
+          household: household
+        )
+      ),
+      account: nil,
+      enroller_id: nil,
+      supplier_id: nil
+    )
+
+    assert_equal(kase.fpl_percentage, 100)
+  end
+
+  test "has no fpl percentage without a household" do
+    kase = Case.new(
+      status: nil,
+      recipient: nil,
+      account: nil,
+      enroller_id: nil,
+      supplier_id: nil
+    )
+
+    assert_nil(kase.fpl_percentage)
+  end
 end

@@ -30,15 +30,19 @@
     }
   }
 
+  &-prefix {
+    margin-right: $spacing5;
+    color: $gray1;
+  }
+
   &-value {
     height: $height1;
     padding-top: $spacing4;
     padding-bottom: $spacing4;
-  }
 
-  &-prefix {
-    margin-right: $spacing5;
-    color: $gray1;
+    &.is-fallback {
+      color: $gray1;
+    }
   }
 
   &-errors {

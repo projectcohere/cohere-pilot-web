@@ -81,6 +81,10 @@ module Cases
       @supplier_repo.find(@model.supplier_id).name
     end
 
+    def fpl_percentage
+      @model.fpl_percentage
+    end
+
     def documents
       @document_repo.find_all_for_case(@model.id)
     end

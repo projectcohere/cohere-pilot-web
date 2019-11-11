@@ -64,6 +64,24 @@ class Case < ::Entity
     end
   end
 
+  # -- queries --
+  def fpl_percentage
+    household = recipient&.dhs_account&.household
+    if household.nil?
+      return nil
+    end
+
+    hh_size = household.size
+    hh_month_cents = household.income
+    hh_year_cents = hh_month_cents * 12
+
+    fpl_month_cents = 1580_00 + (hh_size - 1) * 540_00
+    fpl_year_cents = fpl_month_cents * 8
+    fpl_percentage = hh_year_cents * 100 / fpl_year_cents.to_f
+
+    fpl_percentage.round(2)
+  end
+
   # -- callbacks --
   def did_save(record)
     @id.set(record.id)

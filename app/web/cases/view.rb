@@ -56,6 +56,10 @@ module Cases
       @case.recipient.dhs_account.household.income
     end
 
+    def fpl_percentage
+      @case.fpl_percentage
+    end
+
     # -- queries/documents
     def documents
       @document_repo.find_all_for_case(@case.id)
