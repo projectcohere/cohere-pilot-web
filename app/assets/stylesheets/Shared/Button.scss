@@ -20,11 +20,11 @@
   max-width: $width5;
   height: $height1;
   color: $white;
-  background: $brandPrimary;
+  background-color: $brandPrimary;
   border-radius: 5px;
   cursor: pointer;
 
   &:hover {
-    background: lighten($brandPrimary, 5%);
+    background-color: lighten($brandPrimary, 5%);
   }
 }

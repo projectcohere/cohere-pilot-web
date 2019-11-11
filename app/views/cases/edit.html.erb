@@ -6,7 +6,7 @@
   <div class="EditCase">
     <%= form_for(@form, url: case_path(@form.id), html: { class: "CaseForm Form" }) do |f| %>
       <%= f.section("Case Details", class: "CaseForm-details") do %>
-        <%= f.field(:status, class: "CaseForm-status") do %>
+        <%= f.field(:status, hide_wrapper: true, class: "CaseForm-status") do %>
           <%= f.select(:status, @form.statuses.map { |s| [s.to_s.capitalize, s] }) %>
         <% end %>
         <label class="CaseForm-enroller DetailField">
@@ -26,8 +26,8 @@
         <%= f.field(:last_name, class: "CaseForm-lastName") do %>
           <%= f.text_field(:last_name) %>
         <% end %>
-        <%= f.field(:phone_number, "Phone #", class: "CaseForm-phoneNumber") do %>
-          <%= f.telephone_field(:phone_number) %>
+        <%= f.field(:phone_number, "Phone #", prefix: "#1", class: "CaseForm-phoneNumber") do %>
+          <%= f.telephone_field(:phone_number, placeholder: "3134445555") %>
         <% end %>
       <% end %>
 
@@ -45,7 +45,7 @@
           <%= f.text_field(:state) %>
         <% end %>
         <%= f.field(:zip, class: "CaseForm-zip") do %>
-          <%= f.number_field(:zip) %>
+          <%= f.text_field(:zip) %>
         <% end %>
       <% end %>
 
@@ -61,7 +61,7 @@
         <%= f.field(:account_number, "Account #", class: "CaseForm-accountNumber") do %>
           <%= f.text_field(:account_number) %>
         <% end %>
-        <%= f.field(:arrears, class: "CaseForm-arrears") do %>
+        <%= f.field(:arrears, prefix: "$", class: "CaseForm-arrears") do %>
           <%= f.text_field(:arrears) %>
         <% end %>
       <% end %>
@@ -74,9 +74,9 @@
 
       <%= f.section("Household", class: "CaseForm-household") do %>
         <%= f.field(:household_size, "Size", class: "CaseForm-householdSize") do %>
-          <%= f.number_field(:household_size) %>
+          <%= f.text_field(:household_size) %>
         <% end %>
-        <%= f.field(:income, "Monthly Income", class: "CaseForm-monthlyIncome") do %>
+        <%= f.field(:income, "Monthly Income", prefix: "$", class: "CaseForm-monthlyIncome") do %>
           <%= f.text_field(:income) %>
         <% end %>
       <% end %>

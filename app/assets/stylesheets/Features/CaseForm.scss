@@ -1,5 +1,6 @@
 .CaseForm {
   @extend .u-panel;
+  flex: 1;
   max-width: $width1;
 
   /* CaseForm-case */

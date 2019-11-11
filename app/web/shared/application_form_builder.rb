@@ -21,6 +21,8 @@ class ApplicationFormBuilder < ::ActionView::Helpers::FormBuilder
 
   def field(name, title = nil, *args, **kwargs, &children)
     a_class = kwargs.delete(:class)
+    a_prefix = kwargs.delete(:prefix)
+    a_hide_wrapper = kwargs.delete(:hide_wrapper)
 
     # check for field errors
     has_errors =
@@ -44,7 +46,19 @@ class ApplicationFormBuilder < ::ActionView::Helpers::FormBuilder
         hint_text + hint_error
       end
 
-      hint + content
+      field_content = if a_prefix.nil?
+        content
+      else
+        @template.tag.span(a_prefix, class: "FormField-prefix") + content
+      end
+
+      field = if a_hide_wrapper
+        field_content
+      else
+        @template.tag.div(field_content, class: "FormField-field")
+      end
+
+      hint + field
     end
   end
 end
