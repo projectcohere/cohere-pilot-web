@@ -14,7 +14,7 @@ $f: ".FormField";
     height: $height1;
     padding: $spacing4;
     border: none;
-    border-bottom: 1px solid $brandBlack;
+    border-bottom: 2px solid $brandBlack;
     border-top-left-radius: $radiusField;
     border-top-right-radius: $radiusField;
     background: $colorField;
@@ -25,6 +25,15 @@ $f: ".FormField";
 
     &:focus {
       border-bottom-color: $brandPrimary;
+    }
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+
+    &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
     }
   }
 }

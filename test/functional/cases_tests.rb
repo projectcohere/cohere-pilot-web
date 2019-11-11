@@ -116,13 +116,13 @@ class CasesTests < ActionDispatch::IntegrationTest
       case: {
         first_name: "Janice",
         last_name: "Sample",
-        phone_number: Faker::PhoneNumber.phone_number,
+        phone_number: Faker::Number.number(digits: 10),
         street: "123 Test Street",
         city: "Testopolis",
         state: "Testissippi",
         zip: "11111",
         account_number: "22222",
-        arrears: "$1000.0"
+        arrears: "1000.00"
       }
     })
 
@@ -268,7 +268,7 @@ class CasesTests < ActionDispatch::IntegrationTest
       case: {
         dhs_number: "12345",
         household_size: "5",
-        income: "$500"
+        income: "500"
       }
     })
 

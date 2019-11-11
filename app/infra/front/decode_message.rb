@@ -17,7 +17,7 @@ module Front
         .find { |j| j["role"] == "from" }
 
       Message::Sender::new(
-        phone_number: json["handle"]
+        phone_number: json["handle"].delete_prefix("+1")
       )
     end
 

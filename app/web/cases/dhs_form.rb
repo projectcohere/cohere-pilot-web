@@ -8,10 +8,12 @@ module Cases
 
     # -- fields/household
     field(:household_size, :string,
+      numericality: true,
       on: { submitted: { presence: true } }
     )
 
     field(:income, :string,
+      numericality: true,
       on: { submitted: { presence: true } }
     )
 
@@ -54,6 +56,12 @@ module Cases
       @case_repo.save_dhs_account(@model)
 
       true
+    end
+
+    # -- commands/sanitization
+    def income=(value)
+      value&.gsub!(/[^\d\.]+/, "")
+      super
     end
 
     # -- commands/helpers

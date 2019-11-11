@@ -119,7 +119,7 @@ class Case
         ),
         account: Case::Account.new(
           number: "12345",
-          arrears: "$1000"
+          arrears: "1000"
         ),
         enroller: Enroller::Repo.map_record(enrollers(:enroller_1)),
         supplier: Supplier::Repo.map_record(suppliers(:supplier_1))

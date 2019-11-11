@@ -27,7 +27,7 @@ module Cases
 
       assert_equal(form.dhs_number, "11111")
       assert_equal(form.household_size, "5")
-      assert_equal(form.income, "$111")
+      assert_equal(form.income, "111")
     end
 
     test "saves household updates" do
@@ -49,6 +49,15 @@ module Cases
 
       did_save = form.save
       assert(did_save)
+    end
+
+    test "sanitizes income" do
+      kase = Case::Repo.map_record(cases(:opened_1))
+      form = DhsForm.new(kase, {
+        "income" => "A$100.00"
+      })
+
+      assert_equal(form.income, "100.00")
     end
 
     test "has an address" do

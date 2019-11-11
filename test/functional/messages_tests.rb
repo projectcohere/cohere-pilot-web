@@ -9,7 +9,7 @@ class MessagesTests < ActionDispatch::IntegrationTest
         "target": {
           "data": {
             "recipients": [
-              { "handle": "#{recipients(:recipient_1).phone_number}", "role": "from" }
+              { "handle": "+1#{recipients(:recipient_1).phone_number}", "role": "from" }
             ],
             "attachments": [
               { "url": "https://api2.frontapp.com/download/fil_atg8kcn" }

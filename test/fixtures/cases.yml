@@ -4,7 +4,7 @@ opened_1:
   enroller: enroller_1
   supplier: supplier_1
   account_number: A1
-  account_arrears: $1000
+  account_arrears: 1000
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now %>
   completed_at: null
@@ -15,7 +15,7 @@ opened_2:
   enroller: enroller_2
   supplier: supplier_1
   account_number: A1
-  account_arrears: $1000
+  account_arrears: 1000
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now - 1.hours %>
   completed_at: null
@@ -26,7 +26,7 @@ pending_1:
   enroller: enroller_2
   supplier: supplier_1
   account_number: A1
-  account_arrears: $1000
+  account_arrears: 1000
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now - 1.hours %>
   completed_at: null
@@ -37,7 +37,7 @@ pending_2:
   enroller: enroller_2
   supplier: supplier_1
   account_number: A1
-  account_arrears: $1000
+  account_arrears: 1000
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now - 1.hours %>
   completed_at: null
@@ -48,7 +48,7 @@ submitted_1:
   enroller: enroller_1
   supplier: supplier_1
   account_number: A1
-  account_arrears: $1000
+  account_arrears: 1000
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now - 2.hours %>
   completed_at: null
@@ -59,7 +59,7 @@ submitted_2:
   enroller: enroller_2
   supplier: supplier_1
   account_number: A1
-  account_arrears: $1000
+  account_arrears: 1000
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now - 2.hours %>
   completed_at: null
@@ -70,7 +70,7 @@ approved_1:
   enroller: enroller_1
   supplier: supplier_1
   account_number: A1
-  account_arrears: $1000
+  account_arrears: 1000
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now %>
   completed_at: <%= Time.zone.now %>

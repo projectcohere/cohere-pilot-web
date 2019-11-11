@@ -35,7 +35,7 @@ module Cases
       form_params = {
         "first_name" => "Janice",
         "last_name" => "Sample",
-        "phone_number" => Faker::PhoneNumber.phone_number,
+        "phone_number" => Faker::Number.number(digits: 10).to_s,
         "street" => "123 Test Street",
         "city" => "Testopolis",
         "state" => "Testissippi",
@@ -65,6 +65,22 @@ module Cases
       did_save = form.save
       assert_not(did_save)
       assert_present(form.errors)
+    end
+
+    test "sanitizes phone numbers" do
+      form = SupplierForm.new(nil, nil, {
+        "phone_number" => "+1 (213) 445-2820"
+      })
+
+      assert_equal(form.phone_number, "12134452820")
+    end
+
+    test "sanitizes arrears" do
+      form = SupplierForm.new(nil, nil, {
+        "arrears" => "A$100.00"
+      })
+
+      assert_equal(form.arrears, "100.00")
     end
   end
 end

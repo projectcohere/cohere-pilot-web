@@ -6,18 +6,25 @@ module Cases
     field(:last_name, :string, presence: true)
 
     # -- fields/phone
-    field(:phone_number, :string, presence: true)
+    field(:phone_number, :string, presence: true,
+      numericality: true,
+      length: { is: 10 }
+    )
 
     # -- fields/address
     field(:street, :string, presence: true)
     field(:street2, :string)
     field(:city, :string, presence: true)
     field(:state, :string, presence: true)
-    field(:zip, :string, presence: true)
+    field(:zip, :string, presence: true,
+      numericality: true
+    )
 
     # -- fields/utility-account
     field(:account_number, :string, presence: true)
-    field(:arrears, :string, presence: true)
+    field(:arrears, :string, presence: true,
+      numericality: true
+    )
 
     # -- lifetime --
     def initialize(
@@ -95,6 +102,17 @@ module Cases
       @model = new_case
 
       true
+    end
+
+    # -- commands/sanitization
+    def phone_number=(value)
+      value&.gsub!(/\D+/, "") # strip non-numeric characters
+      super
+    end
+
+    def arrears=(value)
+      value&.gsub!(/[^\d\.]+/, "") # strip non-decimal characters
+      super
     end
 
     # -- commands/helpers

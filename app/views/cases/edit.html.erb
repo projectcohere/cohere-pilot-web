@@ -45,7 +45,7 @@
           <%= f.text_field(:state) %>
         <% end %>
         <%= f.field(:zip, class: "CaseForm-zip") do %>
-          <%= f.text_field(:zip) %>
+          <%= f.number_field(:zip) %>
         <% end %>
       <% end %>
 
@@ -74,7 +74,7 @@
 
       <%= f.section("Household", class: "CaseForm-household") do %>
         <%= f.field(:household_size, "Size", class: "CaseForm-householdSize") do %>
-          <%= f.text_field(:household_size) %>
+          <%= f.number_field(:household_size) %>
         <% end %>
         <%= f.field(:income, "Monthly Income", class: "CaseForm-monthlyIncome") do %>
           <%= f.text_field(:income) %>
