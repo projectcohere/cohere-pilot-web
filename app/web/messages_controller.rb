@@ -15,7 +15,7 @@ class MessagesController < ApplicationController
     )
 
     upload_documents.(request.raw_post).each do |d|
-      Messages::SyncDocumentWorker.perform_async(d.id)
+      Documents::SyncFrontAttachmentWorker.perform_async(d.id)
     end
   end
 

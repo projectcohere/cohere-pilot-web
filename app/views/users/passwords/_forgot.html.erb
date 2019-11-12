@@ -6,8 +6,8 @@
 
   <%= form_for(:password, url: passwords_path, html: { class: "SignIn-form Form" }) do |f| %>
     <%= f.section(class: "SignIn-credentials") do %>
-      <%= f.field(:email, t("auth.email.label"), class: "SignIn-email") do %>
-        <% f.text_field(:email, type: "email", placeholder: t("auth.email.placeholder")) %>
+      <%= f.field(:email, t("users.email.label"), class: "SignIn-email") do %>
+        <% f.text_field(:email, type: "email", placeholder: t("users.email.placeholder")) %>
       <% end %>
     <% end %>
 

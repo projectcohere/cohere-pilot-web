@@ -1,10 +1,11 @@
 require "test_helper"
 
-class AuthenticationTests < ActionDispatch::IntegrationTest
+class UsersTests < ActionDispatch::IntegrationTest
   # -- sign-in --
   test "views the sign in page" do
     get("/sign-in")
     assert_response(:success)
+    assert_select(".SignIn-title h2", text: /sign in/)
   end
 
   test "signs in as an operator" do
@@ -68,7 +69,7 @@ class AuthenticationTests < ActionDispatch::IntegrationTest
 
   # -- reset-password --
   test "views the forgot password page" do
-    get("/forgot-password")
+    get("/passwords/forgot")
     assert_response(:success)
     assert_select(".SignIn-title h1", text: "Forgot Your Password?")
   end
@@ -122,7 +123,7 @@ class AuthenticationTests < ActionDispatch::IntegrationTest
     assert_select(".SignIn-title h1", text: "Reset Your Password")
   end
 
-  test "does not view the reset password page if the user has not asked for a reset" do
+  test "can't view the reset password page if it wasn't requested" do
     user_rec = users(:cohere_1)
 
     get("/user/#{user_rec.id}/password/edit", params: { token: nil })

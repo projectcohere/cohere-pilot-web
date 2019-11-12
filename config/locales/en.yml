@@ -5,18 +5,26 @@ en:
     header:
       logo: Cohere
       sign-out: Sign Out
-  auth:
+  users:
     email:
       label: E-mail
       placeholder: "you@work.com"
     password:
       label: Password
       placeholder: ""
+    passwords:
+      forgot:
+        title: Forgot Your Password?
+        prompt: Please enter your e-mail to reset your password.
+  # imagine this nested in users. clearance actions & root templates don't
+  # respect standard pathing:
+  # https://github.com/thoughtbot/clearance/pull/743
   sessions:
     new:
       title: Sign In
-      prompt: Welcome to the Cohere pilot,<br>please sign in.
+      prompt: Welcome to the Cohere Pilot,<br>please sign in.
       forgot-password: Forgot Password
+  # see `sessions:` above
   passwords:
     forgot:
       title: Forgot Your Password?

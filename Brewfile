@@ -1,4 +1,4 @@
-# underlying database; required for the app database
+# underlying database; it's the app db
 brew "postgresql"
 
 # in-memory store; required for sidekiq

@@ -8,8 +8,8 @@
   <%- form_url = user_password_path(@user, token: @user.confirmation_token) %>
   <%= form_for(:password_reset, url: form_url, html: { method: :patch, class: "SignIn-form Form" }) do |f| %>
     <%= f.section(class: "SignIn-credentials") do %>
-      <%= f.field(:password, t("auth.password.label"), class: "SignIn-password") do %>
-        <% f.text_field(:password, type: "password", placeholder: t("auth.password.placeholder")) %>
+      <%= f.field(:password, t("users.password.label"), class: "SignIn-password") do %>
+        <% f.text_field(:password, type: "password", placeholder: t("users.password.placeholder")) %>
       <% end %>
     <% end %>
 

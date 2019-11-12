@@ -10,29 +10,31 @@ Rails.application.routes.draw do
     sign_in_path = "/sign-in"
 
     # root
-    root(to: redirect(sign_in_path), as: :root_signed_out)
+    root(to: redirect(sign_in_path), as: :root_sign_in)
 
-    # auth
-    get(sign_in_path, to: "sessions#new")
+    # users
+    scope(module: "users") do
+      get(sign_in_path, to: "sessions#new")
 
-    resources(:sessions, only: %i[
-      create
-    ])
-
-    get("/forgot-password", to: "passwords#new")
-
-    resources(:passwords, only: %i[
-      create
-    ])
-
-    resources(:user, only: []) do
-      resource(:password, controller: "passwords", only: %i[
-        edit
-        update
+      resources(:sessions, only: %i[
+        create
       ])
+
+      resources(:passwords, only: %i[
+        create
+      ]) do
+        get("forgot", on: :collection, action: :new)
+      end
+
+      resources(:user, only: []) do
+        resource(:password, controller: "passwords", only: %i[
+          edit
+          update
+        ])
+      end
     end
 
-    # front-webhooks
+    # messages
     namespace(:messages) do
       post(:front, constraints: { format: :json })
     end
@@ -48,8 +50,10 @@ Rails.application.routes.draw do
     # root
     root(to: redirect(cases_path))
 
-    # auth
-    delete("/sign-out", to: "sessions#destroy")
+    # users
+    scope(module: "users") do
+      delete("/sign-out", to: "sessions#destroy")
+    end
 
     # cases
     resources(:cases, only: %i[
