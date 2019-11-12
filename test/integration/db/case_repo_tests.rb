@@ -59,7 +59,7 @@ module Db
       case_repo = Case::Repo.new
       case_rec = cases(:opened_1)
 
-      kase = case_repo.find_opened(case_rec.id)
+      kase = case_repo.find_for_dhs(case_rec.id)
       assert_not_nil(kase)
       assert_equal(kase.status, :opened)
     end
@@ -69,7 +69,7 @@ module Db
       case_rec = cases(:submitted_1)
 
       assert_raises(ActiveRecord::RecordNotFound) do
-        case_repo.find_opened(case_rec.id)
+        case_repo.find_for_dhs(case_rec.id)
       end
     end
 
@@ -89,7 +89,7 @@ module Db
 
     test "finds all opened cases" do
       case_repo = Case::Repo.new
-      cases = case_repo.find_all_opened
+      cases = case_repo.find_all_for_dhs
       assert_length(cases, 4)
     end
 

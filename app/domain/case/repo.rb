@@ -33,20 +33,20 @@ class Case
       entity_from(record)
     end
 
+    def find_for_dhs(id)
+      record = Case::Record
+        .where(status: [:opened, :pending])
+        .find(id)
+
+      entity_from(record)
+    end
+
     def find_for_enroller(id, enroller_id)
       record = Case::Record
         .where(
           enroller_id: enroller_id,
           status: [:submitted, :approved, :rejected]
         )
-        .find(id)
-
-      entity_from(record)
-    end
-
-    def find_opened(id)
-      record = Case::Record
-        .where(status: [:opened, :pending])
         .find(id)
 
       entity_from(record)
@@ -66,6 +66,15 @@ class Case
       entities_from(records)
     end
 
+    def find_all_for_dhs
+      records = Case::Record
+        .where(status: [:opened, :pending])
+        .order(updated_at: :desc)
+        .includes(:recipient)
+
+      entities_from(records)
+    end
+
     def find_all_for_enroller(enroller_id)
       records = Case::Record
         .where(
@@ -78,15 +87,6 @@ class Case
       # pre-fetch associations
       @enroller_repo.find(enroller_id)
       @supplier_repo.find_many(records.map(&:supplier_id))
-
-      entities_from(records)
-    end
-
-    def find_all_opened
-      records = Case::Record
-        .where(status: [:opened, :pending])
-        .order(updated_at: :desc)
-        .includes(:recipient)
 
       entities_from(records)
     end
