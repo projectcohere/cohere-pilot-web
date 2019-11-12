@@ -1,14 +1,13 @@
 require "test_helper"
 
-class Document
-  class RepoTests < ActiveSupport::TestCase
+module Db
+  class DocumentRepoTests < ActiveSupport::TestCase
     test "saves uploaded documents" do
       case_rec = cases(:submitted_2)
 
       documents = [
-        Document.new(
-          case_id: Id.new(case_rec.id),
-          source_url: Faker::Internet.url
+        Document.upload(Faker::Internet.url,
+          case_id: Id.new(case_rec.id)
         )
       ]
 
@@ -23,7 +22,9 @@ class Document
         &act
       )
 
-      assert_all(documents, ->(d) { d.record.present? })
+      record = documents[0].record
+      assert_not_nil(record)
+      assert_not_nil(record.source_url)
     end
 
     test "saves an attached file" do
@@ -48,15 +49,23 @@ class Document
       )
     end
 
-    test "maps a record" do
-      document_rec = documents(:document_2_2)
+    test "saves a new contract" do
+      document = Document.generate_contract(
+        case_id: Id.new(cases(:pending_1).id)
+      )
 
-      document = Document::Repo.map_record(document_rec)
+      document_repo = Document::Repo.new
+
+      act = -> do
+        document_repo.save_new_contract(document)
+      end
+
+      assert_difference(
+        -> { Document::Record.count } => 1,
+        &act
+      )
+
       assert_not_nil(document.record)
-      assert_not_nil(document.id)
-      assert_not_nil(document.file)
-      assert_not_nil(document.source_url)
-      assert_not_nil(document.case_id)
     end
   end
 end

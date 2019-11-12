@@ -110,4 +110,12 @@ class CaseTests < ActiveSupport::TestCase
 
     assert_nil(kase.fpl_percentage)
   end
+
+  test "signs a contract" do
+    kase = Case.stub
+    new_contract = kase.sign_contract
+    assert_nil(new_contract.id)
+    assert_equal(new_contract.classification, :contract)
+    assert_equal(new_contract.case_id, kase.id)
+  end
 end

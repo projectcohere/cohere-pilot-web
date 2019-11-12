@@ -1,7 +1,7 @@
 require "test_helper"
 
-class Enroller
-  class RepoTests < ActiveSupport::TestCase
+module Db
+  class EnrollerRepoTests < ActiveSupport::TestCase
     test "finds an enroller" do
       repo = Enroller::Repo.new
       enroller_id = enrollers(:enroller_1).id
@@ -27,12 +27,6 @@ class Enroller
       enrollers = repo.find_many(enroller_ids)
       assert_length(enrollers, 2)
       assert_same_elements(enrollers.map(&:id), enroller_ids)
-    end
-
-    test "maps a record" do
-      enroller = Enroller::Repo.map_record(enrollers(:enroller_1))
-      assert_not_nil(enroller.id)
-      assert_not_nil(enroller.name)
     end
   end
 end

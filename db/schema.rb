@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_11_205007) do
+ActiveRecord::Schema.define(version: 2019_11_12_153541) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -53,10 +53,11 @@ ActiveRecord::Schema.define(version: 2019_11_11_205007) do
   end
 
   create_table "documents", force: :cascade do |t|
-    t.string "source_url", null: false
+    t.string "source_url"
     t.bigint "case_id", null: false
+    t.integer "classification", default: 0
     t.index ["case_id"], name: "index_documents_on_case_id"
-    t.index ["source_url"], name: "index_documents_on_source_url", unique: true
+    t.index ["classification"], name: "index_documents_on_classification"
   end
 
   create_table "enrollers", force: :cascade do |t|

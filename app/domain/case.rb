@@ -60,8 +60,12 @@ class Case < ::Entity
   # -- commands/factories
   def upload_documents_from_message(message)
     message.attachments.map do |attachment|
-      Document.upload(case_id: id, source_url: attachment.url)
+      Document.upload(attachment.url, case_id: id)
     end
+  end
+
+  def sign_contract
+    Document.generate_contract(case_id: id)
   end
 
   # -- queries --

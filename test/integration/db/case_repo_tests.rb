@@ -1,8 +1,7 @@
 require "test_helper"
-require "minitest/mock"
 
-class Case
-  class RepoTests < ActiveSupport::TestCase
+module Db
+  class CaseRepoTests < ActiveSupport::TestCase
     test "finds a case by id" do
       case_repo = Case::Repo.new
       case_rec = cases(:approved_1)
@@ -238,25 +237,6 @@ class Case
       assert_equal(recipient_rec.dhs_number, "11111")
       assert_equal(recipient_rec.household_size, 3)
       assert_equal(recipient_rec.household_income_cents, 999_00)
-    end
-
-    test "maps a record" do
-      case_rec = cases(:submitted_1)
-
-      kase = Case::Repo.map_record(case_rec)
-      assert_not_nil(kase.record)
-      assert_not_nil(kase.id.val)
-      assert_not_nil(kase.status)
-      assert_not_nil(kase.supplier_id)
-      assert_not_nil(kase.enroller_id)
-      assert_not_nil(kase.account)
-      assert_not_nil(kase.recipient)
-
-      recipient = kase.recipient
-      assert_not_nil(recipient.record)
-      assert_not_nil(recipient.id)
-      assert_not_nil(recipient.profile)
-      assert_not_nil(recipient.dhs_account)
     end
   end
 end

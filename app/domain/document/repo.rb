@@ -32,9 +32,15 @@ class Document
       end
 
       records = Document::Record.transaction do
-        Document::Record.create!(documents.map { |d|
-          { case_id: d.case_id.val, source_url: d.source_url }
-        })
+        records_attrs = documents.map do |d|
+          _attrs = {
+            classification: d.classification,
+            case_id: d.case_id.val,
+            source_url: d.source_url
+          }
+        end
+
+        Document::Record.create!(records_attrs)
       end
 
       # send creation events back to entities
@@ -53,11 +59,23 @@ class Document
         return
       end
 
+      f = new_file
       document.record.file.attach(
-        io: new_file.data,
-        filename: new_file.name,
-        content_type: new_file.mime_type
+        io: f.data,
+        filename: f.name,
+        content_type: f.mime_type
       )
+    end
+
+    def save_new_contract(document)
+      d = document
+      record = Document::Record.create!(
+        classification: d.classification,
+        case_id: d.case_id.val
+      )
+
+      # send creation events back to entities
+      document.did_save(record)
     end
 
     # -- factories --
@@ -65,6 +83,7 @@ class Document
       Document.new(
         record: r,
         id: r.id,
+        classification: r.classification.to_sym,
         file: r.file,
         source_url: r.source_url,
         case_id: r.case_id
