@@ -10,12 +10,13 @@ class MessagesController < ApplicationController
       return
     end
 
-    upload_documents = Document::UploadFromMessage.new(
+    # TODO: maybe just decode the message and pass it in
+    upload_attachments = Case::UploadMessageAttachments.new(
       decode_message: Front::DecodeMessage.new
     )
 
-    upload_documents.(request.raw_post).each do |d|
-      Documents::SyncFrontAttachmentWorker.perform_async(d.id)
+    upload_attachments.(request.raw_post).each do |d|
+      Documents::SyncFrontFileWorker.perform_async(d.id)
     end
   end
 

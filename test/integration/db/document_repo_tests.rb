@@ -2,31 +2,6 @@ require "test_helper"
 
 module Db
   class DocumentRepoTests < ActiveSupport::TestCase
-    test "saves uploaded documents" do
-      case_rec = cases(:submitted_2)
-
-      documents = [
-        Document.upload(Faker::Internet.url,
-          case_id: Id.new(case_rec.id)
-        )
-      ]
-
-      document_repo = Document::Repo.new
-
-      act = -> do
-        document_repo.save_uploaded(documents)
-      end
-
-      assert_difference(
-        -> { Document::Record.count } => 1,
-        &act
-      )
-
-      record = documents[0].record
-      assert_not_nil(record)
-      assert_not_nil(record.source_url)
-    end
-
     test "saves an attached file" do
       document_rec = documents(:document_2_2)
       document = Document::Repo.map_record(document_rec)

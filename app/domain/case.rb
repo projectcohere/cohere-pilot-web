@@ -14,6 +14,9 @@ class Case < ::Entity
   prop(:completed_at, default: nil)
   props_end!
 
+  # -- props/temporary
+  attr(:new_documents)
+
   # -- creation --
   def self.open(profile:, account:, enroller:, supplier:)
     recipient = Recipient.new(
@@ -33,12 +36,12 @@ class Case < ::Entity
   end
 
   # -- commands --
-  def update_supplier_account(account)
-    @account = account
-  end
-
   def update_recipient_profile(profile)
     @recipient.update_profile(profile)
+  end
+
+  def update_supplier_account(account)
+    @account = account
   end
 
   def attach_dhs_account(dhs_account)
@@ -49,6 +52,18 @@ class Case < ::Entity
     @recipient.attach_dhs_account(dhs_account)
   end
 
+  def upload_message_attachments(message)
+    @new_documents ||= []
+
+    message.attachments.each do |attachment|
+      @new_documents << Document.upload(attachment.url, case_id: id)
+    end
+  end
+
+  def sign_contract
+    Document.generate_contract(case_id: id)
+  end
+
   # TODO: rename to `submit_to_enroller`
   def submit
     case @status
@@ -56,17 +71,6 @@ class Case < ::Entity
       @status = :submitted
       @events << Events::DidSubmit.from_case(self)
     end
-  end
-
-  # -- commands/factories
-  def upload_documents_from_message(message)
-    message.attachments.map do |attachment|
-      Document.upload(attachment.url, case_id: id)
-    end
-  end
-
-  def sign_contract
-    Document.generate_contract(case_id: id)
   end
 
   # -- queries --

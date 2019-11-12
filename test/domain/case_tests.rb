@@ -66,10 +66,11 @@ class CaseTests < ActiveSupport::TestCase
       ]
     )
 
-    documents = kase.upload_documents_from_message(message)
-    assert_length(documents, 1)
-    assert_equal(documents[0].case_id, 4)
-    assert_equal(documents[0].source_url, "https://website.com/image.jpg")
+    kase.upload_message_attachments(message)
+    assert_length(kase.new_documents, 1)
+
+    document = kase.new_documents[0]
+    assert_equal(document.source_url, "https://website.com/image.jpg")
   end
 
   test "calcuates an fpl percentage from the household" do

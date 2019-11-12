@@ -26,29 +26,6 @@ class Document
     end
 
     # -- commands --
-    def save_uploaded(documents)
-      if documents.empty?
-        return
-      end
-
-      records = Document::Record.transaction do
-        records_attrs = documents.map do |d|
-          _attrs = {
-            classification: d.classification,
-            case_id: d.case_id.val,
-            source_url: d.source_url
-          }
-        end
-
-        Document::Record.create!(records_attrs)
-      end
-
-      # send creation events back to entities
-      records.each_with_index do |r, i|
-        documents[i].did_save(r)
-      end
-    end
-
     def save_attached_file(document)
       if document.record.nil?
         raise "unsaved document can't be updated with a new file!"

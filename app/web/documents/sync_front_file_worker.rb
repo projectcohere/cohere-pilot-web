@@ -1,5 +1,5 @@
 module Documents
-  class SyncFrontAttachmentWorker < ApplicationWorker
+  class SyncFrontFileWorker < ApplicationWorker
     def perform(document_id)
       sync_source_file = Document::SyncSourceFile.new(
         download_file: Front::DownloadAttachment.new

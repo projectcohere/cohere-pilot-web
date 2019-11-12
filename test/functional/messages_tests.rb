@@ -48,9 +48,12 @@ class MessagesTests < ActionDispatch::IntegrationTest
 
       assert_difference(
         -> { Document::Record.count } => 1,
+        -> { ActiveStorage::Attachment.count } => 1,
+        -> { ActiveStorage::Blob.count } => 1,
         &act
       )
 
+      assert_enqueued_jobs(1)
       assert_response(:no_content)
     end
   end

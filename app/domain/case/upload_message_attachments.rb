@@ -1,14 +1,12 @@
-class Document
-  class UploadFromMessage
+class Case
+  class UploadMessageAttachments
     # -- lifetime --
     def initialize(
       decode_message:,
-      case_repo: Case::Repo.get,
-      document_repo: Document::Repo.get
+      case_repo: Case::Repo.get
     )
       @decode_message = decode_message
       @case_repo = case_repo
-      @document_repo = document_repo
     end
 
     # -- command --
@@ -21,10 +19,10 @@ class Document
         raise "No case found for phone number #{message_phone_number}"
       end
 
-      new_documents = kase.upload_documents_from_message(message)
-      @document_repo.save_uploaded(new_documents)
+      kase.upload_message_attachments(message)
+      @case_repo.save_new_documents(kase)
 
-      new_documents
+      kase.new_documents
     end
   end
 end

@@ -216,6 +216,34 @@ module Db
       assert_equal(recipient_rec.household_income_cents, 999_00)
     end
 
+    test "saves uploaded documents" do
+      case_rec = cases(:submitted_2)
+
+      kase = Case::Repo.map_record(case_rec)
+      kase.upload_message_attachments(Message.stub(
+        attachments: [
+          Message::Attachment.new(
+            url: Faker::Internet.url
+          )
+        ]
+      ))
+
+      case_repo = Case::Repo.new
+      act = -> do
+        case_repo.save_new_documents(kase)
+      end
+
+      assert_difference(
+        -> { Document::Record.count } => 1,
+        &act
+      )
+
+      record = kase.new_documents[0].record
+      assert_not_nil(record)
+      assert_not_nil(record.case_id)
+      assert_not_nil(record.source_url)
+    end
+
     test "saves all fields" do
       case_rec = cases(:pending_2)
       account = Recipient::DhsAccount.new(

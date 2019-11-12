@@ -55,6 +55,10 @@ module Cases
       @model.update_recipient_profile(supplier.map_to_recipient_profile)
       @model.attach_dhs_account(opened.map_to_dhs_account)
 
+      if signed_contract
+        @model.sign_contract
+      end
+
       if submitted?
         @model.submit
       end

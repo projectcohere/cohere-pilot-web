@@ -144,6 +144,28 @@ class Case
       @event_queue.consume(kase.events)
     end
 
+    def save_new_documents(kase)
+      new_documents = kase.new_documents
+      if new_documents.blank?
+        return
+      end
+
+      new_records_attrs = new_documents.map do |d|
+        _attrs = {
+          case_id: kase.id.val,
+          classification: d.classification,
+          source_url: d.source_url
+        }
+      end
+
+      new_records = Document::Record.create!(new_records_attrs)
+
+      # send creation events back to entities
+      new_records.each_with_index do |r, i|
+        new_documents[i].did_save(r)
+      end
+    end
+
     def save(kase)
       if kase.record.nil? || kase.recipient.record.nil?
         raise "case and recipient must be fetched from the db!"
