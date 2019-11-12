@@ -18,7 +18,7 @@ module Cases
     end
 
     def show
-      @case = Case::Repo.get.find_for_enroller(
+      @case = Case::Repo.get.find_by_enroller_with_documents(
         params[:id],
         Current.user.role.organization_id
       )

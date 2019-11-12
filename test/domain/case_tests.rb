@@ -114,9 +114,12 @@ class CaseTests < ActiveSupport::TestCase
 
   test "signs a contract" do
     kase = Case.stub
-    new_contract = kase.sign_contract
+
+    kase.sign_contract
+    assert_length(kase.new_documents, 1)
+
+    new_contract = kase.new_documents[0]
     assert_nil(new_contract.id)
     assert_equal(new_contract.classification, :contract)
-    assert_equal(new_contract.case_id, kase.id)
   end
 end

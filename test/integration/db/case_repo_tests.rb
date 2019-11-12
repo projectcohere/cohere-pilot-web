@@ -31,7 +31,7 @@ module Db
       case_repo = Case::Repo.new
       case_rec = cases(:submitted_1)
 
-      kase = case_repo.find_for_enroller(case_rec.id, case_rec.enroller_id)
+      kase = case_repo.find_by_enroller_with_documents(case_rec.id, case_rec.enroller_id)
       assert_not_nil(kase)
       assert_equal(kase.status, :submitted)
     end
@@ -41,7 +41,7 @@ module Db
       case_rec = cases(:opened_1)
 
       assert_raises(ActiveRecord::RecordNotFound) do
-        case_repo.find_for_enroller(case_rec.id, case_rec.enroller_id)
+        case_repo.find_by_enroller_with_documents(case_rec.id, case_rec.enroller_id)
       end
     end
 
@@ -51,7 +51,7 @@ module Db
       case_rec2 = cases(:submitted_2)
 
       assert_raises(ActiveRecord::RecordNotFound) do
-        case_repo.find_for_enroller(case_rec1.id, case_rec2.enroller_id)
+        case_repo.find_by_enroller_with_documents(case_rec1.id, case_rec2.enroller_id)
       end
     end
 
@@ -59,7 +59,7 @@ module Db
       case_repo = Case::Repo.new
       case_rec = cases(:opened_1)
 
-      kase = case_repo.find_for_dhs(case_rec.id)
+      kase = case_repo.find_opened_with_documents(case_rec.id)
       assert_not_nil(kase)
       assert_equal(kase.status, :opened)
     end
@@ -69,7 +69,7 @@ module Db
       case_rec = cases(:submitted_1)
 
       assert_raises(ActiveRecord::RecordNotFound) do
-        case_repo.find_for_dhs(case_rec.id)
+        case_repo.find_opened_with_documents(case_rec.id)
       end
     end
 
@@ -93,6 +93,7 @@ module Db
       assert_length(cases, 4)
     end
 
+    # -- test/save
     test "saves an opened case" do
       event_queue = EventQueue.new
 
@@ -125,7 +126,7 @@ module Db
       )
 
       act = -> do
-        case_repo.save_opened(kase)
+        case_repo.save_for_supplier_form(kase)
       end
 
       assert_difference(
@@ -174,7 +175,7 @@ module Db
       )
 
       act = -> do
-        case_repo.save_opened(kase)
+        case_repo.save_for_supplier_form(kase)
       end
 
       assert_difference(
@@ -205,7 +206,7 @@ module Db
       )
 
       case_repo = Case::Repo.new
-      case_repo.save_dhs_account(kase)
+      case_repo.save_for_dhs_form(kase)
 
       case_rec = kase.record
       assert_equal(case_rec.status, "pending")
@@ -256,7 +257,7 @@ module Db
       kase.submit
 
       case_repo = Case::Repo.new
-      case_repo.save(kase)
+      case_repo.save_all(kase)
 
       case_rec = kase.record
       assert_equal(case_rec.status, "submitted")

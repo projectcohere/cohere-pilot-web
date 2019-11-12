@@ -41,17 +41,6 @@ class Document
       )
     end
 
-    def save_new_contract(document)
-      d = document
-      record = Document::Record.create!(
-        classification: d.classification,
-        case_id: d.case_id.val
-      )
-
-      # send creation events back to entities
-      document.did_save(record)
-    end
-
     # -- factories --
     def self.map_record(r)
       Document.new(
@@ -59,8 +48,7 @@ class Document
         id: r.id,
         classification: r.classification.to_sym,
         file: r.file,
-        source_url: r.source_url,
-        case_id: r.case_id
+        source_url: r.source_url
       )
     end
   end

@@ -24,6 +24,15 @@ class Case
       entity_from(case_rec)
     end
 
+    def find_by_phone_number(phone_number)
+      case_rec = Case::Record
+        .includes(:recipient)
+        .references(:recipients)
+        .find_by(recipients: { phone_number: phone_number })
+
+      entity_from(case_rec)
+    end
+
     def find_with_documents(id)
       case_rec = Case::Record
         .find(id)
@@ -34,16 +43,7 @@ class Case
       entity_from(case_rec, document_recs)
     end
 
-    def find_by_phone_number(phone_number)
-      case_rec = Case::Record
-        .includes(:recipient)
-        .references(:recipients)
-        .find_by(recipients: { phone_number: phone_number })
-
-      entity_from(case_rec)
-    end
-
-    def find_for_dhs(id)
+    def find_opened_with_documents(id)
       case_rec = Case::Record
         .where(status: [:opened, :pending])
         .find(id)
@@ -54,7 +54,7 @@ class Case
       entity_from(case_rec, document_recs)
     end
 
-    def find_for_enroller(id, enroller_id)
+    def find_by_enroller_with_documents(id, enroller_id)
       case_rec = Case::Record
         .where(
           enroller_id: enroller_id,
@@ -108,7 +108,7 @@ class Case
     end
 
     # -- commands --
-    def save_opened(kase)
+    def save_for_supplier_form(kase)
       # start a new case record
       case_rec = Case::Record.new
 
@@ -141,7 +141,7 @@ class Case
       @event_queue.consume(kase.events)
     end
 
-    def save_dhs_account(kase)
+    def save_for_dhs_form(kase)
       if kase.record.nil? || kase.recipient.record.nil?
         raise "case and recipient must be fetched from the db!"
       end
@@ -182,7 +182,7 @@ class Case
       end
     end
 
-    def save(kase)
+    def save_all(kase)
       if kase.record.nil? || kase.recipient.record.nil?
         raise "case and recipient must be fetched from the db!"
       end

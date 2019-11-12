@@ -55,14 +55,14 @@ class Case < ::Entity
 
   def upload_message_attachments(message)
     @new_documents ||= []
-
     message.attachments.each do |attachment|
-      @new_documents << Document.upload(attachment.url, case_id: id)
+      @new_documents << Document.upload(attachment.url)
     end
   end
 
   def sign_contract
-    Document.generate_contract(case_id: id)
+    @new_documents ||= []
+    @new_documents << Document.sign_contract
   end
 
   # TODO: rename to `submit_to_enroller`
@@ -83,6 +83,7 @@ class Case < ::Entity
 
     hh_size = household.size
     hh_month_cents = household.income_cents
+
     if hh_size.nil? || hh_month_cents.nil?
       return nil
     end

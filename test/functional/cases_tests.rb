@@ -218,6 +218,32 @@ class CasesTests < ActionDispatch::IntegrationTest
     end
   end
 
+  test "generate a signed contract" do
+    skip
+
+    Sidekiq::Testing.inline!
+
+    user_rec = users(:cohere_1)
+    case_rec = cases(:pending_2)
+
+    act = ->() do
+      patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
+        case: {
+          signed_contract: true
+        }
+      })
+    end
+
+    assert_difference(
+      -> { Document::Record.count } => 1,
+      -> { ActiveStorage::Attachment.count } => 1,
+      -> { ActiveStorage::Blob.count } => 1,
+      &act
+    )
+
+    assert_enqueued_jobs(1)
+  end
+
   test "show errors for an invalid case" do
     user_rec = users(:cohere_1)
     case_rec = cases(:pending_2)

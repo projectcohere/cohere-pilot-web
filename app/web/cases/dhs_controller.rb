@@ -17,7 +17,7 @@ module Cases
 
     def edit
       repo = Case::Repo.get
-      kase = repo.find_for_dhs(params[:id])
+      kase = repo.find_opened_with_documents(params[:id])
 
       policy.case = kase
       if policy.forbid?(:edit)
@@ -29,7 +29,7 @@ module Cases
 
     def update
       repo = Case::Repo.get
-      kase = repo.find_for_dhs(params[:id])
+      kase = repo.find_opened_with_documents(params[:id])
 
       policy.case = kase
       if policy.forbid?(:edit)

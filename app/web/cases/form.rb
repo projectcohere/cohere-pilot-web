@@ -63,7 +63,7 @@ module Cases
         @model.submit
       end
 
-      @case_repo.save(@model)
+      @case_repo.save_all(@model)
 
       true
     end

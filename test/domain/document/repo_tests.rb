@@ -11,7 +11,6 @@ class Document
       assert_equal(document.classification, :unclassified)
       assert_not_nil(document.file)
       assert_not_nil(document.source_url)
-      assert_not_nil(document.case_id)
     end
   end
 end

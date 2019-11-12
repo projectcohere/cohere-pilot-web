@@ -5,7 +5,6 @@ class Document < ::Entity
   prop(:id, default: nil)
   prop(:classification)
   prop(:file, default: nil)
-  prop(:case_id)
   prop(:source_url, default: nil)
   props_end!
 
@@ -13,18 +12,16 @@ class Document < ::Entity
   attr(:new_file)
 
   # -- lifetime
-  def self.upload(source_url, case_id:)
+  def self.upload(source_url)
     Document.new(
       classification: :unclassified,
-      case_id: case_id,
       source_url: source_url
     )
   end
 
-  def self.generate_contract(case_id:)
+  def self.sign_contract
     Document.new(
       classification: :contract,
-      case_id: case_id
     )
   end
 

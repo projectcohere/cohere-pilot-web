@@ -23,24 +23,5 @@ module Db
         &act
       )
     end
-
-    test "saves a new contract" do
-      document = Document.generate_contract(
-        case_id: Id.new(cases(:pending_1).id)
-      )
-
-      document_repo = Document::Repo.new
-
-      act = -> do
-        document_repo.save_new_contract(document)
-      end
-
-      assert_difference(
-        -> { Document::Record.count } => 1,
-        &act
-      )
-
-      assert_not_nil(document.record)
-    end
   end
 end
