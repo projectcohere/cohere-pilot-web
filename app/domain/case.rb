@@ -8,6 +8,7 @@ class Case < ::Entity
   prop(:status)
   prop(:recipient)
   prop(:account)
+  prop(:documents, default: nil)
   prop(:enroller_id)
   prop(:supplier_id)
   prop(:updated_at, default: nil)

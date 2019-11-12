@@ -28,13 +28,13 @@ class Repo
   end
 
   # -- factories --
-  protected def entity_from(record)
+  protected def entity_from(record, *associations)
     record.nil? ? nil : self.class.map_record(record)
   end
 
   protected def entities_from(records)
-    records.map do |record|
-      entity_from(record)
+    records.map do |record, *associations|
+      entity_from(record, *associations)
     end
   end
 end

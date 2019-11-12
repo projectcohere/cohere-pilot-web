@@ -7,13 +7,11 @@ module Cases
     def initialize(
       kase,
       enroller_repo: Enroller::Repo.get,
-      supplier_repo: Supplier::Repo.get,
-      document_repo: Document::Repo.get
+      supplier_repo: Supplier::Repo.get
     )
       @case = kase
       @enroller_repo = enroller_repo
       @supplier_repo = supplier_repo
-      @document_repo = document_repo
     end
 
     # -- queries --
@@ -62,7 +60,7 @@ module Cases
 
     # -- queries/documents
     def documents
-      @document_repo.find_all_for_case(@case.id)
+      @case.documents
     end
 
     # -- queries/associations

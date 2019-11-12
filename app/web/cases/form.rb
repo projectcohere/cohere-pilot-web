@@ -91,7 +91,7 @@ module Cases
     end
 
     def documents
-      @document_repo.find_all_for_case(@model.id)
+      @model.documents
     end
 
     def statuses

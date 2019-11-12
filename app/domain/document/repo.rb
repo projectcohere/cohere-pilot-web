@@ -1,4 +1,12 @@
 class Document
+  # A repo for fetching and updating documents in the database.
+  #
+  # Note. Document is not an AR, it is part of Case, and should not
+  # have a repo. Due to ActiveStorage's awkward attachment API, it's
+  # difficult to create Attachments (which would be the AR in this
+  # case) outside the context of a Document.
+  #
+  # Therefore, don't add anything to this class.
   class Repo < ::Repo
     # -- lifetime --
     def self.get
@@ -8,21 +16,10 @@ class Document
     # -- queries --
     # -- queries/one
     def find(id)
-      find_cached(id) do
-        record = Document::Record
-          .find(id)
+      record = Document::Record
+        .find(id)
 
-        entity_from(record)
-      end
-    end
-
-    def find_all_for_case(case_id)
-      find_cached("case=#{case_id}") do
-        records = Document::Record
-          .where(case_id: case_id.val)
-
-        entities_from(records)
-      end
+      entity_from(record)
     end
 
     # -- commands --

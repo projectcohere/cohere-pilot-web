@@ -18,65 +18,81 @@ class Case
     # -- queries --
     # -- queries/one
     def find(id)
-      record = Case::Record
+      case_rec = Case::Record
         .find(id)
 
-      entity_from(record)
+      entity_from(case_rec)
+    end
+
+    def find_with_documents(id)
+      case_rec = Case::Record
+        .find(id)
+
+      document_recs = Document::Record
+        .where(case_id: id)
+
+      entity_from(case_rec, document_recs)
     end
 
     def find_by_phone_number(phone_number)
-      record = Case::Record
+      case_rec = Case::Record
         .includes(:recipient)
         .references(:recipients)
         .find_by(recipients: { phone_number: phone_number })
 
-      entity_from(record)
+      entity_from(case_rec)
     end
 
     def find_for_dhs(id)
-      record = Case::Record
+      case_rec = Case::Record
         .where(status: [:opened, :pending])
         .find(id)
 
-      entity_from(record)
+      document_recs = Document::Record
+        .where(case_id: id)
+
+      entity_from(case_rec, document_recs)
     end
 
     def find_for_enroller(id, enroller_id)
-      record = Case::Record
+      case_rec = Case::Record
         .where(
           enroller_id: enroller_id,
           status: [:submitted, :approved, :rejected]
         )
         .find(id)
 
-      entity_from(record)
+      document_recs = Document::Record
+        .where(case_id: id)
+
+      entity_from(case_rec, document_recs)
     end
 
     # -- queries/many
     def find_all_incomplete
-      records = Case::Record
+      case_recs = Case::Record
         .where(completed_at: nil)
         .order(updated_at: :desc)
         .includes(:recipient)
 
-      # pre-fetch associations
-      @supplier_repo.find_many(records.map(&:supplier_id))
-      @enroller_repo.find_many(records.map(&:enroller_id))
+      # pre-load associated aggregates
+      @supplier_repo.find_many(case_recs.map(&:supplier_id))
+      @enroller_repo.find_many(case_recs.map(&:enroller_id))
 
-      entities_from(records)
+      entities_from(case_recs)
     end
 
     def find_all_for_dhs
-      records = Case::Record
+      case_recs = Case::Record
         .where(status: [:opened, :pending])
         .order(updated_at: :desc)
         .includes(:recipient)
 
-      entities_from(records)
+      entities_from(case_recs)
     end
 
     def find_all_for_enroller(enroller_id)
-      records = Case::Record
+      case_recs = Case::Record
         .where(
           enroller_id: enroller_id,
           status: [:submitted, :approved, :rejected]
@@ -84,11 +100,11 @@ class Case
         .order(updated_at: :desc)
         .includes(:recipient)
 
-      # pre-fetch associations
+      # pre-load associated aggregates
       @enroller_repo.find(enroller_id)
-      @supplier_repo.find_many(records.map(&:supplier_id))
+      @supplier_repo.find_many(case_recs.map(&:supplier_id))
 
-      entities_from(records)
+      entities_from(case_recs)
     end
 
     # -- commands --
@@ -150,7 +166,7 @@ class Case
         return
       end
 
-      new_records_attrs = new_documents.map do |d|
+      new_recs_attrs = new_documents.map do |d|
         _attrs = {
           case_id: kase.id.val,
           classification: d.classification,
@@ -158,10 +174,10 @@ class Case
         }
       end
 
-      new_records = Document::Record.create!(new_records_attrs)
+      new_recs = Document::Record.create!(new_recs_attrs)
 
       # send creation events back to entities
-      new_records.each_with_index do |r, i|
+      new_recs.each_with_index do |r, i|
         new_documents[i].did_save(r)
       end
     end
@@ -243,7 +259,7 @@ class Case
     end
 
     # -- factories --
-    def self.map_record(r)
+    def self.map_record(r, document_recs = nil)
       Case.new(
         record: r,
         id: Id.new(r.id),
@@ -254,6 +270,9 @@ class Case
           number: r.account_number,
           arrears_cents: r.account_arrears_cents,
         ),
+        documents: document_recs&.map { |d|
+          Document::Repo.map_record(d)
+        },
         recipient: map_recipient(r.recipient),
         updated_at: r.updated_at,
         completed_at: r.completed_at
