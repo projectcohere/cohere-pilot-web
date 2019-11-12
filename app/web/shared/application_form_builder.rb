@@ -19,10 +19,8 @@ class ApplicationFormBuilder < ::ActionView::Helpers::FormBuilder
     end
   end
 
-  def field(name, title = nil, *args, **kwargs, &children)
+  def field(name, title = nil, *args, prefix: nil, background: true, **kwargs, &children)
     a_class = kwargs.delete(:class)
-    a_prefix = kwargs.delete(:prefix)
-    a_hide_wrapper = kwargs.delete(:hide_wrapper)
 
     # check for field errors
     has_errors =
@@ -35,30 +33,47 @@ class ApplicationFormBuilder < ::ActionView::Helpers::FormBuilder
       errors = object.errors[name].join(",")
     end
 
+
     # render the children & tag
-    f_class = "#{a_class} FormField #{has_errors ? "is-error" : ""}"
     content = @template.capture(&children)
 
-    label(name, *args, class: f_class, **kwargs) do
+    field_class = if has_errors
+      "#{a_class} FormField is-error"
+    else
+      "#{a_class} FormField"
+    end
+
+    label(name, *args, class: field_class, **kwargs) do
       hint = @template.tag.p(class: "FormField-hint") do
         hint_text = @template.tag.span(title || name.to_s.titlecase)
         hint_error = has_errors ? @template.tag.span(" #{errors}", class: "FormField-errors") : ""
         hint_text + hint_error
       end
 
-      field_content = if a_prefix.nil?
+      input_content = if prefix.nil?
         content
       else
-        @template.tag.span(a_prefix, class: "FormField-prefix") + content
+        @template.tag.span(prefix, class: "FormField-prefix") + content
       end
 
-      field = if a_hide_wrapper
-        field_content
+      input_class = if background
+        "FormField-input--background"
       else
-        @template.tag.div(field_content, class: "FormField-field")
+        "FormField-input"
       end
 
-      hint + field
+      hint + @template.tag.div(input_content, class: input_class)
     end
+  end
+
+  def value(val, *args, fallback: nil, **kwargs)
+    # add fallback if necessary
+    value_class = if val.nil?
+      "FormField-value is-missing"
+    else
+      "FormField-value"
+    end
+
+    @template.tag.p(val || fallback, class: value_class)
   end
 end

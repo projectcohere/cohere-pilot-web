@@ -3,6 +3,7 @@ module Cases
   class Form < ::ApplicationForm
     # -- fields --
     field(:status, :string)
+    field(:signed_contract, :boolean)
     fields_from(:supplier, SupplierForm)
     fields_from(:opened, DhsForm)
 
@@ -55,7 +56,7 @@ module Cases
       @model.attach_dhs_account(opened.map_to_dhs_account)
 
       if submitted?
-        @model.submit()
+        @model.submit
       end
 
       @case_repo.save(@model)

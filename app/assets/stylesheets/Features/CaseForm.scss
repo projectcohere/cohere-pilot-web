@@ -4,13 +4,17 @@
   max-width: $width1;
 
   /* CaseForm-case */
-  &-status {
-    grid-column: 1 / 10;
-  }
-
   &-enroller {
     grid-column: 1 / 4;
     margin-top: $spacing4;
+  }
+
+  &-status {
+    grid-column: 1 / 4;
+  }
+
+  &-signedContract {
+    grid-column: 4 / 7;
   }
 
   /* CaseForm-name */

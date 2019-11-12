@@ -49,6 +49,7 @@ class Case < ::Entity
     @recipient.attach_dhs_account(dhs_account)
   end
 
+  # TODO: rename to `submit_to_enroller`
   def submit
     case @status
     when :opened, :pending

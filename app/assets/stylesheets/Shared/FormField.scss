@@ -15,7 +15,15 @@
     }
   }
 
-  &-field {
+  &-input {
+    display: flex;
+    align-items: center;
+    height: $height1;
+    padding-top: $spacing4;
+    padding-bottom: $spacing4;
+  }
+
+  &-input--background {
     display: flex;
     align-items: center;
     height: $height1;
@@ -40,7 +48,7 @@
     padding-top: $spacing4;
     padding-bottom: $spacing4;
 
-    &.is-fallback {
+    &.is-missing {
       color: $gray1;
     }
   }
@@ -73,6 +81,45 @@
     &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
       -webkit-appearance: none;
       margin: 0;
+    }
+  }
+
+  input[type="checkbox"] {
+    appearance: none;
+    -moz-appearance: none;
+
+    position: relative;
+    max-width: 20px;
+    height: 20px;
+    margin-right: $spacing4;
+    border-bottom: 2px solid $brandBlack;
+    border-top-left-radius: $radiusCheckbox;
+    border-top-right-radius: $radiusCheckbox;
+    background-color: $colorField;
+
+    &:checked {
+      @mixin u-check {
+        position: absolute;
+        height: 2px;
+        background-color: $brandPrimary;
+      }
+
+      $offset-x: 5px;
+      $offset-y: 5px;
+
+      &:before {
+        @include u-check;
+        content: "";
+        width: 20px;
+        transform: translate($offset-x, $offset-y) rotate(-45deg);
+      }
+
+      &:after {
+        @include u-check;
+        content: "";
+        width: 8px;
+        transform: translate($offset-x - 3px, $offset-y + 4px) rotate(45deg);
+      }
     }
   }
 }

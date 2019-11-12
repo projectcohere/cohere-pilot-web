@@ -86,7 +86,7 @@ module Cases
       end
 
       # open a new case for the recipient
-      enroller = @enroller_repo.find_default()
+      enroller = @enroller_repo.find_default
       supplier = @supplier_repo.find(@supplier_id)
 
       new_case = supplier.open_case(enroller,
