@@ -7,7 +7,7 @@ module Front
         "Authorization" => "Bearer #{ENV["FRONT_API_JWT"]}"
       )
 
-      ::FileData.new(
+      Documents::File.new(
         data: response,
         name: ->(r) { r.meta["content-disposition"][/filename="([^"]+)"/, 1] },
         mime_type: response.content_type

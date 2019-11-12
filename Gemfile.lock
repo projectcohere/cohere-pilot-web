@@ -141,6 +141,7 @@ GEM
       mini_portile2 (~> 2.4.0)
     openssl (2.1.2)
       ipaddr
+    pdfkit (0.8.4.1)
     pg (1.1.4)
     pry (0.12.2)
       coderay (~> 1.1.0)
@@ -264,6 +265,7 @@ DEPENDENCIES
   letter_opener (~> 1.7)
   listen (>= 3.0.5, < 3.2)
   openssl (~> 2.1)
+  pdfkit (~> 0.8.4)
   pg (>= 0.18, < 2.0)
   pry-byebug
   pry-rails (~> 0.3.9)

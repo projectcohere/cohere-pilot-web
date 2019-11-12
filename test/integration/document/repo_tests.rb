@@ -29,7 +29,7 @@ class Document
     test "saves an attached file" do
       document_rec = documents(:document_2_2)
       document = Document::Repo.map_record(document_rec)
-      document.attach_file(FileData.new(
+      document.attach_file(Documents::File.new(
         data: StringIO.new("test-data"),
         name: "test.txt",
         mime_type: "text/plain"

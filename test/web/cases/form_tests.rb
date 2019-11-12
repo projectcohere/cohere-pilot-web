@@ -1,4 +1,5 @@
 require "test_helper"
+require "minitest/mock"
 
 module Cases
   class FormTests < ActiveSupport::TestCase
@@ -17,54 +18,66 @@ module Cases
 
     test "saves a case" do
       kase = Case::Repo.map_record(cases(:pending_1))
-      form = Form.new(kase)
-      form.first_name = "Edith"
+      case_repo = Minitest::Mock.new
+        .expect(:save, nil, [kase])
+
+      form_attrs = {
+        "first_name" => "Edith"
+      }
+
+      form = Form.new(
+        kase,
+        form_attrs,
+        case_repo: case_repo
+      )
 
       did_save = form.save
       assert(did_save)
-
-      record = kase.recipient.record
-      assert_equal(record.first_name, "Edith")
+      assert_equal(kase.recipient.profile.name.first, "Edith")
     end
 
     test "does not save an invalid case" do
       kase = Case::Repo.map_record(cases(:pending_1))
-      form = Form.new(kase)
-      form.first_name = ""
+      form = Form.new(kase, {
+        "first_name" => ""
+      })
 
       did_save = form.save
       assert_not(did_save)
       assert_present(form.errors[:first_name])
     end
 
-    test "saves a submitted case" do
+    test "submits a case" do
       kase = Case::Repo.map_record(cases(:pending_1))
-      form = Form.new(kase)
-      form.status = "submitted"
+      case_repo = Minitest::Mock.new
+        .expect(:save, nil, [kase])
+
+      form_attrs = {
+        "status" => "submitted"
+      }
+
+      form = Form.new(
+        kase,
+        form_attrs,
+        case_repo: case_repo
+      )
 
       did_save = form.save
       assert(did_save)
-
-      record = kase.record
-      assert(record.submitted?)
+      assert_equal(kase.status, :submitted)
     end
 
-    test "does not save an invalid submitted case" do
+    test "does not submit an invalid case" do
       kase = Case::Repo.map_record(cases(:pending_1))
-      form = Form.new(kase)
-      form.status = "submitted"
-      form.dhs_number = nil
+      form = Form.new(kase, {
+        "status" => "submitted",
+        "dhs_number" => nil
+      })
 
       did_save = form.save
       assert_not(did_save)
       assert_present(form.errors)
       assert_present(form.errors[:dhs_number])
-    end
-
-    test "has an fpl percentage" do
-      kase = Case::Repo.map_record(cases(:pending_1))
-      form = Form.new(kase)
-      assert_not_nil(form.fpl_percentage)
     end
   end
 end

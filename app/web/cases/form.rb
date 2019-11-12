@@ -73,16 +73,16 @@ module Cases
       @model.recipient.profile.name
     end
 
+    def fpl_percentage
+      @model.fpl_percentage
+    end
+
     def enroller_name
       @enroller_repo.find(@model.enroller_id).name
     end
 
     def supplier_name
       @supplier_repo.find(@model.supplier_id).name
-    end
-
-    def fpl_percentage
-      @model.fpl_percentage
     end
 
     def documents

@@ -15,15 +15,15 @@ class Document
         ]
       )
 
+      document_repo = Minitest::Mock.new
+        .expect(:save_uploaded, nil, [Array])
+
       case_repo = Minitest::Mock.new
         .expect(
           :find_by_phone_number,
           Case.new(status: nil, account: nil, recipient: nil, enroller_id: nil, supplier_id: nil),
           ["111-222-3333"]
         )
-
-      document_repo = Minitest::Mock.new
-        .expect(:save_uploaded, nil, [Array])
 
       upload = UploadFromMessage.new(
         decode_message: ->(_) { message },

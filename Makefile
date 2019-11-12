@@ -98,27 +98,42 @@ t: t/unit
 
 ## runs unit tests
 t/unit:
-	$(test-base)
+	$(call run-tests,$(tests-path))
 .PHONY: t/unit
 
 ## runs unit tests and stops on exceptions
 t/u/rescue:
-	PRY_RESCUE=1 $(test-base)
-.PHONY: t/dbg
+	PRY_RESCUE=1 $(call run-tests,$(tests-path))
+.PHONY: t/u/rescue
+
+## runs unit/integration tests
+t/int:
+	$(call run-tests,$(tests-path-int))
+.PHONY: t/all
+
+## runs unit/integration tests and stops on exceptions
+t/i/rescue:
+	PRY_RESCUE=1 $(call run-tests,$(tests-path-int))
+.PHONY: t/all
 
 ## runs all tests
 t/all:
-	$(test-base-all)
+	$(call run-tests,$(tests-path-all))
 .PHONY: t/all
 
 ## runs all tests and stops on exceptions
 t/a/rescue:
-	PRY_RESCUE=1 $(test-base-all)
-.PHONY: t/dbg
+	PRY_RESCUE=1 $(call run-tests,$(tests-path-all))
+.PHONY: t/a/rescue
 
 # -- test/helpers
-test-base     = $(tools-rails) test $$(find test/infra test/domain test/web -name "*_tests.rb")
-test-base-all = $(tools-rails) test $$(find test -name "*_tests.rb")
+define run-tests
+	$(tools-rails) test $$(find $(1) -name "*_tests.rb")
+endef
+
+tests-path     = test/domain test/web
+tests-path-int = $(tests-path) test/integration
+tests-path-all = test
 
 # -- utilties --
 ## no-op, group utitlies
