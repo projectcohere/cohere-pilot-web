@@ -7,6 +7,7 @@ require "sidekiq/testing"
 require "support/asserts"
 require "support/session"
 require "support/mailers"
+require "support/factories"
 
 # load pry-rescue if the flag is set
 if ENV["PRY_RESCUE"]

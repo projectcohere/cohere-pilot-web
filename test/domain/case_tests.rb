@@ -19,12 +19,9 @@ class CaseTests < ActiveSupport::TestCase
   end
 
   test "attaches a dhs account" do
-    kase = Case.new(
+    kase = Case.stub(
       status: :opened,
-      recipient: Recipient.new(profile: nil),
-      account: nil,
-      enroller_id: nil,
-      supplier_id: nil
+      recipient: Recipient.stub,
     )
 
     kase.attach_dhs_account(:test_account)
@@ -32,13 +29,10 @@ class CaseTests < ActiveSupport::TestCase
     assert_equal(kase.status, :pending)
   end
 
-  test "doesn't revert to back pending" do
-    kase = Case.new(
+  test "doesn't revert back to pending once submitted" do
+    kase = Case.stub(
       status: :submitted,
-      recipient: Recipient.new(profile: nil),
-      account: nil,
-      enroller_id: nil,
-      supplier_id: nil
+      recipient: Recipient.stub
     )
 
     kase.attach_dhs_account(:test_account)
@@ -46,12 +40,9 @@ class CaseTests < ActiveSupport::TestCase
   end
 
   test "submits the case" do
-    kase = Case.new(
+    kase = Case.stub(
       status: :pending,
-      recipient: Recipient.new(profile: nil),
-      account: nil,
-      enroller_id: nil,
-      supplier_id: nil
+      recipient: Recipient.stub
     )
 
     kase.submit
@@ -62,19 +53,12 @@ class CaseTests < ActiveSupport::TestCase
   end
 
   test "uploads documents from a message" do
-    kase = Case.new(
-      id: 4,
-      status: nil,
-      recipient: nil,
-      account: nil,
-      enroller_id: nil,
-      supplier_id: nil
+    kase = Case.stub(
+      id: 4
     )
 
     message = Message.new(
-      sender: Message::Sender.new(
-        phone_number: nil
-      ),
+      sender: Message::Sender.stub,
       attachments: [
         Message::Attachment.new(
           url: "https://website.com/image.jpg"
@@ -94,32 +78,19 @@ class CaseTests < ActiveSupport::TestCase
       income_cents: 2493_33
     )
 
-    kase = Case.new(
-      status: nil,
-      recipient: Recipient.new(
-        profile: nil,
-        dhs_account: Recipient::DhsAccount.new(
-          number: nil,
+    kase = Case.stub(
+      recipient: Recipient.stub(
+        dhs_account: Recipient::DhsAccount.stub(
           household: household
         )
-      ),
-      account: nil,
-      enroller_id: nil,
-      supplier_id: nil
+      )
     )
 
     assert_equal(kase.fpl_percentage, 100)
   end
 
   test "has no fpl percentage without a household" do
-    kase = Case.new(
-      status: nil,
-      recipient: nil,
-      account: nil,
-      enroller_id: nil,
-      supplier_id: nil
-    )
-
+    kase = Case.stub
     assert_nil(kase.fpl_percentage)
   end
 
@@ -129,18 +100,12 @@ class CaseTests < ActiveSupport::TestCase
       income_cents: 2493_33
     )
 
-    kase = Case.new(
-      status: nil,
-      recipient: Recipient.new(
-        profile: nil,
-        dhs_account: Recipient::DhsAccount.new(
-          number: nil,
+    kase = Case.stub(
+      recipient: Recipient.stub(
+        dhs_account: Recipient::DhsAccount.stub(
           household: household
         )
-      ),
-      account: nil,
-      enroller_id: nil,
-      supplier_id: nil
+      )
     )
 
     assert_nil(kase.fpl_percentage)
