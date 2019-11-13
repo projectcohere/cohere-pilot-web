@@ -19,7 +19,7 @@ a {
 
   /* disabled */
   &[href=""] {
-    opacity: 0.5;
+    opacity: $opacityDisabled;
     pointer-events: none;
   }
 }

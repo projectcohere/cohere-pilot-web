@@ -12,8 +12,9 @@
         <%= f.field(:status, background: false, class: "CaseForm-status") do %>
           <%= f.select(:status, @form.statuses.map { |s| [s.to_s.capitalize, s] }) %>
         <% end %>
-        <%= f.field(:signed_contract, "Contract", background: false, class: "CaseForm-signedContract") do %>
-          <%= f.check_box(:signed_contract) %>
+        <%- disabled = @form.signed_contract %>
+        <%= f.field(:signed_contract, "Contract", disabled: disabled, background: false, class: "CaseForm-signedContract") do %>
+          <%= f.check_box(:signed_contract, disabled: disabled) %>
           <span>Signed Contract?</span>
         <% end %>
       <% end %>

@@ -15,7 +15,7 @@ class CasesController < ApplicationController
   end
 
   def edit
-    kase = Case::Repo.get.find(params[:id])
+    kase = Case::Repo.get.find_with_documents(params[:id])
 
     policy.case = kase
     if policy.forbid?(:edit)
@@ -26,7 +26,7 @@ class CasesController < ApplicationController
   end
 
   def update
-    kase = Case::Repo.get.find(params[:id])
+    kase = Case::Repo.get.find_with_documents(params[:id])
 
     policy.case = kase
     if policy.forbid?(:edit)

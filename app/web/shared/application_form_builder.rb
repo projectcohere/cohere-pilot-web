@@ -19,7 +19,7 @@ class ApplicationFormBuilder < ::ActionView::Helpers::FormBuilder
     end
   end
 
-  def field(name, title = nil, *args, prefix: nil, background: true, **kwargs, &children)
+  def field(name, title = nil, *args, prefix: nil, disabled: false, background: true, **kwargs, &children)
     a_class = kwargs.delete(:class)
 
     # check for field errors
@@ -37,11 +37,10 @@ class ApplicationFormBuilder < ::ActionView::Helpers::FormBuilder
     # render the children & tag
     content = @template.capture(&children)
 
-    field_class = if has_errors
-      "#{a_class} FormField is-error"
-    else
-      "#{a_class} FormField"
-    end
+    field_class = classnames(a_class, "FormField",
+      "is-error" => has_errors,
+      "is-disabled" => disabled
+    )
 
     label(name, *args, class: field_class, **kwargs) do
       hint = @template.tag.p(class: "FormField-hint") do
@@ -68,12 +67,16 @@ class ApplicationFormBuilder < ::ActionView::Helpers::FormBuilder
 
   def value(val, *args, fallback: nil, **kwargs)
     # add fallback if necessary
-    value_class = if val.nil?
-      "FormField-value is-missing"
-    else
-      "FormField-value"
-    end
+    value_class = classnames("FormField-value",
+      "is-missing" => val.nil?
+    )
 
     @template.tag.p(val || fallback, class: value_class)
+  end
+
+  # -- helpers --
+  private def classnames(*classes, states)
+    classes += states.is_a?(Hash) ? states.filter { |_, v| v }.keys : states
+    classes.join(" ")
   end
 end

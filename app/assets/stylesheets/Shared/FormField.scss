@@ -1,6 +1,10 @@
 .FormField {
   overflow-x: hidden;
 
+  &.is-disabled {
+    opacity: $opacityDisabled;
+  }
+
   &-hint {
     @extend .u-hint;
     display: block;

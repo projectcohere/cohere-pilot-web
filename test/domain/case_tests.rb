@@ -1,6 +1,7 @@
 require "test_helper"
 
 class CaseTests < ActiveSupport::TestCase
+  # -- creation --
   test "opens the case" do
     kase = Case.open(
       profile: :test_profile,
@@ -18,6 +19,7 @@ class CaseTests < ActiveSupport::TestCase
     assert_instance_of(Case::Events::DidOpen, kase.events[0])
   end
 
+  # -- commands --
   test "attaches a dhs account" do
     kase = Case.stub(
       status: :opened,
@@ -29,7 +31,7 @@ class CaseTests < ActiveSupport::TestCase
     assert_equal(kase.status, :pending)
   end
 
-  test "doesn't revert back to pending once submitted" do
+  test "doesn't revert back to pending after submission" do
     kase = Case.stub(
       status: :submitted,
       recipient: Recipient.stub
@@ -39,6 +41,20 @@ class CaseTests < ActiveSupport::TestCase
     assert_equal(kase.status, :submitted)
   end
 
+  test "submits a case to an enroller" do
+    kase = Case.stub(
+      status: :pending,
+      recipient: Recipient.stub
+    )
+
+    kase.submit_to_enroller
+    assert_equal(kase.status, :submitted)
+
+    assert_length(kase.events, 1)
+    assert_instance_of(Case::Events::DidSubmit, kase.events[0])
+  end
+
+  # -- commands/documents
   test "uploads message attachments" do
     kase = Case.stub(
       id: 4
@@ -75,6 +91,19 @@ class CaseTests < ActiveSupport::TestCase
     assert_equal(new_contract.classification, :contract)
   end
 
+  test "doesn't sign a contract when one already exists" do
+    kase = Case.stub(
+      documents: [
+        Document.stub(classification: :contract)
+      ]
+    )
+
+    kase.sign_contract
+    assert_nil(kase.new_documents)
+    assert_length(kase.events, 0)
+  end
+
+  # -- commands/documents/selection
   test "selects a document" do
     kase = Case.stub(documents: [Document.stub])
 
@@ -106,19 +135,7 @@ class CaseTests < ActiveSupport::TestCase
     end
   end
 
-  test "submits a case to an enroller" do
-    kase = Case.stub(
-      status: :pending,
-      recipient: Recipient.stub
-    )
-
-    kase.submit_to_enroller
-    assert_equal(kase.status, :submitted)
-
-    assert_length(kase.events, 1)
-    assert_instance_of(Case::Events::DidSubmit, kase.events[0])
-  end
-
+  # -- queries --
   test "calcuates an fpl percentage from the household" do
     household = Recipient::Household.new(
       size: 5,
@@ -156,5 +173,13 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     assert_nil(kase.fpl_percentage)
+  end
+
+  test "has an contract" do
+    kase = Case.stub(
+      documents: [Document.stub(classification: :contract)]
+    )
+
+    assert_not_nil(kase.contract)
   end
 end

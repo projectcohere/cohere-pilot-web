@@ -1,4 +1,4 @@
 attachment_2_1:
   name: file
-  record: document_1_1 (Document::Record)
+  record: document_s1_1 (Document::Record)
   blob: blob_2_1

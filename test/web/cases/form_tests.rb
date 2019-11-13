@@ -4,7 +4,8 @@ require "minitest/mock"
 module Cases
   class FormTests < ActiveSupport::TestCase
     test "can be initialized from a case" do
-      kase = Case::Repo.map_record(cases(:pending_1))
+      case_rec = cases(:pending_1)
+      kase = Case::Repo.map_record(case_rec, case_rec.documents)
 
       form = Form.new(kase)
       assert_present(form.dhs_number)
@@ -14,6 +15,7 @@ module Cases
       assert_present(form.account_number)
       assert_present(form.dhs_number)
       assert_present(form.income)
+      assert(form.signed_contract)
     end
 
     test "saves a case" do

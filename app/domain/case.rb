@@ -54,6 +54,15 @@ class Case < ::Entity
     @recipient.attach_dhs_account(dhs_account)
   end
 
+  def submit_to_enroller
+    case @status
+    when :opened, :pending
+      @status = :submitted
+      @events << Events::DidSubmit.from_entity(self)
+    end
+  end
+
+  # -- commands/documents
   def upload_message_attachments(message)
     @new_documents ||= []
 
@@ -65,6 +74,10 @@ class Case < ::Entity
   end
 
   def sign_contract
+    if signed_contract?
+      return
+    end
+
     @new_documents ||= []
 
     new_document = Document.sign_contract
@@ -72,6 +85,7 @@ class Case < ::Entity
     @events << Events::DidSignContract.from_entity(self, new_document)
   end
 
+  # -- commands/documents/selection
   def select_document(i)
     if i >= @documents.count
       raise "tried to select a document that didn't exist"
@@ -86,14 +100,6 @@ class Case < ::Entity
     end
 
     @selected_document.attach_file(file)
-  end
-
-  def submit_to_enroller
-    case @status
-    when :opened, :pending
-      @status = :submitted
-      @events << Events::DidSubmit.from_entity(self)
-    end
   end
 
   # -- queries --
@@ -117,6 +123,16 @@ class Case < ::Entity
     fpl_percentage = hh_year_cents * 100 / fpl_year_cents.to_f
 
     fpl_percentage.round(2)
+  end
+
+  def contract
+    @documents&.find do |d|
+      d.classification == :contract
+    end
+  end
+
+  def signed_contract?
+    not contract.nil?
   end
 
   # -- callbacks --

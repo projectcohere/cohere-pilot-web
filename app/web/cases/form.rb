@@ -37,7 +37,8 @@ module Cases
       # set initial values from case
       c = kase
       assign_defaults!(attrs, {
-        status: c.status.to_s
+        status: c.status.to_s,
+        signed_contract: @model.signed_contract?
       })
 
       super(attrs)
