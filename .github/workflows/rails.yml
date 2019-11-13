@@ -37,7 +37,7 @@ jobs:
         sudo apt install -y yarn nodejs
     - name: Install PDF Utils
       run: |
-        sudo apt install -y wkhtmltopdf poppler
+        sudo apt install -y wkhtmltopdf poppler-utils
     - name: Build
       env:
         PGHOST: localhost
