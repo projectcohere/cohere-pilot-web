@@ -8,12 +8,12 @@ module Cases
 
     # -- fields/household
     field(:household_size, :string,
-      numericality: true,
+      numericality: { allow_blank: true },
       on: { submitted: { presence: true } }
     )
 
     field(:income, :string,
-      numericality: true,
+      numericality: { allow_blank: true },
       on: { submitted: { presence: true } }
     )
 
