@@ -37,7 +37,7 @@ module Cases
     class RenderPdf
       # -- command --
       def call(html, tmp_filename)
-        output_dir = "tmp/pdfs"
+        output_dir = "./tmp/pdfs"
 
         # ensure dir exists
         FileUtils.mkdir_p(output_dir)

@@ -26,7 +26,7 @@ jobs:
       uses: actions/setup-ruby@v1
       with:
         ruby-version: 2.6.x
-    - name: Install Postgres
+    - name: Install Postgres Tools
       run: |
         sudo apt install -y libpq-dev
     - name: Install Yarn & Node
@@ -35,9 +35,11 @@ jobs:
         echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
         curl -sL https://deb.nodesource.com/setup_12.x | sudo bash -
         sudo apt install -y yarn nodejs
-    - name: Install PDF Utils
+    - name: Install PDF Tools
       run: |
-        sudo apt install -y wkhtmltopdf poppler-utils
+        curl -sS -L https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb > wkhtmltox.deb
+        sudo dkpg -i wkhtmltox.deb
+        sudo apt install -y poppler-utils
     - name: Build
       env:
         PGHOST: localhost
