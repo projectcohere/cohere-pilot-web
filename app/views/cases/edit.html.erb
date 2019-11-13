@@ -27,7 +27,12 @@
           <%= f.text_field(:last_name) %>
         <% end %>
         <%= f.field(:phone_number, "Phone #", prefix: "#1", class: "CaseForm-phoneNumber") do %>
-          <%= f.telephone_field(:phone_number, placeholder: "3134445555") %>
+          <%=
+            f.telephone_field(:phone_number,
+              value: number_to_phone(@form.phone_number),
+              placeholder: number_to_phone("3134445555")
+            )
+          %>
         <% end %>
       <% end %>
 
@@ -80,7 +85,7 @@
           <%= f.text_field(:income) %>
         <% end %>
         <%= f.field(:fpl, "FPL Percentage", background: false, class: "CaseForm-fpl") do %>
-          <%= f.value(@form.fpl_percentage, fallback: "Unknown. Please add household info.") %>
+          <%= f.value(@form.fpl_percentage, suffix: "%", fallback: "Unknown. Please add household info.") %>
         <% end %>
       <% end %>
 

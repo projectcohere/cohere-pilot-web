@@ -122,7 +122,7 @@ class Case < ::Entity
     fpl_year_cents = fpl_month_cents * 8
     fpl_percentage = hh_year_cents * 100 / fpl_year_cents.to_f
 
-    fpl_percentage.round(2)
+    fpl_percentage.round(0)
   end
 
   def contract

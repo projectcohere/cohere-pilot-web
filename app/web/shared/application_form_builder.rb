@@ -65,13 +65,18 @@ class ApplicationFormBuilder < ::ActionView::Helpers::FormBuilder
     end
   end
 
-  def value(val, *args, fallback: nil, **kwargs)
-    # add fallback if necessary
+  def value(value, *args, suffix: nil, fallback: nil, **kwargs)
     value_class = classnames("FormField-value",
-      "is-missing" => val.nil?
+      "is-missing" => value.nil?
     )
 
-    @template.tag.p(val || fallback, class: value_class)
+    value = if value.nil?
+      fallback
+    else
+      value.to_s + (suffix || "")
+    end
+
+    @template.tag.p(value, class: value_class)
   end
 
   # -- helpers --

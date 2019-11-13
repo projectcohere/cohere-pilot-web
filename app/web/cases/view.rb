@@ -38,7 +38,7 @@ module Cases
     end
 
     def account_arrears
-      @case.account.arrears_dollars
+      "$#{@case.account.arrears_dollars}"
     end
 
     # -- queries/dhs-account
@@ -51,7 +51,7 @@ module Cases
     end
 
     def household_income
-      @case.recipient.dhs_account.household.income_cents / 100.0
+      "$#{@case.recipient.dhs_account.household.income_cents / 100.0}"
     end
 
     def fpl_percentage

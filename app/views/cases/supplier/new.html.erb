@@ -12,7 +12,12 @@
         <%= f.text_field(:last_name) %>
       <% end %>
       <%= f.field(:phone_number, "Phone #", class: "CaseForm-phoneNumber") do %>
-        <%= f.telephone_field(:phone_number) %>
+        <%=
+          f.telephone_field(:phone_number,
+            value: number_to_phone(@form.phone_number),
+            placeholder: number_to_phone("3134445555")
+          )
+        %>
       <% end %>
     <% end %>
 
