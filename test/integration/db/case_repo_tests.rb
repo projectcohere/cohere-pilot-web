@@ -115,7 +115,7 @@ module Db
     end
 
     # -- test/save
-    test "saves an opened case" do
+    test "saves an opened case with account and profile" do
       event_queue = EventQueue.new
 
       kase = Case.open(
@@ -144,7 +144,7 @@ module Db
 
       case_repo = Case::Repo.new(event_queue: event_queue)
       act = -> do
-        case_repo.save_for_supplier_form(kase)
+        case_repo.save_account_and_recipient_profile(kase)
       end
 
       assert_difference(
@@ -191,7 +191,7 @@ module Db
 
       case_repo = Case::Repo.new(event_queue: event_queue)
       act = -> do
-        case_repo.save_for_supplier_form(kase)
+        case_repo.save_account_and_recipient_profile(kase)
       end
 
       assert_difference(
@@ -209,10 +209,9 @@ module Db
       assert_length(event_queue, 1)
     end
 
-    test "saves a dhs account" do
-      case_repo = Case::Repo.new
-
-      kase = Case::Repo.map_record(cases(:opened_1))
+    test "saves the status and dhs account" do
+      case_rec = cases(:opened_1)
+      kase = Case::Repo.map_record(case_rec)
       kase.attach_dhs_account(
         Recipient::DhsAccount.new(
           number: "11111",
@@ -223,7 +222,9 @@ module Db
         )
       )
 
-      case_repo.save_for_dhs_form(kase)
+      case_repo = Case::Repo.new
+      case_repo.save_status_and_dhs_account(kase)
+
       case_rec = kase.record
       assert_equal(case_rec.status, "pending")
 
@@ -233,7 +234,42 @@ module Db
       assert_equal(recipient_rec.household_income_cents, 999_00)
     end
 
-    test "saves uploaded documents" do
+    test "saves all fields and new documents" do
+      event_queue = EventQueue.new
+
+      case_rec = cases(:pending_2)
+      account = Recipient::DhsAccount.new(
+        number: "11111",
+        household: Recipient::Household.new(
+          size: 3,
+          income_cents: 999_00
+        )
+      )
+
+      kase = Case::Repo.map_record(case_rec)
+      kase.attach_dhs_account(account)
+      kase.sign_contract
+      kase.submit_to_enroller
+
+      case_repo = Case::Repo.new(event_queue: event_queue)
+      case_repo.save_all_fields_and_new_documents(kase)
+
+      case_rec = kase.record
+      assert_equal(case_rec.status, "submitted")
+
+      recipient_rec = case_rec.recipient
+      assert_equal(recipient_rec.dhs_number, "11111")
+      assert_equal(recipient_rec.household_size, 3)
+      assert_equal(recipient_rec.household_income_cents, 999_00)
+
+      document_rec = kase.new_documents[0].record
+      assert_not_nil(document_rec)
+
+      assert_length(kase.events, 0)
+      assert_length(event_queue, 2)
+    end
+
+    test "saves new documents" do
       event_queue = EventQueue.new
 
       case_rec = cases(:submitted_2)
@@ -293,34 +329,6 @@ module Db
 
       document_rec = kase.selected_document.record
       assert(document_rec.file.attached?)
-    end
-
-    test "saves all fields" do
-      event_queue = EventQueue.new
-
-      case_rec = cases(:pending_2)
-      account = Recipient::DhsAccount.new(
-        number: "11111",
-        household: Recipient::Household.new(size: 3, income_cents: 999_00)
-      )
-
-      kase = Case::Repo.map_record(case_rec)
-      kase.attach_dhs_account(account)
-      kase.submit_to_enroller
-
-      case_repo = Case::Repo.new(event_queue: event_queue)
-      case_repo.save_all(kase)
-
-      case_rec = kase.record
-      assert_equal(case_rec.status, "submitted")
-
-      recipient_rec = case_rec.recipient
-      assert_equal(recipient_rec.dhs_number, "11111")
-      assert_equal(recipient_rec.household_size, 3)
-      assert_equal(recipient_rec.household_income_cents, 999_00)
-
-      assert_length(kase.events, 0)
-      assert_length(event_queue, 1)
     end
   end
 end

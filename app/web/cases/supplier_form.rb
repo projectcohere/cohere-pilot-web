@@ -94,7 +94,7 @@ module Cases
         profile: map_to_recipient_profile,
       )
 
-      @case_repo.save_for_supplier_form(new_case)
+      @case_repo.save_account_and_recipient_profile(new_case)
 
       # set underlying model
       @model = new_case

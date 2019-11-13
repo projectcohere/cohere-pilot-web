@@ -29,9 +29,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "can't list enroller cases without permission" do
-    user_rec = users(:cohere_1)
-
-    get(auth("/cases/enroller", as: user_rec))
+    get(auth("/cases/enroller"))
     assert_redirected_to(%r[/cases(?!/enroller)])
   end
 
@@ -51,9 +49,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "can't list supplier cases without permission" do
-    user_rec = users(:cohere_1)
-
-    get(auth("/cases/supplier", as: user_rec))
+    get(auth("/cases/supplier"))
     assert_redirected_to(%r[/cases(?!/supplier)])
   end
 
@@ -72,9 +68,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "can't list dhs cases without permission" do
-    user_rec = users(:cohere_1)
-
-    get(auth("/cases/dhs", as: user_rec))
+    get(auth("/cases/dhs"))
     assert_redirected_to(%r[/cases(?!/dhs)])
   end
 
@@ -95,9 +89,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "can't open a case without permission" do
-    user_rec = users(:cohere_1)
-
-    get(auth("/cases/supplier/new", as: user_rec))
+    get(auth("/cases/supplier/new"))
     assert_redirected_to(%r[/cases(?!/supplier)])
   end
 
@@ -160,10 +152,9 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "can't view an submitted case without permission" do
-    user_rec = users(:cohere_1)
     case_rec = cases(:submitted_1)
 
-    get(auth("/cases/enroller/#{case_rec.id}", as: user_rec))
+    get(auth("/cases/enroller/#{case_rec.id}"))
     assert_redirected_to(%r[/cases(?!/enroller)])
   end
 
@@ -186,20 +177,18 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "edit a case" do
-    user_rec = users(:cohere_1)
     case_rec = cases(:submitted_1)
     kase = Case::Repo.map_record(case_rec)
 
-    get(auth("/cases/#{kase.id}/edit", as: user_rec))
+    get(auth("/cases/#{kase.id}/edit"))
     assert_response(:success)
     assert_select(".Main-title", text: /#{kase.recipient.profile.name}/)
   end
 
   test "save an edited case" do
-    user_rec = users(:cohere_1)
     case_rec = cases(:pending_2)
 
-    patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
+    patch(auth("/cases/#{case_rec.id}"), params: {
       case: {
         status: :submitted,
         income: "$300.00"
@@ -219,15 +208,12 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "generate a signed contract" do
-    skip
-
     Sidekiq::Testing.inline!
 
-    user_rec = users(:cohere_1)
     case_rec = cases(:pending_2)
 
     act = ->() do
-      patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
+      patch(auth("/cases/#{case_rec.id}"), params: {
         case: {
           signed_contract: true
         }
@@ -245,10 +231,9 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "show errors for an invalid case" do
-    user_rec = users(:cohere_1)
     case_rec = cases(:pending_2)
 
-    patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
+    patch(auth("/cases/#{case_rec.id}"), params: {
       case: {
         status: "submitted",
         dhs_number: nil

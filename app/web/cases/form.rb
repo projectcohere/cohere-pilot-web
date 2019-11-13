@@ -62,7 +62,7 @@ module Cases
         @model.submit_to_enroller
       end
 
-      @case_repo.save_all(@model)
+      @case_repo.save_all_fields_and_new_documents(@model)
 
       true
     end

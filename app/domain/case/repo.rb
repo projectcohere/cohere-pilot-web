@@ -119,7 +119,7 @@ class Case
     end
 
     # -- commands --
-    def save_for_supplier_form(kase)
+    def save_account_and_recipient_profile(kase)
       # start a new case record
       case_rec = Case::Record.new
 
@@ -139,10 +139,8 @@ class Case
       assign_recipient_profile(kase, recipient_rec)
 
       # save the records
-      case_rec.transaction do
-        case_rec.recipient = recipient_rec
-        case_rec.save!
-      end
+      case_rec.recipient = recipient_rec
+      case_rec.save!
 
       # send creation events back to entities
       kase.did_save(case_rec)
@@ -152,7 +150,7 @@ class Case
       @event_queue.consume(kase.events)
     end
 
-    def save_for_dhs_form(kase)
+    def save_status_and_dhs_account(kase)
       if kase.record.nil? || kase.recipient.record.nil?
         raise "case and recipient must be fetched from the db!"
       end
@@ -171,26 +169,31 @@ class Case
       @event_queue.consume(kase.events)
     end
 
+    def save_all_fields_and_new_documents(kase)
+      if kase.record.nil? || kase.recipient.record.nil?
+        raise "case and recipient must be fetched from the db!"
+      end
+
+      # update records
+      assign_status(kase, kase.record)
+      assign_account(kase, kase.record)
+      assign_recipient_profile(kase, kase.recipient.record)
+      assign_dhs_account(kase, kase.recipient.record)
+
+      # save records
+      Case::Record.transaction do
+        kase.record.save!
+        kase.recipient.record.save!
+        create_documents!(kase.id.val, kase.new_documents)
+      end
+
+      # consume all entity events
+      @event_queue.consume(kase.events)
+    end
+
+
     def save_new_documents(kase)
-      new_documents = kase.new_documents
-      if new_documents.blank?
-        return
-      end
-
-      new_recs_attrs = new_documents.map do |d|
-        _attrs = {
-          case_id: kase.id.val,
-          classification: d.classification,
-          source_url: d.source_url
-        }
-      end
-
-      new_recs = Document::Record.create!(new_recs_attrs)
-
-      # send creation events back to entities
-      new_recs.each_with_index do |r, i|
-        new_documents[i].did_save(r)
-      end
+      create_documents!(kase.id.val, kase.new_documents)
 
       # consume all entity events
       @event_queue.consume(kase.events)
@@ -217,27 +220,6 @@ class Case
         filename: f.name,
         content_type: f.mime_type
       )
-    end
-
-    def save_all(kase)
-      if kase.record.nil? || kase.recipient.record.nil?
-        raise "case and recipient must be fetched from the db!"
-      end
-
-      # update records
-      assign_status(kase, kase.record)
-      assign_account(kase, kase.record)
-      assign_recipient_profile(kase, kase.recipient.record)
-      assign_dhs_account(kase, kase.recipient.record)
-
-      # save records
-      kase.record.transaction do
-        kase.record.save!
-        kase.recipient.record.save!
-      end
-
-      # consume all entity events
-      @event_queue.consume(kase.events)
     end
 
     # -- commands/helpers
@@ -293,6 +275,27 @@ class Case
         household_size: a.household.size,
         household_income_cents: a.household.income_cents
       )
+    end
+
+    private def create_documents!(case_id, documents)
+      if documents.blank?
+        return
+      end
+
+      document_recs_attrs = documents.map do |d|
+        _attrs = {
+          case_id: case_id,
+          classification: d.classification,
+          source_url: d.source_url
+        }
+      end
+
+      document_recs = Document::Record.create!(document_recs_attrs)
+
+      # send creation events back to entities
+      document_recs.each_with_index do |r, i|
+        documents[i].did_save(r)
+      end
     end
 
     # -- factories --
