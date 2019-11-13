@@ -48,6 +48,7 @@ class Case
       case_rec = Case::Record
         .find(case_id)
 
+      # TODO: fix n+1 on attachments and blobs
       document_recs = Document::Record
         .where(case_id: case_id)
 
@@ -59,6 +60,7 @@ class Case
         .where(status: [:opened, :pending])
         .find(case_id)
 
+      # TODO: fix n+1 on attachments and blobs
       document_recs = Document::Record
         .where(case_id: case_id)
 
@@ -73,6 +75,7 @@ class Case
         )
         .find(case_id)
 
+      # TODO: fix n+1 on attachments and blobs
       document_recs = Document::Record
         .where(case_id: case_id)
 
