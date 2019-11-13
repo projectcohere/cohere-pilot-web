@@ -106,13 +106,13 @@ class CaseTests < ActiveSupport::TestCase
     end
   end
 
-  test "submits a case" do
+  test "submits a case to an enroller" do
     kase = Case.stub(
       status: :pending,
       recipient: Recipient.stub
     )
 
-    kase.submit
+    kase.submit_to_enroller
     assert_equal(kase.status, :submitted)
 
     assert_length(kase.events, 1)

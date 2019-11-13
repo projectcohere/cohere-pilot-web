@@ -58,7 +58,7 @@ module Cases
       end
 
       if submitted?
-        @model.submit
+        @model.submit_to_enroller
       end
 
       @case_repo.save_all(@model)

@@ -306,7 +306,7 @@ module Db
 
       kase = Case::Repo.map_record(case_rec)
       kase.attach_dhs_account(account)
-      kase.submit
+      kase.submit_to_enroller
 
       case_repo = Case::Repo.new(event_queue: event_queue)
       case_repo.save_all(kase)

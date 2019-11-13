@@ -88,8 +88,7 @@ class Case < ::Entity
     @selected_document.attach_file(file)
   end
 
-  # TODO: rename to `submit_to_enroller`
-  def submit
+  def submit_to_enroller
     case @status
     when :opened, :pending
       @status = :submitted
