@@ -38,7 +38,7 @@ jobs:
     - name: Install PDF Tools
       run: |
         curl -sS -L https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb > wkhtmltox.deb
-        sudo dpkg -i wkhtmltox.deb
+        sudo apt install ./wkhtmltox.deb
         sudo apt install -y poppler-utils
     - name: Build
       env:
