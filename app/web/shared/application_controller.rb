@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   helper_method(:case_scope)
 
   # -- filters --
-  after_action(:process_event_queue)
+  after_action(:process_events)
 
   # -- case-scope --
   # -- case-scope/queries
@@ -26,8 +26,8 @@ class ApplicationController < ActionController::Base
   end
 
   # -- events --
-  private def process_event_queue
-    ProcessEventQueue.get.()
+  private def process_events
+    Events::ProcessAll.get.()
   end
 
   # -- Clearance::Authentication --

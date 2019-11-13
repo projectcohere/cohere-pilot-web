@@ -7,17 +7,17 @@ module Users
 
     def initialize(
       user_repo: User::Repo.get,
-      process_event_queue: ProcessEventQueue.get
+      process_events: Events::ProcessAll.get
     )
       @user_repo = user_repo
-      @process_event_queue = process_event_queue
+      @process_events = process_events
     end
 
     # -- command --
     def call(email, role:)
       user = User.invite(email, role: role)
       @user_repo.save_invited(user)
-      @process_event_queue.()
+      @process_events.()
     end
   end
 end

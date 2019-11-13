@@ -2,7 +2,7 @@ class Document < ::Entity
   prop(:record, default: nil)
 
   # -- props --
-  prop(:id, default: nil)
+  prop(:id, default: Id::None)
   prop(:classification)
   prop(:file, default: nil)
   prop(:source_url, default: nil)
@@ -32,7 +32,7 @@ class Document < ::Entity
 
   # -- callbacks --
   def did_save(record)
+    @id.set(record.id)
     @record = record
-    @id = record.id
   end
 end

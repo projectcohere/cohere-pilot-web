@@ -17,6 +17,7 @@ class Case < ::Entity
 
   # -- props/temporary
   attr(:new_documents)
+  attr(:selected_document)
 
   # -- creation --
   def self.open(profile:, account:, enroller:, supplier:)
@@ -32,7 +33,7 @@ class Case < ::Entity
       supplier_id: supplier.id
     )
 
-    kase.events << Events::DidOpen.from_case(kase)
+    kase.events << Events::DidOpen.from_entity(kase)
     kase
   end
 
@@ -55,14 +56,36 @@ class Case < ::Entity
 
   def upload_message_attachments(message)
     @new_documents ||= []
+
     message.attachments.each do |attachment|
-      @new_documents << Document.upload(attachment.url)
+      new_document = Document.upload(attachment.url)
+      @new_documents << new_document
+      @events << Events::DidUploadMessageAttachment.from_entity(self, new_document)
     end
   end
 
   def sign_contract
     @new_documents ||= []
-    @new_documents << Document.sign_contract
+
+    new_document = Document.sign_contract
+    @new_documents << new_document
+    @events << Events::DidSignContract.from_entity(self, new_document)
+  end
+
+  def select_document(i)
+    if i >= @documents.count
+      raise "tried to select a document that didn't exist"
+    end
+
+    @selected_document = @documents[i]
+  end
+
+  def attach_file_to_selected_document(file)
+    if @selected_document.nil?
+      raise "tried to attach a file to the selected document, but there wasn't one"
+    end
+
+    @selected_document.attach_file(file)
   end
 
   # TODO: rename to `submit_to_enroller`
@@ -70,7 +93,7 @@ class Case < ::Entity
     case @status
     when :opened, :pending
       @status = :submitted
-      @events << Events::DidSubmit.from_case(self)
+      @events << Events::DidSubmit.from_entity(self)
     end
   end
 

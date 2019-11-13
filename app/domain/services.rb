@@ -4,5 +4,4 @@ class Services < ActiveSupport::CurrentAttributes
   attribute(:event_queue)
   attribute(:enroller_repo)
   attribute(:supplier_repo)
-  attribute(:document_repo)
 end

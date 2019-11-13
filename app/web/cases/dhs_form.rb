@@ -21,12 +21,10 @@ module Cases
     def initialize(
       kase,
       attrs = {},
-      case_repo: Case::Repo.get,
-      document_repo: Document::Repo.get
+      case_repo: Case::Repo.get
     )
       # set dependencies
       @case_repo = case_repo
-      @document_repo = document_repo
 
       # set underlying model(s)
       @model = kase

@@ -29,7 +29,11 @@ class Repo
 
   # -- factories --
   protected def entity_from(record, *associations)
-    record.nil? ? nil : self.class.map_record(record)
+    if record.nil?
+      nil
+    else
+      self.class.map_record(record, *associations)
+    end
   end
 
   protected def entities_from(records)

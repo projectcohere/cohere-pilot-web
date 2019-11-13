@@ -10,6 +10,14 @@ module Db
       assert_not_nil(kase)
     end
 
+    test "can't find a case with an unknown id" do
+      case_repo = Case::Repo.new
+
+      assert_raises(ActiveRecord::RecordNotFound) do
+        case_repo.find(1)
+      end
+    end
+
     test "finds a case by phone number" do
       case_repo = Case::Repo.new
       recipient_rec = recipients(:recipient_1)
@@ -19,11 +27,24 @@ module Db
       assert_equal(kase.recipient.profile.phone.number, recipient_rec.phone_number)
     end
 
-    test "can't find a case with an unknown id" do
+    test "finds a case and document by id" do
       case_repo = Case::Repo.new
+      case_rec = cases(:submitted_1)
+      document_rec = documents(:document_1_1)
+
+      kase = case_repo.find_with_document(case_rec.id, document_rec.id)
+      assert_equal(kase.id.val, case_rec.id)
+      assert_length(kase.documents, 1)
+      assert_equal(kase.documents[0].id.val, document_rec.id)
+    end
+
+    test "can't find a case and document if the case id does not match" do
+      case_repo = Case::Repo.new
+      case_rec = cases(:submitted_2)
+      document_rec = documents(:document_1_1)
 
       assert_raises(ActiveRecord::RecordNotFound) do
-        case_repo.find(1)
+        case_repo.find_with_document(case_rec.id, document_rec.id)
       end
     end
 
@@ -97,10 +118,6 @@ module Db
     test "saves an opened case" do
       event_queue = EventQueue.new
 
-      case_repo = Case::Repo.new(
-        event_queue: event_queue
-      )
-
       kase = Case.open(
         profile: Recipient::Profile.new(
           phone: Recipient::Phone.new(
@@ -125,6 +142,7 @@ module Db
         supplier: Supplier::Repo.map_record(suppliers(:supplier_1))
       )
 
+      case_repo = Case::Repo.new(event_queue: event_queue)
       act = -> do
         case_repo.save_for_supplier_form(kase)
       end
@@ -146,9 +164,6 @@ module Db
 
     test "saves an opened case for an existing recipient" do
       event_queue = EventQueue.new
-      case_repo = Case::Repo.new(
-        event_queue: event_queue
-      )
 
       kase = Case.open(
         profile: Recipient::Profile.new(
@@ -174,6 +189,7 @@ module Db
         supplier: Supplier::Repo.map_record(suppliers(:supplier_1))
       )
 
+      case_repo = Case::Repo.new(event_queue: event_queue)
       act = -> do
         case_repo.save_for_supplier_form(kase)
       end
@@ -194,6 +210,8 @@ module Db
     end
 
     test "saves a dhs account" do
+      case_repo = Case::Repo.new
+
       kase = Case::Repo.map_record(cases(:opened_1))
       kase.attach_dhs_account(
         Recipient::DhsAccount.new(
@@ -205,9 +223,7 @@ module Db
         )
       )
 
-      case_repo = Case::Repo.new
       case_repo.save_for_dhs_form(kase)
-
       case_rec = kase.record
       assert_equal(case_rec.status, "pending")
 
@@ -218,8 +234,9 @@ module Db
     end
 
     test "saves uploaded documents" do
-      case_rec = cases(:submitted_2)
+      event_queue = EventQueue.new
 
+      case_rec = cases(:submitted_2)
       kase = Case::Repo.map_record(case_rec)
       kase.upload_message_attachments(Message.stub(
         attachments: [
@@ -229,7 +246,7 @@ module Db
         ]
       ))
 
-      case_repo = Case::Repo.new
+      case_repo = Case::Repo.new(event_queue: event_queue)
       act = -> do
         case_repo.save_new_documents(kase)
       end
@@ -239,13 +256,48 @@ module Db
         &act
       )
 
-      record = kase.new_documents[0].record
-      assert_not_nil(record)
-      assert_not_nil(record.case_id)
-      assert_not_nil(record.source_url)
+      document = kase.new_documents[0]
+      assert_not_nil(document.record)
+      assert_not_nil(document.id.val)
+
+      document_rec = document.record
+      assert_not_nil(document_rec)
+      assert_not_nil(document_rec.case_id)
+      assert_not_nil(document_rec.source_url)
+
+      assert_length(kase.events, 0)
+      assert_length(event_queue, 1)
+    end
+
+    test "saves an attached file" do
+      case_rec = cases(:submitted_1)
+      kase = Case::Repo.map_record(case_rec, case_rec.documents)
+
+      kase.select_document(1)
+      kase.attach_file_to_selected_document(FileData.new(
+        data: StringIO.new("test-data"),
+        name: "test.txt",
+        mime_type: "text/plain"
+      ))
+
+      case_repo = Case::Repo.new
+      act = -> do
+        case_repo.save_attached_file(kase)
+      end
+
+      assert_difference(
+        -> { ActiveStorage::Attachment.count } => 1,
+        -> { ActiveStorage::Blob.count } => 1,
+        &act
+      )
+
+      document_rec = kase.selected_document.record
+      assert(document_rec.file.attached?)
     end
 
     test "saves all fields" do
+      event_queue = EventQueue.new
+
       case_rec = cases(:pending_2)
       account = Recipient::DhsAccount.new(
         number: "11111",
@@ -256,7 +308,7 @@ module Db
       kase.attach_dhs_account(account)
       kase.submit
 
-      case_repo = Case::Repo.new
+      case_repo = Case::Repo.new(event_queue: event_queue)
       case_repo.save_all(kase)
 
       case_rec = kase.record
@@ -266,6 +318,9 @@ module Db
       assert_equal(recipient_rec.dhs_number, "11111")
       assert_equal(recipient_rec.household_size, 3)
       assert_equal(recipient_rec.household_income_cents, 999_00)
+
+      assert_length(kase.events, 0)
+      assert_length(event_queue, 1)
     end
   end
 end

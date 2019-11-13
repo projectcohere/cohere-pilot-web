@@ -39,20 +39,7 @@ class CaseTests < ActiveSupport::TestCase
     assert_equal(kase.status, :submitted)
   end
 
-  test "submits the case" do
-    kase = Case.stub(
-      status: :pending,
-      recipient: Recipient.stub
-    )
-
-    kase.submit
-    assert_equal(kase.status, :submitted)
-
-    assert_length(kase.events, 1)
-    assert_instance_of(Case::Events::DidSubmit, kase.events[0])
-  end
-
-  test "uploads documents from a message" do
+  test "uploads message attachments" do
     kase = Case.stub(
       id: 4
     )
@@ -68,9 +55,68 @@ class CaseTests < ActiveSupport::TestCase
 
     kase.upload_message_attachments(message)
     assert_length(kase.new_documents, 1)
+    assert_length(kase.events, 1)
+    assert_instance_of(Case::Events::DidUploadMessageAttachment, kase.events[0])
 
-    document = kase.new_documents[0]
-    assert_equal(document.source_url, "https://website.com/image.jpg")
+    new_document = kase.new_documents[0]
+    assert_equal(new_document.classification, :unclassified)
+    assert_equal(new_document.source_url, "https://website.com/image.jpg")
+  end
+
+  test "signs a contract" do
+    kase = Case.stub
+
+    kase.sign_contract
+    assert_length(kase.new_documents, 1)
+    assert_length(kase.events, 1)
+    assert_instance_of(Case::Events::DidSignContract, kase.events[0])
+
+    new_contract = kase.new_documents[0]
+    assert_equal(new_contract.classification, :contract)
+  end
+
+  test "selects a document" do
+    kase = Case.stub(documents: [Document.stub])
+
+    kase.select_document(0)
+    assert_equal(kase.selected_document, kase.documents[0])
+  end
+
+  test "doesn't select a missing document" do
+    kase = Case.stub
+
+    assert_raises do
+      kase.select_document(0)
+    end
+  end
+
+  test "attaches files to the selected document" do
+    kase = Case.stub(documents: [Document.stub])
+    kase.select_document(0)
+
+    kase.attach_file_to_selected_document("test-file")
+    assert_equal(kase.selected_document.new_file, "test-file")
+  end
+
+  test "doesn't attach files to a missing document" do
+    kase = Case.stub(documents: [Document.stub])
+
+    assert_raises do
+      kase.attach_file_to_selected_document("test-file")
+    end
+  end
+
+  test "submits a case" do
+    kase = Case.stub(
+      status: :pending,
+      recipient: Recipient.stub
+    )
+
+    kase.submit
+    assert_equal(kase.status, :submitted)
+
+    assert_length(kase.events, 1)
+    assert_instance_of(Case::Events::DidSubmit, kase.events[0])
   end
 
   test "calcuates an fpl percentage from the household" do
@@ -110,16 +156,5 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     assert_nil(kase.fpl_percentage)
-  end
-
-  test "signs a contract" do
-    kase = Case.stub
-
-    kase.sign_contract
-    assert_length(kase.new_documents, 1)
-
-    new_contract = kase.new_documents[0]
-    assert_nil(new_contract.id)
-    assert_equal(new_contract.classification, :contract)
   end
 end

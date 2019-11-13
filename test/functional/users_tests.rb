@@ -153,7 +153,7 @@ class UsersTests < ActionDispatch::IntegrationTest
       user_repo: User::Repo.new(
         event_queue: event_queue
       ),
-      process_event_queue: ProcessEventQueue.new(
+      process_events: Events::ProcessAll.new(
         event_queue: event_queue
       )
     )

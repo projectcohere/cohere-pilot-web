@@ -13,14 +13,12 @@ module Cases
       attrs = {},
       case_repo: Case::Repo.get,
       supplier_repo: Supplier::Repo.get,
-      enroller_repo: Enroller::Repo.get,
-      document_repo: Document::Repo.get
+      enroller_repo: Enroller::Repo.get
     )
       # set dependencies
       @case_repo = case_repo
       @supplier_repo = supplier_repo
       @enroller_repo = enroller_repo
-      @document_repo = document_repo
 
       # set underlying model
       @model = kase

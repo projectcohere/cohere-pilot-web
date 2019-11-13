@@ -17,9 +17,9 @@ class Case
 
     # -- queries --
     # -- queries/one
-    def find(id)
+    def find(case_id)
       case_rec = Case::Record
-        .find(id)
+        .find(case_id)
 
       entity_from(case_rec)
     end
@@ -33,37 +33,48 @@ class Case
       entity_from(case_rec)
     end
 
-    def find_with_documents(id)
+    def find_with_document(case_id, document_id)
+      document_rec = Document::Record
+        .includes(:case)
+        .find_by!(
+          id: document_id,
+          case_id: case_id
+        )
+
+      entity_from(document_rec.case, [document_rec])
+    end
+
+    def find_with_documents(case_id)
       case_rec = Case::Record
-        .find(id)
+        .find(case_id)
 
       document_recs = Document::Record
-        .where(case_id: id)
+        .where(case_id: case_id)
 
       entity_from(case_rec, document_recs)
     end
 
-    def find_opened_with_documents(id)
+    def find_opened_with_documents(case_id)
       case_rec = Case::Record
         .where(status: [:opened, :pending])
-        .find(id)
+        .find(case_id)
 
       document_recs = Document::Record
-        .where(case_id: id)
+        .where(case_id: case_id)
 
       entity_from(case_rec, document_recs)
     end
 
-    def find_by_enroller_with_documents(id, enroller_id)
+    def find_by_enroller_with_documents(case_id, enroller_id)
       case_rec = Case::Record
         .where(
           enroller_id: enroller_id,
           status: [:submitted, :approved, :rejected]
         )
-        .find(id)
+        .find(case_id)
 
       document_recs = Document::Record
-        .where(case_id: id)
+        .where(case_id: case_id)
 
       entity_from(case_rec, document_recs)
     end
@@ -180,6 +191,32 @@ class Case
       new_recs.each_with_index do |r, i|
         new_documents[i].did_save(r)
       end
+
+      # consume all entity events
+      @event_queue.consume(kase.events)
+    end
+
+    def save_attached_file(kase)
+      document = kase.selected_document
+      if document.nil?
+        raise "no document was selected"
+      end
+
+      if document.record.nil?
+        raise "unsaved document can't be updated with a new file"
+      end
+
+      new_file = document.new_file
+      if new_file.nil?
+        return
+      end
+
+      f = new_file
+      document.record.file.attach(
+        io: f.data,
+        filename: f.name,
+        content_type: f.mime_type
+      )
     end
 
     def save_all(kase)
@@ -271,11 +308,21 @@ class Case
           arrears_cents: r.account_arrears_cents,
         ),
         documents: document_recs&.map { |d|
-          Document::Repo.map_record(d)
+          map_document(d)
         },
         recipient: map_recipient(r.recipient),
         updated_at: r.updated_at,
         completed_at: r.completed_at
+      )
+    end
+
+    def self.map_document(r)
+      Document.new(
+        record: r,
+        id: Id.new(r.id),
+        classification: r.classification.to_sym,
+        file: r.file,
+        source_url: r.source_url
       )
     end
 

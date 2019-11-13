@@ -1,7 +1,7 @@
 require "test_helper"
 require "minitest/mock"
 
-class Case
+module Cases
   class UploadMessageAttachmentsTests < ActiveSupport::TestCase
     test "uploads documents from message attachments" do
       message = Message.new(
@@ -28,12 +28,8 @@ class Case
           [kase]
         )
 
-      upload = UploadMessageAttachments.new(
-        decode_message: ->(_) { message },
-        case_repo: case_repo,
-      )
-
-      documents = upload.("ignored-data")
+      upload = UploadMessageAttachments.new(case_repo: case_repo)
+      upload.(message)
       assert_mock(case_repo)
     end
 
@@ -52,16 +48,11 @@ class Case
       case_repo = Minitest::Mock.new
         .expect(:find_by_phone_number, nil, ["111-222-3333"])
 
-      upload = UploadMessageAttachments.new(
-        decode_message: ->(_) { message },
-        case_repo: case_repo
-      )
+      upload = UploadMessageAttachments.new(case_repo: case_repo)
 
-      act = -> do
-        upload.("ignored-data")
+      assert_raises do
+        upload.(message)
       end
-
-      assert_raises(&act)
     end
   end
 end

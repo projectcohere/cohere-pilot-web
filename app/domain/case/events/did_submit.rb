@@ -6,7 +6,7 @@ class Case
       props_end!
 
       # -- factories --
-      def self.from_case(kase)
+      def self.from_entity(kase)
         DidSubmit.new(
           case_id: kase.id
         )
