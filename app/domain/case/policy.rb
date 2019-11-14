@@ -21,8 +21,6 @@ class Case
         role == :supplier
       when :view
         role == :enroller
-      when :view_status
-        role == :cohere
       else
         false
       end

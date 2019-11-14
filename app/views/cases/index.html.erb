@@ -23,11 +23,9 @@
               </p>
             </div>
             <div class="CaseCell-row">
-              <% if policy.permit?(:view_status) %>
-                <p class="CaseCell-status">
-                  <%= view.status %>
-                </p>
-              <% end %>
+              <p class="CaseCell-status">
+                <%= view.status %>
+              </p>
               <p class="CaseCell-updateTime">
                 Updated <%= time_ago_in_words(view.updated_at) %> ago
               </p>

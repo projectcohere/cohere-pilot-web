@@ -1,0 +1,53 @@
+<%= f.section("Contact", class: "CaseForm-contact") do %>
+  <%= f.field(:first_name, class: "CaseForm-firstName") do %>
+    <%= f.text_field(:first_name) %>
+  <% end %>
+  <%= f.field(:last_name, class: "CaseForm-lastName") do %>
+    <%= f.text_field(:last_name) %>
+  <% end %>
+  <%= f.field(:phone_number, "Phone #", prefix: "#1", class: "CaseForm-phoneNumber") do %>
+    <%=
+      f.telephone_field(:phone_number,
+        value: number_to_phone(form.phone_number),
+        placeholder: number_to_phone("3134445555")
+      )
+    %>
+  <% end %>
+<% end %>
+
+<%= f.section("Primary Residential Address", class: "CaseForm-address") do %>
+  <%= f.field(:street, class: "CaseForm-street") do %>
+    <%= f.text_field(:street) %>
+  <% end %>
+  <%= f.field(:street2, "", class: "CaseForm-street2") do %>
+    <%= f.text_field(:street2) %>
+  <% end %>
+  <%= f.field(:city, class: "CaseForm-city") do %>
+    <%= f.text_field(:city) %>
+  <% end %>
+  <%= f.field(:state, background: false, class: "CaseForm-state") do %>
+    <%= f.value("MI") %>
+  <% end %>
+  <%= f.field(:zip, class: "CaseForm-zip") do %>
+    <%= f.text_field(:zip) %>
+  <% end %>
+<% end %>
+
+<%= f.section("Utility Account", class: "CaseForm-utilityAccount") do %>
+  <% if form.respond_to?(:supplier_name) %>
+    <label class="CaseForm-accountSupplier DetailField">
+      <span class="DetailField-hint">
+        Supplier
+      </span>
+      <p class="DetailField-text">
+        <%= form.supplier_name %>
+      </p>
+    </label>
+  <% end %>
+  <%= f.field(:account_number, "Account #", class: "CaseForm-accountNumber") do %>
+    <%= f.text_field(:account_number) %>
+  <% end %>
+  <%= f.field(:arrears, prefix: "$", class: "CaseForm-arrears") do %>
+    <%= f.text_field(:arrears) %>
+  <% end %>
+<% end %>

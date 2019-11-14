@@ -98,20 +98,5 @@ class Case
       policy = Case::Policy.new(user)
       assert(policy.forbid?(:create))
     end
-
-    # -- view properties --
-    test "permits operators to view the case status" do
-      user = User.new(id: nil, email: nil, role: User::Role.named(:cohere))
-      kase = cases(:opened_1)
-      policy = Case::Policy.new(user, kase)
-      assert(policy.permit?(:view_status))
-    end
-
-    test "forbids others from viewing the case status" do
-      user = User.new(id: nil, email: nil, role: User::Role.named(:enroller))
-      kase = cases(:submitted_1)
-      policy = Case::Policy.new(user, kase)
-      assert(policy.forbid?(:view_status))
-    end
   end
 end
