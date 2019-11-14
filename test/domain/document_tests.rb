@@ -4,7 +4,7 @@ class DocumentTests < ActiveSupport::TestCase
   test "uploads an attachment" do
     document = Document.upload("https://website.com/image.jpg")
     assert_equal(document.id, Id::None)
-    assert_equal(document.classification, :unclassified)
+    assert_equal(document.classification, :unknown)
   end
 
   test "signs a contract" do

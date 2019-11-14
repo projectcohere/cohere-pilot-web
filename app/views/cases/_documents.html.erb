@@ -16,7 +16,21 @@
             <%= image_tag(image_url, height: 140, class: "CaseDocument-image") %>
           <% end %>
 
-          <%= link_to("View Document", file_url || "", target: "_blank", rel: "noopener noreferrer") %>
+          <div class="CaseDocument-info">
+            <% if d.classification != :unknown %>
+              <label class="CaseDocument-classification">
+                <%= d.classification.to_s.titlecase %>
+              </label>
+            <% end %>
+
+            <%=
+              link_to("View Document", file_url || "",
+                class: "CaseDocument-link",
+                target: "_blank",
+                rel: "noopener noreferrer"
+              )
+            %>
+          <div class="CaseDocument-info">
         </li>
       <% end %>
     <% end %>

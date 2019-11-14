@@ -7,6 +7,6 @@ class Document
     has_one_attached(:file)
 
     # -- classification --
-    enum(classification: %i[unclassified contract])
+    enum(classification: %i[unknown contract])
   end
 end

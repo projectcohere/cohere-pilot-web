@@ -3,16 +3,16 @@ document_p1_1:
   case: pending_1
 
 document_p1_2:
-  classification: :unclassified
+  classification: :unknown
   source_url: https://website.com/image2.jpg
   case: pending_1
 
 document_s1_1:
-  classification: :unclassified
+  classification: :unknown
   source_url: https://website.com/image1.jpg
   case: submitted_1
 
 document_s1_2:
-  classification: :unclassified
+  classification: :unknown
   source_url: https://website.com/image3.jpg
   case: submitted_1

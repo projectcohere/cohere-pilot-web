@@ -1,12 +1,6 @@
 .CaseDocument {
   $height: 140px;
 
-  > a {
-    display: block;
-    margin-top: $spacing4;
-    margin-left: $radius;
-  }
-
   &-placeholder {
     height: $height;
     padding: $spacing3;
@@ -17,5 +11,20 @@
   &-image {
     height: $height;
     border-radius: $radius;
+  }
+
+  &-info {
+    margin-top: $spacing4;
+    padding-left: $radius;
+    padding-right: $radius;
+  }
+
+  &-classification {
+    @extend .u-hint;
+    display: block;
+  }
+
+  &-link {
+    display: block;
   }
 }

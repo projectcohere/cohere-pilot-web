@@ -14,7 +14,7 @@ class Document < ::Entity
   # -- lifetime
   def self.upload(source_url)
     Document.new(
-      classification: :unclassified,
+      classification: :unknown,
       source_url: source_url
     )
   end

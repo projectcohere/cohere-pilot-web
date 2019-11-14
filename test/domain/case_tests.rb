@@ -75,7 +75,7 @@ class CaseTests < ActiveSupport::TestCase
     assert_instance_of(Case::Events::DidUploadMessageAttachment, kase.events[0])
 
     new_document = kase.new_documents[0]
-    assert_equal(new_document.classification, :unclassified)
+    assert_equal(new_document.classification, :unknown)
     assert_equal(new_document.source_url, "https://website.com/image.jpg")
   end
 
