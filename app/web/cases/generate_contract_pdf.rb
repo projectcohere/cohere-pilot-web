@@ -9,11 +9,11 @@ module Cases
     end
 
     def call(kase)
-      locals = {
-        name: "you"
-      }
+      pdf_html = @render_html.("cases/pdfs/contract", {
+        date: Date.today,
+        view: View.new(kase)
+      })
 
-      pdf_html = @render_html.("cases/pdfs/contract", locals)
       pdf_file = @render_pdf.(pdf_html, kase.id.to_s)
 
       FileData.new(

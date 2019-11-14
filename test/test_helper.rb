@@ -6,6 +6,7 @@ require "config/vcr"
 require "sidekiq/testing"
 require "support/asserts"
 require "support/session"
+require "support/pdfs"
 require "support/mailers"
 require "support/factories"
 

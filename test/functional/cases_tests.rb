@@ -228,6 +228,10 @@ class CasesTests < ActionDispatch::IntegrationTest
     )
 
     assert_enqueued_jobs(1)
+
+    pdf_text = text_from_pdf_file(case_rec.documents[0].file)
+    assert_match(/MEAP Agreement/, pdf_text)
+    assert_match(/Danice Sample/, pdf_text)
   end
 
   test "show errors for an invalid case" do

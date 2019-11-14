@@ -1,1 +1,133 @@
-<p>Hello, <%= name %></p>
+<article class="Contract">
+  <section class="Contract-meapAgreement ContractSection">
+    <h1>MEAP Agreement</h1>
+    <ul class="ContractSection-terms">
+      <li>
+        As part of this MEAP agreement, I understand that I may be referred to or
+        required to participate in additional services such as budgeting assistance,
+        energy audits, or other programs that will help your household pay energy
+        bills and understand energy consumption. Participation in the activities
+        outlined in this plan/agreement are required in order to receive any
+        additional energy assistance benefits.
+      </li>
+      <li>
+        I authorize the assisting agency or provider to release my name and address
+        to the local weatherization operator as part of the Weatherization Referral
+        system. I authorize the department to release case and payment information
+        to the Department of Health and Human Services, its affiliates and/or
+        contracted agencies, for the purpose of research, study and evaluation of
+        the Low Income Home Energy Assistance Program (LIHEAP) and the Michigan
+        Energy Assistance Program (MEAP).
+      </li>
+      <li>
+        I authorize my energy company to release by phone, fax, email or their
+        computer web site all available information about my account.
+      </li>
+      <li>
+        UNDER PENALTIES OF PERJURY, I SWEAR OR AFFIRM THAT THIS APPLICATION HAS BEEN
+        EXAMINED BY OR READ TO ME. IF I AM A THIRD PARTY APPLYING ON BEHALF OF
+        ANOTHER PERSON, I SWEAR THAT THIS APPLICATION HAS BEEN EXAMINED BY OR READ
+        TO THE APPLICANT. TO THE BEST OF MY KNOWLEDGE, THE FACTS ARE TRUE AND
+        COMPLETE.
+      </li>
+    </ul>
+    <label class="Contract-address ContractField">
+      <p class="ContractField-hint">
+        Address
+      </p>
+      <p class="ContractField-input">
+        <%- address = view.address.clone  %>
+        <%- address.unshift(view.recipient_name) %>
+        <% view.address.each do |line| %>
+          <%= line %>
+          <br>
+        <% end %>
+      </p>
+    </label>
+    <label class="Contract-address ContractField">
+      <p class="ContractField-hint">
+        Phone Number
+      </p>
+      <p class="ContractField-input">
+        <%= view.phone_number %>
+      </p>
+    </label>
+    <label class="Contract-clientSignature ContractField">
+      <p class="ContractField-hint">
+        Signature of Applicant or Head-of-household
+      </p>
+      <p class="ContractField-input">
+        <%= view.recipient_name %>
+      </p>
+    </label>
+    <label class="Contract-date ContractField">
+      <p class="ContractField-hint">
+        Date
+      </p>
+      <p class="ContractField-input">
+        <%= date %>
+      </p>
+    </label>
+    <label class="Contract-agentSignature ContractField">
+      <p class="ContractField-hint">
+        Signature of Agency Representative
+      </p>
+      <p class="ContractField-input"></p>
+    </label>
+    <label class="Contract-date ContractField">
+      <p class="ContractField-hint">
+        Date
+      </p>
+      <p class="ContractField-input">
+        <%= date %>
+      </p>
+    </label>
+  </section>
+  <section class="Contract-affordablePaymentPlan ContractSection">
+    <h1>Affordable Payment Plan</h1>
+    <ul class="ContractSection-terms">
+      <li>
+        I have been informed if my energy provider offers APP and understand
+        whether or not I am eligible
+      </li>
+      <li>
+        I agree to the terms and conditions of the Affordable Payment Plan
+        offered by my energy provider and have received a list of the terms and
+        conditions of this plan
+      </li>
+    </ul>
+    <label class="Contract-clientSignature ContractField">
+      <p class="ContractField-hint">
+        Signature of Applicant or Head-of-household
+      </p>
+      <p class="ContractField-input">
+        <%= view.recipient_name %>
+      </p>
+    </label>
+    <label class="Contract-date ContractField">
+      <p class="ContractField-hint">
+        Date
+      </p>
+      <p class="ContractField-input">
+        <%= date %>
+      </p>
+    </label>
+  </section>
+  <section class="Contract-internalUse ContractSection">
+    <h1>Internal Use Only</h1>
+    <label class="Contract-agentSignature ContractField">
+      <p class="ContractField-hint">
+        Signature of Agency Representative
+      </p>
+      <p class="ContractField-input"></p>
+    </label>
+    <label class="Contract-date ContractField">
+      <p class="ContractField-hint">
+        Date
+      </p>
+      <p class="ContractField-input">
+        <%= date %>
+      </p>
+    </label>
+  </section>
+</main>
