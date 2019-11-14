@@ -1,6 +1,8 @@
 <style>
   <%= Rails.application.assets["contract.css"].source %>
 </style>
+
+<%- view = Cases::View.new(kase) %>
 <article class="Contract">
   <section class="Contract-meapAgreement ContractSection">
     <h1 class="ContractSection-title">

@@ -29,25 +29,6 @@
       <%= f.submit(class: "Button--action") %>
     <% end %>
 
-    <section class="CaseDocuments">
-      <h1>Documents</h1>
-      <ul class="CaseDocuments-list">
-        <% if @form.documents.blank? %>
-          <p>This case has no documents yet.</p>
-        <% else %>
-          <% @form.documents.each do |d| %>
-            <li class="CaseDocument">
-              <%- file_url = d.file.attached? ? url_for(d.file) : nil %>
-              <% if file_url.nil? %>
-                <p class="CaseDocument-placeholder">This file is being processed.</p>
-              <% else %>
-                <%= image_tag(file_url, height: 140, class: "CaseDocument-image") %>
-              <% end %>
-              <%= link_to("View Document", file_url || "", target: "_blank", rel: "noopener noreferrer") %>
-            </li>
-          <% end %>
-        <% end %>
-      </ul>
-    </section>
+    <%= render(partial: "cases/documents", locals: { documents: @form.documents }) %>
   </div>
 </main>

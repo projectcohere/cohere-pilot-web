@@ -11,7 +11,7 @@ module Cases
     def call(kase)
       pdf_html = @render_html.("cases/pdfs/contract", {
         date: Date.today,
-        view: View.new(kase)
+        kase: kase
       })
 
       pdf_file = @render_pdf.(pdf_html, kase.id.to_s)

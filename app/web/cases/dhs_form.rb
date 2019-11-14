@@ -83,7 +83,9 @@ module Cases
     end
 
     def documents
-      @model.documents
+      @model.documents.filter do |document|
+        document.classifcation != :contract
+      end
     end
 
     # -- ApplicationForm --
