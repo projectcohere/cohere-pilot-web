@@ -111,14 +111,14 @@
       $offset-x: 5px;
       $offset-y: 5px;
 
-      &:before {
+      &::before {
         @include u-check;
         content: "";
         width: 20px;
         transform: translate($offset-x, $offset-y) rotate(-45deg);
       }
 
-      &:after {
+      &::after {
         @include u-check;
         content: "";
         width: 8px;

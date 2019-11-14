@@ -19,7 +19,7 @@
         padding-bottom: $spacing4;
 
         /* bottom-border */
-        &:after {
+        &::after {
           content: "";
           position: absolute;
           display: block;
