@@ -1,9 +1,9 @@
 @import "Global/Resets";
 @import "Global/Config";
-@import "Global/Utilities.scss";
+@import "Global/Utilities";
 
 .Contract {
-  font-family: sans-serif;
+  font-family: system-ui, sans-serif;
   font-size: $fontSize5;
 
   /* --name-row-- */
@@ -33,10 +33,21 @@
 
   &-signature {
     width: 60%;
+
+    .ContractField-value {
+      height: 46px;
+      font-size: $fontSize2;
+      font-family: cursive, serif;
+    }
   }
 
   &-date {
     width: 20%;
+
+    .ContractField-value {
+      height: 46px;
+      padding-top: 12px;
+    }
   }
 }
 
@@ -108,13 +119,6 @@
   &-value {
     height: $height2 - 1px;
     padding-top: 7px;
-    padding-left: $spacing4;
-    padding-right: $spacing4;
-  }
-
-  &-value--tall {
-    height: 50px;
-    padding-top: 20px;
     padding-left: $spacing4;
     padding-right: $spacing4;
   }
