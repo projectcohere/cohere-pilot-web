@@ -12,7 +12,7 @@ class UsersTests < ActionDispatch::IntegrationTest
     session_params = {
       session: {
         email: "me@cohere.org",
-        password: "password"
+        password: "p@ssw0rd"
       }
     }
 
@@ -25,7 +25,7 @@ class UsersTests < ActionDispatch::IntegrationTest
     session_params = {
       session: {
         email: "me@testmetro.org",
-        password: "password"
+        password: "p@ssw0rd"
       }
     }
 
@@ -38,7 +38,7 @@ class UsersTests < ActionDispatch::IntegrationTest
     session_params = {
       session: {
         email: "me@testenergy.com",
-        password: "password"
+        password: "p@ssw0rd"
       }
     }
 
@@ -51,7 +51,7 @@ class UsersTests < ActionDispatch::IntegrationTest
     session_params = {
       session: {
         email: "me@michigan.gov",
-        password: "password"
+        password: "p@ssw0rd"
       }
     }
 
@@ -138,7 +138,7 @@ class UsersTests < ActionDispatch::IntegrationTest
     reset_params = {
       token: user_rec.confirmation_token,
       password_reset: {
-        password: "test-password"
+        password: "p@ssw0rd"
       }
     }
 

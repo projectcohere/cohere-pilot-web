@@ -1,11 +1,13 @@
 en:
   flashes:
     failure_after_create: Your e-mail and password did not match.
+    failure_after_update: Password did not meet requirements.
   layouts:
     header:
       logo: Cohere
       sign-out: Sign Out
   users:
+    # fields
     email:
       label: E-mail
       placeholder: "you@work.com"
@@ -13,11 +15,15 @@ en:
       label: Password
     password-confirmation:
       label: Confirm Password
+    # controllers
     passwords:
       forgot:
         title: Forgot Your Password?
         prompt: Please enter your e-mail and we'll send you instructions to reset your password.
         remember-password: Just remembered? Sign in
+      rules:
+        - at least 8 characters
+        - at least one letter, number, and symbol
   # imagine this nested in users. clearance actions & root templates don't
   # respect standard pathing:
   # https://github.com/thoughtbot/clearance/pull/743
@@ -33,7 +39,7 @@ en:
     edit:
       invite:
         title: Create Your Password
-        prompt: Please enter a password.
+        prompt: "Please enter a password<br>that has:"
       reset:
         title: Reset Your Password
-        prompt: Please enter a new password.
+        prompt: "Please enter a new password<br>that has:"

@@ -5,6 +5,11 @@
         <%- scope = @invited ? ".invite" : ".reset" %>
         <h1><%= t("#{scope}.title") %></h1>
         <h2><%= t("#{scope}.prompt").html_safe %></h2>
+        <ul>
+          <% t("users.passwords.rules").each do |rule| %>
+            <li><%= rule %></li>
+          <% end %>
+        </ul>
       </div>
     </div>
 
