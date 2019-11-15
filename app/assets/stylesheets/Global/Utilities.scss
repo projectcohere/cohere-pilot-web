@@ -42,8 +42,13 @@
 }
 
 .u-panel {
-  padding: $spacing3;
   background-color: $white;
   border-radius: $radius;
   box-shadow: 0px 0px 10px $colorShadow;
+}
+
+.u-panel-cozy {
+  @extend .u-panel;
+  padding: $spacing3;
+  background-color: $white;
 }

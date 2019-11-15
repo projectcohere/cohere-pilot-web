@@ -2,7 +2,7 @@
   display: flex;
 
   &-case {
-    @extend .u-panel;
+    @extend .u-panel-cozy;
     max-width: $width1;
   }
 

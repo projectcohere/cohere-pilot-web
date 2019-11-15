@@ -22,8 +22,9 @@ en:
   sessions:
     new:
       title: Sign In
-      prompt: Welcome to the Cohere Pilot,<br>please sign in.
-      forgot-password: Forgot Password
+      welcome: Welcome to
+      prompt: Thanks for being part of the Cohere Pilot! Please sign in.
+      forgot-password: Forgot your password?
   # see `sessions:` above
   passwords:
     forgot:

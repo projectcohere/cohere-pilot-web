@@ -1,39 +1,80 @@
 .SignIn {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
   height: 100%;
+  padding: $spacing0;
 
-  /* spacers */
-  &::before {
-    content: "";
+  /* SignIn-panel */
+  $triangle-angle: 5deg;
+  $triangle-width: 80px;
+  $triangle-height: 5%;
+
+  &-panel {
+    @extend .u-panel;
+    display: flex;
     flex: 1;
-    max-height: 100px;
+    max-width: $width0;
+    // background-color: $brandPrimary;
   }
 
-  &::after {
-    content: "";
-    flex: 1;
+  &-left {
+    position: relative;
+    width: 50%;
+    padding: $spacing0 $spacing1;
+    overflow: hidden;
+
+    &::after {
+      content: "";
+      position: absolute;
+      width: $triangle-width;
+      height: 50% + $triangle-height;
+      top: 0;
+      right: -$triangle-width;
+      transform-origin: bottom left;
+      transform: translateY(-$triangle-height) rotate(-$triangle-angle);
+      background-color: $brandPrimary;
+    }
+  }
+
+  &-right {
+    position: relative;
+    width: 50%;
+    padding: $spacing0 $spacing1;
+    border-top-right-radius: $radius;
+    border-bottom-right-radius: $radius;
+    color: $white;
+    background-color: $brandPrimary;
+    overflow: hidden;
+
+    &::before {
+      content: "";
+      position: absolute;
+      width: $triangle-width;
+      height: 50% + $triangle-height;
+      top: 50%;
+      left: -$triangle-width;
+      transform-origin: top right;
+      transform: translateY($triangle-height) rotate(-$triangle-angle);
+      background-color: $white;
+    }
   }
 
   /* SignIn-title */
-  &-title {
-    text-align: center;
+  &-welcome {
+    font-weight: thin;
+    margin-left: $spacing5;
   }
 
   &-logo {
-    max-width: $width2;
-    width: $width2;
-    height: 113px;
+    max-width: $width5;
+    margin-bottom: $spacing1;
   }
 
   /* SignIn-form */
   &-form {
-    @extend .u-panel;
-
-    width: $width3;
     max-width: $width3;
-    margin-top: 60px;
+    padding: 0;
   }
 
   &-email {
@@ -44,17 +85,19 @@
     grid-column: 1 / 10;
   }
 
+  &-forgotPassword {
+    margin-top: $spacing5;
+    grid-column: 1 / 10;
+  }
+
   &-submit {
     grid-column: 1 / 10;
-    max-width: initial;
+    max-width: $width5;
   }
 
-  &-resetPassword {
-    grid-column: 1 / 10;
-    text-align: center;
-  }
-
-  &-message {
-    text-align: center;
+  /* SignIn-prompt */
+  &-prompt {
+    color: inherit;
+    font-size: $fontSize1;
   }
 }
