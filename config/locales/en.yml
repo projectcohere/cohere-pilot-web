@@ -15,23 +15,20 @@ en:
     passwords:
       forgot:
         title: Forgot Your Password?
-        prompt: Please enter your e-mail to reset your password.
+        prompt: Please enter your e-mail and we'll send you instructions to reset your password.
+        remember-password: Just remembered? Sign in
   # imagine this nested in users. clearance actions & root templates don't
   # respect standard pathing:
   # https://github.com/thoughtbot/clearance/pull/743
   sessions:
     new:
-      title: Sign In
-      welcome: Welcome to
-      prompt: Thanks for being part of the Cohere Pilot! Please sign in.
+      title: Welcome to the Cohere Pilot!
+      prompt: Thank you for participating, please sign in.
       forgot-password: Forgot your password?
   # see `sessions:` above
   passwords:
-    forgot:
-      title: Forgot Your Password?
-      prompt: Please enter your e-mail to reset your password.
     create:
-      message: If you are registered for the pilot, you will receive an e-mail in the next few minutes with instructions for creating a new password.
+      message: Thank you! If you're registered for the pilot, you'll receive an e-mail in the next few minutes with further instructions.
     edit:
       invite:
         title: Create Your Password

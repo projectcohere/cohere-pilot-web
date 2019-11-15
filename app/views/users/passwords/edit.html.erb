@@ -1,20 +1,28 @@
 <main class="Main SignIn">
-  <div class="SignIn-title">
-    <%- scope = @invited ? ".invite" : ".reset" %>
-    <h1><%= t("#{scope}.title") %></h1>
-    <h2><%= t("#{scope}.prompt").html_safe %></h2>
-  </div>
+  <div class="SignIn-panel">
+    <div class="SignIn-left--inverted">
+      <div class="SignIn-title">
+        <%- scope = @invited ? ".invite" : ".reset" %>
+        <h1><%= t("#{scope}.title") %></h1>
+        <h2><%= t("#{scope}.prompt").html_safe %></h2>
+      </div>
+    </div>
 
-  <%- form_url = user_password_path(@user, token: @user.confirmation_token) %>
-  <%= form_for(:password_reset, url: form_url, html: { method: :patch, class: "SignIn-form Form" }) do |f| %>
-    <%= f.section(class: "SignIn-credentials") do %>
-      <%= f.field(:password, t("users.password.label"), class: "SignIn-password") do %>
-        <% f.text_field(:password, type: "password", placeholder: t("users.password.placeholder")) %>
+    <div class="SignIn-right--inverted">
+      <%= image_tag("logo-large-full.svg", height: 67, class: "SignIn-logo", alt: "Cohere Logo") %>
+
+      <%- form_url = user_password_path(@user, token: @user.confirmation_token) %>
+      <%= form_for(:password_reset, url: form_url, html: { method: :patch, class: "SignIn-form Form" }) do |f| %>
+        <%= f.section(class: "SignIn-credentials") do %>
+          <%= f.field(:password, t("users.password.label"), class: "SignIn-password") do %>
+            <% f.text_field(:password, type: "password", placeholder: t("users.password.placeholder")) %>
+          <% end %>
+        <% end %>
+
+        <%= f.section(class: "SignIn-actions") do %>
+          <%= f.submit(class: "SignIn-submit Button--action") %>
+        <% end %>
       <% end %>
-    <% end %>
-
-    <%= f.section(class: "SignIn-actions") do %>
-      <%= f.submit(class: "SignIn-submit Button--action") %>
-    <% end %>
-  <% end %>
+    </div>
+  </div>
 </main>

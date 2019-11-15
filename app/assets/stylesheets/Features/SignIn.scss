@@ -6,66 +6,108 @@
   padding: $spacing0;
 
   /* SignIn-panel */
+  .u-half-panel {
+    position: relative;
+    width: 50%;
+    padding: $spacing0 $spacing1;
+  }
+
+  .u-half-panel-white {
+    @extend .u-half-panel;
+    background-color: $white;
+  }
+
+  .u-half-panel-primary {
+    @extend .u-half-panel;
+    color: $white;
+    background-color: $brandPrimary;
+
+    // TODO: utilities should be colorless, and their inclusion in h1...n should
+    // be scoped to specific screens.
+    .u-title, .u-subtitle {
+      color: inherit;
+    }
+  }
+
   $triangle-angle: 5deg;
   $triangle-width: 80px;
   $triangle-height: 5%;
+
+  @mixin u-half-panel-triangle {
+    position: absolute;
+    width: $triangle-width;
+    height: 50% + $triangle-height;
+  }
 
   &-panel {
     @extend .u-panel;
     display: flex;
     flex: 1;
     max-width: $width0;
-    // background-color: $brandPrimary;
+    overflow: hidden;
   }
 
   &-left {
-    position: relative;
-    width: 50%;
-    padding: $spacing0 $spacing1;
-    overflow: hidden;
+    @extend .u-half-panel-white;
 
     &::after {
+      @include u-half-panel-triangle;
+
       content: "";
-      position: absolute;
-      width: $triangle-width;
-      height: 50% + $triangle-height;
-      top: 0;
+      top: -$triangle-height;
       right: -$triangle-width;
       transform-origin: bottom left;
-      transform: translateY(-$triangle-height) rotate(-$triangle-angle);
+      transform: rotate(-$triangle-angle);
       background-color: $brandPrimary;
     }
   }
 
-  &-right {
-    position: relative;
-    width: 50%;
-    padding: $spacing0 $spacing1;
-    border-top-right-radius: $radius;
-    border-bottom-right-radius: $radius;
-    color: $white;
-    background-color: $brandPrimary;
-    overflow: hidden;
+  &-left--inverted {
+    @extend .u-half-panel-primary;
 
-    &::before {
+    &::after {
+      @include u-half-panel-triangle;
+
       content: "";
-      position: absolute;
-      width: $triangle-width;
-      height: 50% + $triangle-height;
       top: 50%;
-      left: -$triangle-width;
+      right: -$triangle-width;
       transform-origin: top right;
-      transform: translateY($triangle-height) rotate(-$triangle-angle);
+      transform: rotate($triangle-angle);
       background-color: $white;
     }
   }
 
-  /* SignIn-title */
-  &-welcome {
-    font-weight: thin;
-    margin-left: $spacing5;
+  &-right {
+    @extend .u-half-panel-primary;
+
+    &::before {
+      @include u-half-panel-triangle;
+
+      content: "";
+      top: 50%;
+      left: -$triangle-width;
+      transform-origin: top right;
+      transform: rotate(-$triangle-angle);
+      background-color: $white;
+    }
   }
 
+  &-right--inverted {
+    @extend .u-half-panel-white;
+
+    &::before {
+      @include u-half-panel-triangle;
+
+      content: "";
+      top: -$triangle-height;
+      left: -$triangle-width;
+      transform-origin: bottom right;
+      transform: rotate($triangle-angle);
+      background-color: $brandPrimary;
+    }
+  }
+
+  /* SignIn-title */
   &-logo {
     max-width: $width5;
     margin-bottom: $spacing1;
@@ -85,7 +127,7 @@
     grid-column: 1 / 10;
   }
 
-  &-forgotPassword {
+  &-redirectLink {
     margin-top: $spacing5;
     grid-column: 1 / 10;
   }
@@ -95,9 +137,10 @@
     max-width: $width5;
   }
 
-  /* SignIn-prompt */
-  &-prompt {
-    color: inherit;
-    font-size: $fontSize1;
+  /* SignIn-title */
+  &-title {
+    > h2 {
+      margin-top: $spacing4;
+    }
   }
 }

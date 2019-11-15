@@ -1,22 +1,31 @@
 <main class="Main SignIn">
-  <div class="SignIn-title">
-    <h1><%= t(".title") %></h1>
-    <h2><%= t(".prompt").html_safe %></h2>
-  </div>
+  <div class="SignIn-panel">
+    <div class="SignIn-left--inverted">
+      <div class="SignIn-title">
+        <h1><%= t(".title") %></h1>
+        <h2><%= t(".prompt") %></h2>
+      </div>
+    </div>
 
-  <%= form_for(:password, url: passwords_path, html: { class: "SignIn-form Form" }) do |f| %>
-    <%= f.section(class: "SignIn-credentials") do %>
-      <%= f.field(:email, t("users.email.label"), class: "SignIn-email") do %>
-        <% f.text_field(:email, type: "email", placeholder: t("users.email.placeholder")) %>
+    <div class="SignIn-right--inverted">
+      <%= image_tag("logo-large-full.svg", height: 67, class: "SignIn-logo", alt: "Cohere Logo") %>
+
+      <%= form_for(:password, url: passwords_path, html: { class: "SignIn-form Form" }) do |f| %>
+        <%= f.section(class: "SignIn-credentials") do %>
+          <%= f.field(:email, t("users.email.label"), class: "SignIn-email") do %>
+            <% f.text_field(:email, type: "email", placeholder: t("users.email.placeholder")) %>
+          <% end %>
+          <%= link_to(t(".remember-password"), sign_in_path, class: "SignIn-redirectLink") %>
+        <% end %>
+
+        <%= f.section(class: "SignIn-actions") do %>
+          <%= f.submit(class: "SignIn-submit Button--action") %>
+        <% end %>
+
+        <% if message.present? %>
+          <p class="SignIn-message"><%= message %></p>
+        <% end %>
       <% end %>
-    <% end %>
-
-    <%= f.section(class: "SignIn-actions") do %>
-      <%= f.submit(class: "SignIn-submit Button--action") %>
-    <% end %>
-
-    <% if message.present? %>
-      <p class="SignIn-message"><%= message %></p>
-    <% end %>
-  <% end %>
+    </div>
+  </div>
 </main>

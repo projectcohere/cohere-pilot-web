@@ -1,12 +1,7 @@
 <main class="Main SignIn">
   <div class="SignIn-panel">
     <div class="SignIn-left">
-      <header class="SignIn-title">
-        <label class="SignIn-welcome">
-          <%= t(".welcome") %>
-        </label>
-        <%= image_tag("logo-large-full.svg", height: 67, class: "SignIn-logo", alt: "Cohere Logo") %>
-      </header>
+      <%= image_tag("logo-large-full.svg", height: 67, class: "SignIn-logo", alt: "Cohere Logo") %>
 
       <%= form_for(:session, url: sessions_path, html: { class: "SignIn-form Form" }) do |f| %>
         <%= f.section(class: "SignIn-credentials") do %>
@@ -18,7 +13,7 @@
             <% f.password_field(:password, placeholder: t("users.password.placeholder")) %>
           <% end %>
 
-          <%= link_to(t(".forgot-password"), forgot_passwords_path, class: "SignIn-forgotPassword") %>
+          <%= link_to(t(".forgot-password"), forgot_passwords_path, class: "SignIn-redirectLink") %>
         <% end %>
 
         <%= f.section(class: "SignIn-actions") do %>
@@ -28,9 +23,10 @@
     </div>
 
     <div class="SignIn-right">
-      <h1 class="SignIn-prompt">
-        <%= t(".prompt").html_safe %>
-      </h1>
+      <div class="SignIn-title">
+        <h1><%= t(".title") %></h1>
+        <h2><%= t(".prompt") %></h2>
+      </div>
     </div>
   </div>
 </main>
