@@ -15,7 +15,10 @@
           <%= f.field(:email, t("users.email.label"), class: "SignIn-email") do %>
             <% f.text_field(:email, type: "email", placeholder: t("users.email.placeholder")) %>
           <% end %>
-          <%= link_to(t(".remember-password"), sign_in_path, class: "SignIn-redirectLink") %>
+
+          <div class="SignIn-helpers">
+            <%= link_to(t(".remember-password"), sign_in_path, class: "SignIn-redirectLink") %>
+          </div>
         <% end %>
 
         <%= f.section(class: "SignIn-actions") do %>

@@ -10,10 +10,17 @@
           <% end %>
 
           <%= f.field(:password, t("users.password.label"), class: "SignIn-password") do %>
-            <% f.password_field(:password, placeholder: t("users.password.placeholder")) %>
+            <% f.password_field(:password) %>
           <% end %>
 
-          <%= link_to(t(".forgot-password"), forgot_passwords_path, class: "SignIn-redirectLink") %>
+          <div class="SignIn-helpers">
+            <%= f.field(:show_password, for: :show_password, bare: true, class: "SignIn-showPassword") do %>
+              <%= check_box_tag(:show_password) %>
+              <span>Show Password?</span>
+            <% end %>
+
+            <%= link_to(t(".forgot-password"), forgot_passwords_path, class: "SignIn-redirectLink") %>
+          </div>
         <% end %>
 
         <%= f.section(class: "SignIn-actions") do %>

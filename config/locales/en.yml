@@ -11,7 +11,8 @@ en:
       placeholder: "you@work.com"
     password:
       label: Password
-      placeholder: ""
+    password-confirmation:
+      label: Confirm Password
     passwords:
       forgot:
         title: Forgot Your Password?

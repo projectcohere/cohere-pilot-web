@@ -1,4 +1,4 @@
-import { start, Flash } from "../src"
+import { start, Flash, Passwords } from "../src"
 
 // -- main --
 start(
@@ -6,4 +6,5 @@ start(
   require("@rails/activestorage"),
   require("turbolinks"),
   new Flash(),
+  new Passwords(),
 )

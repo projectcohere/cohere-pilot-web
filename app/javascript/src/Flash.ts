@@ -6,11 +6,11 @@ export class Flash implements IComponent {
 
   // -- lifecycle --
   private onMount() {
-    const flash = document.getElementById("flash")
+    const $flash = document.getElementById("flash")
 
-    if (flash != null) {
+    if ($flash != null) {
       setTimeout(() => {
-        flash.classList.add("is-hidden")
+        $flash.classList.add("is-hidden")
       }, 5000)
     }
   }

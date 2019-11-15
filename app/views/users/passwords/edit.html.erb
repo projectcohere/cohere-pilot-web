@@ -15,8 +15,15 @@
       <%= form_for(:password_reset, url: form_url, html: { method: :patch, class: "SignIn-form Form" }) do |f| %>
         <%= f.section(class: "SignIn-credentials") do %>
           <%= f.field(:password, t("users.password.label"), class: "SignIn-password") do %>
-            <% f.text_field(:password, type: "password", placeholder: t("users.password.placeholder")) %>
+            <% f.password_field(:password) %>
           <% end %>
+
+          <div class="SignIn-helpers">
+            <%= f.field(:show_password, for: :show_password, bare: true, class: "SignIn-showPassword") do %>
+              <%= check_box_tag(:show_password) %>
+              <span>Show Password?</span>
+            <% end %>
+          </div>
         <% end %>
 
         <%= f.section(class: "SignIn-actions") do %>

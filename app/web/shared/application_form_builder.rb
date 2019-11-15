@@ -19,7 +19,7 @@ class ApplicationFormBuilder < ::ActionView::Helpers::FormBuilder
     end
   end
 
-  def field(name, title = nil, *args, prefix: nil, disabled: false, background: true, **kwargs, &children)
+  def field(name, title = nil, *args, prefix: nil, disabled: false, bare: false, background: true, **kwargs, &children)
     a_class = kwargs.delete(:class)
 
     # check for field errors
@@ -43,10 +43,14 @@ class ApplicationFormBuilder < ::ActionView::Helpers::FormBuilder
     )
 
     label(name, *args, class: field_class, **kwargs) do
-      hint = @template.tag.p(class: "FormField-hint") do
-        hint_text = @template.tag.span(title || name.to_s.titlecase)
-        hint_error = has_errors ? @template.tag.span(" #{errors}", class: "FormField-errors") : ""
-        hint_text + hint_error
+      hint_tag = if bare
+        "".html_safe
+      else
+        @template.tag.p(class: "FormField-hint") do
+          hint_text = @template.tag.span(title || name.to_s.titlecase)
+          hint_error = has_errors ? @template.tag.span(" #{errors}", class: "FormField-errors") : ""
+          hint_text + hint_error
+        end
       end
 
       input_content = if prefix.nil?
@@ -55,13 +59,15 @@ class ApplicationFormBuilder < ::ActionView::Helpers::FormBuilder
         @template.tag.span(prefix, class: "FormField-prefix") + content
       end
 
-      input_class = if background
+      input_class = if bare
+        "FormField-input--bare"
+      elsif background
         "FormField-input--background"
       else
         "FormField-input"
       end
 
-      hint + @template.tag.div(input_content, class: input_class)
+      hint_tag + @template.tag.div(input_content, class: input_class)
     end
   end
 

@@ -30,7 +30,7 @@
   }
 
   $triangle-angle: 5deg;
-  $triangle-width: 80px;
+  $triangle-width: 25px;
   $triangle-height: 5%;
 
   @mixin u-half-panel-triangle {
@@ -119,17 +119,19 @@
     padding: 0;
   }
 
-  &-email {
-    grid-column: 1 / 10;
-  }
-
+  &-email,
   &-password {
     grid-column: 1 / 10;
   }
 
-  &-redirectLink {
-    margin-top: $spacing5;
+  &-helpers {
+    display: grid;
     grid-column: 1 / 10;
+    margin-top: $spacing4;
+
+    > * + * {
+      margin-top: $spacing4;
+    }
   }
 
   &-submit {

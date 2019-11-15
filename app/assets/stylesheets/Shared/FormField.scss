@@ -27,6 +27,11 @@
     padding-bottom: $spacing4;
   }
 
+  &-input--bare {
+    display: flex;
+    align-items: center;
+  }
+
   &-input--background {
     display: flex;
     align-items: center;
