@@ -1,0 +1,37 @@
+.Contract {
+  font-family: Euclid Flex, system-ui, sans-serif;
+  font-size: $fontSize5;
+  font-weight: $fontWeightRegular;
+  font-style: normal;
+
+  /* --name-row-- */
+  &-applicantName {
+    display: inline-block;
+    width: 30%;
+  }
+
+  &-phoneNumber {
+    display: inline-block;
+    width: 20%;
+  }
+
+  /* --address-row-- */
+  &-address {
+    width: 40%;
+  }
+
+  /* --signature-row */
+  &-meapSignatures {
+    margin-top: $spacing1 !important;
+  }
+
+  $signature-height: 60px;
+
+  &-signature {
+    width: 50%;
+  }
+
+  &-date {
+    width: 20%;
+  }
+}

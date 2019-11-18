@@ -1,0 +1,44 @@
+.ContractSection {
+  & + & {
+    margin-top: $spacing1;
+  }
+
+  &-title {
+    display: inline-block;
+    color: $brandBlack;
+    font-size: $fontSize1;
+  }
+
+  &-titleBorder {
+    margin-top: $spacing5;
+    height: 3px;
+    background-color: fade-out($brandPrimary, 0.7);
+  }
+
+  /* -- terms -- */
+  &-body {
+    width: 80%;
+    margin-top: $spacing2;
+  }
+
+  &-term + &-term {
+    margin-top: $spacing3;
+  }
+
+  /* -- fields -- */
+  &-fields {
+    margin-top: $spacing2;
+
+    * + .ContractSection-fieldRow {
+      margin-top: $spacing3;
+    }
+  }
+
+  &-fieldRow {
+    display: -webkit-box;
+
+    * + .ContractField {
+      margin-left: $spacing4;
+    }
+  }
+}

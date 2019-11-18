@@ -41,18 +41,18 @@
     <div class="ContractSection-fields">
       <div class="ContractSection-fieldRow">
         <%= field("Name", view.recipient_name, class: "Contract-applicantName") %>
-        <%= field("Phone Number", "+1 #{number_to_phone(view.recipient_name)}", class: "Contract-phoneNumber") %>
+        <%= field("Phone Number", "+1 #{number_to_phone(view.phone_number)}", class: "Contract-phoneNumber") %>
       </div>
       <div class="ContractSection-fieldRow">
         <%= field("Address", view.address, class: "Contract-address") %>
       </div>
       <div class="Contract-meapSignatures ContractSection-fieldRow">
-        <%= field("Signature of Applicant or Head-of-household", view.recipient_name, class: "Contract-signature") %>
-        <%= field("Date", date, class: "Contract-date") %>
+        <%= field("Signature of Applicant or Head-of-household", view.recipient_name, class: "Contract-signature ContractField--signature") %>
+        <%= field("Date", date, class: "Contract-date ContractField--tall") %>
       </div>
       <div class="ContractSection-fieldRow">
-        <%= field("Signature of Agency Representative", class: "Contract-signature") %>
-        <%= field("Date", class: "Contract-date") %>
+        <%= field("Signature of Agency Representative", class: "Contract-signature ContractField--signature") %>
+        <%= field("Date", class: "Contract-date ContractField--tall") %>
       </div>
     </div>
   </section>
@@ -73,8 +73,8 @@
     </div>
     <div class="ContractSection-fields">
       <div class="ContractSection-fieldRow">
-        <%= field("Signature of Applicant or Head-of-household", view.recipient_name, class: "Contract-signature") %>
-        <%= field("Date", date, class: "Contract-date") %>
+        <%= field("Signature of Applicant or Head-of-household", view.recipient_name, class: "Contract-signature ContractField--signature") %>
+        <%= field("Date", date, class: "Contract-date ContractField--tall") %>
       </div>
     </div>
   </section>
@@ -82,8 +82,8 @@
     <%= title("Internal Use Only") %>
     <div class="ContractSection-fields">
       <div class="ContractSection-fieldRow">
-        <%= field("Signature of Agency Representative", class: "Contract-signature") %>
-        <%= field("Date", class: "Contract-date") %>
+        <%= field("Signature of Agency Representative", class: "Contract-signature ContractField--signature") %>
+        <%= field("Date", class: "Contract-date ContractField--tall") %>
       </div>
     </div>
   </section>

@@ -1,0 +1,46 @@
+.ContractField {
+  display: block;
+  box-sizing: border-box;
+
+  &-hint {
+    @extend .u-hint;
+    margin-bottom: $spacing5;
+    color: $brandBlack;
+  }
+
+  &-input {
+    border-top-left-radius: $radiusField;
+    border-top-right-radius: $radiusField;
+    background-color: $colorField;
+  }
+
+  &-input + &-input {
+    margin-top: $spacing4;
+  }
+
+  &-value {
+    height: $height2 - 1px;
+    padding-top: 7px;
+    padding-left: $spacing4;
+    padding-right: $spacing4;
+  }
+
+  &-border {
+    height: 1px;
+    background-color: $brandBlack;
+  }
+
+  /* ContractField--tall/signature */
+  $tall-height: 60px;
+
+  &--tall &-value,
+  &--signature &-value {
+    height: $tall-height;
+    line-height: $tall-height;
+  }
+
+  &--signature &-value {
+    font-family: Cedarville Cursive, serif;
+    font-size: $fontSize1;
+  }
+}

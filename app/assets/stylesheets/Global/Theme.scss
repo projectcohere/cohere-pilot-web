@@ -1,7 +1,7 @@
 /* root */
 body {
   @extend .u-body;
-  font-family: "Euclid Flex", system-ui, sans-serif;
+  font-family: $fontFamily, system-ui, sans-serif;
   background-color: $colorBackground;
 }
 
