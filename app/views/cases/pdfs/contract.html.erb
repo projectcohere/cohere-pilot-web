@@ -5,10 +5,7 @@
 <%- view = Cases::View.new(kase) %>
 <article class="Contract">
   <section class="Contract-meapAgreement ContractSection">
-    <h1 class="ContractSection-title">
-      MEAP Agreement
-      <div class="ContractSection-titleBorder"></div>
-    </h1>
+    <%= title("MEAP Agreement") %>
     <div class="ContractSection-body">
       <ul class="ContractSection-terms">
         <li class="ContractSection-term">
@@ -43,95 +40,24 @@
     </div>
     <div class="ContractSection-fields">
       <div class="ContractSection-fieldRow">
-        <label class="Contract-applicantName ContractField">
-          <p class="ContractField-hint">
-            Name
-          </p>
-          <div class="ContractField-input">
-            <p class="ContractField-value">
-              <%= view.recipient_name %>
-            </p>
-            <div class="ContractField-border"></div>
-          </div>
-        </label>
-        <label class="Contract-phoneNumber ContractField">
-          <p class="ContractField-hint">
-            Phone Number
-          </p>
-          <div class="ContractField-input">
-            <p class="ContractField-value">
-              +1 <%= number_to_phone(view.phone_number) %>
-            </p>
-            <div class="ContractField-border"></div>
-          </div>
-        </label>
+        <%= field("Name", view.recipient_name, class: "Contract-applicantName") %>
+        <%= field("Phone Number", "+1 #{number_to_phone(view.recipient_name)}", class: "Contract-phoneNumber") %>
       </div>
       <div class="ContractSection-fieldRow">
-        <label class="Contract-address ContractField">
-          <p class="ContractField-hint">
-            Address
-          </p>
-          <% view.address.each_with_index do |line, i| %>
-            <div class="Contract-address-<%= i %> ContractField-input">
-              <p class="ContractField-value">
-                <%= line %>
-              </p>
-              <div class="ContractField-border"></div>
-            </div>
-          <% end %>
-        </label>
+        <%= field("Address", view.address, class: "Contract-address") %>
       </div>
       <div class="Contract-meapSignatures ContractSection-fieldRow">
-        <label class="Contract-signature ContractField">
-          <p class="ContractField-hint">
-            Signature of Applicant or Head-of-household
-          </p>
-          <div class="ContractField-input">
-            <p class="ContractField-value">
-              <%= view.recipient_name %>
-            </p>
-            <div class="ContractField-border"></div>
-          </div>
-        </label>
-        <label class="Contract-date ContractField">
-          <p class="ContractField-hint">
-            Date
-          </p>
-          <div class="ContractField-input">
-            <p class="ContractField-value">
-              <%= date %>
-            </p>
-            <div class="ContractField-border"></div>
-          </div>
-        </label>
+        <%= field("Signature of Applicant or Head-of-household", view.recipient_name, class: "Contract-signature") %>
+        <%= field("Date", date, class: "Contract-date") %>
       </div>
       <div class="ContractSection-fieldRow">
-        <label class="Contract-signature ContractField">
-          <p class="ContractField-hint">
-            Signature of Agency Representative
-          </p>
-          <div class="ContractField-input">
-            <p class="ContractField-value"></p>
-            <div class="ContractField-border"></div>
-          </div>
-        </label>
-        <label class="Contract-date ContractField">
-          <p class="ContractField-hint">
-            Date
-          </p>
-          <div class="ContractField-input">
-            <p class="ContractField-value"></p>
-            <div class="ContractField-border"></div>
-          </div>
-        </label>
+        <%= field("Signature of Agency Representative", class: "Contract-signature") %>
+        <%= field("Date", class: "Contract-date") %>
       </div>
     </div>
   </section>
   <section class="Contract-affordablePaymentPlan ContractSection">
-    <h1 class="ContractSection-title">
-      Affordable Payment Plan
-      <div class="ContractSection-titleBorder"></div>
-    </h1>
+    <%= title("Affordable Payment Plan") %>
     <div class="ContractSection-body">
       <ul class="ContractSection-terms">
         <li class="ContractSection-term">
@@ -147,56 +73,17 @@
     </div>
     <div class="ContractSection-fields">
       <div class="ContractSection-fieldRow">
-        <label class="Contract-signature ContractField">
-          <p class="ContractField-hint">
-            Signature of Applicant or Head-of-household
-          </p>
-          <div class="ContractField-input">
-            <p class="ContractField-value">
-              <%= view.recipient_name %>
-            </p>
-            <div class="ContractField-border"></div>
-          </div>
-        </label>
-        <label class="Contract-date ContractField">
-          <p class="ContractField-hint">
-            Date
-          </p>
-          <div class="ContractField-input">
-            <p class="ContractField-value">
-              <%= date %>
-            </p>
-            <div class="ContractField-border"></div>
-          </div>
-        </label>
+        <%= field("Signature of Applicant or Head-of-household", view.recipient_name, class: "Contract-signature") %>
+        <%= field("Date", date, class: "Contract-date") %>
       </div>
     </div>
   </section>
   <section class="Contract-internalUse ContractSection">
-    <h1 class="ContractSection-title">
-      Internal Use Only
-      <div class="ContractSection-titleBorder"></div>
-    </h1>
+    <%= title("Internal Use Only") %>
     <div class="ContractSection-fields">
       <div class="ContractSection-fieldRow">
-        <label class="Contract-signature ContractField">
-          <p class="ContractField-hint">
-            Signature of Agency Representative
-          </p>
-          <div class="ContractField-input">
-            <p class="ContractField-value"></p>
-            <div class="ContractField-border"></div>
-          </div>
-        </label>
-        <label class="Contract-date ContractField">
-          <p class="ContractField-hint">
-            Date
-          </p>
-          <div class="ContractField-input">
-            <p class="ContractField-value"></p>
-            <div class="ContractField-border"></div>
-          </div>
-        </label>
+        <%= field("Signature of Agency Representative", class: "Contract-signature") %>
+        <%= field("Date", class: "Contract-date") %>
       </div>
     </div>
   </section>

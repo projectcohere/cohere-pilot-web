@@ -18,6 +18,7 @@ end
 class ActiveSupport::TestCase
   # parallelize tests
   parallelize(workers: :number_of_processors)
+
   # load all fixtures
-  fixtures :all
+  fixtures(:all)
 end

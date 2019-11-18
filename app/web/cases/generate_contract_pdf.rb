@@ -27,7 +27,7 @@ module Cases
     class RenderHtml
       # -- command --
       def call(name, locals)
-        ApplicationController.renderer.render(name,
+        ContractsController.renderer.render(name,
           layout: nil,
           locals: locals
         )
