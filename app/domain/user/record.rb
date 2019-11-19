@@ -12,8 +12,8 @@ class User
     validate(:check_password_requirements, unless: :skip_password_validation?)
 
     private def check_password_requirements
-      if password.length < 8
-        errors.add(:password, "must be at least 8 characters")
+      if password.length < 12
+        errors.add(:password, "must be at least 12 characters")
       end
 
       if not password.match?(/\w/)

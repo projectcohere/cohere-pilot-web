@@ -22,7 +22,7 @@ en:
         prompt: Please enter your e-mail and we'll send you instructions to reset your password.
         remember-password: Just remembered? Sign in
       rules:
-        - at least 8 characters
+        - at least 12 characters
         - at least one letter, number, and symbol
   # imagine this nested in users. clearance actions & root templates don't
   # respect standard pathing:
