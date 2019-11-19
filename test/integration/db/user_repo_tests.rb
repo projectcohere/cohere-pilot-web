@@ -24,13 +24,15 @@ module Db
     # -- commands --
     test "saves an invited user" do
       event_queue = EventQueue.new
+
       user_repo = User::Repo.new(
         event_queue: event_queue
       )
 
-      user = User.invite("test@website.com",
+      user = User.invite(User::Invitation.new(
+        email: "test@website.com",
         role: User::Role.named(:cohere)
-      )
+      ))
 
       act = -> do
         user_repo.save_invited(user)
@@ -54,12 +56,13 @@ module Db
       enroller_id = enroller_rec.id
 
       user_repo = User::Repo.new
-      user = User.invite("test@enroller.com",
+      user = User.invite(User::Invitation.new(
+        email: "test@enroller.com",
         role: User::Role.new(
           name: :enroller,
           organization_id: enroller_id
         )
-      )
+      ))
 
       user_repo.save_invited(user)
       assert_equal(user.record.organization, enroller_rec)

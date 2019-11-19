@@ -11,8 +11,8 @@ class User < ::Entity
   props_end!
 
   # -- lifetime --
-  def self.invite(email, role:)
-    user = User.new(email: email, role: role)
+  def self.invite(invitation)
+    user = User.new(email: invitation.email, role: invitation.role)
     user.events << Events::DidInvite.from_user(user)
     user
   end

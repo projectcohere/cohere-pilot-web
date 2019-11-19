@@ -149,7 +149,16 @@ class UsersTests < ActionDispatch::IntegrationTest
   # -- invitation --
   test "invites the user" do
     event_queue = EventQueue.new
-    invite_user = Users::InviteUser.new(
+
+    invitation_csv = <<-CSV.strip_heredoc
+      email,role_name,role_organization_id
+      test@cohere.org,cohere,
+      test@michigan.gov,dhs,
+      test@testenergy.org,supplier,#{suppliers(:supplier_1).id}
+      test@testmetro.org,enroller,#{enrollers(:enroller_1).id}
+    CSV
+
+    invite_users = Users::SendInvitations.new(
       user_repo: User::Repo.new(
         event_queue: event_queue
       ),
@@ -158,12 +167,10 @@ class UsersTests < ActionDispatch::IntegrationTest
       )
     )
 
-    invite_user.("test@cohere.org",
-      role: User::Role.named(:cohere)
-    )
+    invite_users.(invitation_csv)
 
     send_all_emails!
-    assert_emails(1)
+    assert_emails(4)
     assert_select_email do
       assert_select("a", text: /create a password/) do |el|
         assert_match(%r[#{ENV["HOST"]}/user/\d+/password/edit\?invited=true&token=\w+], el[0][:href])
