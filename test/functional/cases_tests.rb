@@ -94,14 +94,21 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "open a case with permission" do
+    logger = fake_logging!
+
     user_rec = users(:supplier_1)
 
     get(auth("/cases/supplier/new", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /Add a Case/)
+    assert_match(/"event_name":"DidViewSupplierForm"/, logger.messages.last)
+
+    reset_logging!
   end
 
   test "save an opened case with permission" do
+    logger = fake_logging!
+
     user_rec = users(:supplier_1)
 
     post(auth("/cases/supplier", as: user_rec), params: {
@@ -119,6 +126,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_present(flash[:notice])
     assert_redirected_to("/cases/supplier")
+    assert_match(/"event_name":"DidOpen"/, logger.messages.last)
 
     send_all_emails!
     assert_emails(1)
@@ -127,6 +135,8 @@ class CasesTests < ActionDispatch::IntegrationTest
         assert_match(%r[#{ENV["HOST"]}/cases/\d+/edit], el[0][:href])
       end
     end
+
+    reset_logging!
   end
 
   test "show errors when opening an invalid case" do
@@ -265,6 +275,8 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "can edit an opened case with permission" do
+    logger = fake_logging!
+
     user_rec = users(:dhs_1)
     case_rec = cases(:pending_1)
     kase = Case::Repo.map_record(case_rec)
@@ -272,9 +284,14 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases/dhs/#{kase.id}/edit", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /#{kase.recipient.profile.name}/)
+    assert_match(/"event_name":"DidViewDhsForm"/, logger.messages.last)
+
+    reset_logging!
   end
 
   test "can update an opened case" do
+    logger = fake_logging!
+
     user_rec = users(:dhs_1)
     kase = Case::Repo.map_record(cases(:opened_1))
 
@@ -288,5 +305,8 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_redirected_to("/cases/dhs")
     assert_present(flash[:notice])
+    assert_match(/"event_name":"DidBecomePending"/, logger.messages.last)
+
+    reset_logging!
   end
 end

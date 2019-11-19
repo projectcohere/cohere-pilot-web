@@ -5,7 +5,11 @@ module Events
       Events::ProcessAll.new
     end
 
-    def initialize(event_queue: EventQueue.get)
+    def initialize(
+      analytics: Analytics.get,
+      event_queue: EventQueue.get
+    )
+      @analytics = analytics
       @event_queue = event_queue
     end
 
@@ -24,6 +28,8 @@ module Events
         when User::Events::DidInvite
           UsersMailer.did_invite(event.user_id.val).deliver_later
         end
+
+        @analytics.process_event(event)
       end
     end
   end

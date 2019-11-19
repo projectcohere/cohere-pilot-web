@@ -8,6 +8,7 @@ require "support/asserts"
 require "support/session"
 require "support/pdfs"
 require "support/mailers"
+require "support/logging"
 require "support/factories"
 
 # load pry-rescue if the flag is set

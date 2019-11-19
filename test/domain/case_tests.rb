@@ -20,7 +20,7 @@ class CaseTests < ActiveSupport::TestCase
   end
 
   # -- commands --
-  test "attaches a dhs account" do
+  test "becomes pending with the dhs account" do
     kase = Case.stub(
       status: :opened,
       recipient: Recipient.stub,
@@ -29,6 +29,9 @@ class CaseTests < ActiveSupport::TestCase
     kase.attach_dhs_account(:test_account)
     assert_equal(kase.recipient.dhs_account, :test_account)
     assert_equal(kase.status, :pending)
+
+    assert_length(kase.events, 1)
+    assert_instance_of(Case::Events::DidBecomePending, kase.events[0])
   end
 
   test "doesn't revert back to pending after submission" do

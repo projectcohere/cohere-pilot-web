@@ -25,6 +25,8 @@ module Cases
       end
 
       @form = Cases::DhsForm.new(kase)
+
+      event_queue << Events::DidViewDhsForm.from_entity(kase)
     end
 
     def update

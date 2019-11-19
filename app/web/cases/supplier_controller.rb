@@ -19,6 +19,8 @@ module Cases
       end
 
       @form = Cases::SupplierForm.new
+
+      event_queue << Events::DidViewSupplierForm.new
     end
 
     def create

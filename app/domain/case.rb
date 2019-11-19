@@ -47,19 +47,21 @@ class Case < ::Entity
   end
 
   def attach_dhs_account(dhs_account)
+    @recipient.attach_dhs_account(dhs_account)
+
     if @status == :opened
       @status = :pending
+      events << Events::DidBecomePending.from_entity(self)
     end
-
-    @recipient.attach_dhs_account(dhs_account)
   end
 
   def submit_to_enroller
-    case @status
-    when :opened, :pending
-      @status = :submitted
-      @events << Events::DidSubmit.from_entity(self)
+    if @status != :opened && @status != :pending
+      return
     end
+
+    @status = :submitted
+    @events << Events::DidSubmit.from_entity(self)
   end
 
   # -- commands/documents
