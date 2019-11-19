@@ -44,7 +44,7 @@ class CaseTests < ActiveSupport::TestCase
     assert_equal(kase.status, :submitted)
   end
 
-  test "submits a case to an enroller" do
+  test "submits a pending case to an enroller" do
     kase = Case.stub(
       status: :pending,
       recipient: Recipient.stub
@@ -55,6 +55,19 @@ class CaseTests < ActiveSupport::TestCase
 
     assert_length(kase.events, 1)
     assert_instance_of(Case::Events::DidSubmit, kase.events[0])
+  end
+
+  test "completes a submitted case" do
+    kase = Case.stub(
+      status: :submitted
+    )
+
+    kase.complete(:approved)
+    assert_equal(kase.status, :approved)
+    assert_in_delta(Time.zone.now, kase.completed_at, 1.0)
+
+    assert_length(kase.events, 1)
+    assert_instance_of(Case::Events::DidComplete, kase.events[0])
   end
 
   # -- commands/documents

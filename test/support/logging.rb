@@ -1,5 +1,6 @@
 module Support
   module Logging
+    # -- test utilities --
     def fake_logging!
       logger = Logger.new
       @original = Rails.logger
@@ -7,9 +8,12 @@ module Support
       logger
     end
 
-    def reset_logging!
-      Rails.logger = @original
-      @original = nil
+    # -- test lifecycle --
+    def before_teardown
+      if not @original.nil?
+        Rails.logger = @original
+        @original = nil
+      end
     end
 
     # -- Logger --

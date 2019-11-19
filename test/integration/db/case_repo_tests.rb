@@ -250,12 +250,14 @@ module Db
       kase.attach_dhs_account(account)
       kase.sign_contract
       kase.submit_to_enroller
+      kase.complete(:approved)
 
       case_repo = Case::Repo.new(event_queue: event_queue)
       case_repo.save_all_fields_and_new_documents(kase)
 
       case_rec = kase.record
-      assert_equal(case_rec.status, "submitted")
+      assert_equal(case_rec.status, "approved")
+      assert_not_nil(case_rec.completed_at)
 
       recipient_rec = case_rec.recipient
       assert_equal(recipient_rec.dhs_number, "11111")
@@ -266,7 +268,7 @@ module Db
       assert_not_nil(document_rec)
 
       assert_length(kase.events, 0)
-      assert_length(event_queue, 2)
+      assert_length(event_queue, 3)
     end
 
     test "saves new documents" do

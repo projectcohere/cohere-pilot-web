@@ -64,6 +64,16 @@ class Case < ::Entity
     @events << Events::DidSubmit.from_entity(self)
   end
 
+  def complete(status)
+    if @status != :submitted
+      return
+    end
+
+    @completed_at = Time.zone.now
+    @status = status
+    @events << Events::DidComplete.from_entity(self)
+  end
+
   # -- commands/documents
   def upload_message_attachments(message)
     @new_documents ||= []

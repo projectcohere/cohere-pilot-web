@@ -58,8 +58,12 @@ module Cases
         @model.sign_contract
       end
 
-      if submitted?
+      if new_status == :submitted
         @model.submit_to_enroller
+      end
+
+      if new_status == :approved || new_status == :denied
+        @model.complete(new_status)
       end
 
       @case_repo.save_all_fields_and_new_documents(@model)
@@ -68,8 +72,12 @@ module Cases
     end
 
     # -- commands/helpers
+    private def new_status
+      @status_key ||= status.to_sym
+    end
+
     private def submitted?
-      status == "submitted"
+      new_status == :submitted || new_status == :approved || new_status == :denied
     end
 
     # -- queries --
@@ -99,7 +107,7 @@ module Cases
         :pending,
         :submitted,
         :approved,
-        :rejected
+        :denied
       ]
     end
 

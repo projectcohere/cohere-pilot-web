@@ -71,7 +71,7 @@ class Case
       case_rec = Case::Record
         .where(
           enroller_id: enroller_id,
-          status: [:submitted, :approved, :rejected]
+          status: [:submitted, :approved, :denied]
         )
         .find(case_id)
 
@@ -109,7 +109,7 @@ class Case
       case_recs = Case::Record
         .where(
           enroller_id: enroller_id,
-          status: [:submitted, :approved, :rejected]
+          status: [:submitted, :approved, :denied]
         )
         .order(updated_at: :desc)
         .includes(:recipient)
@@ -229,7 +229,8 @@ class Case
     private def assign_status(kase, case_rec)
       c = kase
       case_rec.assign_attributes(
-        status: c.status
+        status: c.status,
+        completed_at: c.completed_at
       )
     end
 

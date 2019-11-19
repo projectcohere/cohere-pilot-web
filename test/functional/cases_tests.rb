@@ -102,8 +102,6 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_response(:success)
     assert_select(".Main-title", text: /Add a Case/)
     assert_match(/"event_name":"DidViewSupplierForm"/, logger.messages.last)
-
-    reset_logging!
   end
 
   test "save an opened case with permission" do
@@ -135,8 +133,6 @@ class CasesTests < ActionDispatch::IntegrationTest
         assert_match(%r[#{ENV["HOST"]}/cases/\d+/edit], el[0][:href])
       end
     end
-
-    reset_logging!
   end
 
   test "show errors when opening an invalid case" do
@@ -217,6 +213,38 @@ class CasesTests < ActionDispatch::IntegrationTest
     end
   end
 
+  test "save a submitted case" do
+    logger = fake_logging!
+
+    case_rec = cases(:pending_1)
+
+    patch(auth("/cases/#{case_rec.id}"), params: {
+      case: {
+        status: :submitted
+      }
+    })
+
+    assert_redirected_to("/cases")
+    assert_present(flash[:notice])
+    assert_match(/"event_name":"DidSubmit"/, logger.messages.last)
+  end
+
+  test "save a completed case" do
+    logger = fake_logging!
+
+    case_rec = cases(:submitted_1)
+
+    patch(auth("/cases/#{case_rec.id}"), params: {
+      case: {
+        status: :approved
+      }
+    })
+
+    assert_redirected_to("/cases")
+    assert_present(flash[:notice])
+    assert_match(/"event_name":"DidComplete"/, logger.messages.last)
+  end
+
   test "generate a signed contract" do
     Sidekiq::Testing.inline!
 
@@ -285,8 +313,6 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_response(:success)
     assert_select(".Main-title", text: /#{kase.recipient.profile.name}/)
     assert_match(/"event_name":"DidViewDhsForm"/, logger.messages.last)
-
-    reset_logging!
   end
 
   test "can update an opened case" do
@@ -306,7 +332,5 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/dhs")
     assert_present(flash[:notice])
     assert_match(/"event_name":"DidBecomePending"/, logger.messages.last)
-
-    reset_logging!
   end
 end

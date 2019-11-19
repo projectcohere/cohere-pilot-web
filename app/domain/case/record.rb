@@ -9,6 +9,6 @@ class Case
     has_many(:documents, foreign_key: "case_id", class_name: "::Document::Record")
 
     # -- status --
-    enum(status: %i[opened pending submitted approved rejected])
+    enum(status: %i[opened pending submitted approved denied])
   end
 end

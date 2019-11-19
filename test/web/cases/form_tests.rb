@@ -82,7 +82,28 @@ module Cases
       assert_present(form.errors[:dhs_number])
     end
 
-    test "creates a case's signed contract" do
+    test "completes a case" do
+      kase = Case::Repo.map_record(cases(:submitted_1))
+      case_repo = Minitest::Mock.new
+        .expect(:save_all_fields_and_new_documents, nil, [kase])
+
+      form_attrs = {
+        "status" => "approved"
+      }
+
+      form = Form.new(
+        kase,
+        form_attrs,
+        case_repo: case_repo
+      )
+
+      did_save = form.save
+      assert(did_save)
+      assert_equal(kase.status, :approved)
+      assert_not_nil(kase.completed_at)
+    end
+
+    test "creates a signed contract for a case" do
       kase = Case::Repo.map_record(cases(:pending_1))
       case_repo = Minitest::Mock.new
         .expect(:save_all_fields_and_new_documents, nil, [kase])

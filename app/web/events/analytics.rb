@@ -21,6 +21,10 @@ module Events
         { case_id: event.case_id }
       when Case::Events::DidBecomePending
         { case_id: event.case_id }
+      when Case::Events::DidSubmit
+        { case_id: event.case_id }
+      when Case::Events::DidComplete
+        { case_id: event.case_id, case_status: event.case_status }
       end
 
       # bail if we don't log this event
