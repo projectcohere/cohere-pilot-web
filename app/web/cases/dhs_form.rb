@@ -84,7 +84,7 @@ module Cases
 
     def documents
       @model.documents.filter do |document|
-        document.classifcation != :contract
+        document.classification != :contract
       end
     end
 

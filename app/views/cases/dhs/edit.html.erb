@@ -5,7 +5,14 @@
 
   <div class="EditCase">
     <%= form_for(@form, url: cases_dhs_path(@form.id), html: { class: "CaseForm Form" }) do |f| %>
+      <%= f.section("Primary Residential Address", class: "CaseForm-address--read") do %>
+        <% @form.address.each do |line| %>
+          <p class="CaseForm-addressLine"><%= line %></p>
+        <% end %>
+      <% end %>
+
       <%= render(partial: "fields", locals: { f: f, form: @form }) %>
+
       <%= f.submit(class: "Button--action") %>
     <% end %>
 

@@ -143,22 +143,22 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   # -- view --
-  # -- view/submitted
-  test "can't view a submitted case if signed-out" do
+  # -- view/enroller
+  test "can't view an enroller case if signed-out" do
     case_rec = cases(:submitted_1)
 
     get("/cases/enroller/#{case_rec.id}")
     assert_redirected_to("/sign-in")
   end
 
-  test "can't view an submitted case without permission" do
+  test "can't view an enroller case without permission" do
     case_rec = cases(:submitted_1)
 
     get(auth("/cases/enroller/#{case_rec.id}"))
     assert_redirected_to(%r[/cases(?!/enroller)])
   end
 
-  test "view a submitted case" do
+  test "view an enroller case" do
     user_rec = users(:enroller_1)
     case_rec = cases(:submitted_1)
     kase = Case::Repo.map_record(case_rec)
@@ -266,7 +266,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "can edit an opened case with permission" do
     user_rec = users(:dhs_1)
-    case_rec = cases(:opened_1)
+    case_rec = cases(:pending_1)
     kase = Case::Repo.map_record(case_rec)
 
     get(auth("/cases/dhs/#{kase.id}/edit", as: user_rec))
