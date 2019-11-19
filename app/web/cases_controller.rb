@@ -50,6 +50,6 @@ class CasesController < ApplicationController
 
   # -- queries --
   private def policy
-    @policy ||= Case::Policy.new(Current.user)
+    @policy ||= Case::Policy.new(User::Repo.get.find_current)
   end
 end

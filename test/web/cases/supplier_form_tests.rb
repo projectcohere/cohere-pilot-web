@@ -27,9 +27,8 @@ module Cases
 
       supplier_repo = Minitest::Mock.new
         .expect(
-          :find,
-          Supplier.new(id: "supplier-id", name: nil),
-          [13]
+          :find_current,
+          Supplier.new(id: "supplier-id", name: nil)
         )
 
       form_params = {
@@ -45,7 +44,6 @@ module Cases
 
       form = SupplierForm.new(
         nil,
-        13,
         form_params,
         case_repo: case_repo,
         supplier_repo: supplier_repo,
@@ -57,7 +55,7 @@ module Cases
     end
 
     test "does not save an invalid supplier case" do
-      form = SupplierForm.new(nil, nil, {
+      form = SupplierForm.new(nil, {
         "first_name" => "Janice"
       })
 
@@ -67,7 +65,7 @@ module Cases
     end
 
     test "sanitizes phone numbers" do
-      form = SupplierForm.new(nil, nil, {
+      form = SupplierForm.new(nil, {
         "phone_number" => "+1 (213) 445-2820"
       })
 
@@ -75,7 +73,7 @@ module Cases
     end
 
     test "sanitizes arrears" do
-      form = SupplierForm.new(nil, nil, {
+      form = SupplierForm.new(nil, {
         "arrears" => "A$100.00"
       })
 

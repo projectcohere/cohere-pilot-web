@@ -15,7 +15,7 @@ class ApplicationController < ActionController::Base
   # -- case-scope --
   # -- case-scope/queries
   protected def case_scope
-    @case_scope ||= CaseScope.new(request.fullpath, Current.user)
+    @case_scope ||= CaseScope.new(request.fullpath, User::Repo.get.find_current)
   end
 
   # -- case-scope/commands
@@ -26,7 +26,11 @@ class ApplicationController < ActionController::Base
   end
 
   # -- events --
-  private def process_events
+  protected def event_queue
+    EventQueue.get
+  end
+
+  protected def process_events
     Events::ProcessAll.get.()
   end
 

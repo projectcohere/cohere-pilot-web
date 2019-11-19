@@ -2,7 +2,7 @@ class User
   class Repo < ::Repo
     # -- lifetime --
     def self.get
-      Repo.new
+      Services.user_repo ||= Repo.new
     end
 
     def initialize(event_queue: EventQueue.get)
@@ -11,6 +11,10 @@ class User
 
     # -- queries --
     # -- queries/one
+    def find_current
+      @current
+    end
+
     def find(id)
       record = User::Record
         .find(id)
@@ -37,6 +41,10 @@ class User
     end
 
     # -- commands --
+    def current=(user)
+      @current = user
+    end
+
     def save_invited(user)
       user_rec = User::Record.new
 

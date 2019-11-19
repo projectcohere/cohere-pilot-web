@@ -26,9 +26,7 @@ module Cases
         deny_access
       end
 
-      supplier_id = Current.user.role.organization_id
-
-      @form = Cases::SupplierForm.new(nil, supplier_id,
+      @form = Cases::SupplierForm.new(nil,
         params
           .require(:case)
           .permit(Cases::SupplierForm.attribute_names)
@@ -46,7 +44,7 @@ module Cases
 
     # -- queries --
     private def policy
-      @policy ||= Case::Policy.new(Current.user)
+      @policy ||= Case::Policy.new(User::Repo.get.find_current)
     end
   end
 end

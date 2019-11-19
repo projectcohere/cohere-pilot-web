@@ -28,7 +28,6 @@ module Cases
     # -- lifetime --
     def initialize(
       kase = nil,
-      supplier_id = nil,
       attrs = {},
       case_repo: Case::Repo.get,
       supplier_repo: Supplier::Repo.get,
@@ -38,9 +37,6 @@ module Cases
       @case_repo = case_repo
       @supplier_repo = supplier_repo
       @enroller_repo = enroller_repo
-
-      # set params
-      @supplier_id = supplier_id
 
       # set underlying model
       @model = kase
@@ -87,7 +83,7 @@ module Cases
 
       # open a new case for the recipient
       enroller = @enroller_repo.find_default
-      supplier = @supplier_repo.find(@supplier_id)
+      supplier = @supplier_repo.find_current
 
       new_case = supplier.open_case(enroller,
         account: map_to_supplier_account,

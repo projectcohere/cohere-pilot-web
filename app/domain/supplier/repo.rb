@@ -5,8 +5,21 @@ class Supplier
       Services.supplier_repo ||= Repo.new
     end
 
+    def initialize(user_repo: User::Repo.get)
+      @user_repo = user_repo
+    end
+
     # -- queries --
     # -- queries/one
+    def find_current
+      current_user = @user_repo.find_current
+      if current_user.role.name != :supplier
+        return nil
+      end
+
+      find(current_user.role.organization_id)
+    end
+
     def find(id)
       find_cached(id) do
         record = Supplier::Record
