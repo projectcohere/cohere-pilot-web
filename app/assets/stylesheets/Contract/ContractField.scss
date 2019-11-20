@@ -4,6 +4,7 @@
 
   &-hint {
     @extend .u-hint;
+    letter-spacing: 0; // this has issues in wkhtmltopdf 0.12.3
     margin-bottom: $spacing5;
     color: $brandBlack;
   }
