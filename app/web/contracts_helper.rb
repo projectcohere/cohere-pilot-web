@@ -2,8 +2,12 @@ module ContractsHelper
   # -- impls --
   # -- impls/css
   def styles(filename)
-    asset_path = Rails.application.assets_manifest.assets[filename]
-    Rails.root.join("public", "assets", asset_path).read
+    if Rails.env.production?
+      asset_path = Rails.application.assets_manifest.assets[filename]
+      Rails.root.join("public", "assets", asset_path).read
+    else
+      Rails.application.assets[filename].source
+    end
   end
 
   # -- impls/elements
