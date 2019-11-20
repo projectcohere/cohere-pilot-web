@@ -44,10 +44,9 @@ module Cases
 
         # write pdf to file
         pdf = PDFKit.new(html,
-          page_size: "Letter",
           footer_center: "Page [page] of [toPage]",
           footer_font_size: 8,
-          footer_font_name: "sans-serif"
+          footer_font_name: "Euclid Flex"
         )
 
         pdf.to_file("#{output_dir}/#{tmp_filename}.pdf")

@@ -4,7 +4,19 @@
   font-weight: $fontWeightRegular;
   font-style: normal;
 
-  /* --name-row-- */
+  // -- sections --
+  // -- sections/meap
+  &-meapSignatures {
+    margin-top: $spacing1 !important;
+  }
+
+  // -- sections/app
+  &-affordablePaymentPlan {
+    page-break-before: always;
+  }
+
+  // -- rows --
+  // -- rows/name
   &-applicantName {
     display: inline-block;
     width: 30%;
@@ -15,16 +27,12 @@
     width: 20%;
   }
 
-  /* --address-row-- */
+  // -- rows/address
   &-address {
     width: 40%;
   }
 
-  /* --signature-row */
-  &-meapSignatures {
-    margin-top: $spacing1 !important;
-  }
-
+  // -- rows/signature
   $signature-height: 60px;
 
   &-signature {

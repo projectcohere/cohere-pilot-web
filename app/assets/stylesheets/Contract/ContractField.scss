@@ -6,6 +6,8 @@
     @extend .u-hint;
     margin-bottom: $spacing5;
     color: $brandBlack;
+    // https://github.com/wkhtmltopdf/wkhtmltopdf/issues/3256
+    letter-spacing: 0;
   }
 
   &-input {
