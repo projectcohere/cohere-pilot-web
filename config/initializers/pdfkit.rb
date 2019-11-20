@@ -5,6 +5,10 @@ PDFKit.configure do |config|
   page_margin = "#{0.75 / page_zoom}in"
 
   config.default_options = {
+    quiet: true,
+    disable_smart_shrinking: false,
+    page_size: "Letter",
+    encoding: "UTF-8",
     zoom: page_zoom,
     margin_top: page_margin,
     margin_bottom: page_margin,
