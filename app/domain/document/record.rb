@@ -3,7 +3,7 @@ class Document
     set_table_name!
 
     # -- associations --
-    belongs_to(:case, class_name: "::Case::Record")
+    belongs_to(:case, class_name: "::Case::Record", touch: true)
     has_one_attached(:file)
 
     # -- classification --
