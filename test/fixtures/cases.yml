@@ -7,6 +7,7 @@ opened_1:
   account_arrears_cents: 1000_00
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now %>
+  received_message_at: null
   completed_at: null
 
 opened_2:
@@ -18,6 +19,7 @@ opened_2:
   account_arrears_cents: 1000_00
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now - 1.hours %>
+  received_message_at: null
   completed_at: null
 
 pending_1:
@@ -29,6 +31,7 @@ pending_1:
   account_arrears_cents: 1000_00
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now - 1.hours %>
+  received_message_at: <%= Time.zone.now %>
   completed_at: null
 
 pending_2:
@@ -40,6 +43,7 @@ pending_2:
   account_arrears_cents: 1000_00
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now - 1.hours %>
+  received_message_at: null
   completed_at: null
 
 submitted_1:
@@ -51,6 +55,7 @@ submitted_1:
   account_arrears_cents: 1000_00
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now - 2.hours %>
+  received_message_at: <%= Time.zone.now %>
   completed_at: null
 
 submitted_2:
@@ -62,6 +67,7 @@ submitted_2:
   account_arrears_cents: 1000_00
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now - 2.hours %>
+  received_message_at: <%= Time.zone.now %>
   completed_at: null
 
 approved_1:
@@ -73,4 +79,5 @@ approved_1:
   account_arrears_cents: 1000_00
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now %>
+  received_message_at: <%= Time.zone.now %>
   completed_at: <%= Time.zone.now %>

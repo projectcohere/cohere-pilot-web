@@ -15,8 +15,8 @@ module Cases
         raise "No case found for phone number #{message_phone_number}"
       end
 
-      kase.upload_message_attachments(message)
-      @case_repo.save_new_documents(kase)
+      kase.add_message(message)
+      @case_repo.save_message_changes(kase)
     end
   end
 end

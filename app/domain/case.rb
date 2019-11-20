@@ -11,6 +11,7 @@ class Case < ::Entity
   prop(:documents, default: nil)
   prop(:enroller_id)
   prop(:supplier_id)
+  prop(:received_message_at, default: nil)
   prop(:updated_at, default: nil)
   prop(:completed_at, default: nil)
   props_end!
@@ -19,7 +20,7 @@ class Case < ::Entity
   attr(:new_documents)
   attr(:selected_document)
 
-  # -- creation --
+  # -- lifetime --
   def self.open(profile:, account:, enroller:, supplier:)
     recipient = Recipient.new(
       profile: profile
@@ -74,27 +75,38 @@ class Case < ::Entity
     @events << Events::DidComplete.from_entity(self)
   end
 
-  # -- commands/documents
-  def upload_message_attachments(message)
-    @new_documents ||= []
+  # -- commands/messages
+  def add_message(message)
+    is_first_message = @received_message_at.nil?
 
-    message.attachments.each do |attachment|
+    # track the message receipt
+    @received_message_at = Time.zone.now
+    if is_first_message
+      @events << Events::DidReceiveFirstMessage.from_entity(self)
+    end
+
+    # upload message attachments
+    message.attachments&.each do |attachment|
       new_document = Document.upload(attachment.url)
-      @new_documents << new_document
+      add_document(new_document)
       @events << Events::DidUploadMessageAttachment.from_entity(self, new_document)
     end
   end
 
+  # -- commands/documents
   def sign_contract
     if signed_contract?
       return
     end
 
-    @new_documents ||= []
-
     new_document = Document.sign_contract
-    @new_documents << new_document
+    add_document(new_document)
     @events << Events::DidSignContract.from_entity(self, new_document)
+  end
+
+  private def add_document(document)
+    @new_documents ||= []
+    @new_documents << document
   end
 
   # -- commands/documents/selection

@@ -271,12 +271,11 @@ module Db
       assert_length(event_queue, 3)
     end
 
-    test "saves new documents" do
-      event_queue = EventQueue.new
+    test "saves the changes from a message" do
+      case_rec = cases(:pending_2)
 
-      case_rec = cases(:submitted_2)
       kase = Case::Repo.map_record(case_rec)
-      kase.upload_message_attachments(Message.stub(
+      kase.add_message(Message.stub(
         attachments: [
           Message::Attachment.new(
             url: Faker::Internet.url
@@ -284,15 +283,20 @@ module Db
         ]
       ))
 
+      event_queue = EventQueue.new
       case_repo = Case::Repo.new(event_queue: event_queue)
+
       act = -> do
-        case_repo.save_new_documents(kase)
+        case_repo.save_message_changes(kase)
       end
 
       assert_difference(
         -> { Document::Record.count } => 1,
         &act
       )
+
+      case_rec = kase.record
+      assert_not_nil(case_rec.received_message_at)
 
       document = kase.new_documents[0]
       assert_not_nil(document.record)
@@ -304,7 +308,7 @@ module Db
       assert_not_nil(document_rec.source_url)
 
       assert_length(kase.events, 0)
-      assert_length(event_queue, 1)
+      assert_length(event_queue, 2)
     end
 
     test "saves an attached file" do

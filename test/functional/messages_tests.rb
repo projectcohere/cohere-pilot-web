@@ -38,6 +38,8 @@ class MessagesTests < ActionDispatch::IntegrationTest
     VCR.use_cassette("front--attachment") do
       Sidekiq::Testing.inline!
 
+      logger = fake_logging!
+
       act = -> do
         post("/messages/front", params: @json,
           headers: {
@@ -55,6 +57,7 @@ class MessagesTests < ActionDispatch::IntegrationTest
 
       assert_enqueued_jobs(1)
       assert_response(:no_content)
+      assert_match(/"event_name":"DidReceiveFirstMessage"/, logger.messages.last)
     end
   end
 end

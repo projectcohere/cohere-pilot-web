@@ -23,7 +23,7 @@ module Cases
           ["111-222-3333"]
         )
         .expect(
-          :save_new_documents,
+          :save_message_changes,
           nil,
           [kase]
         )

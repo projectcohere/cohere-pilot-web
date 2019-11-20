@@ -21,6 +21,8 @@ module Events
         { case_id: event.case_id }
       when Case::Events::DidBecomePending
         { case_id: event.case_id }
+      when Case::Events::DidReceiveFirstMessage
+        { case_id: event.case_id }
       when Case::Events::DidSubmit
         { case_id: event.case_id }
       when Case::Events::DidComplete

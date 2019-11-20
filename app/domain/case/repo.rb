@@ -127,16 +127,18 @@ class Case
       case_rec = Case::Record.new
 
       # update the case record
+      c = kase
       case_rec.assign_attributes(
-        enroller_id: kase.enroller_id,
-        supplier_id: kase.supplier_id,
+        enroller_id: c.enroller_id,
+        supplier_id: c.supplier_id,
       )
 
       assign_account(kase, case_rec)
 
-      # find or update a recipient with a matching phone number
+      # find or update a recipient record with a matching phone number
+      p = kase.recipient.profile.phone
       recipient_rec = Recipient::Record.find_or_initialize_by(
-        phone_number: kase.recipient.profile.phone.number
+        phone_number: p.number
       )
 
       assign_recipient_profile(kase, recipient_rec)
@@ -163,7 +165,7 @@ class Case
       assign_dhs_account(kase, kase.recipient.record)
 
       # save records
-      kase.record.transaction do
+      transaction do
         kase.record.save!
         kase.recipient.record.save!
       end
@@ -173,20 +175,26 @@ class Case
     end
 
     def save_all_fields_and_new_documents(kase)
-      if kase.record.nil? || kase.recipient.record.nil?
+      case_rec = kase.record
+      recipient_rec = kase.recipient.record
+
+      if case_rec.nil? || recipient_rec.nil?
         raise "case and recipient must be fetched from the db!"
       end
 
       # update records
-      assign_status(kase, kase.record)
-      assign_account(kase, kase.record)
-      assign_recipient_profile(kase, kase.recipient.record)
-      assign_dhs_account(kase, kase.recipient.record)
+      c = kase
+      case_rec.completed_at = kase.completed_at
+
+      assign_status(kase, case_rec)
+      assign_account(kase, case_rec)
+      assign_recipient_profile(kase, recipient_rec)
+      assign_dhs_account(kase, recipient_rec)
 
       # save records
-      Case::Record.transaction do
-        kase.record.save!
-        kase.recipient.record.save!
+      transaction do
+        case_rec.save!
+        recipient_rec.save!
         create_documents!(kase.id.val, kase.new_documents)
       end
 
@@ -194,9 +202,21 @@ class Case
       @event_queue.consume(kase.events)
     end
 
+    def save_message_changes(kase)
+      case_rec = kase.record
+      if case_rec.nil?
+        raise "case must be fetched from the db!"
+      end
 
-    def save_new_documents(kase)
-      create_documents!(kase.id.val, kase.new_documents)
+      # update records
+      c = kase
+      case_rec.received_message_at = c.received_message_at
+
+      # save records
+      transaction do
+        case_rec.save!
+        create_documents!(kase.id.val, kase.new_documents)
+      end
 
       # consume all entity events
       @event_queue.consume(kase.events)
@@ -230,7 +250,6 @@ class Case
       c = kase
       case_rec.assign_attributes(
         status: c.status,
-        completed_at: c.completed_at
       )
     end
 
@@ -300,6 +319,11 @@ class Case
       document_recs.each_with_index do |r, i|
         documents[i].did_save(r)
       end
+    end
+
+    # -- commands/helpers
+    private def transaction(&block)
+      Case::Record.transaction(&block)
     end
 
     # -- factories --

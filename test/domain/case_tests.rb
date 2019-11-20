@@ -70,10 +70,20 @@ class CaseTests < ActiveSupport::TestCase
     assert_instance_of(Case::Events::DidComplete, kase.events[0])
   end
 
-  # -- commands/documents
+  # -- commands/messages
+  test "adds the first message" do
+    kase = Case.stub
+
+    kase.add_message(Message.stub)
+    assert_not_nil(kase.received_message_at)
+
+    assert_length(kase.events, 1)
+    assert_instance_of(Case::Events::DidReceiveFirstMessage, kase.events[0])
+  end
+
   test "uploads message attachments" do
     kase = Case.stub(
-      id: 4
+      received_message_at: Time.zone.now
     )
 
     message = Message.new(
@@ -85,7 +95,7 @@ class CaseTests < ActiveSupport::TestCase
       ]
     )
 
-    kase.upload_message_attachments(message)
+    kase.add_message(message)
     assert_length(kase.new_documents, 1)
     assert_length(kase.events, 1)
     assert_instance_of(Case::Events::DidUploadMessageAttachment, kase.events[0])
