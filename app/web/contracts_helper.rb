@@ -1,4 +1,12 @@
 module ContractsHelper
+  # -- impls --
+  # -- impls/css
+  def styles(filename)
+    asset_path = Rails.application.assets_manifest.assets[filename]
+    Rails.root.join("public", "assets", asset_path).read
+  end
+
+  # -- impls/elements
   def title(text)
     tag.h1(class: "ContractSection-title") do
       text.html_safe +
