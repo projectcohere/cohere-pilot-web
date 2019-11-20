@@ -50,7 +50,7 @@ module Events
       })
 
       # format log message
-      logger.info("[Analytics] #{attrs.to_json}")
+      logger.debug("[Analytics] #{attrs.to_json}")
     end
 
     # -- helpers --

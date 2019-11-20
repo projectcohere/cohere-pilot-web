@@ -26,6 +26,10 @@ module Support
         @messages << message
       end
 
+      def debug(message = "")
+        @messages << message
+      end
+
       def messages
         @messages
       end
