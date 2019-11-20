@@ -1,5 +1,5 @@
 <style>
-  <%= Rails.application.assets["contract.css"].source %>
+  <%= Rails.application.assets_manifest.find("contract.css").first.source %>
 </style>
 
 <%- view = Cases::View.new(kase) %>
