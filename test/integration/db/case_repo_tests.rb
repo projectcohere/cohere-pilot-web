@@ -336,5 +336,16 @@ module Db
       document_rec = kase.selected_document.record
       assert(document_rec.file.attached?)
     end
+
+    test "saves completed" do
+      case_rec = cases(:submitted_1)
+      kase = Case::Repo.map_record(case_rec, case_rec.documents)
+      kase.complete(:approved)
+      case_repo = Case::Repo.new
+
+      case_repo.save_completed(kase)
+      assert_equal(case_rec.status, "approved")
+      assert_not_nil(case_rec.completed_at)
+    end
   end
 end

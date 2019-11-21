@@ -74,7 +74,10 @@ Rails.application.routes.draw do
     resources(:cases, controller: "cases/enroller", only: %i[
       index
       show
-    ])
+    ]) do
+      patch(:approve)
+      patch(:deny)
+    end
   end
 
   constraints(signed_in(role: :cohere)) do

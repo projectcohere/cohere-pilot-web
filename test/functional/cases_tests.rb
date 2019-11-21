@@ -274,4 +274,41 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_response(:success)
     assert_present(flash[:alert])
   end
+
+  # -- approve/deny --
+  test "can't approve/deny a case if signed-out" do
+    assert_raises(ActionController::RoutingError) do
+      patch("/cases/3/approve")
+    end
+  end
+
+  test "can't approve/deny a case without permission" do
+    user_rec = users(:supplier_1)
+
+    assert_raises(ActionController::RoutingError) do
+      patch(auth("/cases/4/deny", as: user_rec))
+    end
+  end
+
+  test "can't approve/deny another enroller's case as an enroller" do
+    user_rec = users(:enroller_1)
+    case_rec = cases(:submitted_2)
+
+    assert_raises(ActiveRecord::RecordNotFound) do
+      patch(auth("/cases/#{case_rec.id}/deny", as: user_rec))
+    end
+  end
+
+  test "can approve/deny a case as an enroller" do
+    logger = fake_logging!
+
+    user_rec = users(:enroller_1)
+    case_rec = cases(:submitted_1)
+
+    patch(auth("/cases/#{case_rec.id}/approve", as: user_rec))
+
+    assert_redirected_to("/cases")
+    assert_present(flash[:notice])
+    assert_match(/"event_name":"DidComplete"/, logger.messages.last)
+  end
 end

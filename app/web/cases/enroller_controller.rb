@@ -7,11 +7,20 @@ module Cases
     def index
       if policy.forbid?(:list)
         deny_access
+        return
       end
 
       @cases = Case::Repo.get.find_all_for_enroller(
         User::Repo.get.find_current.role.organization_id
       )
+    end
+
+    def approve
+      complete(:approved)
+    end
+
+    def deny
+      complete(:denied)
     end
 
     def show
@@ -20,15 +29,36 @@ module Cases
         User::Repo.get.find_current.role.organization_id
       )
 
-      policy.case = @case
       if policy.forbid?(:view)
         deny_access
+        return
       end
+    end
+
+    # -- actions/helpers
+    private def complete(status)
+      user_repo = User::Repo.get
+      case_repo = Case::Repo.get
+
+      @case = case_repo.find_by_enroller_with_documents(
+        params[:case_id],
+        user_repo.find_current.role.organization_id
+      )
+
+      if policy.forbid?(:edit_status)
+        deny_access
+        return
+      end
+
+      @case.complete(status)
+      case_repo.save_completed(@case)
+
+      redirect_to(cases_path, notice: "Updated #{@case.recipient.profile.name}'s case!")
     end
 
     # -- queries --
     private def policy
-      @policy ||= Case::Policy.new(User::Repo.get.find_current)
+      Case::Policy.new(User::Repo.get.find_current, @case)
     end
   end
 end

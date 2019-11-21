@@ -17,6 +17,8 @@ class Case
         true
       when :edit
         role != :supplier && role != :enroller
+      when :edit_status
+        role == :enroller
       when :create
         role == :supplier
       when :view

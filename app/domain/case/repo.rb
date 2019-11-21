@@ -156,18 +156,21 @@ class Case
     end
 
     def save_status_and_dhs_account(kase)
-      if kase.record.nil? || kase.recipient.record.nil?
+      case_rec = kase.record
+      recipient_rec = kase.recipient.record
+
+      if case_rec.nil? || recipient_rec.nil?
         raise "case and recipient must be fetched from the db!"
       end
 
       # update records
-      assign_status(kase, kase.record)
-      assign_dhs_account(kase, kase.recipient.record)
+      assign_status(kase, case_rec)
+      assign_dhs_account(kase, recipient_rec)
 
       # save records
       transaction do
-        kase.record.save!
-        kase.recipient.record.save!
+        case_rec.save!
+        recipient_rec.save!
       end
 
       # consume all entity events
@@ -183,9 +186,6 @@ class Case
       end
 
       # update records
-      c = kase
-      case_rec.completed_at = kase.completed_at
-
       assign_status(kase, case_rec)
       assign_account(kase, case_rec)
       assign_recipient_profile(kase, recipient_rec)
@@ -228,7 +228,8 @@ class Case
         raise "no document was selected"
       end
 
-      if document.record.nil?
+      document_rec = document.record
+      if document_rec.nil?
         raise "unsaved document can't be updated with a new file"
       end
 
@@ -238,11 +239,27 @@ class Case
       end
 
       f = new_file
-      document.record.file.attach(
+      document_rec.file.attach(
         io: f.data,
         filename: f.name,
         content_type: f.mime_type
       )
+
+      # consume all entity events
+      @event_queue.consume(kase.events)
+    end
+
+    def save_completed(kase)
+      case_rec = kase.record
+
+      # update records
+      assign_status(kase, case_rec)
+
+      # save records
+      case_rec.save!
+
+      # consume all entity events
+      @event_queue.consume(kase.events)
     end
 
     # -- commands/helpers
@@ -250,6 +267,7 @@ class Case
       c = kase
       case_rec.assign_attributes(
         status: c.status,
+        completed_at: c.completed_at
       )
     end
 
