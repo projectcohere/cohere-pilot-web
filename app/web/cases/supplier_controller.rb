@@ -1,8 +1,5 @@
 module Cases
   class SupplierController < ApplicationController
-    # -- filters --
-    before_action(:check_case_scope)
-
     # -- helpers --
     helper_method(:policy)
 
@@ -41,7 +38,7 @@ module Cases
         return
       end
 
-      redirect_to(cases_supplier_index_path, notice: "Created case!")
+      redirect_to(cases_path, notice: "Created case!")
     end
 
     # -- queries --

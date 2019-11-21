@@ -1,6 +1,6 @@
 <main class="Main">
   <h1 class="Main-title">
-    All Cases
+    Submitted Cases
   </h1>
   <ul class="CaseList">
     <% if @cases.blank? %>
@@ -11,7 +11,7 @@
         <% policy.with_case(kase) do %>
           <li class="CaseCell">
             <div class="CaseCell-row">
-              <%= link_to(view.recipient_name, cases_enroller_path(kase), class: "CaseCell-name") %>
+              <%= link_to(view.recipient_name, case_path(kase), class: "CaseCell-name") %>
             </div>
             <div class="CaseCell-row">
               <p class="CaseCell-organizations">

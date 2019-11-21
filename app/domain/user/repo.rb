@@ -83,6 +83,16 @@ class User
 
     # -- factories --
     def self.map_record(r)
+      # create entity
+      User.new(
+        id: r.id,
+        email: r.email,
+        role: map_role(r),
+        confirmation_token: r.confirmation_token
+      )
+    end
+
+    def self.map_role(r)
       # parse role from org type. if the user has an org with
       # an associated record it will be the record's class name.
       role = case r.organization_type
@@ -95,14 +105,6 @@ class User
       when Supplier::Record.to_s
         Role.new(name: :supplier, organization_id: r.organization_id)
       end
-
-      # create entity
-      User.new(
-        id: r.id,
-        email: r.email,
-        role: role,
-        confirmation_token: r.confirmation_token
-      )
     end
   end
 end

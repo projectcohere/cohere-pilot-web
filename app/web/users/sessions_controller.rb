@@ -9,8 +9,7 @@ module Users
 
     # -- Clearance::SessionsController --
     def url_after_create
-      build_user
-      case_scope.rewrite_path(cases_path)
+      cases_path
     end
   end
 end

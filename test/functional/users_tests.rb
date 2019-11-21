@@ -8,7 +8,7 @@ class UsersTests < ActionDispatch::IntegrationTest
     assert_select(".SignIn-title h2", text: /sign in/)
   end
 
-  test "signs in as an operator" do
+  test "signs in as an cohere user" do
     session_params = {
       session: {
         email: "me@cohere.org",
@@ -31,7 +31,7 @@ class UsersTests < ActionDispatch::IntegrationTest
 
     post("/sessions", params: session_params)
     assert(current_session.signed_in?)
-    assert_redirected_to("/cases/enroller")
+    assert_redirected_to("/cases")
   end
 
   test "signs in as a supplier" do
@@ -44,10 +44,10 @@ class UsersTests < ActionDispatch::IntegrationTest
 
     post("/sessions", params: session_params)
     assert(current_session.signed_in?)
-    assert_redirected_to("/cases/supplier")
+    assert_redirected_to("/cases")
   end
 
-  test "signs in as a dhs partner" do
+  test "signs in as a dhs user" do
     session_params = {
       session: {
         email: "me@michigan.gov",
@@ -57,7 +57,7 @@ class UsersTests < ActionDispatch::IntegrationTest
 
     post("/sessions", params: session_params)
     assert(current_session.signed_in?)
-    assert_redirected_to("/cases/dhs")
+    assert_redirected_to("/cases")
   end
 
   # -- sign-out --

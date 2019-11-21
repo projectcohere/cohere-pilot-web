@@ -1,7 +1,4 @@
 class CasesController < ApplicationController
-  # -- filters --
-  before_action(:check_case_scope)
-
   # -- helpers --
   helper_method(:policy)
 

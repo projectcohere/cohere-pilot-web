@@ -3,7 +3,7 @@
     Add a Case
   </h1>
 
-  <%= form_for(@form, url: cases_supplier_index_path, html: { class: "CaseForm Form" }) do |f| %>
+  <%= form_for(@form, url: cases_path, html: { class: "CaseForm Form" }) do |f| %>
     <%= render(partial: "fields", locals: { f: f, form: @form }) %>
     <%= f.submit(class: "Button--action") %>
   <% end %>

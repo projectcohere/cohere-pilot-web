@@ -2,7 +2,7 @@ require "test_helper"
 
 class User
   class RepoTests < ActiveSupport::TestCase
-    test "maps a operator record" do
+    test "maps a cohere user record" do
       user_rec = users(:cohere_1)
       user_rec.confirmation_token = "test-token"
 
@@ -12,7 +12,7 @@ class User
       assert_equal(user.confirmation_token, "test-token")
     end
 
-    test "maps an enroller record" do
+    test "maps an enroller user record" do
       user_rec = users(:enroller_1)
 
       user = User::Repo.map_record(user_rec)
@@ -21,7 +21,7 @@ class User
       assert_not_nil(user.role.organization_id)
     end
 
-    test "maps a supplier record" do
+    test "maps a supplier user record" do
       user_rec = users(:supplier_1)
 
       user = User::Repo.map_record(user_rec)
@@ -30,7 +30,7 @@ class User
       assert_not_nil(user.role.organization_id)
     end
 
-    test "maps a dhs partner record" do
+    test "maps a dhs user record" do
       user_rec = users(:dhs_1)
 
       user = User::Repo.map_record(user_rec)

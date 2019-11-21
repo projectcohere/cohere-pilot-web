@@ -1,8 +1,5 @@
 module Cases
   class DhsController < ApplicationController
-    # -- filters --
-    before_action(:check_case_scope)
-
     # -- helpers --
     helper_method(:policy)
 
@@ -45,7 +42,7 @@ module Cases
       )
 
       if @form.save
-        redirect_to(cases_dhs_index_path, notice: "Case updated!")
+        redirect_to(cases_path, notice: "Case updated!")
       else
         render(:edit)
       end
