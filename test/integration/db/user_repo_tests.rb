@@ -8,7 +8,7 @@ module Db
 
       users = user_repo.find_all_for_opened_case
       assert_length(users, 2)
-      assert_all(users.map(&:role_name), ->(r) { r == :cohere || r == :dhs })
+      assert_same_elements(users.map(&:role_name), [:cohere, :dhs])
     end
 
     test "finds matching enrollers for a submitted case" do
@@ -18,7 +18,15 @@ module Db
 
       users = user_repo.find_all_for_submitted_case(kase)
       assert_length(users, 1)
-      assert_all(users, ->(u) { u.role.organization_id == kase.enroller_id })
+      assert_equal(users[0].role.organization_id, kase.enroller_id)
+    end
+
+    test "finds cohere users for a completed case" do
+      user_repo = User::Repo.new
+
+      users = user_repo.find_all_for_completed_case
+      assert_length(users, 1)
+      assert_equal(users[0].role_name, :cohere)
     end
 
     # -- commands --

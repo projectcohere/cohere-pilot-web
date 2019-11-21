@@ -310,5 +310,15 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
     assert_match(/"event_name":"DidComplete"/, logger.messages.last)
+
+    send_all_emails!
+    assert_emails(1)
+    assert_select_email do
+      assert_select("a", text: /Johnice Sample/) do |el|
+        assert_match(%r[#{ENV["HOST"]}/cases/\d+], el[0][:href])
+      end
+
+      assert_select("p", text: /approved/)
+    end
   end
 end

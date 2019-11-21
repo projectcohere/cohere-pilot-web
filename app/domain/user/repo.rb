@@ -40,6 +40,13 @@ class User
       entities_from(records)
     end
 
+    def find_all_for_completed_case
+      records = User::Record
+        .where(organization_type: :cohere)
+
+      entities_from(records)
+    end
+
     # -- commands --
     def current=(user)
       @current = user
