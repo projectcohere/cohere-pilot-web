@@ -1,31 +1,39 @@
 .Button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   max-width: $width4;
   height: $height2;
-  color: $brandPrimary;
-  border: 1px solid $brandPrimary;
+  padding: 0 $spacing3;
   border-radius: 5px;
   text-decoration: none;
   cursor: pointer;
+}
+
+.Button--action {
+  @extend .Button;
+
+  color: $white;
+  background-color: $brandPrimary;
+
+  &:hover {
+    background-color: lighten($brandPrimary, 5%);
+  }
+}
+
+.Button--destructive {
+  @extend .Button;
+
+  &:hover {
+    background-color: $colorField;
+  }
+}
+
+.Button--secondary {
+  @extend .Button;
+
+  color: $brandPrimary;
+  border: 2px solid $brandPrimary;
 
   &:hover {
     color: lighten($brandPrimary, 5%);
     border-color: lighten($brandPrimary, 5%);
-  }
-}
-
-.Button--action {
-  max-width: $width4;
-  height: $height1;
-  color: $white;
-  background-color: $brandPrimary;
-  border-radius: 5px;
-  padding: 0 $spacing3;
-  cursor: pointer;
-
-  &:hover {
-    background-color: lighten($brandPrimary, 5%);
   }
 }

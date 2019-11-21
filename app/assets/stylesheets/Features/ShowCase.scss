@@ -6,7 +6,7 @@
     max-width: $width1;
   }
 
-  /* Case-contact */
+  /* ShowCase-contact */
   &-phoneNumber {
     grid-column: 1 / 5;
   }
@@ -15,7 +15,7 @@
     grid-column: 1 / 7;
   }
 
-  /* Case-utilityAccount */
+  /* ShowCase-utilityAccount */
   &-supplier {
     grid-column: 1 / 4;
   }
@@ -28,12 +28,12 @@
     grid-column: 4 / 7;
   }
 
-  /* Case-dhs */
+  /* ShowCase-dhs */
   &-dhsNumber {
     grid-column: 1 / 4;
   }
 
-  /* Case-household */
+  /* ShowCase-household */
   &-size {
     grid-column: 1 / 2;
   }
@@ -44,5 +44,14 @@
 
   &-fpl {
     grid-column: 1 / 4;
+  }
+
+  /* ShowCase-actions */
+  &-actions {
+    display: flex;
+  }
+
+  &-action + &-action {
+    margin-left: $spacing4;
   }
 }

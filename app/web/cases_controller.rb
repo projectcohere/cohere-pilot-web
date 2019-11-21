@@ -42,7 +42,9 @@ class CasesController < ApplicationController
       return
     end
 
-    redirect_to(cases_path, notice: "Updated #{@form.name}'s case!")
+    redirect_to(cases_path,
+      notice: "Updated #{@form.name}'s case!"
+    )
   end
 
   # -- queries --

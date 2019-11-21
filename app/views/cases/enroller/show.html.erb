@@ -6,6 +6,13 @@
 
   <div class="ShowCase">
     <article class="ShowCase-case Detail">
+      <section class="ShowCase-details Detail-section">
+        <h1><span>Case Status</span></h1>
+        <p class="DetailField-text">
+          <%= view.status %>
+        </p>
+      </section>
+
       <section class="ShowCase-contact Detail-section">
         <h1><span>Contact</span></h1>
         <label class="ShowCase-phoneNumber DetailField">
@@ -96,6 +103,25 @@
           </p>
         </label>
       </section>
+
+      <% if @case.status == :submitted %>
+        <div class="ShowCase-actions">
+          <%=
+            button_to("Approve Case", [@case, :approve],
+              method: :patch,
+              form_class: "ShowCase-action",
+              class: "Button--action"
+            )
+          %>
+          <%=
+            button_to("Deny Case", [@case, :deny],
+              method: :patch,
+              form_class: "ShowCase-action",
+              class: "Button--destructive"
+            )
+          %>
+        </div>
+      <% end %>
     </article>
 
     <%= render(partial: "cases/documents", locals: { documents: view.documents }) %>

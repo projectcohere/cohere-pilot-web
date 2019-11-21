@@ -53,7 +53,9 @@ module Cases
       @case.complete(status)
       case_repo.save_completed(@case)
 
-      redirect_to(cases_path, notice: "Updated #{@case.recipient.profile.name}'s case!")
+      redirect_to(cases_path,
+        notice: "#{status.to_s.capitalize} #{@case.recipient.profile.name}'s case!"
+      )
     end
 
     # -- queries --
