@@ -30,6 +30,10 @@ class EventQueue
     end
   end
 
+  def clear
+    @queue.clear
+  end
+
   # -- queries --
   def [](index)
     @queue[index]

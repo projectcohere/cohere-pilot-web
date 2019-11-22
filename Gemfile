@@ -7,11 +7,13 @@ gem "aws-sdk-s3", "~> 1.52", require: false
 gem "bootsnap", ">= 1.4.2", require: false
 gem "clearance", "~> 1.17"
 gem "image_processing", "~> 1.9"
+gem "mixpanel-ruby", "~> 2.2"
 gem "openssl", "~> 2.1"
 gem "pdfkit", "~> 0.8.4"
 gem "pg", ">= 0.18", "< 2.0"
 gem "puma", "~> 3.11"
 gem "rails", "~> 6.0.0"
+gem "redis", "~> 4.1"
 gem "sass-rails", "~> 5"
 gem "sentry-raven", "~> 2.12"
 gem "sidekiq", "~> 6.0"

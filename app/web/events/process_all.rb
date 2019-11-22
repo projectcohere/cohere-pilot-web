@@ -6,11 +6,11 @@ module Events
     end
 
     def initialize(
-      analytics: Analytics.get,
-      event_queue: EventQueue.get
+      event_queue: EventQueue.get,
+      process_analytics: ProcessAnalytics.get
     )
-      @analytics = analytics
       @event_queue = event_queue
+      @process_analytics = process_analytics
     end
 
     # -- command --
@@ -31,7 +31,7 @@ module Events
           UsersMailer.did_invite(event.user_id.val).deliver_later
         end
 
-        @analytics.process_event(event)
+        @process_analytics.(event)
       end
     end
   end

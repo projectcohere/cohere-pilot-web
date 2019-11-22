@@ -57,19 +57,14 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "open a case as a supplier" do
-    logger = fake_logging!
-
     user_rec = users(:supplier_1)
 
     get(auth("/cases/new", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /Add a Case/)
-    assert_match(/"event_name":"DidViewSupplierForm"/, logger.messages.last)
   end
 
   test "save an opened case as a supplier" do
-    logger = fake_logging!
-
     user_rec = users(:supplier_1)
 
     post(auth("/cases", as: user_rec), params: {
@@ -87,7 +82,9 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_present(flash[:notice])
     assert_redirected_to("/cases")
-    assert_match(/"event_name":"DidOpen"/, logger.messages.last)
+
+    assert_tracking_events(1)
+    assert_match(/DidOpen/, tracking_events[0])
 
     send_all_emails!
     assert_emails(1)
@@ -154,20 +151,18 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "edit a case as a dhs user" do
-    logger = fake_logging!
-
     user_rec = users(:dhs_1)
     case_rec = cases(:pending_1)
 
     get(auth("/cases/#{case_rec.id}/edit", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /\w's case/)
-    assert_match(/"event_name":"DidViewDhsForm"/, logger.messages.last)
+
+    assert_tracking_events(1)
+    assert_match(/DidViewDhsForm/, tracking_events[0])
   end
 
   test "save an edited case as a dhs user" do
-    logger = fake_logging!
-
     user_rec = users(:dhs_1)
     case_rec = cases(:opened_1)
 
@@ -181,7 +176,9 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
-    assert_match(/"event_name":"DidBecomePending"/, logger.messages.last)
+
+    assert_tracking_events(1)
+    assert_match(/DidBecomePending/, tracking_events[0])
   end
 
   test "edit a case as a cohere user" do
@@ -194,8 +191,6 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "save an edited case as a cohere user" do
-    logger = fake_logging!
-
     case_rec = cases(:pending_2)
 
     patch(auth("/cases/#{case_rec.id}"), params: {
@@ -207,7 +202,9 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
-    assert_match(/"event_name":"DidSubmit"/, logger.messages.last)
+
+    assert_tracking_events(1)
+    assert_match(/DidSubmit/, tracking_events[0])
 
     send_all_emails!
     assert_emails(1)
@@ -219,8 +216,6 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "save a completed case" do
-    logger = fake_logging!
-
     case_rec = cases(:submitted_1)
 
     patch(auth("/cases/#{case_rec.id}"), params: {
@@ -231,7 +226,9 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
-    assert_match(/"event_name":"DidComplete"/, logger.messages.last)
+
+    assert_tracking_events(1)
+    assert_match(/DidComplete/, tracking_events[0])
   end
 
   test "save a signed contract" do
@@ -300,8 +297,6 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "can approve/deny a case as an enroller" do
-    logger = fake_logging!
-
     user_rec = users(:enroller_1)
     case_rec = cases(:submitted_1)
 
@@ -309,7 +304,9 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
-    assert_match(/"event_name":"DidComplete"/, logger.messages.last)
+
+    assert_tracking_events(1)
+    assert_match(/DidComplete/, tracking_events[0])
 
     send_all_emails!
     assert_emails(1)

@@ -8,8 +8,8 @@ require "support/asserts"
 require "support/session"
 require "support/pdfs"
 require "support/mailers"
-require "support/logging"
 require "support/factories"
+require "support/tracking"
 
 # load pry-rescue if the flag is set
 if ENV["PRY_RESCUE"]
