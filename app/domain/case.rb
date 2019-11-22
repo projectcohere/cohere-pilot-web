@@ -77,13 +77,9 @@ class Case < ::Entity
 
   # -- commands/messages
   def add_message(message)
-    is_first_message = @received_message_at.nil?
-
     # track the message receipt
     @received_message_at = Time.zone.now
-    if is_first_message
-      @events << Events::DidReceiveFirstMessage.from_entity(self)
-    end
+    @events << Events::DidReceiveMessage.from_entity(self)
 
     # upload message attachments
     message.attachments&.each do |attachment|

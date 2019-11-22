@@ -23,7 +23,7 @@ module Events
         event.case_id
       when Case::Events::DidBecomePending
         event.case_id
-      when Case::Events::DidReceiveFirstMessage
+      when Case::Events::DidReceiveMessage
         event.case_id
       when Case::Events::DidSubmit
         event.case_id

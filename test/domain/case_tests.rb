@@ -78,7 +78,7 @@ class CaseTests < ActiveSupport::TestCase
     assert_not_nil(kase.received_message_at)
 
     assert_length(kase.events, 1)
-    assert_instance_of(Case::Events::DidReceiveFirstMessage, kase.events[0])
+    assert_instance_of(Case::Events::DidReceiveMessage, kase.events[0])
   end
 
   test "uploads message attachments" do
@@ -97,8 +97,9 @@ class CaseTests < ActiveSupport::TestCase
 
     kase.add_message(message)
     assert_length(kase.new_documents, 1)
-    assert_length(kase.events, 1)
-    assert_instance_of(Case::Events::DidUploadMessageAttachment, kase.events[0])
+    assert_length(kase.events, 2)
+    assert_instance_of(Case::Events::DidReceiveMessage, kase.events[0])
+    assert_instance_of(Case::Events::DidUploadMessageAttachment, kase.events[1])
 
     new_document = kase.new_documents[0]
     assert_equal(new_document.classification, :unknown)

@@ -57,7 +57,7 @@ class MessagesTests < ActionDispatch::IntegrationTest
       assert_response(:no_content)
 
       assert_tracking_events(1)
-      assert_match(/DidReceiveFirstMessage/, tracking_events[0])
+      assert_match(/DidReceiveMessage/, tracking_events[0])
     end
   end
 end

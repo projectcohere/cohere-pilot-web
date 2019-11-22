@@ -1,13 +1,13 @@
 class Case
   module Events
-    class DidReceiveFirstMessage < ::Value
+    class DidReceiveMessage < ::Value
       # -- props --
       prop(:case_id)
       props_end!
 
       # -- factories --
       def self.from_entity(kase)
-        DidReceiveFirstMessage.new(
+        DidReceiveMessage.new(
           case_id: kase.id
         )
       end
