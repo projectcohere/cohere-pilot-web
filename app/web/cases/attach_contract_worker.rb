@@ -1,4 +1,5 @@
 module Cases
+  # -- command --
   class AttachContractWorker < ApplicationWorker
     def perform(case_id, document_id)
       attach_file = AttachDocumentFile.new(

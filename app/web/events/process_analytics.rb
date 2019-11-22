@@ -7,10 +7,10 @@ module Events
 
     def initialize(
       user_repo: User::Repo.get,
-      tracking_events: Services.tracking_events
+      analytics_events: Services.analytics_events
     )
       @user_repo = user_repo
-      @tracking_events = tracking_events
+      @analytics_events = analytics_events
     end
 
     # -- commands --
@@ -56,7 +56,7 @@ module Events
     private def tracker
       @tracker ||= begin
         Mixpanel::Tracker.new(ENV["MIXPANEL_TOKEN"]) do |type, message|
-          @tracking_events << [type, message].to_json
+          @analytics_events << [type, message].to_json
         end
       end
     end

@@ -2,14 +2,14 @@
 # accessor, e.g. `Case::Repo.get`.
 class Services < ActiveSupport::CurrentAttributes
   # -- web --
-  attribute(:tracking_events)
+  attribute(:analytics_events)
 
-  def tracking_events
+  def analytics_events
     service = super
 
     if service.nil?
-      service = RedisQueue.new("tracking-events")
-      self.tracking_events = service
+      service = RedisQueue.new("analytics--events")
+      self.analytics_events = service
     end
 
     service

@@ -10,9 +10,13 @@ class RedisQueue
     @redis.rpush(@key, event)
   end
 
+  # call the block for each event in the queue at call time, only
+  # removing it if successful
   def drain(&block)
-    events = @redis.lrange(@key, 0, -1)
-    @redis.del(@key)
-    events.each(&block)
+    @redis.llen(@key).times do
+      event = @redis.lrange(@key, 0, 0).first
+      block.(event)
+      @redis.lpop
+    end
   end
 end

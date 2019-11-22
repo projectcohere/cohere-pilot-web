@@ -6,7 +6,7 @@ module Support
     # -- lifecycle --
     Services.resets do
       # fake the tracking events queue
-      Services.tracking_events = Queue
+      Services.analytics_events = Queue
     end
 
     def before_setup
@@ -20,13 +20,13 @@ module Support
     end
 
     # -- queries --
-    def tracking_events
+    def analytics_events
       Queue
     end
 
     # -- asserts --
-    def assert_tracking_events(length)
-      assert_equal(tracking_events.length, length)
+    def assert_analytics_events(length)
+      assert_equal(analytics_events.length, length)
     end
   end
 end

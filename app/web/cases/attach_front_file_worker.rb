@@ -1,4 +1,5 @@
 module Cases
+  # -- command --
   class AttachFrontFileWorker < ApplicationWorker
     def perform(case_id, document_id)
       attach_file = AttachDocumentFile.new(
