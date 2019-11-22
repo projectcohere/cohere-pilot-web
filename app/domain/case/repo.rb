@@ -6,11 +6,11 @@ class Case
     end
 
     def initialize(
-      event_queue: EventQueue.get,
+      domain_events: Services.domain_events,
       supplier_repo: ::Supplier::Repo.get,
       enroller_repo: ::Enroller::Repo.get
     )
-      @event_queue = event_queue
+      @domain_events = domain_events
       @supplier_repo = supplier_repo
       @enroller_repo = enroller_repo
     end
@@ -152,7 +152,7 @@ class Case
       kase.recipient.did_save(recipient_rec)
 
       # consume all entity events
-      @event_queue.consume(kase.events)
+      @domain_events.consume(kase.events)
     end
 
     def save_status_and_dhs_account(kase)
@@ -174,7 +174,7 @@ class Case
       end
 
       # consume all entity events
-      @event_queue.consume(kase.events)
+      @domain_events.consume(kase.events)
     end
 
     def save_all_fields_and_new_documents(kase)
@@ -199,7 +199,7 @@ class Case
       end
 
       # consume all entity events
-      @event_queue.consume(kase.events)
+      @domain_events.consume(kase.events)
     end
 
     def save_message_changes(kase)
@@ -219,7 +219,7 @@ class Case
       end
 
       # consume all entity events
-      @event_queue.consume(kase.events)
+      @domain_events.consume(kase.events)
     end
 
     def save_attached_file(kase)
@@ -246,7 +246,7 @@ class Case
       )
 
       # consume all entity events
-      @event_queue.consume(kase.events)
+      @domain_events.consume(kase.events)
     end
 
     def save_completed(kase)
@@ -259,7 +259,7 @@ class Case
       case_rec.save!
 
       # consume all entity events
-      @event_queue.consume(kase.events)
+      @domain_events.consume(kase.events)
     end
 
     # -- commands/helpers

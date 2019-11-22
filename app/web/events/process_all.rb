@@ -6,16 +6,16 @@ module Events
     end
 
     def initialize(
-      event_queue: EventQueue.get,
+      domain_events: Services.domain_events,
       process_analytics: ProcessAnalytics.get
     )
-      @event_queue = event_queue
+      @domain_events = domain_events
       @process_analytics = process_analytics
     end
 
     # -- command --
     def call
-      @event_queue.drain do |event|
+      @domain_events.drain do |event|
         case event
         when Case::Events::DidOpen
           CasesMailer.did_open(event.case_id.val).deliver_later

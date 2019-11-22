@@ -1,9 +1,5 @@
-class EventQueue
+class ArrayQueue
   # -- lifetime --
-  def self.get
-    Services.event_queue ||= EventQueue.new
-  end
-
   def initialize
     @queue = []
   end
@@ -44,5 +40,5 @@ class EventQueue
   end
 
   # -- constants --
-  Empty = EventQueue.new
+  Empty = ArrayQueue.new
 end

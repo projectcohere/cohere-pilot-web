@@ -23,7 +23,7 @@ module Cases
 
       @form = Cases::DhsForm.new(kase)
 
-      event_queue << Events::DidViewDhsForm.from_entity(kase)
+      domain_events << Events::DidViewDhsForm.from_entity(kase)
     end
 
     def update

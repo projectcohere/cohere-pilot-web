@@ -16,7 +16,18 @@ class Services < ActiveSupport::CurrentAttributes
   end
 
   # -- domain --
-  attribute(:event_queue)
+  attribute(:domain_events)
+
+  def domain_events
+    service = super
+
+    if service.nil?
+      service = ArrayQueue.new
+      self.domain_events = service
+    end
+
+    service
+  end
 
   # -- domain/repos
   attribute(:user_repo)

@@ -1,7 +1,7 @@
 module Support
   module Tracking
     # -- constants --
-    Queue = EventQueue.new
+    Queue = ArrayQueue.new
 
     # -- lifecycle --
     Services.resets do

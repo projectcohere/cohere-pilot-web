@@ -10,8 +10,8 @@ class ApplicationController < ActionController::Base
   after_action(:process_events)
 
   # -- events --
-  protected def event_queue
-    EventQueue.get
+  protected def domain_events
+    Services.domain_events
   end
 
   protected def process_events

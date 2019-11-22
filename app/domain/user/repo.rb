@@ -5,8 +5,8 @@ class User
       Services.user_repo ||= Repo.new
     end
 
-    def initialize(event_queue: EventQueue.get)
-      @event_queue = event_queue
+    def initialize(domain_events: Services.domain_events)
+      @domain_events = domain_events
     end
 
     # -- queries --
@@ -85,7 +85,7 @@ class User
       user.did_save(user_rec)
 
       # consume all entity events
-      @event_queue.consume(user.events)
+      @domain_events.consume(user.events)
     end
 
     # -- factories --

@@ -148,7 +148,7 @@ class UsersTests < ActionDispatch::IntegrationTest
 
   # -- invitation --
   test "invites the user" do
-    event_queue = EventQueue.new
+    domain_events = ArrayQueue.new
 
     invitation_csv = <<-CSV.strip_heredoc
       email,role_name,role_organization_id
@@ -160,10 +160,10 @@ class UsersTests < ActionDispatch::IntegrationTest
 
     invite_users = Users::SendInvitations.new(
       user_repo: User::Repo.new(
-        event_queue: event_queue
+        domain_events: domain_events
       ),
       process_events: Events::ProcessAll.new(
-        event_queue: event_queue
+        domain_events: domain_events
       )
     )
 

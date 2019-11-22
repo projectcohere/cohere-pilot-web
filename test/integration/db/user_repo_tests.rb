@@ -31,10 +31,10 @@ module Db
 
     # -- commands --
     test "saves an invited user" do
-      event_queue = EventQueue.new
+      domain_events = ArrayQueue.new
 
       user_repo = User::Repo.new(
-        event_queue: event_queue
+        domain_events: domain_events
       )
 
       user = User.invite(User::Invitation.new(
@@ -56,7 +56,7 @@ module Db
       assert_not_nil(user.record)
 
       assert_length(user.events, 0)
-      assert_length(event_queue, 1)
+      assert_length(domain_events, 1)
     end
 
     test "saves an invited org user" do

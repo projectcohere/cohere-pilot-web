@@ -1,7 +1,7 @@
 class Case < ::Entity
   # TODO: should these be generalized for entity/ar?
   prop(:record, default: nil)
-  prop(:events, default: EventQueue::Empty)
+  prop(:events, default: ArrayQueue::Empty)
 
   # -- props --
   prop(:id, default: Id::None)
