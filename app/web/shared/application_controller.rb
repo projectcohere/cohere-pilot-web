@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   after_action(:process_events)
 
   # -- events --
-  protected def domain_events
+  protected def events
     Services.domain_events
   end
 

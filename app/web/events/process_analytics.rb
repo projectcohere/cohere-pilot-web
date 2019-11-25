@@ -1,5 +1,8 @@
 module Events
   class ProcessAnalytics
+    # -- constants --
+    Unsaved = "Unsaved".freeze
+
     # -- lifetime --
     def self.get
       ProcessAnalytics.new
@@ -17,6 +20,8 @@ module Events
     def call(event)
       # add event attrs
       id = case event
+      when Cases::Events::DidViewSupplierForm
+        Unsaved
       when Case::Events::DidOpen
         event.case_id
       when Cases::Events::DidViewDhsForm
@@ -26,6 +31,8 @@ module Events
       when Case::Events::DidReceiveMessage
         event.case_id
       when Case::Events::DidSubmit
+        event.case_id
+      when Cases::Events::DidViewEnrollerCase
         event.case_id
       when Case::Events::DidComplete
         event.case_id
@@ -38,10 +45,12 @@ module Events
 
       # determine event name
       event_path = event.class.name.split("::")
-      event_name = event_path[2]
+      event_name = event_path[2].titlecase
 
       # determine event attrs
       event_attrs = case event
+      when Case::Events::DidReceiveMessage
+        { is_first: event.is_first }
       when Case::Events::DidComplete
         { case_status: event.case_status }
       else

@@ -62,6 +62,9 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases/new", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /Add a Case/)
+
+    assert_analytics_events(1)
+    assert_match(/Did View Supplier Form/, analytics_events[0])
   end
 
   test "save an opened case as a supplier" do
@@ -84,7 +87,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases")
 
     assert_analytics_events(1)
-    assert_match(/DidOpen/, analytics_events[0])
+    assert_match(/Did Open/, analytics_events[0])
 
     send_all_emails!
     assert_emails(1)
@@ -140,6 +143,9 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases/#{kase.id}", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /#{kase.recipient.profile.name}/)
+
+    assert_analytics_events(1)
+    assert_match(/Did View Enroller Case/, analytics_events[0])
   end
 
   # -- edit --
@@ -159,7 +165,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".Main-title", text: /\w's case/)
 
     assert_analytics_events(1)
-    assert_match(/DidViewDhsForm/, analytics_events[0])
+    assert_match(/Did View Dhs Form/, analytics_events[0])
   end
 
   test "save an edited case as a dhs user" do
@@ -178,7 +184,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:notice])
 
     assert_analytics_events(1)
-    assert_match(/DidBecomePending/, analytics_events[0])
+    assert_match(/Did Become Pending/, analytics_events[0])
   end
 
   test "edit a case as a cohere user" do
@@ -204,7 +210,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:notice])
 
     assert_analytics_events(1)
-    assert_match(/DidSubmit/, analytics_events[0])
+    assert_match(/Did Submit/, analytics_events[0])
 
     send_all_emails!
     assert_emails(1)
@@ -228,7 +234,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:notice])
 
     assert_analytics_events(1)
-    assert_match(/DidComplete/, analytics_events[0])
+    assert_match(/Did Complete/, analytics_events[0])
   end
 
   test "save a signed contract" do
@@ -306,7 +312,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:notice])
 
     assert_analytics_events(1)
-    assert_match(/DidComplete/, analytics_events[0])
+    assert_match(/Did Complete/, analytics_events[0])
 
     send_all_emails!
     assert_emails(1)

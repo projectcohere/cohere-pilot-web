@@ -33,6 +33,8 @@ module Cases
         deny_access
         return
       end
+
+      events << Events::DidViewEnrollerCase.from_entity(@case)
     end
 
     # -- actions/helpers
