@@ -92,7 +92,7 @@ class User
     def self.map_record(r)
       # create entity
       User.new(
-        id: r.id,
+        id: Id.new(r.id),
         email: r.email,
         role: map_role(r),
         confirmation_token: r.confirmation_token

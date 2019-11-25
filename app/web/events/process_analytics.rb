@@ -23,19 +23,19 @@ module Events
       when Cases::Events::DidViewSupplierForm
         Unsaved
       when Case::Events::DidOpen
-        event.case_id
+        event.case_id.val
       when Cases::Events::DidViewDhsForm
-        event.case_id
+        event.case_id.val
       when Case::Events::DidBecomePending
-        event.case_id
+        event.case_id.val
       when Case::Events::DidReceiveMessage
-        event.case_id
+        event.case_id.val
       when Case::Events::DidSubmit
-        event.case_id
+        event.case_id.val
       when Cases::Events::DidViewEnrollerCase
-        event.case_id
+        event.case_id.val
       when Case::Events::DidComplete
-        event.case_id
+        event.case_id.val
       end
 
       # bail if we don't log this event
@@ -60,7 +60,7 @@ module Events
       # add user attrs if available
       @user_repo.find_current&.tap do |u|
         event_attrs.merge!(
-          user_id: u.id
+          user_id: u.id.val
         )
       end
 
