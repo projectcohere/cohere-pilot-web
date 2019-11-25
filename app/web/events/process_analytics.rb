@@ -57,6 +57,13 @@ module Events
         { }
       end
 
+      # add user attrs if available
+      @user_repo.find_current&.tap do |u|
+        event_attrs.merge!(
+          user_id: u.id
+        )
+      end
+
       # track event
       tracker.track(id, event_name, event_attrs)
     end
