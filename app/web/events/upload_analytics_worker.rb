@@ -1,6 +1,9 @@
 module Events
   class UploadAnalyticsWorker < ApplicationWorker
-    sidekiq_options(retry: false)
+    schedule(
+      name: "Every 5 minutes",
+      cron: "*/5 * * * *"
+    )
 
     # -- command --
     def perform
@@ -13,9 +16,3 @@ module Events
     end
   end
 end
-
-Sidekiq::Cron::Job.create(
-  name: "Events::UploadAnalyticsWorker - Every  5 Minutes",
-  cron: "*/5 * * * *",
-  class: "Events::UploadAnalyticsWorker"
-)
