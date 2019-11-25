@@ -16,7 +16,7 @@ class RedisQueue
     @redis.llen(@key).times do
       event = @redis.lrange(@key, 0, 0).first
       block.(event)
-      @redis.lpop
+      @redis.lpop(@key)
     end
   end
 end
