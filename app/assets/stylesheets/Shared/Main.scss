@@ -2,14 +2,17 @@
   padding: $spacing0;
   padding-top: $spacing3;
 
-  &-title {
-    display: inline-block;
-    color: $brandBlack;
-    font-size: $fontSize0;
+  &-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    max-width: $width1;
     margin-bottom: $spacing3;
+    padding: $spacing4 0;
   }
 
-  &-actions {
-    font-size: $fontSize1;
+  &-title {
+    color: $brandBlack;
+    font-size: $fontSize0;
   }
 }

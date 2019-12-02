@@ -19,6 +19,10 @@ module Cases
       @case.status.to_s.camelize
     end
 
+    def approved?
+      @case.status == :approved
+    end
+
     # -- queries/profile
     def recipient_name
       @case.recipient.profile.name
@@ -73,6 +77,10 @@ module Cases
     end
 
     # -- queries/timestamps
+    def created_at
+      @case.updated_at
+    end
+
     def updated_at
       @case.updated_at
     end

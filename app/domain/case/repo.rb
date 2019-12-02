@@ -99,6 +99,15 @@ class Case
     def find_all_for_dhs
       case_recs = Case::Record
         .where(status: [:opened, :pending])
+        .order(created_at: :desc)
+        .includes(:recipient)
+
+      entities_from(case_recs)
+    end
+
+    def find_all_for_supplier(supplier_id)
+      case_recs = Case::Record
+        .where(supplier_id: supplier_id)
         .order(updated_at: :desc)
         .includes(:recipient)
 

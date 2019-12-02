@@ -1,10 +1,35 @@
 <main class="Main">
-  <h1 class="Main-title">
-    Inbound Cases
-  </h1>
-  <div class="Main-actions">
-    <% if policy.permit?(:create) %>
-      <%= link_to("Add a Case", new_case_path) %>
+  <header class="Main-header">
+    <h1 class="Main-title">
+      Inbound Cases
+    </h1>
+    <div class="Main-actions">
+      <%= link_to("Add a Case", new_case_path, class: "Button--action") %>
+    </div>
+  </header>
+  <ul class="CaseList">
+    <% if @cases.blank? %>
+      <p>No cases left!</p>
+    <% else %>
+      <% @cases.each do |kase| %>
+        <%- view = Cases::View.new(kase) %>
+        <li class="CaseCell">
+          <div class="CaseCell-row">
+            <p class="CaseCell-name"><%= view.recipient_name %></p>
+            <% if view.approved? %>
+              <p class="CaseCell-approved">
+                Approved
+                <img class="CaseCell-approvedCheckmark" alt="Checkmark" />
+              </p>
+            <% else %>
+              <p class="CaseCell-createdDate">
+                Added
+                <%= view.created_at.to_date %>
+              </p>
+            <% end %>
+          </div>
+        </li>
+      <% end %>
     <% end %>
-  </div>
+  </ul>
 </main>

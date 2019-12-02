@@ -13,7 +13,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /Inbound Cases/)
-    assert_select(".CaseCell", 0)
+    assert_select(".CaseCell", 7)
   end
 
   test "can list opened cases as a dhs user" do

@@ -16,10 +16,4 @@ h2 {
 
 a {
   @extend .u-link;
-
-  /* disabled */
-  &[href=""] {
-    opacity: $opacityDisabled;
-    pointer-events: none;
-  }
 }

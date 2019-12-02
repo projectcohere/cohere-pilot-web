@@ -8,6 +8,10 @@ module Cases
       if policy.forbid?(:list)
         deny_access
       end
+
+      @cases = Case::Repo.get.find_all_for_supplier(
+        User::Repo.get.find_current.role.organization_id
+      )
     end
 
     def new
@@ -16,7 +20,6 @@ module Cases
       end
 
       @form = Cases::SupplierForm.new
-
       events << Events::DidViewSupplierForm.new
     end
 

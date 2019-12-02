@@ -1,8 +1,10 @@
 <main class="Main">
   <%- view = Cases::View.new(@case) %>
-  <h1 class="Main-title">
-    <%= view.recipient_name %>'s case
-  </h1>
+  <header class="Main-header">
+    <h1 class="Main-title">
+      <%= view.recipient_name %>'s case
+    </h1>
+  </header>
 
   <div class="ShowCase">
     <article class="ShowCase-case Detail">

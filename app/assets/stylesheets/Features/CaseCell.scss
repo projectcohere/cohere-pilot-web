@@ -26,4 +26,17 @@
   &-updateTime {
     color: $gray1;
   }
+
+  &-approved {
+    display: flex;
+  }
+
+  &-approvedCheckmark {
+    @include u-checkmark($offset-x: 2px, $offset-y: 10px);
+
+    width: $height3;
+    height: $height3;
+    margin-left: $spacing4;
+    color: transparent;
+  }
 }

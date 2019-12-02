@@ -31,4 +31,9 @@
       }
     }
   }
+
+  &-submit {
+    min-width: $width6;
+    justify-self: start;
+  }
 }

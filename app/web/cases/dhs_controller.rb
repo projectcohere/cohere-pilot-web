@@ -22,7 +22,6 @@ module Cases
       end
 
       @form = Cases::DhsForm.new(kase)
-
       events << Events::DidViewDhsForm.from_entity(kase)
     end
 
