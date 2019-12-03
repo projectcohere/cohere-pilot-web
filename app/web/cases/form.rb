@@ -3,7 +3,7 @@ module Cases
   class Form < ::ApplicationForm
     # -- fields --
     field(:status, :string,
-      inclusion: %w[opened pending submitted approved denied]
+      inclusion: %w[opened pending submitted approved denied removed]
     )
 
     field(:signed_contract, :boolean,
@@ -64,11 +64,12 @@ module Cases
         @model.sign_contract
       end
 
-      if new_status == :submitted
+      case new_status
+      when :submitted
         @model.submit_to_enroller
-      end
-
-      if new_status == :approved || new_status == :denied
+      when :removed
+        @model.remove_from_pilot
+      when :approved, :denied
         @model.complete(new_status)
       end
 

@@ -56,6 +56,12 @@ class Case < ::Entity
     end
   end
 
+  def remove_from_pilot
+    @completed_at = Time.zone.now
+    @status = :removed
+    @events << Events::DidComplete.from_entity(self)
+  end
+
   def submit_to_enroller
     if not can_submit?
       return

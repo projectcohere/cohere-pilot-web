@@ -7,9 +7,16 @@
     <div class="Main-actions">
       <% if @case.can_submit? %>
         <%=
-          button_to("Submit to Enroller", [@case, :submit],
+          button_to("Submit Case", [@case, :submit],
             method: :patch,
             class: "Button--action"
+          )
+        %>
+        <%=
+          button_to("Remove from Pilot", [@case, :complete],
+            method: :patch,
+            params: { case: { status: :removed } },
+            class: "Button--destructive"
           )
         %>
       <% elsif @case.can_complete? %>

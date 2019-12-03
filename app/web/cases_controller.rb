@@ -82,13 +82,13 @@ class CasesController < ApplicationController
     )
 
     if not @form.save
-      flash.now[:alert] = "May only approve or deny the case."
+      flash.now[:alert] = "May not set case status to #{@form.status}."
       render(:edit)
       return
     end
 
     redirect_to(cases_path,
-      notice: "#{status.to_s.capitalize} #{@case.recipient.profile.name}'s case!"
+      notice: "#{@form.status.to_s.capitalize} #{@case.recipient.profile.name}'s case!"
     )
   end
 

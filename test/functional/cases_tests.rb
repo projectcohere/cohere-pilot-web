@@ -391,4 +391,25 @@ class CasesTests < ActionDispatch::IntegrationTest
       assert_select("p", text: /approved/)
     end
   end
+
+  test "remove a case from the pilot as a cohere user" do
+    user_rec = users(:cohere_1)
+    case_rec = cases(:pending_1)
+
+    patch(auth("/cases/#{case_rec.id}/complete", as: user_rec), params: {
+      case: {
+        status: :removed
+      }
+    })
+
+    assert_redirected_to("/cases")
+    assert_present(flash[:notice])
+
+    assert_analytics_events(1) do |events|
+      assert_match(/Did Complete/, events[0])
+    end
+
+    assert_send_emails(0)
+  end
+
 end

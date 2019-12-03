@@ -70,6 +70,19 @@ class CaseTests < ActiveSupport::TestCase
     assert_instance_of(Case::Events::DidComplete, kase.events[0])
   end
 
+  test "removes a case from the pilot" do
+    kase = Case.stub(
+      status: :pending
+    )
+
+    kase.remove_from_pilot
+    assert_equal(kase.status, :removed)
+    assert_in_delta(Time.zone.now, kase.completed_at, 1.0)
+
+    assert_length(kase.events, 1)
+    assert_instance_of(Case::Events::DidComplete, kase.events[0])
+  end
+
   # -- commands/messages
   test "adds the first message" do
     kase = Case.stub
