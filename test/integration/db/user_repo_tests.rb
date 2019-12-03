@@ -13,7 +13,7 @@ module Db
 
     test "finds matching enrollers for a submitted case" do
       enroller_rec = enrollers(:enroller_1)
-      kase = Case.new(enroller_id: enroller_rec.id, status: nil, account: nil, recipient: nil, supplier_id: nil)
+      kase = Case.stub(enroller_id: enroller_rec.id)
       user_repo = User::Repo.new
 
       users = user_repo.find_all_for_submitted_case(kase)

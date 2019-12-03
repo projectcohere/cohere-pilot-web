@@ -2,4 +2,8 @@
   display: grid;
   gap: $spacing3;
   max-width: $width1;
+
+  &-fallback {
+    padding: 0 $spacing5;
+  }
 }

@@ -8,7 +8,20 @@ class Case
     belongs_to(:supplier, class_name: "::Supplier::Record")
     has_many(:documents, foreign_key: "case_id", class_name: "::Document::Record")
 
+    # -- program --
+    enum(program: %i[
+      meap
+      wrap
+    ])
+
     # -- status --
-    enum(status: %i[opened pending submitted approved denied removed])
+    enum(status: %i[
+      opened
+      pending
+      submitted
+      approved
+      denied
+      removed
+    ])
   end
 end

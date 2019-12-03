@@ -20,7 +20,9 @@
 
   <ul class="CaseList">
     <% if @cases&.blank? %>
-      <p>No cases left!</p>
+      <h2 class="CaseList-fallback">
+        No <%= @scope %> cases left.
+      </h2>
     <% else %>
       <% @cases.each do |kase| %>
         <%- view = Cases::View.new(kase) %>

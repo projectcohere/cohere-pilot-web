@@ -4,6 +4,7 @@ class CaseTests < ActiveSupport::TestCase
   # -- creation --
   test "opens the case" do
     kase = Case.open(
+      program: Case::Program::Meap,
       profile: :test_profile,
       account: :test_account,
       enroller: Enroller.new(id: 1, name: :enroller),

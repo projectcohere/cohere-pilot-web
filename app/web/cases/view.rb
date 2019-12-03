@@ -25,41 +25,55 @@ module Cases
 
     # -- queries/profile
     def recipient_name
-      @case.recipient.profile.name
+      profile.name
     end
 
     def address
-      @case.recipient.profile.address.to_lines
+      profile.address.to_lines
     end
 
     def phone_number
-      @case.recipient.profile.phone.number
+      profile.phone.number
+    end
+
+    private def profile
+      @case.recipient.profile
     end
 
     # -- queries/account
     def account_number
-      @case.account.number
+      account.number
     end
 
     def account_arrears
-      "$#{@case.account.arrears_dollars}"
+      "$#{account.arrears_dollars}"
+    end
+
+    private def account
+      @case.account
     end
 
     # -- queries/dhs-account
     def dhs_number
-      @case.recipient.dhs_account.number
+      dhs_account&.number || "Unknown"
     end
 
     def household_size
-      @case.recipient.dhs_account.household.size
+      dhs_account&.household&.size || "Unknown"
     end
 
     def household_income
-      "$#{@case.recipient.dhs_account.household.income_cents / 100.0}"
+      income_dollars = dhs_account&.household&.income_dollars
+      income_dollars.nil? ? "Unknown" : "$#{income_dollars}"
     end
 
     def fpl_percentage
-      "#{@case.fpl_percentage}%"
+      fpl_percentage = @case.fpl_percentage
+      fpl_percentage.nil? ? "Unknown" : "#{fpl_percentage}%"
+    end
+
+    private def dhs_account
+      @case.recipient.dhs_account
     end
 
     # -- queries/documents

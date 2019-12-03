@@ -7,26 +7,22 @@
 
   <ul class="CaseList">
     <% if @cases.blank? %>
-      <p>No cases left!</p>
+      <h2 class="CaseList-fallback">
+        No open cases left.
+      </h2>
     <% else %>
       <% @cases.each do |kase| %>
         <%- view = Cases::View.new(kase) %>
-        <% policy.with_case(kase) do %>
-          <li class="CaseCell">
-            <div class="CaseCell-row">
-              <% if policy.permit?(:edit) %>
-                <%= link_to(view.recipient_name, edit_case_path(kase), action: :edit, class: "CaseCell-name") %>
-              <% else %>
-                <p class="CaseCell-name"><%= view.recipient_name %></p>
-              <% end %>
-            </div>
-            <div class="CaseCell-row">
-              <p class="CaseCell-updateTime">
-                Updated <%= time_ago_in_words(view.updated_at) %> ago
-              </p>
-            </div>
-          </li>
-        <% end %>
+        <li class="CaseCell">
+          <div class="CaseCell-row">
+            <p class="CaseCell-name"><%= view.recipient_name %></p>
+          </div>
+          <div class="CaseCell-row">
+            <p class="CaseCell-updateTime">
+              Updated <%= time_ago_in_words(view.updated_at) %> ago
+            </p>
+          </div>
+        </li>
       <% end %>
     <% end %>
   </ul>
