@@ -75,8 +75,7 @@ Rails.application.routes.draw do
       index
       show
     ]) do
-      patch(:approve)
-      patch(:deny)
+      patch(:complete)
     end
   end
 
@@ -85,7 +84,10 @@ Rails.application.routes.draw do
       index
       edit
       update
-    ])
+    ]) do
+      patch(:submit)
+      patch(:complete)
+    end
   end
 
   constraints(Clearance::Constraints::SignedIn.new) do

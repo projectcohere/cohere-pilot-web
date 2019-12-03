@@ -57,7 +57,7 @@ class Case < ::Entity
   end
 
   def submit_to_enroller
-    if @status != :opened && @status != :pending
+    if not can_submit?
       return
     end
 
@@ -66,7 +66,7 @@ class Case < ::Entity
   end
 
   def complete(status)
-    if @status != :submitted
+    if not can_complete?
       return
     end
 
@@ -123,6 +123,14 @@ class Case < ::Entity
   end
 
   # -- queries --
+  def can_submit?
+    @status == :opened || @status == :pending
+  end
+
+  def can_complete?
+    @status == :submitted
+  end
+
   def fpl_percentage
     household = recipient&.dhs_account&.household
     if household.nil?

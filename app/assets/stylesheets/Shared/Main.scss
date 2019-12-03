@@ -4,9 +4,8 @@
 
   &-header {
     display: flex;
-    justify-content: space-between;
     align-items: flex-end;
-    max-width: $width1;
+    gap: $spacing3;
     margin-bottom: $spacing3;
     padding: $spacing4 0;
   }
@@ -14,5 +13,10 @@
   &-title {
     color: $brandBlack;
     font-size: $fontSize0;
+  }
+
+  &-actions {
+    display: flex;
+    gap: $spacing4;
   }
 }

@@ -23,6 +23,9 @@
 .Button--destructive {
   @extend .Button;
 
+  border: 2px solid $colorField;
+  line-height: $height2 - 4px;
+
   &:hover {
     background-color: $colorField;
   }

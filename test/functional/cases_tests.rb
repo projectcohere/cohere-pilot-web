@@ -156,6 +156,14 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/sign-in")
   end
 
+  test "can't edit a case without permission" do
+    user_rec = users(:supplier_1)
+    case_rec = cases(:submitted_1)
+
+    get(auth("/cases/#{case_rec.id}", as: user_rec))
+    assert_redirected_to("/cases")
+  end
+
   test "edit a case as a dhs user" do
     user_rec = users(:dhs_1)
     case_rec = cases(:pending_1)
@@ -197,44 +205,16 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "save an edited case as a cohere user" do
-    case_rec = cases(:pending_2)
+    case_rec = cases(:pending_1)
 
     patch(auth("/cases/#{case_rec.id}"), params: {
       case: {
-        status: :submitted,
         income: "$300.00"
       }
     })
 
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
-
-    assert_analytics_events(1)
-    assert_match(/Did Submit/, analytics_events[0])
-
-    send_all_emails!
-    assert_emails(1)
-    assert_select_email do
-      assert_select("a", text: /Danice Sample/) do |el|
-        assert_match(%r[#{ENV["HOST"]}/cases/\d+], el[0][:href])
-      end
-    end
-  end
-
-  test "save a completed case" do
-    case_rec = cases(:submitted_1)
-
-    patch(auth("/cases/#{case_rec.id}"), params: {
-      case: {
-        status: :approved
-      }
-    })
-
-    assert_redirected_to("/cases")
-    assert_present(flash[:notice])
-
-    assert_analytics_events(1)
-    assert_match(/Did Complete/, analytics_events[0])
   end
 
   test "save a signed contract" do
@@ -265,12 +245,11 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "show errors when saving an invalid case as a cohere user" do
-    case_rec = cases(:pending_2)
+    case_rec = cases(:pending_1)
 
     patch(auth("/cases/#{case_rec.id}"), params: {
       case: {
-        status: "submitted",
-        dhs_number: nil
+        first_name: nil
       }
     })
 
@@ -278,35 +257,123 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:alert])
   end
 
-  # -- approve/deny --
-  test "can't approve/deny a case if signed-out" do
+  # -- submit --
+  test "can't submit a case if signed-out" do
     assert_raises(ActionController::RoutingError) do
-      patch("/cases/3/approve")
+      patch("/cases/3/submit")
     end
   end
 
-  test "can't approve/deny a case without permission" do
+  test "can't submit a case without permission" do
+    user_rec = users(:enroller_1)
+
+    assert_raises(ActionController::RoutingError) do
+      patch(auth("/cases/4/submit", as: user_rec))
+    end
+  end
+
+  test "show errors when submitting an invalid case as a cohere user" do
+    case_rec = cases(:pending_2)
+
+    patch(auth("/cases/#{case_rec.id}/submit"))
+
+    assert_response(:success)
+    assert_present(flash[:alert])
+  end
+
+  test "can submit a case as a cohere user" do
+    case_rec = cases(:pending_1)
+    patch(auth("/cases/#{case_rec.id}/submit"))
+
+    assert_redirected_to("/cases")
+    assert_present(flash[:notice])
+
+    assert_analytics_events(1)
+    assert_match(/Did Submit/, analytics_events[0])
+
+    send_all_emails!
+    assert_emails(1)
+    assert_select_email do
+      assert_select("a", text: /Johnice Sample/) do |el|
+        assert_match(%r[#{ENV["HOST"]}/cases/\d+], el[0][:href])
+      end
+    end
+  end
+
+  # -- complete --
+  test "can't complete a case if signed-out" do
+    assert_raises(ActionController::RoutingError) do
+      patch("/cases/3/complete")
+    end
+  end
+
+  test "can't complete a case without permission" do
     user_rec = users(:supplier_1)
 
     assert_raises(ActionController::RoutingError) do
-      patch(auth("/cases/4/deny", as: user_rec))
+      patch(auth("/cases/4/complete", as: user_rec))
     end
   end
 
-  test "can't approve/deny another enroller's case as an enroller" do
+  test "can't complete another enroller's case as an enroller" do
     user_rec = users(:enroller_1)
     case_rec = cases(:submitted_2)
 
     assert_raises(ActiveRecord::RecordNotFound) do
-      patch(auth("/cases/#{case_rec.id}/deny", as: user_rec))
+      patch(auth("/cases/#{case_rec.id}/complete", as: user_rec))
     end
   end
 
-  test "can approve/deny a case as an enroller" do
+  test "can't complete a case with an unknown status" do
+    user_rec = users(:cohere_1)
+    case_rec = cases(:submitted_1)
+
+    patch(auth("/cases/#{case_rec.id}/complete", as: user_rec), params: {
+      case: {
+        status: :malicious
+      }
+    })
+
+    assert_response(:success)
+    assert_present(flash[:alert])
+  end
+
+  test "complete a case as a cohere user" do
+    user_rec = users(:cohere_1)
+    case_rec = cases(:submitted_1)
+
+    patch(auth("/cases/#{case_rec.id}/complete", as: user_rec), params: {
+      case: {
+        status: :approved
+      }
+    })
+
+    assert_redirected_to("/cases")
+    assert_present(flash[:notice])
+
+    assert_analytics_events(1)
+    assert_match(/Did Complete/, analytics_events[0])
+
+    send_all_emails!
+    assert_emails(1)
+    assert_select_email do
+      assert_select("a", text: /Johnice Sample/) do |el|
+        assert_match(%r[#{ENV["HOST"]}/cases/\d+], el[0][:href])
+      end
+
+      assert_select("p", text: /approved/)
+    end
+  end
+
+  test "complete a case as an enroller" do
     user_rec = users(:enroller_1)
     case_rec = cases(:submitted_1)
 
-    patch(auth("/cases/#{case_rec.id}/approve", as: user_rec))
+    patch(auth("/cases/#{case_rec.id}/complete", as: user_rec), params: {
+      case: {
+        status: :approved
+      }
+    })
 
     assert_redirected_to("/cases")
     assert_present(flash[:notice])

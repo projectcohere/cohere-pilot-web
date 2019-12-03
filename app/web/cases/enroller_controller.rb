@@ -15,12 +15,38 @@ module Cases
       )
     end
 
-    def approve
-      complete(:approved)
-    end
+    def complete
+      # find the case
+      user_repo = User::Repo.get
+      case_repo = Case::Repo.get
 
-    def deny
-      complete(:denied)
+      @case = case_repo.find_by_enroller_with_documents(
+        params[:case_id],
+        user_repo.find_current.role.organization_id
+      )
+
+      if policy.forbid?(:edit_status)
+        deny_access
+        return
+      end
+
+      # whitelist params
+      case_params = params.require(:case).permit(:status)
+      case_status = case_params[:status]&.to_sym
+
+      if case_status != :approved && case_status != :denied
+        flash.now[:alert] = "May only approve or deny the case."
+        render(:show)
+        return
+      end
+
+      # complete the case
+      @case.complete(case_status)
+      case_repo.save_completed(@case)
+
+      redirect_to(cases_path,
+        notice: "#{status.to_s.capitalize} #{@case.recipient.profile.name}'s case!"
+      )
     end
 
     def show
@@ -35,29 +61,6 @@ module Cases
       end
 
       events << Events::DidViewEnrollerCase.from_entity(@case)
-    end
-
-    # -- actions/helpers
-    private def complete(status)
-      user_repo = User::Repo.get
-      case_repo = Case::Repo.get
-
-      @case = case_repo.find_by_enroller_with_documents(
-        params[:case_id],
-        user_repo.find_current.role.organization_id
-      )
-
-      if policy.forbid?(:edit_status)
-        deny_access
-        return
-      end
-
-      @case.complete(status)
-      case_repo.save_completed(@case)
-
-      redirect_to(cases_path,
-        notice: "#{status.to_s.capitalize} #{@case.recipient.profile.name}'s case!"
-      )
     end
 
     # -- queries --

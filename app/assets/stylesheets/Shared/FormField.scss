@@ -70,7 +70,7 @@
 
   &.is-error:hover &-errors {
     position: absolute;
-    transform: translateX($spacing5);
+    transform: translateX(4px);
   }
 
   input {

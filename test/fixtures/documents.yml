@@ -8,7 +8,7 @@ document_p1_2:
   case: pending_1
 
 document_s1_1:
-  classification: :unknown
+  classification: :contract
   source_url: https://website.com/image1.jpg
   case: submitted_1
 

@@ -4,6 +4,25 @@
     <h1 class="Main-title">
       <%= view.recipient_name %>'s case
     </h1>
+
+    <div class="Main-actions">
+      <% if @case.can_complete? %>
+        <%=
+          button_to("Approve Case", [@case, :complete],
+            method: :patch,
+            params: { case: { status: :approved } },
+            class: "Button--action"
+          )
+        %>
+        <%=
+          button_to("Deny Case", [@case, :complete],
+            method: :patch,
+            params: { case: { status: :denied } },
+            class: "Button--destructive"
+          )
+        %>
+      <% end %>
+    </div>
   </header>
 
   <div class="ShowCase">
@@ -105,25 +124,6 @@
           </p>
         </label>
       </section>
-
-      <% if @case.status == :submitted %>
-        <div class="ShowCase-actions">
-          <%=
-            button_to("Approve Case", [@case, :approve],
-              method: :patch,
-              form_class: "ShowCase-action",
-              class: "Button--action"
-            )
-          %>
-          <%=
-            button_to("Deny Case", [@case, :deny],
-              method: :patch,
-              form_class: "ShowCase-action",
-              class: "Button--destructive"
-            )
-          %>
-        </div>
-      <% end %>
     </article>
 
     <%= render(partial: "cases/documents", locals: { documents: view.documents }) %>

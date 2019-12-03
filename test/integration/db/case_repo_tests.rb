@@ -237,7 +237,7 @@ module Db
     test "saves all fields and new documents" do
       domain_events = ArrayQueue.new
 
-      case_rec = cases(:pending_2)
+      case_rec = cases(:opened_1)
       account = Recipient::DhsAccount.new(
         number: "11111",
         household: Recipient::Household.new(
@@ -268,11 +268,11 @@ module Db
       assert_not_nil(document_rec)
 
       assert_length(kase.events, 0)
-      assert_length(domain_events, 3)
+      assert_length(domain_events, 4)
     end
 
     test "saves the changes from a message" do
-      case_rec = cases(:pending_2)
+      case_rec = cases(:pending_1)
 
       kase = Case::Repo.map_record(case_rec)
       kase.add_message(Message.stub(

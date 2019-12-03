@@ -34,7 +34,7 @@ module Cases
       )
 
       did_save = form.save
-      assert(did_save)
+      assert(did_save, "expected no errors saving, but got #{form.errors.full_messages}")
       assert_equal(kase.recipient.profile.name.first, "Edith")
     end
 
@@ -45,12 +45,13 @@ module Cases
       })
 
       did_save = form.save
-      assert_not(did_save)
+      assert_not(did_save, "expected errors saving, but got none")
       assert_present(form.errors[:first_name])
     end
 
     test "submits a case" do
-      kase = Case::Repo.map_record(cases(:pending_1))
+      case_rec = cases(:pending_1)
+      kase = Case::Repo.map_record(case_rec, case_rec.documents)
       case_repo = Minitest::Mock.new
         .expect(:save_all_fields_and_new_documents, nil, [kase])
 
@@ -65,25 +66,26 @@ module Cases
       )
 
       did_save = form.save
-      assert(did_save)
+      assert(did_save, "expected no errors saving, but got #{form.errors.full_messages}")
       assert_equal(kase.status, :submitted)
     end
 
     test "does not submit an invalid case" do
-      kase = Case::Repo.map_record(cases(:pending_1))
+      case_rec = cases(:pending_1)
+      kase = Case::Repo.map_record(case_rec, case_rec.documents)
       form = Form.new(kase, {
         "status" => "submitted",
         "dhs_number" => nil
       })
 
       did_save = form.save
-      assert_not(did_save)
-      assert_present(form.errors)
+      assert_not(did_save, "expected errors saving, but got none")
       assert_present(form.errors[:dhs_number])
     end
 
     test "completes a case" do
-      kase = Case::Repo.map_record(cases(:submitted_1))
+      case_rec = cases(:submitted_1)
+      kase = Case::Repo.map_record(case_rec, case_rec.documents)
       case_repo = Minitest::Mock.new
         .expect(:save_all_fields_and_new_documents, nil, [kase])
 
@@ -98,7 +100,7 @@ module Cases
       )
 
       did_save = form.save
-      assert(did_save)
+      assert(did_save, "expected no errors saving, but got #{form.errors.full_messages}")
       assert_equal(kase.status, :approved)
       assert_not_nil(kase.completed_at)
     end
@@ -119,7 +121,7 @@ module Cases
       )
 
       did_save = form.save
-      assert(did_save)
+      assert(did_save, "expected no errors saving, but got #{form.errors.full_messages}")
       assert_length(kase.new_documents, 1)
     end
   end

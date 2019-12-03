@@ -1,8 +1,34 @@
 <main class="Main">
+  <%- view = Cases::View.new(@case) %>
   <header class="Main-header">
     <h1 class="Main-title">
-      <%= @form.name %>'s case
+      <%= view.recipient_name %>'s case
     </h1>
+    <div class="Main-actions">
+      <% if @case.can_submit? %>
+        <%=
+          button_to("Submit to Enroller", [@case, :submit],
+            method: :patch,
+            class: "Button--action"
+          )
+        %>
+      <% elsif @case.can_complete? %>
+        <%=
+          button_to("Approve Case", [@case, :complete],
+            method: :patch,
+            params: { case: { status: :approved } },
+            class: "Button--action"
+          )
+        %>
+        <%=
+          button_to("Deny Case", [@case, :complete],
+            method: :patch,
+            params: { case: { status: :denied } },
+            class: "Button--destructive"
+          )
+        %>
+      <% end %>
+    </div>
   </header>
 
   <div class="EditCase">
@@ -10,9 +36,6 @@
       <%= f.section("Case Details", class: "CaseForm-details") do %>
         <%= f.field(:enroller, background: false, class: "CaseForm-enroller") do %>
           <%= f.value(@form.enroller_name) %>
-        <% end %>
-        <%= f.field(:status, background: false, class: "CaseForm-status") do %>
-          <%= f.select(:status, @form.statuses.map { |s| [s.to_s.capitalize, s] }) %>
         <% end %>
         <%- disabled = @form.signed_contract %>
         <%= f.field(:signed_contract, "Contract", disabled: disabled, background: false, class: "CaseForm-signedContract") do %>

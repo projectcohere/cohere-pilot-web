@@ -45,13 +45,4 @@
   &-fpl {
     grid-column: 1 / 4;
   }
-
-  /* ShowCase-actions */
-  &-actions {
-    display: flex;
-  }
-
-  &-action + &-action {
-    margin-left: $spacing4;
-  }
 }

@@ -16,9 +16,9 @@ class Case
       when :list
         true
       when :edit
-        role != :supplier && role != :enroller
+        role == :cohere || role == :dhs
       when :edit_status
-        role == :enroller
+        role == :cohere || role == :enroller
       when :create
         role == :supplier
       when :view

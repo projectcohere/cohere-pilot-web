@@ -2,10 +2,16 @@ module Cases
   # A form object for all the case info
   class Form < ::ApplicationForm
     # -- fields --
-    field(:status, :string)
-    field(:signed_contract, :boolean)
+    field(:status, :string,
+      inclusion: %w[opened pending submitted approved denied]
+    )
+
+    field(:signed_contract, :boolean,
+      on: { submitted: { presence: true } }
+    )
+
     fields_from(:supplier, SupplierForm)
-    fields_from(:opened, DhsForm)
+    fields_from(:dhs, DhsForm)
 
     # -- lifetime --
     def initialize(
@@ -29,7 +35,7 @@ module Cases
         attrs.slice(SupplierForm.attribute_names)
       )
 
-      @opened = DhsForm.new(
+      @dhs = DhsForm.new(
         kase,
         attrs.slice(DhsForm.attribute_names)
       )
@@ -52,7 +58,7 @@ module Cases
 
       @model.update_supplier_account(supplier.map_to_supplier_account)
       @model.update_recipient_profile(supplier.map_to_recipient_profile)
-      @model.attach_dhs_account(opened.map_to_dhs_account)
+      @model.attach_dhs_account(dhs.map_to_dhs_account)
 
       if signed_contract
         @model.sign_contract
@@ -99,16 +105,6 @@ module Cases
 
     def documents
       @model.documents
-    end
-
-    def statuses
-      [
-        :opened,
-        :pending,
-        :submitted,
-        :approved,
-        :denied
-      ]
     end
 
     # -- ApplicationForm --
