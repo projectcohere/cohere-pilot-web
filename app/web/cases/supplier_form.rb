@@ -111,23 +111,29 @@ module Cases
 
     # -- commands/cosmetics
     def first_name=(value)
-      super(value&.titlecase)
+      super(beautify(value))
     end
 
     def last_name=(value)
-      super(value&.titlecase)
+      super(beautify(value))
     end
 
     def street=(value)
-      super(value&.titlecase)
+      super(beautify(value))
     end
 
     def street2=(value)
-      super(value&.titlecase)
+      super(beautify(value))
     end
 
     def city=(value)
-      super(value&.titlecase)
+      super(beautify(value))
+    end
+
+    private def beautify(value)
+      if not value.nil?
+        value.strip.titlecase
+      end
     end
 
     # -- commands/helpers
