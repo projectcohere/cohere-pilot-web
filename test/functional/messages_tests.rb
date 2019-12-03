@@ -56,8 +56,9 @@ class MessagesTests < ActionDispatch::IntegrationTest
       assert_enqueued_jobs(1)
       assert_response(:no_content)
 
-      assert_analytics_events(1)
-      assert_match(/Did Receive Message/, analytics_events[0])
+      assert_analytics_events(1) do |events|
+        assert_match(/Did Receive Message/, events[0])
+      end
     end
   end
 end

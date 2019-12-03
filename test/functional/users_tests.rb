@@ -85,9 +85,7 @@ class UsersTests < ActionDispatch::IntegrationTest
     post("/passwords", params: password_params)
     assert_response(:success)
 
-    send_all_emails!
-    assert_emails(1)
-    assert_select_email do
+    assert_send_emails(1) do
       assert_select("a", text: /Change my password/) do |el|
         assert_match(%r[#{ENV["HOST"]}/user/\d+/password/edit], el[0][:href])
       end
@@ -104,8 +102,7 @@ class UsersTests < ActionDispatch::IntegrationTest
     post("/passwords", params: password_params)
     assert_response(:success)
 
-    send_all_emails!
-    assert_emails(0)
+    assert_send_emails(0)
   end
 
   test "follows the reset password link" do
@@ -169,9 +166,7 @@ class UsersTests < ActionDispatch::IntegrationTest
 
     invite_users.(invitation_csv)
 
-    send_all_emails!
-    assert_emails(4)
-    assert_select_email do
+    assert_send_emails(4) do
       assert_select("a", text: /create a password/) do |el|
         assert_match(%r[#{ENV["HOST"]}/user/\d+/password/edit\?invited=true&token=\w+], el[0][:href])
       end

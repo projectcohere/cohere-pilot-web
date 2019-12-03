@@ -63,8 +63,9 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_response(:success)
     assert_select(".Main-title", text: /Add a Case/)
 
-    assert_analytics_events(1)
-    assert_match(/Did View Supplier Form/, analytics_events[0])
+    assert_analytics_events(1) do |events|
+      assert_match(/Did View Supplier Form/, events[0])
+    end
   end
 
   test "save an opened case as a supplier" do
@@ -86,12 +87,11 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:notice])
     assert_redirected_to("/cases")
 
-    assert_analytics_events(1)
-    assert_match(/Did Open/, analytics_events[0])
+    assert_analytics_events(1) do |events|
+      assert_match(/Did Open/, events[0])
+    end
 
-    send_all_emails!
-    assert_emails(1)
-    assert_select_email do
+    assert_send_emails(1) do
       assert_select("a", text: /Janice Sample/) do |el|
         assert_match(%r[#{ENV["HOST"]}/cases/\d+/edit], el[0][:href])
       end
@@ -144,8 +144,9 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_response(:success)
     assert_select(".Main-title", text: /#{kase.recipient.profile.name}/)
 
-    assert_analytics_events(1)
-    assert_match(/Did View Enroller Case/, analytics_events[0])
+    assert_analytics_events(1) do |events|
+      assert_match(/Did View Enroller Case/, events[0])
+    end
   end
 
   # -- edit --
@@ -172,8 +173,9 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_response(:success)
     assert_select(".Main-title", text: /\w's case/)
 
-    assert_analytics_events(1)
-    assert_match(/Did View Dhs Form/, analytics_events[0])
+    assert_analytics_events(1) do |events|
+      assert_match(/Did View Dhs Form/, events[0])
+    end
   end
 
   test "save an edited case as a dhs user" do
@@ -191,8 +193,9 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
 
-    assert_analytics_events(1)
-    assert_match(/Did Become Pending/, analytics_events[0])
+    assert_analytics_events(1) do |events|
+      assert_match(/Did Become Pending/, events[0])
+    end
   end
 
   test "edit a case as a cohere user" do
@@ -288,12 +291,11 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
 
-    assert_analytics_events(1)
-    assert_match(/Did Submit/, analytics_events[0])
+    assert_analytics_events(1) do |events|
+      assert_match(/Did Submit/, events[0])
+    end
 
-    send_all_emails!
-    assert_emails(1)
-    assert_select_email do
+    assert_send_emails(1) do
       assert_select("a", text: /Johnice Sample/) do |el|
         assert_match(%r[#{ENV["HOST"]}/cases/\d+], el[0][:href])
       end
@@ -351,12 +353,11 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
 
-    assert_analytics_events(1)
-    assert_match(/Did Complete/, analytics_events[0])
+    assert_analytics_events(1) do |events|
+      assert_match(/Did Complete/, events[0])
+    end
 
-    send_all_emails!
-    assert_emails(1)
-    assert_select_email do
+    assert_send_emails(1) do
       assert_select("a", text: /Johnice Sample/) do |el|
         assert_match(%r[#{ENV["HOST"]}/cases/\d+], el[0][:href])
       end
@@ -378,12 +379,11 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
 
-    assert_analytics_events(1)
-    assert_match(/Did Complete/, analytics_events[0])
+    assert_analytics_events(1) do |events|
+      assert_match(/Did Complete/, events[0])
+    end
 
-    send_all_emails!
-    assert_emails(1)
-    assert_select_email do
+    assert_send_emails(1) do
       assert_select("a", text: /Johnice Sample/) do |el|
         assert_match(%r[#{ENV["HOST"]}/cases/\d+], el[0][:href])
       end
