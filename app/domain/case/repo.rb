@@ -83,10 +83,23 @@ class Case
     end
 
     # -- queries/many
-    def find_all_incomplete
+    def find_all_open
       case_recs = Case::Record
         .where(completed_at: nil)
         .order(updated_at: :desc)
+        .includes(:recipient)
+
+      # pre-load associated aggregates
+      @supplier_repo.find_many(case_recs.map(&:supplier_id))
+      @enroller_repo.find_many(case_recs.map(&:enroller_id))
+
+      entities_from(case_recs)
+    end
+
+    def find_all_completed
+      case_recs = Case::Record
+        .where.not(completed_at: nil)
+        .order(completed_at: :desc)
         .includes(:recipient)
 
       # pre-load associated aggregates

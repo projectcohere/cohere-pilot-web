@@ -94,10 +94,16 @@ module Db
       end
     end
 
-    test "finds all incomplete cases" do
+    test "finds all open cases" do
       case_repo = Case::Repo.new
-      cases = case_repo.find_all_incomplete
+      cases = case_repo.find_all_open
       assert_length(cases, 6)
+    end
+
+    test "finds all completed cases" do
+      case_repo = Case::Repo.new
+      cases = case_repo.find_all_completed
+      assert_length(cases, 1)
     end
 
     test "finds all submitted cases for an enroller" do

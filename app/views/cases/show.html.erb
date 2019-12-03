@@ -1,0 +1,112 @@
+<main class="Main">
+  <%- view = Cases::View.new(@case) %>
+  <header class="Main-header">
+    <h1 class="Main-title">
+      <%= view.recipient_name %>'s case
+    </h1>
+  </header>
+
+  <div class="ShowCase">
+    <article class="ShowCase-case Detail">
+      <section class="ShowCase-details Detail-section">
+        <h1><span>Case Status</span></h1>
+        <p class="DetailField-text">
+          <%= view.status %>
+        </p>
+      </section>
+
+      <section class="ShowCase-contact Detail-section">
+        <h1><span>Contact</span></h1>
+        <label class="ShowCase-phoneNumber DetailField">
+          <span class="DetailField-hint">
+            Phone #
+          </span>
+          <p class="DetailField-text">
+            +1 <%= number_to_phone(view.phone_number) %>
+          </p>
+        </label>
+        <label class="ShowCase-address DetailField">
+          <span class="DetailField-hint">
+            Primary Residential Address
+          </span>
+          <p class="DetailField-text">
+            <% view.address.each do |line| %>
+              <%= line %>
+              <br>
+            <% end %>
+          </p>
+        </section>
+      </section>
+
+      <section class="ShowCase-utilityAccount Detail-section">
+        <h1><span>Utility Account</span></h1>
+        <label class="ShowCase-supplier DetailField">
+          <span class="DetailField-hint">
+            Supplier
+          </span>
+          <p class="DetailField-text">
+            <%= view.supplier_name %>
+          </p>
+        </label>
+        <label class="ShowCase-accountNumber DetailField">
+          <span class="DetailField-hint">
+            Account #
+          </span>
+          <p class="DetailField-text">
+            <%= view.account_number %>
+          </p>
+        </label>
+        <label class="ShowCase-arrears DetailField">
+          <span class="DetailField-hint">
+            Arrears
+          </span>
+          <p class="DetailField-text">
+            <%= view.account_arrears %>
+          </p>
+        </label>
+      </section>
+
+      <section class="ShowCase-dhs Detail-section">
+        <h1><span>MDHHS</span></h1>
+        <label class="ShowCase-dhsNumber DetailField">
+          <span class="DetailField-hint">
+            Case #
+          </span>
+          <p class="DetailField-text">
+            <%= view.dhs_number %>
+          </p>
+        </label>
+      </section>
+
+      <section class="ShowCase-household Detail-section">
+        <h1><span>Household</span></h1>
+        <label class="ShowCase-householdSize DetailField">
+          <span class="DetailField-hint">
+            Size
+          </span>
+          <p class="DetailField-text">
+            <%= view.household_size %>
+          </p>
+        </label>
+        <label class="ShowCase-monthlyIncome DetailField">
+          <span class="DetailField-hint">
+            Monthly Income
+          </span>
+          <p class="DetailField-text">
+            <%= view.household_income %>
+          </p>
+        </label>
+        <label class="ShowCase-fpl DetailField">
+          <span class="DetailField-hint">
+            FPL Percentage
+          </span>
+          <p class="DetailField-text">
+            <%= view.fpl_percentage %>
+          </p>
+        </label>
+      </section>
+    </article>
+
+    <%= render(partial: "cases/documents", locals: { documents: view.documents }) %>
+  </div>
+</main>

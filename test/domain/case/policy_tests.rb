@@ -36,11 +36,11 @@ class Case
       assert(policy.permit?(:view))
     end
 
-    test "forbids cohere users from viewing a case" do
+    test "permits cohere users to view a case" do
       user = User.new(id: nil, email: nil, role: User::Role.named(:cohere))
       kase = cases(:opened_1)
       policy = Case::Policy.new(user, kase)
-      assert(policy.forbid?(:view))
+      assert(policy.permit?(:view))
     end
 
     test "forbids dhs users from viewing a case" do

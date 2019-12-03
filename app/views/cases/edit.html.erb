@@ -40,7 +40,10 @@
 
   <div class="EditCase">
     <%= form_for(@form, url: case_path(@form.id), html: { class: "CaseForm Form" }) do |f| %>
-      <%= f.section("Case Details", class: "CaseForm-details") do %>
+      <%= f.section("Details", class: "CaseForm-details") do %>
+        <%= f.field(:status, background: false, class: "CaseForm-status") do %>
+          <%= f.value(@form.status.titlecase) %>
+        <% end %>
         <%= f.field(:enroller, background: false, class: "CaseForm-enroller") do %>
           <%= f.value(@form.enroller_name) %>
         <% end %>

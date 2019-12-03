@@ -80,11 +80,14 @@ Rails.application.routes.draw do
   end
 
   constraints(signed_in(role: :cohere)) do
-    resources(:cases, only: %i[
-      index
+    resources(:cases, constraints: { id: /\d+/ }, only: %i[
       edit
       update
+      show
     ]) do
+      get("/:scope", on: :collection, action: :index, constraints: { scope: /open|completed/ })
+      get("/", on: :collection, to: redirect("/cases/open"))
+
       patch(:submit)
       patch(:complete)
     end

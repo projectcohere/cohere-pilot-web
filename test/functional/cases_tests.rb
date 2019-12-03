@@ -25,13 +25,29 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 4)
   end
 
-  test "can list cases as an cohere user" do
+  test "can list cases as a cohere user" do
     user_rec = users(:cohere_1)
 
     get(auth("/cases", as: user_rec))
+    assert_redirected_to("/cases/open")
+  end
+
+  test "can list open cases as a cohere user" do
+    user_rec = users(:cohere_1)
+
+    get(auth("/cases/open", as: user_rec))
     assert_response(:success)
-    assert_select(".Main-title", text: /All Cases/)
+    assert_select(".Main-title", text: /Open Cases/)
     assert_select(".CaseCell", 6)
+  end
+
+  test "can list completed cases as a cohere user" do
+    user_rec = users(:cohere_1)
+
+    get(auth("/cases/completed", as: user_rec))
+    assert_response(:success)
+    assert_select(".Main-title", text: /Completed Cases/)
+    assert_select(".CaseCell", 1)
   end
 
   test "can list submitted cases as an enroller" do
@@ -120,9 +136,10 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "can't view a case without permission" do
+    user_rec = users(:supplier_1)
     case_rec = cases(:submitted_1)
 
-    get(auth("/cases/#{case_rec.id}"))
+    get(auth("/cases/#{case_rec.id}", as: user_rec))
     assert_redirected_to("/cases")
   end
 
@@ -133,6 +150,16 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_raises(ActiveRecord::RecordNotFound) do
       get(auth("/cases/#{case_rec.id}", as: user_rec))
     end
+  end
+
+  test "view a case as a cohere user" do
+    user_rec = users(:cohere_1)
+    case_rec = cases(:approved_1)
+    kase = Case::Repo.map_record(case_rec)
+
+    get(auth("/cases/#{kase.id}", as: user_rec))
+    assert_response(:success)
+    assert_select(".Main-title", text: /#{kase.recipient.profile.name}/)
   end
 
   test "view a case as an enroller" do

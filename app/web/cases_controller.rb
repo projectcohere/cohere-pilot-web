@@ -4,11 +4,18 @@ class CasesController < ApplicationController
 
   # -- actions --
   def index
+    @scope = params[:scope]
+
     if policy.forbid?(:list)
       deny_access
     end
 
-    @cases = Case::Repo.get.find_all_incomplete
+    case @scope
+    when "open"
+      @cases = Case::Repo.get.find_all_open
+    when "completed"
+      @cases = Case::Repo.get.find_all_completed
+    end
   end
 
   def edit
@@ -90,6 +97,14 @@ class CasesController < ApplicationController
     redirect_to(cases_path,
       notice: "#{@form.status.to_s.capitalize} #{@case.recipient.profile.name}'s case!"
     )
+  end
+
+  def show
+    @case = Case::Repo.get.find(params[:id])
+
+    if policy.forbid?(:view)
+      deny_access
+    end
   end
 
   # -- queries --
