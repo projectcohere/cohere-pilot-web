@@ -7,7 +7,9 @@
 
   <ul class="CaseList">
     <% if @cases.blank? %>
-      <p>No cases left!</p>
+      <h2 class="CaseList-fallback">
+        No submitted cases left.
+      </h2>
     <% else %>
       <% @cases.each do |kase| %>
         <%- view = Cases::View.new(kase) %>
@@ -19,6 +21,11 @@
             <div class="CaseCell-row">
               <p class="CaseCell-organizations">
                 <%= view.supplier_name %>
+              </p>
+            </div>
+            <div class="CaseCell-row">
+              <p class="CaseCell-status">
+                <%= view.status %>
               </p>
               <p class="CaseCell-updateTime">
                 Updated <%= time_ago_in_words(view.updated_at) %> ago
