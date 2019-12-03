@@ -24,4 +24,17 @@ class CasesMailer < ApplicationMailer
       bcc: emails
     )
   end
+
+  def did_complete(case_id)
+    @case = Case::Repo.get.find(case_id)
+
+    emails = User::Repo.get
+      .find_all_for_completed_case
+      .map(&:email)
+
+    mail(
+      subject: "Cohere Pilot -- A case was completed!",
+      bcc: emails
+    )
+  end
 end

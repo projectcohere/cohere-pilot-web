@@ -8,7 +8,7 @@ class UsersTests < ActionDispatch::IntegrationTest
     assert_select(".SignIn-title h2", text: /sign in/)
   end
 
-  test "signs in as an operator" do
+  test "signs in as an cohere user" do
     session_params = {
       session: {
         email: "me@cohere.org",
@@ -31,7 +31,7 @@ class UsersTests < ActionDispatch::IntegrationTest
 
     post("/sessions", params: session_params)
     assert(current_session.signed_in?)
-    assert_redirected_to("/cases/enroller")
+    assert_redirected_to("/cases")
   end
 
   test "signs in as a supplier" do
@@ -44,10 +44,10 @@ class UsersTests < ActionDispatch::IntegrationTest
 
     post("/sessions", params: session_params)
     assert(current_session.signed_in?)
-    assert_redirected_to("/cases/supplier")
+    assert_redirected_to("/cases")
   end
 
-  test "signs in as a dhs partner" do
+  test "signs in as a dhs user" do
     session_params = {
       session: {
         email: "me@michigan.gov",
@@ -57,7 +57,7 @@ class UsersTests < ActionDispatch::IntegrationTest
 
     post("/sessions", params: session_params)
     assert(current_session.signed_in?)
-    assert_redirected_to("/cases/dhs")
+    assert_redirected_to("/cases")
   end
 
   # -- sign-out --
@@ -85,9 +85,7 @@ class UsersTests < ActionDispatch::IntegrationTest
     post("/passwords", params: password_params)
     assert_response(:success)
 
-    send_all_emails!
-    assert_emails(1)
-    assert_select_email do
+    assert_send_emails(1) do
       assert_select("a", text: /Change my password/) do |el|
         assert_match(%r[#{ENV["HOST"]}/user/\d+/password/edit], el[0][:href])
       end
@@ -104,8 +102,7 @@ class UsersTests < ActionDispatch::IntegrationTest
     post("/passwords", params: password_params)
     assert_response(:success)
 
-    send_all_emails!
-    assert_emails(0)
+    assert_send_emails(0)
   end
 
   test "follows the reset password link" do
@@ -148,7 +145,7 @@ class UsersTests < ActionDispatch::IntegrationTest
 
   # -- invitation --
   test "invites the user" do
-    event_queue = EventQueue.new
+    domain_events = ArrayQueue.new
 
     invitation_csv = <<-CSV.strip_heredoc
       email,role_name,role_organization_id
@@ -160,18 +157,16 @@ class UsersTests < ActionDispatch::IntegrationTest
 
     invite_users = Users::SendInvitations.new(
       user_repo: User::Repo.new(
-        event_queue: event_queue
+        domain_events: domain_events
       ),
       process_events: Events::ProcessAll.new(
-        event_queue: event_queue
+        domain_events: domain_events
       )
     )
 
     invite_users.(invitation_csv)
 
-    send_all_emails!
-    assert_emails(4)
-    assert_select_email do
+    assert_send_emails(4) do
       assert_select("a", text: /create a password/) do |el|
         assert_match(%r[#{ENV["HOST"]}/user/\d+/password/edit\?invited=true&token=\w+], el[0][:href])
       end

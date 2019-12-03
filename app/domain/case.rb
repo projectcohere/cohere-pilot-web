@@ -1,7 +1,7 @@
 class Case < ::Entity
   # TODO: should these be generalized for entity/ar?
   prop(:record, default: nil)
-  prop(:events, default: EventQueue::Empty)
+  prop(:events, default: ArrayQueue::Empty)
 
   # -- props --
   prop(:id, default: Id::None)
@@ -56,8 +56,14 @@ class Case < ::Entity
     end
   end
 
+  def remove_from_pilot
+    @completed_at = Time.zone.now
+    @status = :removed
+    @events << Events::DidComplete.from_entity(self)
+  end
+
   def submit_to_enroller
-    if @status != :opened && @status != :pending
+    if not can_submit?
       return
     end
 
@@ -66,7 +72,7 @@ class Case < ::Entity
   end
 
   def complete(status)
-    if @status != :submitted
+    if not can_complete?
       return
     end
 
@@ -77,13 +83,9 @@ class Case < ::Entity
 
   # -- commands/messages
   def add_message(message)
-    is_first_message = @received_message_at.nil?
-
     # track the message receipt
     @received_message_at = Time.zone.now
-    if is_first_message
-      @events << Events::DidReceiveFirstMessage.from_entity(self)
-    end
+    @events << Events::DidReceiveMessage.from_entity(self)
 
     # upload message attachments
     message.attachments&.each do |attachment|
@@ -127,6 +129,14 @@ class Case < ::Entity
   end
 
   # -- queries --
+  def can_submit?
+    @status == :opened || @status == :pending
+  end
+
+  def can_complete?
+    @status == :submitted
+  end
+
   def fpl_percentage
     household = recipient&.dhs_account&.household
     if household.nil?

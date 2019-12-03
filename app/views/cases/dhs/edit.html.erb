@@ -1,10 +1,12 @@
 <main class="Main">
-  <h1 class="Main-title">
-    <%= @form.name %>'s case
-  </h1>
+  <header class="Main-header">
+    <h1 class="Main-title">
+      <%= @form.name %>'s case
+    </h1>
+  </header>
 
   <div class="EditCase">
-    <%= form_for(@form, url: cases_dhs_path(@form.id), html: { class: "CaseForm Form" }) do |f| %>
+    <%= form_for(@form, url: case_path(@form.id), html: { class: "CaseForm Form" }) do |f| %>
       <%= f.section("Primary Residential Address", class: "CaseForm-address--read") do %>
         <% @form.address.each do |line| %>
           <p class="CaseForm-addressLine"><%= line %></p>
@@ -13,7 +15,7 @@
 
       <%= render(partial: "fields", locals: { f: f, form: @form }) %>
 
-      <%= f.submit(class: "Button--action") %>
+      <%= f.submit(class: "Form-submit Button--action") %>
     <% end %>
 
     <%= render(partial: "cases/documents", locals: { documents: @form.documents }) %>

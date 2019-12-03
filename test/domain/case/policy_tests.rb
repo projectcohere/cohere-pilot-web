@@ -4,7 +4,7 @@ class Case
   # TODO: randomize scope/role pairs for catch-all forbid tests
   class PolicyTests < ActiveSupport::TestCase
     # -- list --
-    test "permits operators to list cases" do
+    test "permits cohere users to list cases" do
       user = User.new(id: nil, email: nil, role: User::Role.named(:cohere))
       policy = Case::Policy.new(user)
       assert(policy.permit?(:list))
@@ -16,7 +16,7 @@ class Case
       assert(policy.permit?(:list))
     end
 
-    test "permits dhs partners to list cases" do
+    test "permits dhs users to list cases" do
       user = User.new(id: nil, email: nil, role: User::Role.named(:dhs))
       policy = Case::Policy.new(user)
       assert(policy.permit?(:list))
@@ -36,14 +36,14 @@ class Case
       assert(policy.permit?(:view))
     end
 
-    test "forbids operators from viewing a case" do
+    test "permits cohere users to view a case" do
       user = User.new(id: nil, email: nil, role: User::Role.named(:cohere))
       kase = cases(:opened_1)
       policy = Case::Policy.new(user, kase)
-      assert(policy.forbid?(:view))
+      assert(policy.permit?(:view))
     end
 
-    test "forbids dhs partners from viewing a case" do
+    test "forbids dhs users from viewing a case" do
       user = User.new(id: nil, email: nil, role: User::Role.named(:dhs))
       kase = cases(:opened_1)
       policy = Case::Policy.new(user, kase)
@@ -58,14 +58,14 @@ class Case
     end
 
     # -- edit --
-    test "permits operators to edit a case" do
+    test "permits cohere users to edit a case" do
       user = User.new(id: nil, email: nil, role: User::Role.named(:cohere))
       kase = cases(:opened_1)
       policy = Case::Policy.new(user, kase)
       assert(policy.permit?(:edit))
     end
 
-    test "permits dhs partners to edit a case" do
+    test "permits dhs users to edit a case" do
       user = User.new(id: nil, email: nil, role: User::Role.named(:dhs))
       kase = cases(:opened_1)
       policy = Case::Policy.new(user, kase)
@@ -94,7 +94,7 @@ class Case
     end
 
     test "forbids others from creating cases" do
-      user = User.new(id: nil, email: nil, role: User::Role.named(:operator))
+      user = User.new(id: nil, email: nil, role: User::Role.named(:cohere))
       policy = Case::Policy.new(user)
       assert(policy.forbid?(:create))
     end

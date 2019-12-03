@@ -141,7 +141,12 @@
 
   /* SignIn-title */
   &-title {
+    > h1 {
+      line-height: 1.3;
+    }
+
     > h2 {
+      line-height: 1.5;
       margin-top: $spacing4;
     }
   }

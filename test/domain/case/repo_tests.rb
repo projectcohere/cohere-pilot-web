@@ -23,7 +23,7 @@ class Case
       document = kase.documents[0]
       assert_not_nil(document.record)
       assert_not_nil(document.id.val)
-      assert_equal(document.classification, :unknown)
+      assert_equal(document.classification, :contract)
       assert_not_nil(document.file)
       assert_not_nil(document.source_url)
     end

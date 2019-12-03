@@ -70,7 +70,7 @@
 
   &.is-error:hover &-errors {
     position: absolute;
-    transform: translateX($spacing5);
+    transform: translateX(4px);
   }
 
   input {
@@ -98,8 +98,8 @@
     -moz-appearance: none;
 
     position: relative;
-    max-width: 20px;
-    height: 20px;
+    max-width: $height3;
+    height: $height3;
     margin-right: $spacing4;
     border-bottom: 2px solid $brandBlack;
     border-top-left-radius: $radiusCheckbox;
@@ -107,28 +107,7 @@
     background-color: $colorField;
 
     &:checked {
-      @mixin u-check {
-        position: absolute;
-        height: 2px;
-        background-color: $brandPrimary;
-      }
-
-      $offset-x: 5px;
-      $offset-y: 5px;
-
-      &::before {
-        @include u-check;
-        content: "";
-        width: 20px;
-        transform: translate($offset-x, $offset-y) rotate(-45deg);
-      }
-
-      &::after {
-        @include u-check;
-        content: "";
-        width: 8px;
-        transform: translate($offset-x - 3px, $offset-y + 4px) rotate(45deg);
-      }
+      @include u-checkmark;
     }
   }
 }

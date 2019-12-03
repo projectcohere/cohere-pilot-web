@@ -33,4 +33,4 @@ recipient_3:
   zip: 22222
   dhs_number: 99999
   household_size: 2
-  household_income_cents: nil
+  household_income_cents: 400_00

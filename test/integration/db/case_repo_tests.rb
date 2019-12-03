@@ -94,10 +94,16 @@ module Db
       end
     end
 
-    test "finds all incomplete cases" do
+    test "finds all open cases" do
       case_repo = Case::Repo.new
-      cases = case_repo.find_all_incomplete
+      cases = case_repo.find_all_open
       assert_length(cases, 6)
+    end
+
+    test "finds all completed cases" do
+      case_repo = Case::Repo.new
+      cases = case_repo.find_all_completed
+      assert_length(cases, 1)
     end
 
     test "finds all submitted cases for an enroller" do
@@ -116,7 +122,7 @@ module Db
 
     # -- test/save
     test "saves an opened case with account and profile" do
-      event_queue = EventQueue.new
+      domain_events = ArrayQueue.new
 
       kase = Case.open(
         profile: Recipient::Profile.new(
@@ -142,7 +148,7 @@ module Db
         supplier: Supplier::Repo.map_record(suppliers(:supplier_1))
       )
 
-      case_repo = Case::Repo.new(event_queue: event_queue)
+      case_repo = Case::Repo.new(domain_events: domain_events)
       act = -> do
         case_repo.save_account_and_recipient_profile(kase)
       end
@@ -159,11 +165,11 @@ module Db
       assert_not_nil(kase.recipient.id)
 
       assert_length(kase.events, 0)
-      assert_length(event_queue, 1)
+      assert_length(domain_events, 1)
     end
 
     test "saves an opened case for an existing recipient" do
-      event_queue = EventQueue.new
+      domain_events = ArrayQueue.new
 
       kase = Case.open(
         profile: Recipient::Profile.new(
@@ -189,7 +195,7 @@ module Db
         supplier: Supplier::Repo.map_record(suppliers(:supplier_1))
       )
 
-      case_repo = Case::Repo.new(event_queue: event_queue)
+      case_repo = Case::Repo.new(domain_events: domain_events)
       act = -> do
         case_repo.save_account_and_recipient_profile(kase)
       end
@@ -206,7 +212,7 @@ module Db
       assert_not_nil(kase.recipient.id)
 
       assert_length(kase.events, 0)
-      assert_length(event_queue, 1)
+      assert_length(domain_events, 1)
     end
 
     test "saves the status and dhs account" do
@@ -235,9 +241,9 @@ module Db
     end
 
     test "saves all fields and new documents" do
-      event_queue = EventQueue.new
+      domain_events = ArrayQueue.new
 
-      case_rec = cases(:pending_2)
+      case_rec = cases(:opened_1)
       account = Recipient::DhsAccount.new(
         number: "11111",
         household: Recipient::Household.new(
@@ -252,7 +258,7 @@ module Db
       kase.submit_to_enroller
       kase.complete(:approved)
 
-      case_repo = Case::Repo.new(event_queue: event_queue)
+      case_repo = Case::Repo.new(domain_events: domain_events)
       case_repo.save_all_fields_and_new_documents(kase)
 
       case_rec = kase.record
@@ -268,11 +274,11 @@ module Db
       assert_not_nil(document_rec)
 
       assert_length(kase.events, 0)
-      assert_length(event_queue, 3)
+      assert_length(domain_events, 4)
     end
 
     test "saves the changes from a message" do
-      case_rec = cases(:pending_2)
+      case_rec = cases(:pending_1)
 
       kase = Case::Repo.map_record(case_rec)
       kase.add_message(Message.stub(
@@ -283,8 +289,8 @@ module Db
         ]
       ))
 
-      event_queue = EventQueue.new
-      case_repo = Case::Repo.new(event_queue: event_queue)
+      domain_events = ArrayQueue.new
+      case_repo = Case::Repo.new(domain_events: domain_events)
 
       act = -> do
         case_repo.save_message_changes(kase)
@@ -308,7 +314,7 @@ module Db
       assert_not_nil(document_rec.source_url)
 
       assert_length(kase.events, 0)
-      assert_length(event_queue, 2)
+      assert_length(domain_events, 2)
     end
 
     test "saves an attached file" do
@@ -335,6 +341,17 @@ module Db
 
       document_rec = kase.selected_document.record
       assert(document_rec.file.attached?)
+    end
+
+    test "saves completed" do
+      case_rec = cases(:submitted_1)
+      kase = Case::Repo.map_record(case_rec, case_rec.documents)
+      kase.complete(:approved)
+      case_repo = Case::Repo.new
+
+      case_repo.save_completed(kase)
+      assert_equal(case_rec.status, "approved")
+      assert_not_nil(case_rec.completed_at)
     end
   end
 end

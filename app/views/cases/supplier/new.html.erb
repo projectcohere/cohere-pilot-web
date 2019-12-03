@@ -1,10 +1,12 @@
 <main class="Main">
-  <h1 class="Main-title">
-    Add a Case
-  </h1>
+  <header class="Main-header">
+    <h1 class="Main-title">
+      Add a Case
+    </h1>
+  </header>
 
-  <%= form_for(@form, url: cases_supplier_index_path, html: { class: "CaseForm Form" }) do |f| %>
+  <%= form_for(@form, url: cases_path, html: { class: "CaseForm Form" }) do |f| %>
     <%= render(partial: "fields", locals: { f: f, form: @form }) %>
-    <%= f.submit(class: "Button--action") %>
+    <%= f.submit(class: "Form-submit Button--action") %>
   <% end %>
 </main>

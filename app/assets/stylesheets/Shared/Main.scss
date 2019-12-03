@@ -2,14 +2,26 @@
   padding: $spacing0;
   padding-top: $spacing3;
 
+  &-header {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: $spacing3;
+    margin-bottom: $spacing3;
+    padding: $spacing4 0;
+  }
+
   &-title {
-    display: inline-block;
     color: $brandBlack;
     font-size: $fontSize0;
-    margin-bottom: $spacing3;
+  }
+
+  &-filters {
+    width: 100%;
   }
 
   &-actions {
-    font-size: $fontSize1;
+    display: flex;
+    gap: $spacing4;
   }
 }

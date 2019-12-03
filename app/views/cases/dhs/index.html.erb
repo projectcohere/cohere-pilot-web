@@ -1,7 +1,10 @@
 <main class="Main">
-  <h1 class="Main-title">
-    Open Cases
-  </h1>
+  <header class="Main-header">
+    <h1 class="Main-title">
+      Open Cases
+    </h1>
+  </header>
+
   <ul class="CaseList">
     <% if @cases.blank? %>
       <p>No cases left!</p>
@@ -12,7 +15,7 @@
           <li class="CaseCell">
             <div class="CaseCell-row">
               <% if policy.permit?(:edit) %>
-                <%= link_to(view.recipient_name, edit_cases_dhs_path(kase), action: :edit, class: "CaseCell-name") %>
+                <%= link_to(view.recipient_name, edit_case_path(kase), action: :edit, class: "CaseCell-name") %>
               <% else %>
                 <p class="CaseCell-name"><%= view.recipient_name %></p>
               <% end %>

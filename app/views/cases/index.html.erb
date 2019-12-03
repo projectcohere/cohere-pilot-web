@@ -1,37 +1,53 @@
+<%# -- helpers -- %>
+<% filter_link_to = ->(scope) do %>
+<%   link_class = "Filter #{@scope == scope && "is-selected"}" %>
+<%   link_to(scope.titlecase, "#{cases_path}/#{scope}", class: link_class) %>
+<% end %>
+
+<%# -- template -- %>
 <main class="Main">
-  <h1 class="Main-title">
-    All Cases
-  </h1>
+  <header class="Main-header">
+    <h1 class="Main-title">
+      <%= @scope.titlecase %> Cases
+    </h1>
+    <div class="Main-filters">
+      <nav class="Filters">
+        <%= filter_link_to.("open") %>
+        <%= filter_link_to.("completed") %>
+      </nav>
+    </div>
+  </header>
+
   <ul class="CaseList">
-    <% if @cases.blank? %>
+    <% if @cases&.blank? %>
       <p>No cases left!</p>
     <% else %>
       <% @cases.each do |kase| %>
         <%- view = Cases::View.new(kase) %>
-        <% policy.with_case(kase) do %>
-          <li class="CaseCell">
-            <div class="CaseCell-row">
-              <% if policy.permit?(:edit) %>
-                <%= link_to(view.recipient_name, edit_case_path(kase), action: :edit, class: "CaseCell-name") %>
-              <% else %>
-                <p class="CaseCell-name"><%= view.recipient_name %></p>
-              <% end %>
-            </div>
-            <div class="CaseCell-row">
-              <p class="CaseCell-organizations">
-                <%= view.supplier_name %>, <%= view.enroller_name %>
-              </p>
-            </div>
-            <div class="CaseCell-row">
-              <p class="CaseCell-status">
-                <%= view.status %>
-              </p>
-              <p class="CaseCell-updateTime">
-                Updated <%= time_ago_in_words(view.updated_at) %> ago
-              </p>
-            </div>
-          </li>
-        <% end %>
+        <li class="CaseCell">
+          <div class="CaseCell-row">
+            <%- link_path = if @scope == "open" %>
+            <%-   edit_case_path(kase) %>
+            <%- else %>
+            <%-   case_path(kase) %>
+            <%- end %>
+
+            <%= link_to(view.recipient_name, link_path, action: :edit, class: "CaseCell-name") %>
+          </div>
+          <div class="CaseCell-row">
+            <p class="CaseCell-organizations">
+              <%= view.supplier_name %>, <%= view.enroller_name %>
+            </p>
+          </div>
+          <div class="CaseCell-row">
+            <p class="CaseCell-status">
+              <%= view.status %>
+            </p>
+            <p class="CaseCell-updateTime">
+              Updated <%= time_ago_in_words(view.updated_at) %> ago
+            </p>
+          </div>
+        </li>
       <% end %>
     <% end %>
   </ul>

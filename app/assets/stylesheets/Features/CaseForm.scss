@@ -3,18 +3,17 @@
   flex: 1;
   max-width: $width1;
 
-  /* CaseForm-case */
-  &-enroller {
-    grid-column: 1 / 4;
-    margin-top: $spacing4;
-  }
-
+  /* CaseForm-details */
   &-status {
     grid-column: 1 / 4;
   }
 
+  &-enroller {
+    grid-column: 4 / 8;
+  }
+
   &-signedContract {
-    grid-column: 4 / 10;
+    grid-column: 1 / 10;
   }
 
   /* CaseForm-name */

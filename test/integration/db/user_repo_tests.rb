@@ -8,7 +8,7 @@ module Db
 
       users = user_repo.find_all_for_opened_case
       assert_length(users, 2)
-      assert_all(users.map(&:role_name), ->(r) { r == :cohere || r == :dhs })
+      assert_same_elements(users.map(&:role_name), [:cohere, :dhs])
     end
 
     test "finds matching enrollers for a submitted case" do
@@ -18,15 +18,23 @@ module Db
 
       users = user_repo.find_all_for_submitted_case(kase)
       assert_length(users, 1)
-      assert_all(users, ->(u) { u.role.organization_id == kase.enroller_id })
+      assert_equal(users[0].role.organization_id, kase.enroller_id)
+    end
+
+    test "finds cohere users for a completed case" do
+      user_repo = User::Repo.new
+
+      users = user_repo.find_all_for_completed_case
+      assert_length(users, 1)
+      assert_equal(users[0].role_name, :cohere)
     end
 
     # -- commands --
     test "saves an invited user" do
-      event_queue = EventQueue.new
+      domain_events = ArrayQueue.new
 
       user_repo = User::Repo.new(
-        event_queue: event_queue
+        domain_events: domain_events
       )
 
       user = User.invite(User::Invitation.new(
@@ -48,7 +56,7 @@ module Db
       assert_not_nil(user.record)
 
       assert_length(user.events, 0)
-      assert_length(event_queue, 1)
+      assert_length(domain_events, 1)
     end
 
     test "saves an invited org user" do

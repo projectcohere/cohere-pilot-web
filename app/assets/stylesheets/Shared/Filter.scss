@@ -1,0 +1,16 @@
+.Filter {
+  line-height: $height2;
+  opacity: 0.4;
+  border-bottom: 2px solid $brandBlack;
+  text-decoration: none;
+
+  &:hover {
+    opacity: 1.0;
+    border-bottom-color: $brandPrimary;
+  }
+
+  &.is-selected {
+    opacity: 1.0;
+    border-bottom-color: $brandPrimary;
+  }
+}

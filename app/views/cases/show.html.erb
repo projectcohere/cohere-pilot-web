@@ -4,25 +4,6 @@
     <h1 class="Main-title">
       <%= view.recipient_name %>'s case
     </h1>
-
-    <div class="Main-actions">
-      <% if @case.can_complete? %>
-        <%=
-          button_to("Approve Case", [@case, :complete],
-            method: :patch,
-            params: { case: { status: :approved } },
-            class: "Button--action"
-          )
-        %>
-        <%=
-          button_to("Deny Case", [@case, :complete],
-            method: :patch,
-            params: { case: { status: :denied } },
-            class: "Button--destructive"
-          )
-        %>
-      <% end %>
-    </div>
   </header>
 
   <div class="ShowCase">

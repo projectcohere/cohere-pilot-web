@@ -6,21 +6,25 @@ module Events
     end
 
     def initialize(
-      analytics: Analytics.get,
-      event_queue: EventQueue.get
+      domain_events: Services.domain_events,
+      process_analytics: ProcessAnalytics.get
     )
-      @analytics = analytics
-      @event_queue = event_queue
+      @domain_events = domain_events
+      @process_analytics = process_analytics
     end
 
     # -- command --
     def call
-      @event_queue.drain do |event|
+      @domain_events.drain do |event|
         case event
         when Case::Events::DidOpen
           CasesMailer.did_open(event.case_id.val).deliver_later
         when Case::Events::DidSubmit
           CasesMailer.did_submit(event.case_id.val).deliver_later
+        when Case::Events::DidComplete
+          if event.case_status != :removed
+            CasesMailer.did_complete(event.case_id.val).deliver_later
+          end
         when Case::Events::DidUploadMessageAttachment
           Cases::AttachFrontFileWorker.perform_async(event.case_id.val, event.document_id.val)
         when Case::Events::DidSignContract
@@ -29,7 +33,7 @@ module Events
           UsersMailer.did_invite(event.user_id.val).deliver_later
         end
 
-        @analytics.process_event(event)
+        @process_analytics.(event)
       end
     end
   end

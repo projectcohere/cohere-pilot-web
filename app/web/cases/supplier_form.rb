@@ -109,6 +109,33 @@ module Cases
       super
     end
 
+    # -- commands/cosmetics
+    def first_name=(value)
+      super(beautify(value))
+    end
+
+    def last_name=(value)
+      super(beautify(value))
+    end
+
+    def street=(value)
+      super(beautify(value))
+    end
+
+    def street2=(value)
+      super(beautify(value))
+    end
+
+    def city=(value)
+      super(beautify(value))
+    end
+
+    private def beautify(value)
+      if not value.nil?
+        value.strip.titlecase
+      end
+    end
+
     # -- commands/helpers
     def map_to_supplier_account
       Case::Account.new(

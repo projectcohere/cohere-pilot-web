@@ -6,11 +6,11 @@ class Case
     end
 
     def initialize(
-      event_queue: EventQueue.get,
+      domain_events: Services.domain_events,
       supplier_repo: ::Supplier::Repo.get,
       enroller_repo: ::Enroller::Repo.get
     )
-      @event_queue = event_queue
+      @domain_events = domain_events
       @supplier_repo = supplier_repo
       @enroller_repo = enroller_repo
     end
@@ -83,7 +83,7 @@ class Case
     end
 
     # -- queries/many
-    def find_all_incomplete
+    def find_all_open
       case_recs = Case::Record
         .where(completed_at: nil)
         .order(updated_at: :desc)
@@ -96,9 +96,31 @@ class Case
       entities_from(case_recs)
     end
 
+    def find_all_completed
+      case_recs = Case::Record
+        .where.not(completed_at: nil)
+        .order(completed_at: :desc)
+        .includes(:recipient)
+
+      # pre-load associated aggregates
+      @supplier_repo.find_many(case_recs.map(&:supplier_id))
+      @enroller_repo.find_many(case_recs.map(&:enroller_id))
+
+      entities_from(case_recs)
+    end
+
     def find_all_for_dhs
       case_recs = Case::Record
         .where(status: [:opened, :pending])
+        .order(created_at: :desc)
+        .includes(:recipient)
+
+      entities_from(case_recs)
+    end
+
+    def find_all_for_supplier(supplier_id)
+      case_recs = Case::Record
+        .where(supplier_id: supplier_id)
         .order(updated_at: :desc)
         .includes(:recipient)
 
@@ -152,26 +174,29 @@ class Case
       kase.recipient.did_save(recipient_rec)
 
       # consume all entity events
-      @event_queue.consume(kase.events)
+      @domain_events.consume(kase.events)
     end
 
     def save_status_and_dhs_account(kase)
-      if kase.record.nil? || kase.recipient.record.nil?
+      case_rec = kase.record
+      recipient_rec = kase.recipient.record
+
+      if case_rec.nil? || recipient_rec.nil?
         raise "case and recipient must be fetched from the db!"
       end
 
       # update records
-      assign_status(kase, kase.record)
-      assign_dhs_account(kase, kase.recipient.record)
+      assign_status(kase, case_rec)
+      assign_dhs_account(kase, recipient_rec)
 
       # save records
       transaction do
-        kase.record.save!
-        kase.recipient.record.save!
+        case_rec.save!
+        recipient_rec.save!
       end
 
       # consume all entity events
-      @event_queue.consume(kase.events)
+      @domain_events.consume(kase.events)
     end
 
     def save_all_fields_and_new_documents(kase)
@@ -183,9 +208,6 @@ class Case
       end
 
       # update records
-      c = kase
-      case_rec.completed_at = kase.completed_at
-
       assign_status(kase, case_rec)
       assign_account(kase, case_rec)
       assign_recipient_profile(kase, recipient_rec)
@@ -199,7 +221,7 @@ class Case
       end
 
       # consume all entity events
-      @event_queue.consume(kase.events)
+      @domain_events.consume(kase.events)
     end
 
     def save_message_changes(kase)
@@ -219,7 +241,7 @@ class Case
       end
 
       # consume all entity events
-      @event_queue.consume(kase.events)
+      @domain_events.consume(kase.events)
     end
 
     def save_attached_file(kase)
@@ -228,7 +250,8 @@ class Case
         raise "no document was selected"
       end
 
-      if document.record.nil?
+      document_rec = document.record
+      if document_rec.nil?
         raise "unsaved document can't be updated with a new file"
       end
 
@@ -238,11 +261,27 @@ class Case
       end
 
       f = new_file
-      document.record.file.attach(
+      document_rec.file.attach(
         io: f.data,
         filename: f.name,
         content_type: f.mime_type
       )
+
+      # consume all entity events
+      @domain_events.consume(kase.events)
+    end
+
+    def save_completed(kase)
+      case_rec = kase.record
+
+      # update records
+      assign_status(kase, case_rec)
+
+      # save records
+      case_rec.save!
+
+      # consume all entity events
+      @domain_events.consume(kase.events)
     end
 
     # -- commands/helpers
@@ -250,6 +289,7 @@ class Case
       c = kase
       case_rec.assign_attributes(
         status: c.status,
+        completed_at: c.completed_at
       )
     end
 

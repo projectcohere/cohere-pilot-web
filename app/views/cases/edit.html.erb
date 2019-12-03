@@ -1,16 +1,51 @@
 <main class="Main">
-  <h1 class="Main-title">
-    <%= @form.name %>'s case
-  </h1>
+  <%- view = Cases::View.new(@case) %>
+  <header class="Main-header">
+    <h1 class="Main-title">
+      <%= view.recipient_name %>'s case
+    </h1>
+    <div class="Main-actions">
+      <% if @case.can_submit? %>
+        <%=
+          button_to("Submit Case", [@case, :submit],
+            method: :patch,
+            class: "Button--action"
+          )
+        %>
+        <%=
+          button_to("Remove from Pilot", [@case, :complete],
+            method: :patch,
+            params: { case: { status: :removed } },
+            class: "Button--destructive"
+          )
+        %>
+      <% elsif @case.can_complete? %>
+        <%=
+          button_to("Approve Case", [@case, :complete],
+            method: :patch,
+            params: { case: { status: :approved } },
+            class: "Button--action"
+          )
+        %>
+        <%=
+          button_to("Deny Case", [@case, :complete],
+            method: :patch,
+            params: { case: { status: :denied } },
+            class: "Button--destructive"
+          )
+        %>
+      <% end %>
+    </div>
+  </header>
 
   <div class="EditCase">
     <%= form_for(@form, url: case_path(@form.id), html: { class: "CaseForm Form" }) do |f| %>
-      <%= f.section("Case Details", class: "CaseForm-details") do %>
+      <%= f.section("Details", class: "CaseForm-details") do %>
+        <%= f.field(:status, background: false, class: "CaseForm-status") do %>
+          <%= f.value(@form.status.titlecase) %>
+        <% end %>
         <%= f.field(:enroller, background: false, class: "CaseForm-enroller") do %>
           <%= f.value(@form.enroller_name) %>
-        <% end %>
-        <%= f.field(:status, background: false, class: "CaseForm-status") do %>
-          <%= f.select(:status, @form.statuses.map { |s| [s.to_s.capitalize, s] }) %>
         <% end %>
         <%- disabled = @form.signed_contract %>
         <%= f.field(:signed_contract, "Contract", disabled: disabled, background: false, class: "CaseForm-signedContract") do %>
@@ -22,7 +57,7 @@
       <%= render(partial: "cases/supplier/fields", locals: { f: f, form: @form }) %>
       <%= render(partial: "cases/dhs/fields", locals: { f: f, form: @form }) %>
 
-      <%= f.submit(class: "Button--action") %>
+      <%= f.submit(class: "Form-submit Button--action") %>
     <% end %>
 
     <%= render(partial: "cases/documents", locals: { documents: @form.documents }) %>

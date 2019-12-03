@@ -44,6 +44,55 @@ Rails.application.routes.draw do
   end
 
   # -- signed-in --
+  def signed_in(role: nil)
+    if role.nil?
+      Clearance::Constraints::SignedIn.new
+    else
+      Clearance::Constraints::SignedIn.new do |user_rec|
+        User::Repo.map_role(user_rec).name == role
+      end
+    end
+  end
+
+  constraints(signed_in(role: :supplier)) do
+    resources(:cases, controller: "cases/supplier", only: %i[
+      index
+      new
+      create
+    ])
+  end
+
+  constraints(signed_in(role: :dhs)) do
+    resources(:cases, controller: "cases/dhs", only: %i[
+      index
+      edit
+      update
+    ])
+  end
+
+  constraints(signed_in(role: :enroller)) do
+    resources(:cases, controller: "cases/enroller", only: %i[
+      index
+      show
+    ]) do
+      patch(:complete)
+    end
+  end
+
+  constraints(signed_in(role: :cohere)) do
+    resources(:cases, constraints: { id: /\d+/ }, only: %i[
+      edit
+      update
+      show
+    ]) do
+      get("/:scope", on: :collection, action: :index, constraints: { scope: /open|completed/ })
+      get("/", on: :collection, to: redirect("/cases/open"))
+
+      patch(:submit)
+      patch(:complete)
+    end
+  end
+
   constraints(Clearance::Constraints::SignedIn.new) do
     cases_path = "/cases"
 
@@ -53,33 +102,6 @@ Rails.application.routes.draw do
     # users
     scope(module: "users") do
       delete("/sign-out", to: "sessions#destroy")
-    end
-
-    # cases
-    resources(:cases, only: %i[
-      index
-      edit
-      update
-    ])
-
-    # cases/role-scoped
-    namespace(:cases) do
-      resources(:supplier, only: %i[
-        index
-        new
-        create
-      ])
-
-      resources(:dhs, only: %i[
-        index
-        edit
-        update
-      ])
-
-      resources(:enroller, only: %i[
-        index
-        show
-      ])
     end
 
     # fallback

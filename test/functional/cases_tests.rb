@@ -2,114 +2,92 @@ require "test_helper"
 
 class CasesTests < ActionDispatch::IntegrationTest
   # -- list --
-  # -- list/root
   test "can't list cases if signed-out" do
     get("/cases")
     assert_redirected_to("/sign-in")
   end
 
-  test "can't list cases without permission" do
+  test "can list cases as a supplier" do
     user_rec = users(:supplier_1)
 
     get(auth("/cases", as: user_rec))
-    assert_redirected_to(%r[/cases/supplier])
-  end
-
-  test "can list incomplete cases as an operator" do
-    get(auth("/cases"))
     assert_response(:success)
-    assert_select(".Main-title", text: /Cases/)
-    assert_select(".CaseCell", 6)
+    assert_select(".Main-title", text: /Inbound Cases/)
+    assert_select(".CaseCell", 7)
   end
 
-  # -- list/enroller
-  test "can't list enroller cases if signed-out" do
-    get("/cases/enroller")
-    assert_redirected_to("/sign-in")
-  end
-
-  test "can't list enroller cases without permission" do
-    get(auth("/cases/enroller"))
-    assert_redirected_to(%r[/cases(?!/enroller)])
-  end
-
-  test "can list enroller cases for my org as an enroller" do
-    user_rec = users(:enroller_1)
-
-    get(auth("/cases/enroller", as: user_rec))
-    assert_response(:success)
-    assert_select(".Main-title", text: /Cases/)
-    assert_select(".CaseCell", 2)
-  end
-
-  # -- list/supplier
-  test "can't list supplier cases if signed-out" do
-    get("/cases/supplier")
-    assert_redirected_to("/sign-in")
-  end
-
-  test "can't list supplier cases without permission" do
-    get(auth("/cases/supplier"))
-    assert_redirected_to(%r[/cases(?!/supplier)])
-  end
-
-  test "can list supplier cases with permission" do
-    user_rec = users(:supplier_1)
-
-    get(auth("/cases/supplier", as: user_rec))
-    assert_response(:success)
-    assert_select(".Main-title", text: /Supplier Cases/)
-  end
-
-  # -- list/dhs
-  test "can't list dhs cases if signed-out" do
-    get("/cases/dhs")
-    assert_redirected_to("/sign-in")
-  end
-
-  test "can't list dhs cases without permission" do
-    get(auth("/cases/dhs"))
-    assert_redirected_to(%r[/cases(?!/dhs)])
-  end
-
-  test "can list dhs cases with permission" do
+  test "can list opened cases as a dhs user" do
     user_rec = users(:dhs_1)
 
-    get(auth("/cases/dhs", as: user_rec))
+    get(auth("/cases", as: user_rec))
     assert_response(:success)
-    assert_select(".Main-title", text: /Cases/)
+    assert_select(".Main-title", text: /Open Cases/)
     assert_select(".CaseCell", 4)
   end
 
+  test "can list cases as a cohere user" do
+    user_rec = users(:cohere_1)
+
+    get(auth("/cases", as: user_rec))
+    assert_redirected_to("/cases/open")
+  end
+
+  test "can list open cases as a cohere user" do
+    user_rec = users(:cohere_1)
+
+    get(auth("/cases/open", as: user_rec))
+    assert_response(:success)
+    assert_select(".Main-title", text: /Open Cases/)
+    assert_select(".CaseCell", 6)
+  end
+
+  test "can list completed cases as a cohere user" do
+    user_rec = users(:cohere_1)
+
+    get(auth("/cases/completed", as: user_rec))
+    assert_response(:success)
+    assert_select(".Main-title", text: /Completed Cases/)
+    assert_select(".CaseCell", 1)
+  end
+
+  test "can list submitted cases as an enroller" do
+    user_rec = users(:enroller_1)
+
+    get(auth("/cases", as: user_rec))
+    assert_response(:success)
+    assert_select(".Main-title", text: /Submitted Cases/)
+    assert_select(".CaseCell", 2)
+  end
+
   # -- create --
-  # -- create/supplier
   test "can't open a case if signed-out" do
-    get("/cases/supplier/new")
+    get("/cases/new")
     assert_redirected_to("/sign-in")
   end
 
   test "can't open a case without permission" do
-    get(auth("/cases/supplier/new"))
-    assert_redirected_to(%r[/cases(?!/supplier)])
+    user_rec = users(:cohere_1)
+
+    get(auth("/cases/new", as: user_rec))
+    assert_redirected_to("/cases")
   end
 
-  test "open a case with permission" do
-    logger = fake_logging!
-
+  test "open a case as a supplier" do
     user_rec = users(:supplier_1)
 
-    get(auth("/cases/supplier/new", as: user_rec))
+    get(auth("/cases/new", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /Add a Case/)
-    assert_match(/"event_name":"DidViewSupplierForm"/, logger.messages.last)
+
+    assert_analytics_events(1) do |events|
+      assert_match(/Did View Supplier Form/, events[0])
+    end
   end
 
-  test "save an opened case with permission" do
-    logger = fake_logging!
-
+  test "save an opened case as a supplier" do
     user_rec = users(:supplier_1)
 
-    post(auth("/cases/supplier", as: user_rec), params: {
+    post(auth("/cases", as: user_rec), params: {
       case: {
         first_name: "Janice",
         last_name: "Sample",
@@ -123,22 +101,23 @@ class CasesTests < ActionDispatch::IntegrationTest
     })
 
     assert_present(flash[:notice])
-    assert_redirected_to("/cases/supplier")
-    assert_match(/"event_name":"DidOpen"/, logger.messages.last)
+    assert_redirected_to("/cases")
 
-    send_all_emails!
-    assert_emails(1)
-    assert_select_email do
+    assert_analytics_events(1) do |events|
+      assert_match(/Did Open/, events[0])
+    end
+
+    assert_send_emails(1) do
       assert_select("a", text: /Janice Sample/) do |el|
         assert_match(%r[#{ENV["HOST"]}/cases/\d+/edit], el[0][:href])
       end
     end
   end
 
-  test "show errors when opening an invalid case" do
+  test "show errors when opening an invalid case as a supplier" do
     user_rec = users(:supplier_1)
 
-    post(auth("/cases/supplier", as: user_rec), params: {
+    post(auth("/cases", as: user_rec), params: {
       case: {
         first_name: "Janice",
       }
@@ -149,29 +128,52 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   # -- view --
-  # -- view/enroller
-  test "can't view an enroller case if signed-out" do
+  test "can't view a case if signed-out" do
     case_rec = cases(:submitted_1)
 
-    get("/cases/enroller/#{case_rec.id}")
+    get("/cases/#{case_rec.id}")
     assert_redirected_to("/sign-in")
   end
 
-  test "can't view an enroller case without permission" do
+  test "can't view a case without permission" do
+    user_rec = users(:supplier_1)
     case_rec = cases(:submitted_1)
 
-    get(auth("/cases/enroller/#{case_rec.id}"))
-    assert_redirected_to(%r[/cases(?!/enroller)])
+    get(auth("/cases/#{case_rec.id}", as: user_rec))
+    assert_redirected_to("/cases")
   end
 
-  test "view an enroller case" do
+  test "can't view another enroller's case as an enroller" do
+    user_rec = users(:enroller_1)
+    case_rec = cases(:submitted_2)
+
+    assert_raises(ActiveRecord::RecordNotFound) do
+      get(auth("/cases/#{case_rec.id}", as: user_rec))
+    end
+  end
+
+  test "view a case as a cohere user" do
+    user_rec = users(:cohere_1)
+    case_rec = cases(:approved_1)
+    kase = Case::Repo.map_record(case_rec)
+
+    get(auth("/cases/#{kase.id}", as: user_rec))
+    assert_response(:success)
+    assert_select(".Main-title", text: /#{kase.recipient.profile.name}/)
+  end
+
+  test "view a case as an enroller" do
     user_rec = users(:enroller_1)
     case_rec = cases(:submitted_1)
     kase = Case::Repo.map_record(case_rec)
 
-    get(auth("/cases/enroller/#{kase.id}", as: user_rec))
+    get(auth("/cases/#{kase.id}", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /#{kase.recipient.profile.name}/)
+
+    assert_analytics_events(1) do |events|
+      assert_match(/Did View Enroller Case/, events[0])
+    end
   end
 
   # -- edit --
@@ -182,70 +184,70 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/sign-in")
   end
 
-  test "edit a case" do
+  test "can't edit a case without permission" do
+    user_rec = users(:supplier_1)
     case_rec = cases(:submitted_1)
-    kase = Case::Repo.map_record(case_rec)
 
-    get(auth("/cases/#{kase.id}/edit"))
-    assert_response(:success)
-    assert_select(".Main-title", text: /#{kase.recipient.profile.name}/)
+    get(auth("/cases/#{case_rec.id}", as: user_rec))
+    assert_redirected_to("/cases")
   end
 
-  test "save an edited case" do
-    case_rec = cases(:pending_2)
+  test "edit a case as a dhs user" do
+    user_rec = users(:dhs_1)
+    case_rec = cases(:pending_1)
+
+    get(auth("/cases/#{case_rec.id}/edit", as: user_rec))
+    assert_response(:success)
+    assert_select(".Main-title", text: /\w's case/)
+
+    assert_analytics_events(1) do |events|
+      assert_match(/Did View Dhs Form/, events[0])
+    end
+  end
+
+  test "save an edited case as a dhs user" do
+    user_rec = users(:dhs_1)
+    case_rec = cases(:opened_1)
+
+    patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
+      case: {
+        dhs_number: "12345",
+        household_size: "5",
+        income: "$500.00"
+      }
+    })
+
+    assert_redirected_to("/cases")
+    assert_present(flash[:notice])
+
+    assert_analytics_events(1) do |events|
+      assert_match(/Did Become Pending/, events[0])
+    end
+  end
+
+  test "edit a case as a cohere user" do
+    user_rec = users(:cohere_1)
+    case_rec = cases(:submitted_1)
+
+    get(auth("/cases/#{case_rec.id}/edit", as: user_rec))
+    assert_response(:success)
+    assert_select(".Main-title", text: /\w+'s case/)
+  end
+
+  test "save an edited case as a cohere user" do
+    case_rec = cases(:pending_1)
 
     patch(auth("/cases/#{case_rec.id}"), params: {
       case: {
-        status: :submitted,
         income: "$300.00"
       }
     })
 
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
-
-    send_all_emails!
-    assert_emails(1)
-    assert_select_email do
-      assert_select("a", text: /Danice Sample/) do |el|
-        assert_match(%r[#{ENV["HOST"]}/cases/\d+], el[0][:href])
-      end
-    end
   end
 
-  test "save a submitted case" do
-    logger = fake_logging!
-
-    case_rec = cases(:pending_1)
-
-    patch(auth("/cases/#{case_rec.id}"), params: {
-      case: {
-        status: :submitted
-      }
-    })
-
-    assert_redirected_to("/cases")
-    assert_present(flash[:notice])
-    assert_match(/"event_name":"DidSubmit"/, logger.messages.last)
-  end
-
-  test "save a completed case" do
-    logger = fake_logging!
-
-    case_rec = cases(:submitted_1)
-
-    patch(auth("/cases/#{case_rec.id}"), params: {
-      case: {
-        status: :approved
-      }
-    })
-
-    assert_redirected_to("/cases")
-    assert_present(flash[:notice])
-    assert_match(/"event_name":"DidComplete"/, logger.messages.last)
-  end
-
-  test "generate a signed contract" do
+  test "save a signed contract" do
     Sidekiq::Testing.inline!
 
     case_rec = cases(:pending_2)
@@ -272,13 +274,12 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_match(/Danice\s*Sample/, pdf_text)
   end
 
-  test "show errors for an invalid case" do
-    case_rec = cases(:pending_2)
+  test "show errors when saving an invalid case as a cohere user" do
+    case_rec = cases(:pending_1)
 
     patch(auth("/cases/#{case_rec.id}"), params: {
       case: {
-        status: "submitted",
-        dhs_number: nil
+        first_name: nil
       }
     })
 
@@ -286,51 +287,156 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:alert])
   end
 
-  # -- edit/dhs
-  test "can't edit a dhs case if signed-out" do
-    case_rec = cases(:opened_1)
-
-    get("/cases/dhs/#{case_rec.id}/edit")
-    assert_redirected_to("/sign-in")
+  # -- submit --
+  test "can't submit a case if signed-out" do
+    assert_raises(ActionController::RoutingError) do
+      patch("/cases/3/submit")
+    end
   end
 
-  test "can't edit a dhs case without permission" do
+  test "can't submit a case without permission" do
+    user_rec = users(:enroller_1)
+
+    assert_raises(ActionController::RoutingError) do
+      patch(auth("/cases/4/submit", as: user_rec))
+    end
+  end
+
+  test "show errors when submitting an invalid case as a cohere user" do
+    case_rec = cases(:pending_2)
+
+    patch(auth("/cases/#{case_rec.id}/submit"))
+
+    assert_response(:success)
+    assert_present(flash[:alert])
+  end
+
+  test "can submit a case as a cohere user" do
+    case_rec = cases(:pending_1)
+    patch(auth("/cases/#{case_rec.id}/submit"))
+
+    assert_redirected_to("/cases")
+    assert_present(flash[:notice])
+
+    assert_analytics_events(1) do |events|
+      assert_match(/Did Submit/, events[0])
+    end
+
+    assert_send_emails(1) do
+      assert_select("a", text: /Johnice Sample/) do |el|
+        assert_match(%r[#{ENV["HOST"]}/cases/\d+], el[0][:href])
+      end
+    end
+  end
+
+  # -- complete --
+  test "can't complete a case if signed-out" do
+    assert_raises(ActionController::RoutingError) do
+      patch("/cases/3/complete")
+    end
+  end
+
+  test "can't complete a case without permission" do
     user_rec = users(:supplier_1)
+
+    assert_raises(ActionController::RoutingError) do
+      patch(auth("/cases/4/complete", as: user_rec))
+    end
+  end
+
+  test "can't complete another enroller's case as an enroller" do
+    user_rec = users(:enroller_1)
+    case_rec = cases(:submitted_2)
+
+    assert_raises(ActiveRecord::RecordNotFound) do
+      patch(auth("/cases/#{case_rec.id}/complete", as: user_rec))
+    end
+  end
+
+  test "can't complete a case with an unknown status" do
+    user_rec = users(:cohere_1)
     case_rec = cases(:submitted_1)
 
-    get(auth("/cases/dhs/#{case_rec.id}/edit", as: user_rec))
-    assert_redirected_to(%r[/cases(?!/dhs)])
-  end
-
-  test "can edit an opened case with permission" do
-    logger = fake_logging!
-
-    user_rec = users(:dhs_1)
-    case_rec = cases(:pending_1)
-    kase = Case::Repo.map_record(case_rec)
-
-    get(auth("/cases/dhs/#{kase.id}/edit", as: user_rec))
-    assert_response(:success)
-    assert_select(".Main-title", text: /#{kase.recipient.profile.name}/)
-    assert_match(/"event_name":"DidViewDhsForm"/, logger.messages.last)
-  end
-
-  test "can update an opened case" do
-    logger = fake_logging!
-
-    user_rec = users(:dhs_1)
-    kase = Case::Repo.map_record(cases(:opened_1))
-
-    patch(auth("/cases/dhs/#{kase.id}", as: user_rec), params: {
+    patch(auth("/cases/#{case_rec.id}/complete", as: user_rec), params: {
       case: {
-        dhs_number: "12345",
-        household_size: "5",
-        income: "$500.00"
+        status: :malicious
       }
     })
 
-    assert_redirected_to("/cases/dhs")
-    assert_present(flash[:notice])
-    assert_match(/"event_name":"DidBecomePending"/, logger.messages.last)
+    assert_response(:success)
+    assert_present(flash[:alert])
   end
+
+  test "complete a case as a cohere user" do
+    user_rec = users(:cohere_1)
+    case_rec = cases(:submitted_1)
+
+    patch(auth("/cases/#{case_rec.id}/complete", as: user_rec), params: {
+      case: {
+        status: :approved
+      }
+    })
+
+    assert_redirected_to("/cases")
+    assert_present(flash[:notice])
+
+    assert_analytics_events(1) do |events|
+      assert_match(/Did Complete/, events[0])
+    end
+
+    assert_send_emails(1) do
+      assert_select("a", text: /Johnice Sample/) do |el|
+        assert_match(%r[#{ENV["HOST"]}/cases/\d+], el[0][:href])
+      end
+
+      assert_select("p", text: /approved/)
+    end
+  end
+
+  test "complete a case as an enroller" do
+    user_rec = users(:enroller_1)
+    case_rec = cases(:submitted_1)
+
+    patch(auth("/cases/#{case_rec.id}/complete", as: user_rec), params: {
+      case: {
+        status: :approved
+      }
+    })
+
+    assert_redirected_to("/cases")
+    assert_present(flash[:notice])
+
+    assert_analytics_events(1) do |events|
+      assert_match(/Did Complete/, events[0])
+    end
+
+    assert_send_emails(1) do
+      assert_select("a", text: /Johnice Sample/) do |el|
+        assert_match(%r[#{ENV["HOST"]}/cases/\d+], el[0][:href])
+      end
+
+      assert_select("p", text: /approved/)
+    end
+  end
+
+  test "remove a case from the pilot as a cohere user" do
+    user_rec = users(:cohere_1)
+    case_rec = cases(:pending_1)
+
+    patch(auth("/cases/#{case_rec.id}/complete", as: user_rec), params: {
+      case: {
+        status: :removed
+      }
+    })
+
+    assert_redirected_to("/cases")
+    assert_present(flash[:notice])
+
+    assert_analytics_events(1) do |events|
+      assert_match(/Did Complete/, events[0])
+    end
+
+    assert_send_emails(0)
+  end
+
 end

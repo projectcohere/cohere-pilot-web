@@ -5,8 +5,8 @@ class User
       Services.user_repo ||= Repo.new
     end
 
-    def initialize(event_queue: EventQueue.get)
-      @event_queue = event_queue
+    def initialize(domain_events: Services.domain_events)
+      @domain_events = domain_events
     end
 
     # -- queries --
@@ -36,6 +36,13 @@ class User
           organization_type: Enroller::Record.name,
           organization_id: kase.enroller_id
         )
+
+      entities_from(records)
+    end
+
+    def find_all_for_completed_case
+      records = User::Record
+        .where(organization_type: :cohere)
 
       entities_from(records)
     end
@@ -78,11 +85,21 @@ class User
       user.did_save(user_rec)
 
       # consume all entity events
-      @event_queue.consume(user.events)
+      @domain_events.consume(user.events)
     end
 
     # -- factories --
     def self.map_record(r)
+      # create entity
+      User.new(
+        id: Id.new(r.id),
+        email: r.email,
+        role: map_role(r),
+        confirmation_token: r.confirmation_token
+      )
+    end
+
+    def self.map_role(r)
       # parse role from org type. if the user has an org with
       # an associated record it will be the record's class name.
       role = case r.organization_type
@@ -95,14 +112,6 @@ class User
       when Supplier::Record.to_s
         Role.new(name: :supplier, organization_id: r.organization_id)
       end
-
-      # create entity
-      User.new(
-        id: r.id,
-        email: r.email,
-        role: role,
-        confirmation_token: r.confirmation_token
-      )
     end
   end
 end

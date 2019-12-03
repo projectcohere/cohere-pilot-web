@@ -1,8 +1,5 @@
 module Cases
   class SupplierController < ApplicationController
-    # -- filters --
-    before_action(:check_case_scope)
-
     # -- helpers --
     helper_method(:policy)
 
@@ -11,6 +8,10 @@ module Cases
       if policy.forbid?(:list)
         deny_access
       end
+
+      @cases = Case::Repo.get.find_all_for_supplier(
+        User::Repo.get.find_current.role.organization_id
+      )
     end
 
     def new
@@ -19,8 +20,7 @@ module Cases
       end
 
       @form = Cases::SupplierForm.new
-
-      event_queue << Events::DidViewSupplierForm.new
+      events << Events::DidViewSupplierForm.new
     end
 
     def create
@@ -41,7 +41,7 @@ module Cases
         return
       end
 
-      redirect_to(cases_supplier_index_path, notice: "Created case!")
+      redirect_to(cases_path, notice: "Created case!")
     end
 
     # -- queries --
