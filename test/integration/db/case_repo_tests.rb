@@ -125,6 +125,7 @@ module Db
       domain_events = ArrayQueue.new
 
       kase = Case.open(
+        program: Case::Program::Meap,
         profile: Recipient::Profile.new(
           phone: Recipient::Phone.new(
             number: Faker::PhoneNumber.phone_number
@@ -172,6 +173,7 @@ module Db
       domain_events = ArrayQueue.new
 
       kase = Case.open(
+        program: Case::Program::Meap,
         profile: Recipient::Profile.new(
           phone: Recipient::Phone.new(
             number: recipients(:recipient_1).phone_number

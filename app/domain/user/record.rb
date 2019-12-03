@@ -11,6 +11,7 @@ class User
     # -- validations --
     validate(:check_password_requirements, unless: :skip_password_validation?)
 
+    # -- validations/helpers
     private def check_password_requirements
       if password.length < 12
         errors.add(:password, "must be at least 12 characters")

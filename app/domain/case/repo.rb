@@ -371,6 +371,7 @@ class Case
       Case.new(
         record: r,
         id: Id.new(r.id),
+        program: r.program.to_sym,
         status: r.status.to_sym,
         enroller_id: r.enroller_id,
         supplier_id: r.supplier_id,

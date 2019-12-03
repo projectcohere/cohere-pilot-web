@@ -5,6 +5,7 @@ class Case < ::Entity
 
   # -- props --
   prop(:id, default: Id::None)
+  prop(:program)
   prop(:status)
   prop(:recipient)
   prop(:account)
@@ -21,12 +22,13 @@ class Case < ::Entity
   attr(:selected_document)
 
   # -- lifetime --
-  def self.open(profile:, account:, enroller:, supplier:)
+  def self.open(program:, profile:, account:, enroller:, supplier:)
     recipient = Recipient.new(
       profile: profile
     )
 
     kase = Case.new(
+      program: program,
       status: :opened,
       account: account,
       recipient: recipient,
