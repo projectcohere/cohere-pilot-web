@@ -6,11 +6,10 @@
     </h1>
 
     <div class="Main-actions">
-      <% if @case.can_be_referred? %>
+      <% if @case.can_make_referral? %>
         <%=
-          button_to("Refer to WRAP", [@case, :referral],
-            method: :post,
-            params: { case: { program: Case::Program::Wrap } },
+          link_to("Make Referral to WRAP", new_case_referral_path(@case),
+            params: { program: Case::Program::Wrap },
             class: "Button--action"
           )
         %>

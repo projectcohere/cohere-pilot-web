@@ -46,8 +46,8 @@ module Cases
         c = kase
         a = c.supplier_account
         assign_defaults!(attrs, {
-          account_number: a.number,
-          arrears: a.arrears_dollars.to_s
+          account_number: a&.number,
+          arrears: a&.arrears_dollars&.to_s
         })
 
         # set initial values from recipient

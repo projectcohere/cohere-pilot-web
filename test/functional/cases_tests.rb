@@ -439,4 +439,24 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_send_emails(0)
   end
 
+  # -- referrals --
+  test "can't make a referral if signed-out" do
+    get("/cases/3/referrals/new")
+    assert_redirected_to("/sign-in")
+  end
+
+  test "can't make a referral without permission" do
+    user_rec = users(:supplier_1)
+
+    get(auth("/cases/4/referrals/new", as: user_rec))
+    assert_redirected_to("/cases")
+  end
+
+  test "make a referral as a cohere user" do
+    user_rec = users(:cohere_1)
+    case_rec = cases(:approved_1)
+
+    get(auth("/cases/#{case_rec.id}/referrals/new", as: user_rec))
+    assert_response(:success)
+  end
 end

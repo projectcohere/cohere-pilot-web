@@ -6,6 +6,5 @@ class Case
     Approved = :approved
     Denied = :denied
     Removed = :removed
-    Referred = :referred
   end
 end

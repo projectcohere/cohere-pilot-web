@@ -1,0 +1,33 @@
+<main class="Main">
+  <%- view = Cases::View.new(@case) %>
+  <header class="Main-header">
+    <h1 class="Main-title">
+      <%= view.recipient_name %>'s case
+    </h1>
+  </header>
+
+  <div class="EditCase">
+    <%= form_for(@form, url: case_referrals_path, html: { class: "CaseForm Form" }) do |f| %>
+      <%= f.section("Details", class: "CaseForm-details") do %>
+        <%= f.field(:status, background: false, class: "CaseForm-status") do %>
+          <%= f.value(@form.status.titlecase) %>
+        <% end %>
+        <%= f.field(:enroller, background: false, class: "CaseForm-enroller") do %>
+          <%= f.value(@form.enroller_name) %>
+        <% end %>
+        <%- disabled = @form.signed_contract %>
+        <%= f.field(:signed_contract, "Contract", disabled: disabled, background: false, class: "CaseForm-signedContract") do %>
+          <%= f.check_box(:signed_contract, disabled: disabled) %>
+          <span>Signed Contract?</span>
+        <% end %>
+      <% end %>
+
+      <%= render(partial: "cases/supplier/fields", locals: { f: f, form: @form }) %>
+      <%= render(partial: "cases/dhs/fields", locals: { f: f, form: @form }) %>
+
+      <%= f.submit(class: "Form-submit Button--action") %>
+    <% end %>
+
+    <%= render(partial: "cases/documents", locals: { documents: @form.documents }) %>
+  <div>
+</main>

@@ -83,6 +83,40 @@ class Case < ::Entity
     @events << Events::DidComplete.from_entity(self)
   end
 
+  def make_referral_to_program(program)
+    if not can_make_referral?
+      return nil
+    end
+
+    new_documents = []
+
+    documents.each do |d|
+      if d.classification != :contract
+        new_documents << d
+      end
+    end
+
+    new_referral = Case.new(
+      program: program,
+      status: Status::Opened,
+      recipient: recipient,
+      enroller_id: enroller_id,
+      supplier_id: nil,
+      supplier_account: nil,
+      documents: new_documents
+    )
+
+    new_referral.events << Events::DidOpen.from_entity(new_referral,
+      referring_case: self
+    )
+
+    @events << Events::DidMakeReferral.from_entity(self,
+      program: program
+    )
+
+    new_referral
+  end
+
   # -- commands/messages
   def add_message(message)
     # track the message receipt
@@ -139,7 +173,7 @@ class Case < ::Entity
     @status == Status::Submitted
   end
 
-  def can_be_referred?
+  def can_make_referral?
     @status == Status::Approved
   end
 

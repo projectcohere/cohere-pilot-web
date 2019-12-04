@@ -23,6 +23,8 @@ class Case
         role == :supplier
       when :view
         role == :cohere || role == :enroller
+      when :referral
+        role == :cohere
       else
         false
       end

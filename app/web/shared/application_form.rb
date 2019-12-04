@@ -124,7 +124,7 @@ class ApplicationForm
   end
 
   def persisted?
-    id != nil
+    id&.val != nil
   end
 
   # -- ActiveModel::Naming

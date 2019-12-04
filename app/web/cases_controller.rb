@@ -100,14 +100,11 @@ class CasesController < ApplicationController
   end
 
   def show
-    @case = Case::Repo.get.find(params[:id])
+    @case = Case::Repo.get.find_with_documents(params[:id])
 
     if policy.forbid?(:view)
       deny_access
     end
-  end
-
-  def referral
   end
 
   # -- queries --

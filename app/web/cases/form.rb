@@ -101,7 +101,9 @@ module Cases
     end
 
     def supplier_name
-      @supplier_repo.find(@model.supplier_id).name
+      if not @model.supplier_id.nil?
+        @supplier_repo.find(@model.supplier_id).name
+      end
     end
 
     def documents

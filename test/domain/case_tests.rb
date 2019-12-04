@@ -84,6 +84,33 @@ class CaseTests < ActiveSupport::TestCase
     assert_instance_of(Case::Events::DidComplete, kase.events[0])
   end
 
+  test "makes a referral to a new program" do
+    kase = Case.stub(
+      program: Case::Program::Meap,
+      status: Case::Status::Approved,
+      documents: [
+        Document.stub
+      ]
+    )
+
+    referral = kase.make_referral_to_program(Case::Program::Wrap)
+    assert_not_nil(referral)
+    assert_equal(referral.program, Case::Program::Wrap)
+
+    documents = referral.documents
+    assert_length(documents, kase.documents.length)
+
+    assert_length(kase.events, 1)
+    event = kase.events[0]
+    assert_instance_of(Case::Events::DidMakeReferral, event)
+    assert_equal(event.case_program, Case::Program::Wrap)
+
+    assert_length(referral.events, 1)
+    event = referral.events[0]
+    assert_instance_of(Case::Events::DidOpen, event)
+    assert_equal(event.referring_case_id, kase.id)
+  end
+
   # -- commands/messages
   test "adds the first message" do
     kase = Case.stub
