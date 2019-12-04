@@ -22,13 +22,13 @@ module Cases
       enroller_repo = Minitest::Mock.new
         .expect(
           :find_default,
-          Enroller.new(id: "enroller-id", name: nil)
+          Enroller.stub(id: "enroller-id")
         )
 
       supplier_repo = Minitest::Mock.new
         .expect(
           :find_current,
-          Supplier.new(id: "supplier-id", name: nil)
+          Supplier.stub(id: "supplier-id")
         )
 
       form_params = {

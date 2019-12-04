@@ -4,10 +4,10 @@ class CaseTests < ActiveSupport::TestCase
   # -- creation --
   test "opens the case" do
     kase = Case.open(
-      program: Case::Program::Meap,
+      program: Program::Meap,
       profile: :test_profile,
-      enroller: Enroller.new(id: 1, name: :enroller),
-      supplier: Supplier.new(id: 2, name: :supplier),
+      enroller: Enroller.stub(id: 1),
+      supplier: Supplier.stub(id: 2),
       supplier_account: :test_account
     )
 
@@ -86,16 +86,16 @@ class CaseTests < ActiveSupport::TestCase
 
   test "makes a referral to a new program" do
     kase = Case.stub(
-      program: Case::Program::Meap,
+      program: Program::Meap,
       status: Case::Status::Approved,
       documents: [
         Document.stub
       ]
     )
 
-    referral = kase.make_referral_to_program(Case::Program::Wrap)
+    referral = kase.make_referral_to_program(Program::Wrap)
     assert_not_nil(referral)
-    assert_equal(referral.program, Case::Program::Wrap)
+    assert_equal(referral.program, Program::Wrap)
 
     documents = referral.documents
     assert_length(documents, kase.documents.length)
@@ -103,7 +103,7 @@ class CaseTests < ActiveSupport::TestCase
     assert_length(kase.events, 1)
     event = kase.events[0]
     assert_instance_of(Case::Events::DidMakeReferral, event)
-    assert_equal(event.case_program, Case::Program::Wrap)
+    assert_equal(event.case_program, Program::Wrap)
 
     assert_length(referral.events, 1)
     event = referral.events[0]

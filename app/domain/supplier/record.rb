@@ -4,5 +4,8 @@ class Supplier
 
     # -- associations --
     has_many(:users, as: :organization, class_name: "::User::Record")
+
+    # -- program --
+    enum(program: Program.all)
   end
 end

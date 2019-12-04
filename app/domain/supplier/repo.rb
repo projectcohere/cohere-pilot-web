@@ -45,7 +45,8 @@ class Supplier
     def self.map_record(r)
       Supplier.new(
         id: r.id,
-        name: r.name
+        name: r.name,
+        program: r.program.to_sym
       )
     end
   end

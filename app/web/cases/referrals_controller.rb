@@ -7,7 +7,7 @@ module Cases
         return
       end
 
-      @case = @case.make_referral_to_program(Case::Program::Wrap)
+      @case = @case.make_referral_to_program(Program::Wrap)
       @form = Cases::Form.new(@case)
     end
 

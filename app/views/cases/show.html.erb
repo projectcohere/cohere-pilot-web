@@ -9,7 +9,7 @@
       <% if @case.can_make_referral? %>
         <%=
           link_to("Make Referral to WRAP", new_case_referral_path(@case),
-            params: { program: Case::Program::Wrap },
+            params: { program: Program::Wrap },
             class: "Button--action"
           )
         %>

@@ -9,10 +9,7 @@ class Case
     has_many(:documents, foreign_key: "case_id", class_name: "::Document::Record")
 
     # -- program --
-    enum(program: %i[
-      meap
-      wrap
-    ])
+    enum(program: Program.all)
 
     # -- status --
     enum(status: %i[
