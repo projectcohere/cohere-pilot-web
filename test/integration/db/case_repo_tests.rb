@@ -141,12 +141,12 @@ module Db
             zip: "12345"
           )
         ),
-        account: Case::Account.new(
+        enroller: Enroller::Repo.map_record(enrollers(:enroller_1)),
+        supplier: Supplier::Repo.map_record(suppliers(:supplier_1)),
+        supplier_account: Case::Account.new(
           number: "12345",
           arrears_cents: 1000_00
-        ),
-        enroller: Enroller::Repo.map_record(enrollers(:enroller_1)),
-        supplier: Supplier::Repo.map_record(suppliers(:supplier_1))
+        )
       )
 
       case_repo = Case::Repo.new(domain_events: domain_events)
@@ -189,12 +189,12 @@ module Db
             zip: "12345"
           )
         ),
-        account: Case::Account.new(
+        enroller: Enroller::Repo.map_record(enrollers(:enroller_1)),
+        supplier: Supplier::Repo.map_record(suppliers(:supplier_1)),
+        supplier_account: Case::Account.new(
           number: "12345",
           arrears_cents: 1000_00
-        ),
-        enroller: Enroller::Repo.map_record(enrollers(:enroller_1)),
-        supplier: Supplier::Repo.map_record(suppliers(:supplier_1))
+        )
       )
 
       case_repo = Case::Repo.new(domain_events: domain_events)

@@ -44,7 +44,7 @@ module Cases
       if not kase.nil?
         # set initial values from case
         c = kase
-        a = c.account
+        a = c.supplier_account
         assign_defaults!(attrs, {
           account_number: a.number,
           arrears: a.arrears_dollars.to_s
@@ -86,8 +86,8 @@ module Cases
       supplier = @supplier_repo.find_current
 
       new_case = supplier.open_case(enroller,
-        account: map_to_supplier_account,
         profile: map_to_recipient_profile,
+        account: map_to_supplier_account,
       )
 
       @case_repo.save_account_and_recipient_profile(new_case)

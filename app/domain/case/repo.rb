@@ -294,10 +294,10 @@ class Case
     end
 
     private def assign_account(kase, case_rec)
-      a = kase.account
+      a = kase.supplier_account
       case_rec.assign_attributes(
-        account_number: a.number,
-        account_arrears_cents: a.arrears_cents
+        supplier_account_number: a.number,
+        supplier_account_arrears_cents: a.arrears_cents
       )
     end
 
@@ -373,16 +373,17 @@ class Case
         id: Id.new(r.id),
         program: r.program.to_sym,
         status: r.status.to_sym,
+        recipient: map_recipient(r.recipient),
         enroller_id: r.enroller_id,
         supplier_id: r.supplier_id,
-        account: Case::Account.new(
-          number: r.account_number,
-          arrears_cents: r.account_arrears_cents,
+        supplier_account: Case::Account.new(
+          number: r.supplier_account_number,
+          arrears_cents: r.supplier_account_arrears_cents,
         ),
         documents: document_recs&.map { |d|
           map_document(d)
         },
-        recipient: map_recipient(r.recipient),
+        received_message_at: r.received_message_at,
         updated_at: r.updated_at,
         completed_at: r.completed_at
       )

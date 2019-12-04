@@ -5,13 +5,13 @@ class Supplier < ::Entity
   props_end!
 
   # -- factories --
-  def open_case(enroller, account:, profile:)
+  def open_case(enroller, profile:, account:)
     Case.open(
       program: Case::Program::Meap,
-      account: account,
       profile: profile,
       enroller: enroller,
-      supplier: self
+      supplier: self,
+      supplier_account: account
     )
   end
 end

@@ -6,13 +6,13 @@ class CaseTests < ActiveSupport::TestCase
     kase = Case.open(
       program: Case::Program::Meap,
       profile: :test_profile,
-      account: :test_account,
       enroller: Enroller.new(id: 1, name: :enroller),
-      supplier: Supplier.new(id: 2, name: :supplier)
+      supplier: Supplier.new(id: 2, name: :supplier),
+      supplier_account: :test_account
     )
 
     assert_equal(kase.recipient.profile, :test_profile)
-    assert_equal(kase.account, :test_account)
+    assert_equal(kase.supplier_account, :test_account)
     assert_equal(kase.enroller_id, 1)
     assert_equal(kase.supplier_id, 2)
 

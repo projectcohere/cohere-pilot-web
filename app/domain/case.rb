@@ -5,13 +5,13 @@ class Case < ::Entity
 
   # -- props --
   prop(:id, default: Id::None)
-  prop(:program)
   prop(:status)
+  prop(:program)
   prop(:recipient)
-  prop(:account)
-  prop(:documents, default: nil)
   prop(:enroller_id)
   prop(:supplier_id)
+  prop(:supplier_account)
+  prop(:documents, default: nil)
   prop(:received_message_at, default: nil)
   prop(:updated_at, default: nil)
   prop(:completed_at, default: nil)
@@ -22,18 +22,18 @@ class Case < ::Entity
   attr(:selected_document)
 
   # -- lifetime --
-  def self.open(program:, profile:, account:, enroller:, supplier:)
+  def self.open(program:, profile:, enroller:, supplier:, supplier_account:)
     recipient = Recipient.new(
       profile: profile
     )
 
     kase = Case.new(
-      program: program,
       status: Status::Opened,
-      account: account,
+      program: program,
       recipient: recipient,
       enroller_id: enroller.id,
-      supplier_id: supplier.id
+      supplier_id: supplier.id,
+      supplier_account: supplier_account
     )
 
     kase.events << Events::DidOpen.from_entity(kase)

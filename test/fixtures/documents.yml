@@ -4,7 +4,7 @@ document_p1_1:
 
 document_p1_2:
   classification: :unknown
-  source_url: https://website.com/image2.jpg
+  source_url: https://website.com/contract.pdf
   case: pending_1
 
 document_s1_1:
@@ -14,5 +14,15 @@ document_s1_1:
 
 document_s1_2:
   classification: :unknown
-  source_url: https://website.com/image3.jpg
+  source_url: https://website.com/contract.pdf
   case: submitted_1
+
+document_a1_1:
+  classification: :contract
+  source_url: https://website.com/image1.jpg
+  case: approved_1
+
+document_a1_2:
+  classification: :unknown
+  source_url: https://website.com/contract.pdf
+  case: approved_1
