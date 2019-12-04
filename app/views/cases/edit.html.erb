@@ -9,14 +9,20 @@
         <%=
           button_to("Submit Case", [@case, :submit],
             method: :patch,
-            class: "Button--action"
+            class: "Button--action",
+            data: {
+              confirm: "Are you sure you want to submit this case?"
+            }
           )
         %>
         <%=
           button_to("Remove from Pilot", [@case, :complete],
             method: :patch,
             params: { case: { status: :removed } },
-            class: "Button--destructive"
+            class: "Button--destructive",
+            data: {
+              confirm: "Are you sure you want to remove this case from the pilot?"
+            }
           )
         %>
       <% elsif @case.can_complete? %>
@@ -24,14 +30,20 @@
           button_to("Approve Case", [@case, :complete],
             method: :patch,
             params: { case: { status: :approved } },
-            class: "Button--action"
+            class: "Button--action",
+            data: {
+              confirm: "Are you sure you want to approve this case?"
+            }
           )
         %>
         <%=
           button_to("Deny Case", [@case, :complete],
             method: :patch,
             params: { case: { status: :denied } },
-            class: "Button--destructive"
+            class: "Button--destructive",
+            data: {
+              confirm: "Are you sure you want to deny this case?"
+            }
           )
         %>
       <% end %>
