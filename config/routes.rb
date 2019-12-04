@@ -90,6 +90,7 @@ Rails.application.routes.draw do
 
       patch(:submit)
       patch(:complete)
+      post(:referral)
     end
   end
 

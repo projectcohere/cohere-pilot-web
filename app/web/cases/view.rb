@@ -19,6 +19,10 @@ module Cases
       @case.status.to_s.camelize
     end
 
+    def program_name
+      @case.program.to_s.upcase
+    end
+
     def approved?
       @case.status == :approved
     end

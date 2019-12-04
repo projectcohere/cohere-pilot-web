@@ -13,26 +13,24 @@
     <% else %>
       <% @cases.each do |kase| %>
         <%- view = Cases::View.new(kase) %>
-        <% policy.with_case(kase) do %>
-          <li class="CaseCell">
-            <div class="CaseCell-row">
-              <%= link_to(view.recipient_name, case_path(kase), class: "CaseCell-name") %>
-            </div>
-            <div class="CaseCell-row">
-              <p class="CaseCell-organizations">
-                <%= view.supplier_name %>
-              </p>
-            </div>
-            <div class="CaseCell-row">
-              <p class="CaseCell-status">
-                <%= view.status %>
-              </p>
-              <p class="CaseCell-updateTime">
-                Updated <%= time_ago_in_words(view.updated_at) %> ago
-              </p>
-            </div>
-          </li>
-        <% end %>
+        <li class="CaseCell">
+          <div class="CaseCell-row">
+            <%= link_to(view.recipient_name, case_path(kase), class: "CaseCell-name") %>
+          </div>
+          <div class="CaseCell-row">
+            <p class="CaseCell-organizations">
+              <%= view.supplier_name %>
+            </p>
+          </div>
+          <div class="CaseCell-row">
+            <p class="CaseCell-status">
+              <%= view.status %>
+            </p>
+            <p class="CaseCell-updateTime">
+              Updated <%= time_ago_in_words(view.updated_at) %> ago
+            </p>
+          </div>
+        </li>
       <% end %>
     <% end %>
   </ul>

@@ -107,6 +107,9 @@ class CasesController < ApplicationController
     end
   end
 
+  def referral
+  end
+
   # -- queries --
   private def policy
     Case::Policy.new(User::Repo.get.find_current, @case)

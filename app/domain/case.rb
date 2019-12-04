@@ -139,6 +139,10 @@ class Case < ::Entity
     @status == :submitted
   end
 
+  def can_be_referred?
+    @status == :approved
+  end
+
   def fpl_percentage
     household = recipient&.dhs_account&.household
     if household.nil?

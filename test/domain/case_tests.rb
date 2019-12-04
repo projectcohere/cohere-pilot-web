@@ -177,7 +177,7 @@ class CaseTests < ActiveSupport::TestCase
   end
 
   # -- queries --
-  test "calcuates an fpl percentage from the household" do
+  test "has an fpl percentage with a household" do
     household = Recipient::Household.new(
       size: 5,
       income_cents: 2493_33
