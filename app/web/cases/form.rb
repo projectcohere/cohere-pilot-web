@@ -6,6 +6,7 @@ module Cases
       inclusion: %w[opened pending submitted approved denied removed]
     )
 
+    field(:supplier_id, :integer)
     field(:signed_contract, :boolean,
       on: { submitted: { presence: true } }
     )
@@ -44,6 +45,7 @@ module Cases
       c = kase
       assign_defaults!(attrs, {
         status: c.status.to_s,
+        supplier_id: c.supplier_id,
         signed_contract: @model.signed_contract?
       })
 
@@ -100,9 +102,9 @@ module Cases
       @enroller_repo.find(@model.enroller_id).name
     end
 
-    def supplier_name
-      if not @model.supplier_id.nil?
-        @supplier_repo.find(@model.supplier_id).name
+    def supplier_options
+      @supplier_repo.find_all_by_program(@model.program).map do |s|
+        [s.name.titlecase, s.id]
       end
     end
 

@@ -41,6 +41,15 @@ class Supplier
       end
     end
 
+    def find_all_by_program(program)
+      find_cached(program) do
+        records = Supplier::Record
+          .where(program: program)
+
+        entities_from(records)
+      end
+    end
+
     # -- factories --
     def self.map_record(r)
       Supplier.new(
