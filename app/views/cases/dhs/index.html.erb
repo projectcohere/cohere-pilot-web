@@ -15,7 +15,7 @@
         <%- view = Cases::View.new(kase) %>
         <li class="CaseCell">
           <div class="CaseCell-row">
-            <p class="CaseCell-name"><%= view.recipient_name %></p>
+            <%= link_to(view.recipient_name, edit_case_path(kase), action: :edit, class: "CaseCell-name") %>
           </div>
           <div class="CaseCell-row">
             <p class="CaseCell-updateTime">
