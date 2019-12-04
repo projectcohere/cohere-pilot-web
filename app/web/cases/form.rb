@@ -65,11 +65,11 @@ module Cases
       end
 
       case new_status
-      when :submitted
+      when Case::Status::Submitted
         @model.submit_to_enroller
-      when :removed
+      when Case::Status::Removed
         @model.remove_from_pilot
-      when :approved, :denied
+      when Case::Status::Approved, Case::Status::Denied
         @model.complete(new_status)
       end
 
@@ -84,7 +84,7 @@ module Cases
     end
 
     private def submitted?
-      new_status == :submitted || new_status == :approved || new_status == :denied
+      new_status == Case::Status::Submitted || new_status == Case::Status::Approved || new_status == Case::Status::Denied
     end
 
     # -- queries --

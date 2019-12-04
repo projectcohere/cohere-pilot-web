@@ -54,7 +54,7 @@ module Db
 
       kase = case_repo.find_by_enroller_with_documents(case_rec.id, case_rec.enroller_id)
       assert_not_nil(kase)
-      assert_equal(kase.status, :submitted)
+      assert_equal(kase.status, Case::Status::Submitted)
     end
 
     test "can't find a non-submitted case for an enroller" do
@@ -82,7 +82,7 @@ module Db
 
       kase = case_repo.find_opened_with_documents(case_rec.id)
       assert_not_nil(kase)
-      assert_equal(kase.status, :opened)
+      assert_equal(kase.status, Case::Status::Opened)
     end
 
     test "can't find an opened case by id" do
@@ -258,7 +258,7 @@ module Db
       kase.attach_dhs_account(account)
       kase.sign_contract
       kase.submit_to_enroller
-      kase.complete(:approved)
+      kase.complete(Case::Status::Approved)
 
       case_repo = Case::Repo.new(domain_events: domain_events)
       case_repo.save_all_fields_and_new_documents(kase)
@@ -348,7 +348,7 @@ module Db
     test "saves completed" do
       case_rec = cases(:submitted_1)
       kase = Case::Repo.map_record(case_rec, case_rec.documents)
-      kase.complete(:approved)
+      kase.complete(Case::Status::Approved)
       case_repo = Case::Repo.new
 
       case_repo.save_completed(kase)

@@ -15,7 +15,7 @@
         <%=
           button_to("Remove from Pilot", [@case, :complete],
             method: :patch,
-            params: { case: { status: :removed } },
+            params: { case: { status: Case::Status::Removed } },
             class: "Button--destructive"
           )
         %>
@@ -23,14 +23,14 @@
         <%=
           button_to("Approve Case", [@case, :complete],
             method: :patch,
-            params: { case: { status: :approved } },
+            params: { case: { status: Case::Status::Approved } },
             class: "Button--action"
           )
         %>
         <%=
           button_to("Deny Case", [@case, :complete],
             method: :patch,
-            params: { case: { status: :denied } },
+            params: { case: { status: Case::Status::Denied } },
             class: "Button--destructive"
           )
         %>

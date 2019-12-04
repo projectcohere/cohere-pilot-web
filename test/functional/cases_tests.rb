@@ -373,7 +373,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     patch(auth("/cases/#{case_rec.id}/complete", as: user_rec), params: {
       case: {
-        status: :approved
+        status: Case::Status::Approved
       }
     })
 
@@ -399,7 +399,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     patch(auth("/cases/#{case_rec.id}/complete", as: user_rec), params: {
       case: {
-        status: :approved
+        status: Case::Status::Approved
       }
     })
 
@@ -425,7 +425,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     patch(auth("/cases/#{case_rec.id}/complete", as: user_rec), params: {
       case: {
-        status: :removed
+        status: Case::Status::Removed
       }
     })
 

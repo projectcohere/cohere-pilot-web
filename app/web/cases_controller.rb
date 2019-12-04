@@ -59,7 +59,7 @@ class CasesController < ApplicationController
     end
 
     @form = Cases::Form.new(@case, {
-      "status" => :submitted
+      "status" => Case::Status::Submitted
     })
 
     if not @form.save

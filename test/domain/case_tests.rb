@@ -23,13 +23,13 @@ class CaseTests < ActiveSupport::TestCase
   # -- commands --
   test "becomes pending with the dhs account" do
     kase = Case.stub(
-      status: :opened,
+      status: Case::Status::Opened,
       recipient: Recipient.stub,
     )
 
     kase.attach_dhs_account(:test_account)
     assert_equal(kase.recipient.dhs_account, :test_account)
-    assert_equal(kase.status, :pending)
+    assert_equal(kase.status, Case::Status::Pending)
 
     assert_length(kase.events, 1)
     assert_instance_of(Case::Events::DidBecomePending, kase.events[0])
@@ -37,22 +37,22 @@ class CaseTests < ActiveSupport::TestCase
 
   test "doesn't revert back to pending after submission" do
     kase = Case.stub(
-      status: :submitted,
+      status: Case::Status::Submitted,
       recipient: Recipient.stub
     )
 
     kase.attach_dhs_account(:test_account)
-    assert_equal(kase.status, :submitted)
+    assert_equal(kase.status, Case::Status::Submitted)
   end
 
   test "submits a pending case to an enroller" do
     kase = Case.stub(
-      status: :pending,
+      status: Case::Status::Pending,
       recipient: Recipient.stub
     )
 
     kase.submit_to_enroller
-    assert_equal(kase.status, :submitted)
+    assert_equal(kase.status, Case::Status::Submitted)
 
     assert_length(kase.events, 1)
     assert_instance_of(Case::Events::DidSubmit, kase.events[0])
@@ -60,11 +60,11 @@ class CaseTests < ActiveSupport::TestCase
 
   test "completes a submitted case" do
     kase = Case.stub(
-      status: :submitted
+      status: Case::Status::Submitted
     )
 
-    kase.complete(:approved)
-    assert_equal(kase.status, :approved)
+    kase.complete(Case::Status::Approved)
+    assert_equal(kase.status, Case::Status::Approved)
     assert_in_delta(Time.zone.now, kase.completed_at, 1.0)
 
     assert_length(kase.events, 1)
@@ -73,11 +73,11 @@ class CaseTests < ActiveSupport::TestCase
 
   test "removes a case from the pilot" do
     kase = Case.stub(
-      status: :pending
+      status: Case::Status::Pending
     )
 
     kase.remove_from_pilot
-    assert_equal(kase.status, :removed)
+    assert_equal(kase.status, Case::Status::Removed)
     assert_in_delta(Time.zone.now, kase.completed_at, 1.0)
 
     assert_length(kase.events, 1)

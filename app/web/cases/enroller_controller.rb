@@ -34,7 +34,7 @@ module Cases
       case_params = params.require(:case).permit(:status)
       case_status = case_params[:status]&.to_sym
 
-      if case_status != :approved && case_status != :denied
+      if case_status != Case::Status::Approved && case_status != Case::Status::Denied
         flash.now[:alert] = "May only approve or deny the case."
         render(:show)
         return
