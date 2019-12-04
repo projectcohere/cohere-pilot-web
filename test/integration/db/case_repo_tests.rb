@@ -151,7 +151,7 @@ module Db
 
       case_repo = Case::Repo.new(domain_events: domain_events)
       act = -> do
-        case_repo.save_account_and_recipient_profile(kase)
+        case_repo.save_opened(kase)
       end
 
       assert_difference(
@@ -199,7 +199,7 @@ module Db
 
       case_repo = Case::Repo.new(domain_events: domain_events)
       act = -> do
-        case_repo.save_account_and_recipient_profile(kase)
+        case_repo.save_opened(kase)
       end
 
       assert_difference(
@@ -231,7 +231,7 @@ module Db
       )
 
       case_repo = Case::Repo.new
-      case_repo.save_status_and_dhs_account(kase)
+      case_repo.save_pending(kase)
 
       case_rec = kase.record
       assert_equal(case_rec.status, "pending")
@@ -261,7 +261,7 @@ module Db
       kase.complete(Case::Status::Approved)
 
       case_repo = Case::Repo.new(domain_events: domain_events)
-      case_repo.save_all_fields_and_new_documents(kase)
+      case_repo.save_all_fields_and_documents(kase)
 
       case_rec = kase.record
       assert_equal(case_rec.status, "approved")

@@ -90,7 +90,7 @@ module Cases
         account: map_to_supplier_account,
       )
 
-      @case_repo.save_account_and_recipient_profile(new_case)
+      @case_repo.save_opened(new_case)
 
       # set underlying model
       @model = new_case

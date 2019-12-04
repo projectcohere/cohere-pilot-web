@@ -144,17 +144,12 @@ class Case
     end
 
     # -- commands --
-    def save_account_and_recipient_profile(kase)
+    def save_opened(kase)
       # start a new case record
       case_rec = Case::Record.new
 
       # update the case record
-      c = kase
-      case_rec.assign_attributes(
-        enroller_id: c.enroller_id,
-        supplier_id: c.supplier_id,
-      )
-
+      assign_partners(kase, case_rec)
       assign_account(kase, case_rec)
 
       # find or update a recipient record with a matching phone number
@@ -177,7 +172,7 @@ class Case
       @domain_events.consume(kase.events)
     end
 
-    def save_status_and_dhs_account(kase)
+    def save_pending(kase)
       case_rec = kase.record
       recipient_rec = kase.recipient.record
 
@@ -199,7 +194,7 @@ class Case
       @domain_events.consume(kase.events)
     end
 
-    def save_all_fields_and_new_documents(kase)
+    def save_all_fields_and_documents(kase)
       case_rec = kase.record
       recipient_rec = kase.recipient.record
 
@@ -285,6 +280,14 @@ class Case
     end
 
     # -- commands/helpers
+    private def assign_partners(kase, case_rec)
+      c = kase
+      case_rec.assign_attributes(
+        enroller_id: c.enroller_id,
+        supplier_id: c.supplier_id
+      )
+    end
+
     private def assign_status(kase, case_rec)
       c = kase
       case_rec.assign_attributes(

@@ -73,7 +73,7 @@ module Cases
         @model.complete(new_status)
       end
 
-      @case_repo.save_all_fields_and_new_documents(@model)
+      @case_repo.save_all_fields_and_documents(@model)
 
       true
     end

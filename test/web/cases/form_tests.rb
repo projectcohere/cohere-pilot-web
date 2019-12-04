@@ -21,7 +21,7 @@ module Cases
     test "saves a case" do
       kase = Case::Repo.map_record(cases(:pending_1))
       case_repo = Minitest::Mock.new
-        .expect(:save_all_fields_and_new_documents, nil, [kase])
+        .expect(:save_all_fields_and_documents, nil, [kase])
 
       form_attrs = {
         "first_name" => "Edith"
@@ -53,7 +53,7 @@ module Cases
       case_rec = cases(:pending_1)
       kase = Case::Repo.map_record(case_rec, case_rec.documents)
       case_repo = Minitest::Mock.new
-        .expect(:save_all_fields_and_new_documents, nil, [kase])
+        .expect(:save_all_fields_and_documents, nil, [kase])
 
       form_attrs = {
         "status" => "submitted"
@@ -87,7 +87,7 @@ module Cases
       case_rec = cases(:submitted_1)
       kase = Case::Repo.map_record(case_rec, case_rec.documents)
       case_repo = Minitest::Mock.new
-        .expect(:save_all_fields_and_new_documents, nil, [kase])
+        .expect(:save_all_fields_and_documents, nil, [kase])
 
       form_attrs = {
         "status" => "approved"
@@ -108,7 +108,7 @@ module Cases
     test "creates a signed contract for a case" do
       kase = Case::Repo.map_record(cases(:pending_1))
       case_repo = Minitest::Mock.new
-        .expect(:save_all_fields_and_new_documents, nil, [kase])
+        .expect(:save_all_fields_and_documents, nil, [kase])
 
       form_attrs = {
         "signed_contract" => true

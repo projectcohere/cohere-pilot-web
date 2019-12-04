@@ -16,7 +16,7 @@ module Cases
     test "saves an supplier case" do
       case_repo = Minitest::Mock.new
         .expect(
-          :save_account_and_recipient_profile, nil, [Case]
+          :save_opened, nil, [Case]
         )
 
       enroller_repo = Minitest::Mock.new
