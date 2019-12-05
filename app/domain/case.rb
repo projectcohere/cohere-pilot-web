@@ -47,8 +47,8 @@ class Case < ::Entity
     @recipient.update_profile(profile)
   end
 
-  def update_supplier_account(account)
-    @account = account
+  def update_supplier_account(supplier_account)
+    @supplier_account = supplier_account
   end
 
   def attach_dhs_account(dhs_account)

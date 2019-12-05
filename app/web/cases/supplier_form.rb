@@ -20,7 +20,7 @@ module Cases
 
     # -- fields/utility-account
     field(:account_number, :string)
-    field(:arrears, :string, numericality: true, allow_nil: true)
+    field(:arrears, :string, numericality: true, allow_blank: true)
     validate(:has_account_unless_referral)
 
     # -- lifetime --

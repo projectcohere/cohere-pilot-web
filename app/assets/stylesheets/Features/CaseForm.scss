@@ -4,6 +4,10 @@
   max-width: $width1;
 
   /* CaseForm-details */
+  &-status {
+    grid-columN: 1 / 3;
+  }
+
   &-program {
     grid-column: 3 / 5;
 
