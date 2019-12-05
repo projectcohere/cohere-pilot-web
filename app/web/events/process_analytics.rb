@@ -50,17 +50,24 @@ module Events
       event_name = event_path[2].titlecase
 
       # determine event attrs
-      event_attrs = case event
-      when Case::Events::DidOpen
-        { case_program: event.case_program, case_is_referral: event.case_is_referral }
+      event_attrs = {}
+      if event.respond_to?(:case_program)
+        event_attrs[:case_program] = event.case_program
+      end
+
+      if event.respond_to?(:case_is_referral)
+        event_attrs[:case_is_referral] = event.case_is_referral
+      end
+
+      other_attrs = case event
       when Case::Events::DidReceiveMessage
         { is_first: event.is_first }
       when Case::Events::DidComplete
         { case_status: event.case_status }
-      when Case::Events::DidMakeReferral
-        { case_program: event.case_program }
-      else
-        { }
+      end
+
+      if not other_attrs.nil?
+        event_attrs.merge!(other_attrs)
       end
 
       # add user attrs if available
