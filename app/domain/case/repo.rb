@@ -53,7 +53,7 @@ class Case
         .where(case_id: case_id)
 
       is_referrer = Case::Record
-        .exists?(referring_case_id: case_id)
+        .exists?(referrer_id: case_id)
 
       entity_from(case_rec, document_recs, is_referrer)
     end
@@ -300,7 +300,7 @@ class Case
       referral_rec.assign_attributes(
         program: r.program,
         recipient_id: r.recipient.id,
-        referring_case_id: c.id.val
+        referrer_id: c.id.val
       )
 
       assign_status(referral, referral_rec)
@@ -425,7 +425,7 @@ class Case
           map_document(d)
         },
         is_referrer: is_referrer,
-        is_referral: r.referring_case_id.present?,
+        is_referral: r.referrer_id.present?,
         received_message_at: r.received_message_at,
         updated_at: r.updated_at,
         completed_at: r.completed_at

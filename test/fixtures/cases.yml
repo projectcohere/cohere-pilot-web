@@ -106,4 +106,4 @@ referral_1:
   updated_at: <%= Time.zone.now %>
   received_message_at: nil
   completed_at: nil
-  referring_case: approved_2
+  referrer: approved_2

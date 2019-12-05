@@ -394,7 +394,7 @@ module Db
       referral_rec = referral.record
       assert_equal(referral_rec.status, "opened")
       assert_equal(referral_rec.program, "wrap")
-      assert_equal(referral_rec.referring_case_id, referrer.id.val)
+      assert_equal(referral_rec.referrer_id, referrer.id.val)
 
       assert_length(referrer.events, 0)
       assert_length(referral.events, 0)
