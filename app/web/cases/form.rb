@@ -118,7 +118,7 @@ module Cases
 
     def supplier_options
       @supplier_repo.find_all_by_program(@model.program).map do |s|
-        [s.name.titlecase, s.id]
+        [s.name, s.id]
       end
     end
 
