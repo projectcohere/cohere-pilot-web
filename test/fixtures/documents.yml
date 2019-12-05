@@ -26,3 +26,13 @@ document_a1_2:
   classification: :unknown
   source_url: https://website.com/contract.pdf
   case: approved_1
+
+document_a2_1:
+  classification: :contract
+  source_url: https://website.com/image1.jpg
+  case: approved_2
+
+document_a2_2:
+  classification: :unknown
+  source_url: https://website.com/contract.pdf
+  case: approved_2

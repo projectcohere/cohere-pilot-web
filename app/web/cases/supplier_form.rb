@@ -6,24 +6,22 @@ module Cases
     field(:last_name, :string, presence: true)
 
     # -- fields/phone
-    field(:phone_number, :string, presence: true,
-      numericality: true,
-      length: { is: 10 }
+    field(:phone_number, :string,
+      presence: true, numericality: true, length: { is: 10 }
     )
 
     # -- fields/address
     field(:street, :string, presence: true)
     field(:street2, :string)
     field(:city, :string, presence: true)
-    field(:zip, :string, presence: true,
-      numericality: true
+    field(:zip, :string,
+      presence: true, numericality: true
     )
 
     # -- fields/utility-account
-    field(:account_number, :string, presence: true)
-    field(:arrears, :string, presence: true,
-      numericality: true
-    )
+    field(:account_number, :string)
+    field(:arrears, :string, numericality: true, allow_nil: true)
+    validate(:has_account_unless_referral)
 
     # -- lifetime --
     def initialize(
@@ -166,6 +164,21 @@ module Cases
     # -- queries --
     def case_id
       @model&.id
+    end
+
+    # -- validations --
+    def has_account_unless_referral
+      if validation_context == :referral
+        return
+      end
+
+      if account_number.blank?
+        errors.add(:account_number, "can't be blank")
+      end
+
+      if arrears.blank?
+        errors.add(:arrears, "can't be blank")
+      end
     end
 
     # -- ApplicationForm --

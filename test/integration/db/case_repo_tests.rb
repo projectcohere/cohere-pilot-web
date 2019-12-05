@@ -48,6 +48,16 @@ module Db
       end
     end
 
+    test "finds a case with its documents and referral" do
+      case_repo = Case::Repo.new
+      case_rec = cases(:approved_2)
+
+      kase = case_repo.find_with_documents_and_referral(case_rec.id)
+      assert_equal(kase.id.val, case_rec.id)
+      assert_length(kase.documents, 2)
+      assert(kase.is_referrer)
+    end
+
     test "finds a submitted case by id for an enroller" do
       case_repo = Case::Repo.new
       case_rec = cases(:submitted_1)
@@ -94,16 +104,16 @@ module Db
       end
     end
 
-    test "finds all open cases" do
+    test "finds all opened cases" do
       case_repo = Case::Repo.new
-      cases = case_repo.find_all_open
-      assert_length(cases, 6)
+      cases = case_repo.find_all_opened
+      assert_length(cases, 7)
     end
 
     test "finds all completed cases" do
       case_repo = Case::Repo.new
       cases = case_repo.find_all_completed
-      assert_length(cases, 1)
+      assert_length(cases, 2)
     end
 
     test "finds all submitted cases for an enroller" do
@@ -111,10 +121,10 @@ module Db
       case_rec = cases(:submitted_1)
 
       cases = case_repo.find_all_for_enroller(case_rec.enroller_id)
-      assert_length(cases, 2)
+      assert_length(cases, 3)
     end
 
-    test "finds all opened cases" do
+    test "finds all dhs cases" do
       case_repo = Case::Repo.new
       cases = case_repo.find_all_for_dhs
       assert_length(cases, 4)
@@ -354,6 +364,41 @@ module Db
       case_repo.save_completed(kase)
       assert_equal(case_rec.status, "approved")
       assert_not_nil(case_rec.completed_at)
+    end
+
+    test "saves a referral" do
+      supplier_rec = suppliers(:supplier_3)
+      case_rec = cases(:approved_1)
+
+      referrer = Case::Repo.map_record(case_rec, case_rec.documents)
+      referral = referrer.make_referral_to_program(
+        Program::Wrap,
+        supplier_id: supplier_rec.id
+      )
+
+      domain_events = ArrayQueue.new
+      case_repo = Case::Repo.new(domain_events: domain_events)
+
+      act = -> do
+        case_repo.save_all_fields_and_documents(referral, referrer)
+      end
+
+      assert_difference(
+        -> { Case::Record.count } => 1,
+        &act
+      )
+
+      assert_not_nil(referral.record)
+      assert_not_nil(referral.id.val)
+
+      referral_rec = referral.record
+      assert_equal(referral_rec.status, "opened")
+      assert_equal(referral_rec.program, "wrap")
+      assert_equal(referral_rec.referring_case_id, referrer.id.val)
+
+      assert_length(referrer.events, 0)
+      assert_length(referral.events, 0)
+      assert_length(domain_events, 2)
     end
   end
 end

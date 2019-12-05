@@ -4,6 +4,9 @@ module Program
 
   # -- queries --
   def self.all
-    @all ||= constants.map { |n| const_get(n) }
+    @all ||= [
+      Meap,
+      Wrap
+    ]
   end
 end

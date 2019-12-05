@@ -94,7 +94,10 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     referral = kase.make_referral_to_program(Program::Wrap)
+    assert(kase.referrer?)
+
     assert_not_nil(referral)
+    assert(referral.referral?)
     assert_equal(referral.program, Program::Wrap)
 
     documents = referral.documents
@@ -108,7 +111,7 @@ class CaseTests < ActiveSupport::TestCase
     assert_length(referral.events, 1)
     event = referral.events[0]
     assert_instance_of(Case::Events::DidOpen, event)
-    assert_equal(event.referring_case_id, kase.id)
+    assert(event.case_is_referral)
   end
 
   # -- commands/messages

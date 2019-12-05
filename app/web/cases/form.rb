@@ -53,8 +53,14 @@ module Cases
     end
 
     # -- commands --
-    def save
-      if not valid?(submitted? ? :submitted : nil)
+    def save(referrer: nil)
+      scope = if submitted?
+        :submitted
+      elsif @model.referral?
+        :referral
+      end
+
+      if not valid?(scope)
         return false
       end
 
@@ -75,7 +81,11 @@ module Cases
         @model.complete(new_status)
       end
 
-      @case_repo.save_all_fields_and_documents(@model)
+      if referrer.nil?
+        @case_repo.save_all_fields_and_documents(@model)
+      else
+        @case_repo.save_all_fields_and_documents(@model, referrer)
+      end
 
       true
     end
@@ -96,6 +106,10 @@ module Cases
 
     def fpl_percentage
       @model.fpl_percentage
+    end
+
+    def program_name
+      @model.program.to_s.upcase
     end
 
     def enroller_name

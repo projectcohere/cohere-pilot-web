@@ -4,15 +4,15 @@ class Case
       # -- props --
       prop(:case_id)
       prop(:case_program)
-      prop(:referring_case_id)
+      prop(:case_is_referral)
       props_end!
 
       # -- factories --
-      def self.from_entity(kase, referring_case: nil)
+      def self.from_entity(kase)
         DidOpen.new(
           case_id: kase.id,
           case_program: kase.program,
-          referring_case_id: referring_case&.id
+          case_is_referral: kase.referral?
         )
       end
     end

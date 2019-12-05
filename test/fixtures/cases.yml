@@ -81,3 +81,29 @@ approved_1:
   updated_at: <%= Time.zone.now %>
   received_message_at: <%= Time.zone.now %>
   completed_at: <%= Time.zone.now %>
+
+approved_2:
+  status: approved
+  recipient: recipient_3
+  enroller: enroller_1
+  supplier: supplier_2
+  supplier_account_number: A1
+  supplier_account_arrears_cents: 1000_00
+  created_at: <%= Time.zone.now - 1.days %>
+  updated_at: <%= Time.zone.now %>
+  received_message_at: <%= Time.zone.now %>
+  completed_at: <%= Time.zone.now %>
+
+referral_1:
+  status: pending
+  program: wrap
+  recipient: recipient_2
+  enroller: enroller_1
+  supplier: supplier_3
+  supplier_account_number: nil
+  supplier_account_arrears_cents: nil
+  created_at: <%= Time.zone.now - 1.days %>
+  updated_at: <%= Time.zone.now %>
+  received_message_at: nil
+  completed_at: nil
+  referring_case: approved_2

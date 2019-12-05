@@ -55,15 +55,18 @@
       <%= f.section("Details", class: "CaseForm-details") do %>
         <%= f.field(:status, background: false, class: "CaseForm-status") do %>
           <%= f.value(@form.status.titlecase) %>
-        <% end %>
+        <%- end %>
+        <%= f.field(:program, background: false, class: "CaseForm-program") do %>
+          <%= f.value(@form.program_name) %>
+        <%- end %>
         <%= f.field(:enroller, background: false, class: "CaseForm-enroller") do %>
           <%= f.value(@form.enroller_name) %>
-        <% end %>
+        <%- end %>
         <%- disabled = @form.signed_contract %>
-        <%= f.field(:signed_contract, "Contract", disabled: disabled, background: false, class: "CaseForm-signedContract") do %>
+        <%= f.field(:signed_contract, "Contract", disabled: disabled, background: false, class: "CaseForm-contract") do %>
           <%= f.check_box(:signed_contract, disabled: disabled) %>
           <span>Signed Contract?</span>
-        <% end %>
+        <%- end %>
       <% end %>
 
       <%= render(partial: "cases/supplier/fields", locals: { f: f, form: @form }) %>

@@ -12,6 +12,8 @@ class Case < ::Entity
   prop(:supplier_id)
   prop(:supplier_account)
   prop(:documents, default: nil)
+  prop(:is_referrer, default: false)
+  prop(:is_referral, default: false)
   prop(:received_message_at, default: nil)
   prop(:updated_at, default: nil)
   prop(:completed_at, default: nil)
@@ -83,14 +85,20 @@ class Case < ::Entity
     @events << Events::DidComplete.from_entity(self)
   end
 
-  def make_referral_to_program(program)
+  def make_referral_to_program(program, supplier_id: nil)
     if not can_make_referral?
       return nil
     end
 
-    new_documents = []
+    # mark as referrer
+    @is_referrer = true
+    @events << Events::DidMakeReferral.from_entity(self,
+      program: program
+    )
 
-    documents.each do |d|
+    # create referral
+    new_documents = []
+    documents&.each do |d|
       if d.classification != :contract
         new_documents << d
       end
@@ -101,18 +109,13 @@ class Case < ::Entity
       status: Status::Opened,
       recipient: recipient,
       enroller_id: enroller_id,
-      supplier_id: nil,
+      supplier_id: supplier_id,
       supplier_account: nil,
-      documents: new_documents
+      documents: new_documents,
+      is_referral: true
     )
 
-    new_referral.events << Events::DidOpen.from_entity(new_referral,
-      referring_case: self
-    )
-
-    @events << Events::DidMakeReferral.from_entity(self,
-      program: program
-    )
+    new_referral.events << Events::DidOpen.from_entity(new_referral)
 
     new_referral
   end
@@ -165,6 +168,9 @@ class Case < ::Entity
   end
 
   # -- queries --
+  alias :referrer? :is_referrer
+  alias :referral? :is_referral
+
   def can_submit?
     @status == Status::Opened || @status == Status::Pending
   end

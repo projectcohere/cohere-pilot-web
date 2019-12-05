@@ -44,7 +44,7 @@ class Case
       entity_from(document_rec.case, [document_rec])
     end
 
-    def find_with_documents(case_id)
+    def find_with_documents_and_referral(case_id)
       case_rec = Case::Record
         .find(case_id)
 
@@ -52,7 +52,10 @@ class Case
       document_recs = Document::Record
         .where(case_id: case_id)
 
-      entity_from(case_rec, document_recs)
+      is_referrer = Case::Record
+        .exists?(referring_case_id: case_id)
+
+      entity_from(case_rec, document_recs, is_referrer)
     end
 
     def find_opened_with_documents(case_id)
@@ -83,7 +86,7 @@ class Case
     end
 
     # -- queries/many
-    def find_all_open
+    def find_all_opened
       case_recs = Case::Record
         .where(completed_at: nil)
         .order(updated_at: :desc)
@@ -111,7 +114,10 @@ class Case
 
     def find_all_for_dhs
       case_recs = Case::Record
-        .where(status: [:opened, :pending])
+        .where(
+          program: :meap,
+          status: [:opened, :pending]
+        )
         .order(created_at: :desc)
         .includes(:recipient)
 
@@ -194,7 +200,12 @@ class Case
       @domain_events.consume(kase.events)
     end
 
-    def save_all_fields_and_documents(kase)
+    def save_all_fields_and_documents(kase, referrer = nil)
+      if not referrer.nil?
+        save_referral(kase, referrer)
+        return
+      end
+
       case_rec = kase.record
       recipient_rec = kase.recipient.record
 
@@ -277,6 +288,33 @@ class Case
 
       # consume all entity events
       @domain_events.consume(kase.events)
+    end
+
+    private def save_referral(referral, referrer)
+      # start a new record for the referral
+      referral_rec = Case::Record.new
+
+      # update the referral record
+      c = referrer
+      r = referral
+      referral_rec.assign_attributes(
+        program: r.program,
+        recipient_id: r.recipient.id,
+        referring_case_id: c.id.val
+      )
+
+      assign_status(referral, referral_rec)
+      assign_partners(referral, referral_rec)
+
+      # save the records
+      referral_rec.save!
+
+      # send creation events back to entities
+      referral.did_save(referral_rec)
+
+      # consume all entity events
+      @domain_events.consume(referrer.events)
+      @domain_events.consume(referral.events)
     end
 
     # -- commands/helpers
@@ -370,7 +408,7 @@ class Case
     end
 
     # -- factories --
-    def self.map_record(r, document_recs = nil)
+    def self.map_record(r, document_recs = nil, is_referrer = false)
       Case.new(
         record: r,
         id: Id.new(r.id),
@@ -386,6 +424,8 @@ class Case
         documents: document_recs&.map { |d|
           map_document(d)
         },
+        is_referrer: is_referrer,
+        is_referral: r.referring_case_id.present?,
         received_message_at: r.received_message_at,
         updated_at: r.updated_at,
         completed_at: r.completed_at

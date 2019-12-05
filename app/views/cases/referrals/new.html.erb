@@ -9,14 +9,14 @@
   <div class="EditCase">
     <%= form_for(@form, url: case_referrals_path, html: { class: "CaseForm Form" }) do |f| %>
       <%= f.section("Details", class: "CaseForm-details") do %>
-        <%= f.field(:status, background: false, class: "CaseForm-status") do %>
-          <%= f.value(@form.status.titlecase) %>
+        <%= f.field(:program, background: false, class: "CaseForm-program--referral") do %>
+          <%= f.value(@form.program_name) %>
         <% end %>
-        <%= f.field(:enroller, background: false, class: "CaseForm-enroller") do %>
+        <%= f.field(:enroller, background: false, class: "CaseForm-enroller--referral") do %>
           <%= f.value(@form.enroller_name) %>
         <% end %>
         <%- disabled = @form.signed_contract %>
-        <%= f.field(:signed_contract, "Contract", disabled: disabled, background: false, class: "CaseForm-signedContract") do %>
+        <%= f.field(:signed_contract, "Contract", disabled: disabled, background: false, class: "CaseForm-contract") do %>
           <%= f.check_box(:signed_contract, disabled: disabled) %>
           <span>Signed Contract?</span>
         <% end %>

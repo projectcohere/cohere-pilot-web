@@ -2,10 +2,10 @@ supplier_1:
   name: "Test Energy"
   program: :meap
 
-supplier_1:
+supplier_2:
   name: "Test Energon"
   program: :meap
 
-supplier_2:
+supplier_3:
   name: "Test Water"
   program: :wrap

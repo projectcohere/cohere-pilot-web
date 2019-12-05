@@ -36,6 +36,8 @@ module Events
         event.case_id.val
       when Case::Events::DidComplete
         event.case_id.val
+      when Case::Events::DidMakeReferral
+        event.case_id.val
       end
 
       # bail if we don't log this event
@@ -49,10 +51,14 @@ module Events
 
       # determine event attrs
       event_attrs = case event
+      when Case::Events::DidOpen
+        { case_program: event.case_program, case_is_referral: event.case_is_referral }
       when Case::Events::DidReceiveMessage
         { is_first: event.is_first }
       when Case::Events::DidComplete
         { case_status: event.case_status }
+      when Case::Events::DidMakeReferral
+        { case_program: event.case_program }
       else
         { }
       end
