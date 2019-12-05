@@ -19,12 +19,12 @@
           </div>
           <div class="CaseCell-row">
             <p class="CaseCell-organizations">
-              <%= view.supplier_name %>
+              <%= view.program_name %>, <%= view.supplier_name %>
             </p>
           </div>
           <div class="CaseCell-row">
             <p class="CaseCell-status">
-              <%= view.status %>
+              <%= view.program_name %>, <%= view.status %>
             </p>
             <p class="CaseCell-updateTime">
               Updated <%= time_ago_in_words(view.updated_at) %> ago
