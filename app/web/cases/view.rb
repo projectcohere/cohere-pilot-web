@@ -89,7 +89,7 @@ module Cases
 
     def fpl_percentage
       fpl_percentage = @case.fpl_percentage
-      fpl_percentage.nil? ? "Unknown" : "#{fpl_percentage}%"
+      fpl_percentage.nil? ? nil : "#{fpl_percentage}%"
     end
 
     private def dhs_account

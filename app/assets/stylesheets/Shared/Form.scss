@@ -3,6 +3,14 @@
   gap: $spacing1;
   padding: $spacing1;
 
+  &-tab {
+    display: none;
+
+    &.is-visible {
+      display: block;
+    }
+  }
+
   &-section {
     display: grid;
     gap: $spacing4;

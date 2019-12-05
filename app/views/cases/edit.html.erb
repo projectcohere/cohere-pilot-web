@@ -51,32 +51,36 @@
   </header>
 
   <div class="EditCase">
+    <nav class="Filters">
+      <%= link_to("Details", "#details", class: "Filter is-selected") %>
+      <%= link_to("Profile", "#profile", class: "Filter") %>
+      <%= link_to("Accounts", "#accounts", class: "Filter") %>
+      <%= link_to("Documents", "#documents", class: "Filter") %>
+    </nav>
+
     <%= form_for(@form, url: case_path(@form.id), html: { class: "CaseForm Form" }) do |f| %>
-      <%= f.section("Details", class: "CaseForm-details") do %>
-        <%= f.field(:status, background: false, class: "CaseForm-status") do %>
-          <%= f.value(@form.status.titlecase) %>
-        <%- end %>
+      <%- form_locals = { f: f, form: @form, view: view } %>
 
-        <%= f.field(:program, background: false, class: "CaseForm-program") do %>
-          <%= f.value(@form.program_name) %>
-        <%- end %>
+      <section id="details" class="Form-tab is-visible">
+        <%= render(partial: "cases/fields/details", locals: form_locals) %>
+      </section>
 
-        <%= f.field(:enroller, background: false, class: "CaseForm-enroller") do %>
-          <%= f.value(@form.enroller_name) %>
-        <%- end %>
+      <section id="profile" class="Form-tab">
+        <%= render(partial: "cases/fields/contact", locals: form_locals) %>
+        <%= render(partial: "cases/fields/address", locals: form_locals) %>
+      </section>
 
-        <%- disabled = @form.contract_variant.present? %>
-        <%= f.field(:contract_variant, "Contract", disabled: disabled, background: false, class: "CaseForm-contract") do %>
-          <%= f.select(:contract_variant, @form.contract_options, include_blank: "None") %>
-        <%- end %>
-      <%- end %>
+      <section id="accounts" class="Form-tab">
+        <%= render(partial: "cases/fields/mdhhs", locals: form_locals) %>
+        <%= render(partial: "cases/fields/utility", locals: form_locals) %>
+        <%= render(partial: "cases/fields/household", locals: form_locals) %>
+      </section>
 
-      <%= render(partial: "cases/supplier/fields", locals: { f: f, form: @form }) %>
-      <%= render(partial: "cases/dhs/fields", locals: { f: f, form: @form }) %>
+      <section id="documents" class="Form-tab">
+        <%= render(partial: "cases/documents", locals: { documents: @form.documents }) %>
+      </section>
 
       <%= f.submit(class: "Form-submit Button--action") %>
-    <%- end %>
-
-    <%= render(partial: "cases/documents", locals: { documents: @form.documents }) %>
+    <% end %>
   <div>
 </main>

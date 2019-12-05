@@ -1,4 +1,4 @@
-import { start, Flash, Passwords } from "../src"
+import { start, Flash, Passwords, EditCase } from "../src"
 
 // -- main --
 start(
@@ -7,4 +7,5 @@ start(
   require("turbolinks"),
   new Flash(),
   new Passwords(),
+  new EditCase()
 )

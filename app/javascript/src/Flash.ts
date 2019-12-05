@@ -4,8 +4,8 @@ import { IComponent } from "./Component"
 export class Flash implements IComponent {
   isDocumentDependent = true
 
-  // -- lifecycle --
-  private onMount() {
+  // -- IComponent --
+  start() {
     const $flash = document.getElementById("flash")
 
     if ($flash != null) {
@@ -13,10 +13,5 @@ export class Flash implements IComponent {
         $flash.classList.add("is-hidden")
       }, 5000)
     }
-  }
-
-  // -- IComponent --
-  start() {
-    this.onMount()
   }
 }
