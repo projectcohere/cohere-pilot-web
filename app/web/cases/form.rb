@@ -7,7 +7,7 @@ module Cases
     )
 
     field(:supplier_id, :integer)
-    field(:signed_contract, :boolean,
+    field(:contract_variant, :integer,
       on: { submitted: { presence: true } }
     )
 
@@ -19,11 +19,13 @@ module Cases
       kase,
       attrs = {},
       case_repo: Case::Repo.get,
+      program_repo: Program::Repo.get,
       supplier_repo: Supplier::Repo.get,
       enroller_repo: Enroller::Repo.get
     )
       # set dependencies
       @case_repo = case_repo
+      @program_repo = program_repo
       @supplier_repo = supplier_repo
       @enroller_repo = enroller_repo
 
@@ -46,7 +48,7 @@ module Cases
       assign_defaults!(attrs, {
         status: c.status.to_s,
         supplier_id: c.supplier_id,
-        signed_contract: @model.signed_contract?
+        contract_variant: contracts.find_index { |c| c.variant == @model.contract_variant }
       })
 
       super(attrs)
@@ -68,8 +70,9 @@ module Cases
       @model.update_recipient_profile(supplier.map_to_recipient_profile)
       @model.attach_dhs_account(dhs.map_to_dhs_account)
 
-      if signed_contract
-        @model.sign_contract(Program::Contract.meap)
+      # sign the contract if necessary
+      if not contract_variant.nil?
+        @model.sign_contract(contracts[contract_variant])
       end
 
       case new_status
@@ -122,8 +125,30 @@ module Cases
       end
     end
 
+    def contract_options
+      contracts.map.with_index do |c, i|
+        [name_from_contract_variant(c.variant), i]
+      end
+    end
+
     def documents
       @model.documents
+    end
+
+    # -- queries/helpers
+    private def contracts
+      @program_repo.find_by_name(@model.program).contracts
+    end
+
+    private def name_from_contract_variant(variant)
+      case variant
+      when Program::Contract::Meap
+        "MEAP"
+      when Program::Contract::Wrap3h
+        "WRAP ($300)"
+      when Program::Contract::Wrap1k
+        "WRAP ($1000)"
+      end
     end
 
     # -- ApplicationForm --

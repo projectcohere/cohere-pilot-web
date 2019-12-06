@@ -1,12 +1,5 @@
-module Program
-  Meap = :meap
-  Wrap = :wrap
-
-  # -- queries --
-  def self.all
-    @all ||= [
-      Meap,
-      Wrap
-    ]
-  end
+class Program < ::Entity
+  prop(:id)
+  prop(:contracts)
+  props_end!
 end

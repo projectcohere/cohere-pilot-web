@@ -307,7 +307,10 @@ class Case
       assign_partners(referral, referral_rec)
 
       # save the records
-      referral_rec.save!
+      transaction do
+        referral_rec.save!
+        create_documents!(referral_rec.id, referral.new_documents)
+      end
 
       # send creation events back to entities
       referral.did_save(referral_rec)

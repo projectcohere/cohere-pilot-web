@@ -6,6 +6,6 @@ class Supplier
     has_many(:users, as: :organization, class_name: "::User::Record")
 
     # -- program --
-    enum(program: Program.all)
+    enum(program: Program::Name.all)
   end
 end

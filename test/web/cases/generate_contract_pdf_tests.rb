@@ -7,7 +7,7 @@ module Cases
       kase = Case.stub(
         documents: [
           Document.stub(
-            source_url: Program::Contract::Variant::Wrap1k
+            source_url: Program::Contract::Wrap1k
           )
         ]
       )
@@ -32,7 +32,7 @@ module Cases
       kase = Case.stub(
         documents: [
           Document.stub(
-            source_url: Program::Contract::Variant::Meap
+            source_url: Program::Contract::Meap
           )
         ]
       )
@@ -53,7 +53,7 @@ module Cases
       kase = Case.stub(
         documents: [
           Document.stub(
-            source_url: Program::Contract::Variant::Wrap3h
+            source_url: Program::Contract::Wrap3h
           )
         ]
       )

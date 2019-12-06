@@ -136,7 +136,7 @@ class Case < ::Entity
 
   # -- commands/documents
   def sign_contract(program_contract)
-    if signed_contract?
+    if not contract_document.nil?
       return
     end
 
@@ -209,14 +209,14 @@ class Case < ::Entity
     fpl_percentage.round(0)
   end
 
-  def contract
+  def contract_document
     @documents&.find do |d|
       d.classification == :contract
     end
   end
 
-  def signed_contract?
-    not contract.nil?
+  def contract_variant
+    contract_document&.source_url&.to_sym
   end
 
   # -- callbacks --

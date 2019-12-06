@@ -255,7 +255,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     act = ->() do
       patch(auth("/cases/#{case_rec.id}"), params: {
         case: {
-          signed_contract: true
+          contract_variant: 0
         }
       })
     end

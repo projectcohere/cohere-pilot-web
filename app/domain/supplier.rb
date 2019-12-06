@@ -8,7 +8,7 @@ class Supplier < ::Entity
   # -- factories --
   def open_case(enroller, profile:, account:)
     Case.open(
-      program: Program::Meap,
+      program: Program::Name::Meap,
       profile: profile,
       enroller: enroller,
       supplier: self,

@@ -10,7 +10,7 @@ class Case
     has_many(:documents, foreign_key: "case_id", class_name: "::Document::Record")
 
     # -- program --
-    enum(program: Program.all)
+    enum(program: Program::Name.all)
 
     # -- status --
     enum(status: %i[

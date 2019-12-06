@@ -7,7 +7,7 @@ module Cases
         return
       end
 
-      @case = @case.make_referral_to_program(Program::Wrap)
+      @case = @case.make_referral_to_program(Program::Name::Wrap)
       @form = Cases::Form.new(@case)
     end
 
@@ -25,7 +25,7 @@ module Cases
         .permit(Cases::Form.params_shape)
 
       @case = referrer.make_referral_to_program(
-        Program::Wrap,
+        Program::Name::Wrap,
         supplier_id: case_params[:supplier_id]
       )
 

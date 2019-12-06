@@ -135,7 +135,7 @@ module Db
       domain_events = ArrayQueue.new
 
       kase = Case.open(
-        program: Program::Meap,
+        program: Program::Name::Meap,
         profile: Recipient::Profile.new(
           phone: Recipient::Phone.new(
             number: Faker::PhoneNumber.phone_number
@@ -183,7 +183,7 @@ module Db
       domain_events = ArrayQueue.new
 
       kase = Case.open(
-        program: Program::Meap,
+        program: Program::Name::Meap,
         profile: Recipient::Profile.new(
           phone: Recipient::Phone.new(
             number: recipients(:recipient_1).phone_number
@@ -256,6 +256,7 @@ module Db
       domain_events = ArrayQueue.new
 
       case_rec = cases(:opened_1)
+
       account = Recipient::DhsAccount.new(
         number: "11111",
         household: Recipient::Household.new(
@@ -264,9 +265,14 @@ module Db
         )
       )
 
+      contract = Program::Contract.new(
+        program: Program::Name::Meap,
+        variant: Program::Contract::Meap
+      )
+
       kase = Case::Repo.map_record(case_rec)
       kase.attach_dhs_account(account)
-      kase.sign_contract(Program::Contract.meap)
+      kase.sign_contract(contract)
       kase.submit_to_enroller
       kase.complete(Case::Status::Approved)
 
@@ -372,7 +378,7 @@ module Db
 
       referrer = Case::Repo.map_record(case_rec, case_rec.documents)
       referral = referrer.make_referral_to_program(
-        Program::Wrap,
+        Program::Name::Wrap,
         supplier_id: supplier_rec.id
       )
 

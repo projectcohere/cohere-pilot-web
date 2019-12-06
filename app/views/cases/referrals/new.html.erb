@@ -12,21 +12,21 @@
         <%= f.field(:program, background: false, class: "CaseForm-program--referral") do %>
           <%= f.value(@form.program_name) %>
         <% end %>
+
         <%= f.field(:enroller, background: false, class: "CaseForm-enroller--referral") do %>
           <%= f.value(@form.enroller_name) %>
         <% end %>
-        <%- disabled = @form.signed_contract %>
-        <%= f.field(:signed_contract, "Contract", disabled: disabled, background: false, class: "CaseForm-contract") do %>
-          <%= f.check_box(:signed_contract, disabled: disabled) %>
-          <span>Signed Contract?</span>
-        <% end %>
-      <% end %>
+
+        <%= f.field(:contract_variant, "Contract", background: false, class: "CaseForm-contract") do %>
+          <%= f.select(:contract_variant, @form.contract_options, include_blank: "None") %>
+        <%- end %>
+      <%- end %>
 
       <%= render(partial: "cases/supplier/fields", locals: { f: f, form: @form }) %>
       <%= render(partial: "cases/dhs/fields", locals: { f: f, form: @form }) %>
 
       <%= f.submit(class: "Form-submit Button--action") %>
-    <% end %>
+    <%- end %>
 
     <%= render(partial: "cases/documents", locals: { documents: @form.documents }) %>
   <div>

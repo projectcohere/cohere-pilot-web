@@ -15,11 +15,11 @@ module Cases
       end
 
       variant_path = case document.source_url&.to_sym
-      when Program::Contract::Variant::Meap
+      when Program::Contract::Meap
         "cases/pdfs/meap"
-      when Program::Contract::Variant::Wrap3h
+      when Program::Contract::Wrap3h
         "cases/pdfs/wrap_3h"
-      when Program::Contract::Variant::Wrap1k
+      when Program::Contract::Wrap1k
         "cases/pdfs/wrap_1k"
       end
 

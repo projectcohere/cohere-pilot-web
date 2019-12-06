@@ -12,7 +12,7 @@ module Db
 
     test "finds suppliers by program" do
       repo = Supplier::Repo.new
-      suppliers = repo.find_all_by_program(Program::Wrap)
+      suppliers = repo.find_all_by_program(Program::Name::Wrap)
       assert_equal(suppliers.map(&:id), [suppliers(:supplier_3).id])
     end
 

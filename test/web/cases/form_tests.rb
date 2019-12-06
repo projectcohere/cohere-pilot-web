@@ -15,7 +15,7 @@ module Cases
       assert_present(form.account_number)
       assert_present(form.dhs_number)
       assert_present(form.income)
-      assert(form.signed_contract)
+      assert_present(form.contract_variant)
     end
 
     test "saves a case" do
@@ -111,7 +111,7 @@ module Cases
         .expect(:save_all_fields_and_documents, nil, [kase])
 
       form_attrs = {
-        "signed_contract" => true
+        "contract_variant" => 0
       }
 
       form = Form.new(

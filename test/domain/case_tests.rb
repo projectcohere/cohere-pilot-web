@@ -4,7 +4,7 @@ class CaseTests < ActiveSupport::TestCase
   # -- creation --
   test "opens the case" do
     kase = Case.open(
-      program: Program::Meap,
+      program: Program::Name::Meap,
       profile: :test_profile,
       enroller: Enroller.stub(id: 1),
       supplier: Supplier.stub(id: 2),
@@ -86,19 +86,19 @@ class CaseTests < ActiveSupport::TestCase
 
   test "makes a referral to a new program" do
     kase = Case.stub(
-      program: Program::Meap,
+      program: Program::Name::Meap,
       status: Case::Status::Approved,
       documents: [
         Document.stub
       ]
     )
 
-    referral = kase.make_referral_to_program(Program::Wrap)
+    referral = kase.make_referral_to_program(Program::Name::Wrap)
     assert(kase.referrer?)
 
     assert_not_nil(referral)
     assert(referral.referral?)
-    assert_equal(referral.program, Program::Wrap)
+    assert_equal(referral.program, Program::Name::Wrap)
 
     documents = referral.documents
     assert_length(documents, kase.documents.length)
@@ -106,7 +106,7 @@ class CaseTests < ActiveSupport::TestCase
     assert_length(kase.events, 1)
     event = kase.events[0]
     assert_instance_of(Case::Events::DidMakeReferral, event)
-    assert_equal(event.case_program, Program::Wrap)
+    assert_equal(event.case_program, Program::Name::Wrap)
 
     assert_length(referral.events, 1)
     event = referral.events[0]
@@ -152,10 +152,15 @@ class CaseTests < ActiveSupport::TestCase
 
   test "signs a contract" do
     kase = Case.stub(
-      program: Program::Wrap
+      program: Program::Name::Wrap
     )
 
-    kase.sign_contract(Program::Contract.wrap_3h)
+    contract = Program::Contract.new(
+      program: Program::Name::Wrap,
+      variant: Program::Contract::Wrap3h
+    )
+
+    kase.sign_contract(contract)
     assert_length(kase.new_documents, 1)
     assert_length(kase.events, 1)
     assert_instance_of(Case::Events::DidSignContract, kase.events[0])
@@ -171,17 +176,22 @@ class CaseTests < ActiveSupport::TestCase
       ]
     )
 
-    kase.sign_contract(Program::Contract.meap)
+    kase.sign_contract(nil)
     assert_nil(kase.new_documents)
     assert_length(kase.events, 0)
   end
 
   test "doesn't sign a contract for the wrong program" do
     kase = Case.stub(
-      program: Program::Meap
+      program: Program::Name::Meap
     )
 
-    kase.sign_contract(Program::Contract.wrap_1k)
+    contract = Program::Contract.new(
+      program: Program::Name::Wrap,
+      variant: Program::Contract::Wrap1k
+    )
+
+    kase.sign_contract(contract)
     assert_nil(kase.new_documents)
     assert_length(kase.events, 0)
   end
@@ -258,11 +268,11 @@ class CaseTests < ActiveSupport::TestCase
     assert_nil(kase.fpl_percentage)
   end
 
-  test "has an contract" do
+  test "has an contract document" do
     kase = Case.stub(
       documents: [Document.stub(classification: :contract)]
     )
 
-    assert_not_nil(kase.contract)
+    assert_not_nil(kase.contract_document)
   end
 end
