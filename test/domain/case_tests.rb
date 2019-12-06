@@ -151,9 +151,11 @@ class CaseTests < ActiveSupport::TestCase
   end
 
   test "signs a contract" do
-    kase = Case.stub
+    kase = Case.stub(
+      program: Program::Wrap
+    )
 
-    kase.sign_contract
+    kase.sign_contract(Program::Contract.wrap_3h)
     assert_length(kase.new_documents, 1)
     assert_length(kase.events, 1)
     assert_instance_of(Case::Events::DidSignContract, kase.events[0])
@@ -169,7 +171,17 @@ class CaseTests < ActiveSupport::TestCase
       ]
     )
 
-    kase.sign_contract
+    kase.sign_contract(Program::Contract.meap)
+    assert_nil(kase.new_documents)
+    assert_length(kase.events, 0)
+  end
+
+  test "doesn't sign a contract for the wrong program" do
+    kase = Case.stub(
+      program: Program::Meap
+    )
+
+    kase.sign_contract(Program::Contract.wrap_1k)
     assert_nil(kase.new_documents)
     assert_length(kase.events, 0)
   end

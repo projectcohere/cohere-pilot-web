@@ -135,12 +135,16 @@ class Case < ::Entity
   end
 
   # -- commands/documents
-  def sign_contract
+  def sign_contract(program_contract)
     if signed_contract?
       return
     end
 
-    new_document = Document.sign_contract
+    if program_contract.program != program
+      return
+    end
+
+    new_document = Document.sign_contract(program_contract)
     add_document(new_document)
     @events << Events::DidSignContract.from_entity(self, new_document)
   end

@@ -69,7 +69,7 @@ module Cases
       @model.attach_dhs_account(dhs.map_to_dhs_account)
 
       if signed_contract
-        @model.sign_contract
+        @model.sign_contract(Program::Contract.meap)
       end
 
       case new_status

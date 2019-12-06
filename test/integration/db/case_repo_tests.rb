@@ -266,7 +266,7 @@ module Db
 
       kase = Case::Repo.map_record(case_rec)
       kase.attach_dhs_account(account)
-      kase.sign_contract
+      kase.sign_contract(Program::Contract.meap)
       kase.submit_to_enroller
       kase.complete(Case::Status::Approved)
 
