@@ -5,36 +5,85 @@
 <%- view = Cases::View.new(kase) %>
 <article class="Contract">
   <section class="Contract-meapAgreement ContractSection">
-    <%= title("WRAP Agreement") %>
+    <%= title("WRAP Participant Agreement") %>
     <div class="ContractSection-body">
       <ul class="ContractSection-terms">
         <li class="ContractSection-term">
-          As part of this WRAP 1K agreement, I understand that I may be referred to or
-          required to participate in additional services such as budgeting assistance,
-          energy audits, or other programs that will help your household pay energy
-          bills and understand energy consumption. Participation in the activities
-          outlined in this plan/agreement are required in order to receive any
-          additional energy assistance benefits.
+          This agreement demonstrates your intent to adhere to the terms and
+          conditions for participation in the Great Lakes Water Authority (GLWA)
+          Water Residential Assistance Program (WRAP). Please read all of the
+          statements below and initial to indicate that you are voluntarily
+          signing this agreement and fully understand and agree to comply with
+          all guidelines stated herein.
         </li>
         <li class="ContractSection-term">
-          I authorize the assisting agency or provider to release my name and address
-          to the local weatherization operator as part of the Weatherization Referral
-          system. I authorize the department to release case and payment information
-          to the Department of Health and Human Services, its affiliates and/or
-          contracted agencies, for the purpose of research, study and evaluation of
-          the Low Income Home Energy Assistance Program (LIHEAP) and the Michigan
-          Energy Assistance Program (WRAP).
+          I understand that the WRAP Program is a program that consists of a
+          combination of supportive services and financial assistance. The
+          ultimate goal is for each participant to maintain financial
+          self-sufficiency in paying timely water bills. Maximum total financial
+          assistance per household, per year is up to $1,000 based on
+          eligibility. Maximum participation in the WRAP is up to 2 YEARS.
         </li>
         <li class="ContractSection-term">
-          I authorize my energy company to release by phone, fax, email or their
-          computer web site all available information about my account.
+          I understand that I must meet eligibility requirements, to qualify for
+          WRAP assistance. I agree to provide all required documentation to
+          qualify for services. Should I provide incomplete or inaccurate
+          required documentation at intake, I understand that entry into the
+          program cannot be completed.
         </li>
         <li class="ContractSection-term">
-          UNDER PENALTIES OF PERJURY, I SWEAR OR AFFIRM THAT THIS APPLICATION HAS BEEN
-          EXAMINED BY OR READ TO ME. IF I AM A THIRD PARTY APPLYING ON BEHALF OF
-          ANOTHER PERSON, I SWEAR THAT THIS APPLICATION HAS BEEN EXAMINED BY OR READ
-          TO THE APPLICANT. TO THE BEST OF MY KNOWLEDGE, THE FACTS ARE TRUE AND
-          COMPLETE.
+          I understand that financial assistance for water bill payment is
+          limited to $25 per month, per household ($300 annually). I agree to
+          pay the water bill amount issued by my city or municipality (circle:
+          monthly, bi-monthly, quarterly) minus WRAP financial assistance credit
+          paid toward my/our water bill.
+        </li>
+        <li class="ContractSection-term">
+          I understand that the WRAP may provide financial assistance for past
+          due water payments up to $700 per household annually. I understand
+          that the first payment amount (up to $350) will be paid one month
+          after enrollment and a second payment (up to $350) will be paid at 12
+          months if I maintain on-time water bill payments.
+        </li>
+        <li class="ContractSection-term">
+          I understand that if I am eligible for a WRAP Home Water Conservation
+          Audit, I must schedule the Home Water Conservation Audit and be
+          present when the audit takes place. Non-compliance with the Home Water
+          Conservation Audit may result in an exit from the program.  Maximum
+          total financial assistance One Time Only per household (Home Owner
+          Only) for home water conservation measures (water audit and minor
+          plumbing repairs) is $1,000 based on audit determination.
+        </li>
+        <li class="ContractSection-term">
+          I agree that if I receive Subsidized Housing Assistance, I must report
+          WRAP Assistance as income to my designated Housing Authority. I
+          understand that failure to report may put my Housing Assistance in
+          jeopardy with said Authority.
+        </li>
+        <li class="ContractSection-term">
+          I understand that if I miss two payments (partial payments and late
+          payments are considered missed payments) at any point in time within
+          12 months of my WRAP enrollment date, I will be exited from the WRAP
+          and will not be eligible to reenroll until 6 months from exit date. I
+          understand that written notice of exit will be sent to me and my water
+          municipality. I understand that I may request an appeal of the
+          decision in writing within thirty days (30) of written notice date.
+        </li>
+        <li class="ContractSection-term">
+          I understand that voluntary supportive services will be offered to
+          assist me in making on-time water bill payments. The supportive
+          services may last up to 12 months depending on my expressed or
+          identified needs. I understand that during enrollment in the WRAP
+          program. My Case Manager may contact me monthly for up to 12 months to
+          support my progress. I agree to keep my Case Manager informed of my
+          bill payment compliance and other issues and needs as requested.
+        </li>
+        <li class="ContractSection-term">
+          I understand and agree to adhere to all WRAP guidelines stated herein
+          which have been fully discussed with me. I agree to report honestly
+          any changes, or concerns that occur during the length of my enrollment
+          in the WRAP. I understand that should it be determined that I have not
+          met the guidelines; termination from the program is possible.
         </li>
       </ul>
     </div>
@@ -50,37 +99,6 @@
         <%= field("Signature of Applicant or Head-of-household", view.recipient_name, class: "Contract-signature ContractField--signature") %>
         <%= field("Date", date, class: "Contract-date ContractField--tall") %>
       </div>
-      <div class="ContractSection-fieldRow">
-        <%= field("Signature of Agency Representative", class: "Contract-signature ContractField--signature") %>
-        <%= field("Date", class: "Contract-date ContractField--tall") %>
-      </div>
-    </div>
-  </section>
-  <section class="Contract-affordablePaymentPlan ContractSection">
-    <%= title("Affordable Payment Plan") %>
-    <div class="ContractSection-body">
-      <ul class="ContractSection-terms">
-        <li class="ContractSection-term">
-          I have been informed if my energy provider offers APP and understand
-          whether or not I am eligible
-        </li>
-        <li class="ContractSection-term">
-          I agree to the terms and conditions of the Affordable Payment Plan
-          offered by my energy provider and have received a list of the terms and
-          conditions of this plan
-        </li>
-      </ul>
-    </div>
-    <div class="ContractSection-fields">
-      <div class="ContractSection-fieldRow">
-        <%= field("Signature of Applicant or Head-of-household", view.recipient_name, class: "Contract-signature ContractField--signature") %>
-        <%= field("Date", date, class: "Contract-date ContractField--tall") %>
-      </div>
-    </div>
-  </section>
-  <section class="Contract-internalUse ContractSection">
-    <%= title("Internal Use Only") %>
-    <div class="ContractSection-fields">
       <div class="ContractSection-fieldRow">
         <%= field("Signature of Agency Representative", class: "Contract-signature ContractField--signature") %>
         <%= field("Date", class: "Contract-date ContractField--tall") %>
