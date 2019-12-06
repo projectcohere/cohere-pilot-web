@@ -38,7 +38,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases/open", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /Open Cases/)
-    assert_select(".CaseCell", 6)
+    assert_select(".CaseCell", 7)
   end
 
   test "can list completed cases as a cohere user" do
@@ -47,7 +47,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases/completed", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /Completed Cases/)
-    assert_select(".CaseCell", 1)
+    assert_select(".CaseCell", 2)
   end
 
   test "can list submitted cases as an enroller" do
@@ -56,7 +56,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /Submitted Cases/)
-    assert_select(".CaseCell", 2)
+    assert_select(".CaseCell", 3)
   end
 
   # -- create --
@@ -255,7 +255,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     act = ->() do
       patch(auth("/cases/#{case_rec.id}"), params: {
         case: {
-          signed_contract: true
+          contract_variant: 0
         }
       })
     end
@@ -311,7 +311,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:alert])
   end
 
-  test "can submit a case as a cohere user" do
+  test "submit a case as a cohere user" do
     case_rec = cases(:pending_1)
     patch(auth("/cases/#{case_rec.id}/submit"))
 
@@ -373,7 +373,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     patch(auth("/cases/#{case_rec.id}/complete", as: user_rec), params: {
       case: {
-        status: :approved
+        status: Case::Status::Approved
       }
     })
 
@@ -399,7 +399,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     patch(auth("/cases/#{case_rec.id}/complete", as: user_rec), params: {
       case: {
-        status: :approved
+        status: Case::Status::Approved
       }
     })
 
@@ -425,7 +425,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     patch(auth("/cases/#{case_rec.id}/complete", as: user_rec), params: {
       case: {
-        status: :removed
+        status: Case::Status::Removed
       }
     })
 
@@ -439,4 +439,62 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_send_emails(0)
   end
 
+  # -- referrals --
+  test "can't make a referral if signed-out" do
+    get("/cases/3/referrals/new")
+    assert_redirected_to("/sign-in")
+  end
+
+  test "can't make a referral without permission" do
+    user_rec = users(:supplier_1)
+
+    get(auth("/cases/4/referrals/new", as: user_rec))
+    assert_redirected_to("/cases")
+  end
+
+  test "make a referral as a cohere user" do
+    user_rec = users(:cohere_1)
+    case_rec = cases(:approved_1)
+
+    get(auth("/cases/#{case_rec.id}/referrals/new", as: user_rec))
+    assert_response(:success)
+  end
+
+  test "save a referral as a cohere user" do
+    user_rec = users(:cohere_1)
+    case_rec = cases(:approved_1)
+    supplier_rec = suppliers(:supplier_3)
+
+    post(auth("/cases/#{case_rec.id}/referrals", as: user_rec), params: {
+      case: {
+        supplier_id: supplier_rec.id
+      }
+    })
+
+    assert_redirected_to("/cases")
+    assert_present(flash[:notice])
+
+    assert_send_emails(0)
+    assert_analytics_events(3) do |events|
+      assert_match(/Did Make Referral/, events[0])
+      assert_match(/Did Open/, events[1])
+      assert_match(/Did Become Pending/, events[2])
+    end
+  end
+
+  test "show errors when saving an invalid referral as a cohere user" do
+    user_rec = users(:cohere_1)
+    case_rec = cases(:approved_1)
+    supplier_rec = suppliers(:supplier_3)
+
+    post(auth("/cases/#{case_rec.id}/referrals", as: user_rec), params: {
+      case: {
+        supplier_id: supplier_rec.id,
+        first_name: nil
+      }
+    })
+
+    assert_response(:success)
+    assert_present(flash[:alert])
+  end
 end

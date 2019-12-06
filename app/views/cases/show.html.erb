@@ -4,15 +4,48 @@
     <h1 class="Main-title">
       <%= view.recipient_name %>'s case
     </h1>
+
+    <div class="Main-actions">
+      <% program = Program::Name::Wrap %>
+      <% if @case.can_make_referral?(program) %>
+        <%=
+          link_to("Make Referral to WRAP", new_case_referral_path(@case),
+            params: { program: program },
+            class: "Button--action"
+          )
+        %>
+      <% end %>
+    </div>
   </header>
 
   <div class="ShowCase">
     <article class="ShowCase-case Detail">
       <section class="ShowCase-details Detail-section">
-        <h1><span>Case Status</span></h1>
-        <p class="DetailField-text">
-          <%= view.status %>
-        </p>
+        <h1><span>Details</span></h1>
+        <label class="ShowCase-status DetailField">
+          <span class="DetailField-hint">
+            Status
+          </span>
+          <p class="DetailField-text">
+            <%= view.status %>
+          </p>
+        </label>
+        <label class="ShowCase-program DetailField">
+          <span class="DetailField-hint">
+            Program
+          </span>
+          <p class="DetailField-text">
+            <%= view.program_name %>
+          </p>
+        </label>
+        <label class="ShowCase-enroller DetailField">
+          <span class="DetailField-hint">
+            Enroller
+          </span>
+          <p class="DetailField-text">
+            <%= view.enroller_name %>
+          </p>
+        </label>
       </section>
 
       <section class="ShowCase-contact Detail-section">

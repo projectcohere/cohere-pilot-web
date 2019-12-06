@@ -1,18 +1,16 @@
 class Case
   module Events
-    class DidSubmit < ::Value
+    class DidMakeReferral < ::Value
       # -- props --
       prop(:case_id)
       prop(:case_program)
-      prop(:case_is_referral)
       props_end!
 
       # -- factories --
-      def self.from_entity(kase)
-        DidSubmit.new(
+      def self.from_entity(kase, program:)
+        DidMakeReferral.new(
           case_id: kase.id,
-          case_program: kase.program,
-          case_is_referral: kase.referral?
+          case_program: program
         )
       end
     end

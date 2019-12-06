@@ -10,11 +10,17 @@ module Db
       assert_equal(supplier.id, supplier_id)
     end
 
+    test "finds suppliers by program" do
+      repo = Supplier::Repo.new
+      suppliers = repo.find_all_by_program(Program::Name::Wrap)
+      assert_equal(suppliers.map(&:id), [suppliers(:supplier_3).id])
+    end
+
     test "finds many suppliers" do
       repo = Supplier::Repo.new
       supplier_ids = [
         suppliers(:supplier_1).id,
-        suppliers(:supplier_2).id
+        suppliers(:supplier_3).id
       ]
 
       suppliers = repo.find_many(supplier_ids)

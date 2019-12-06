@@ -44,7 +44,7 @@ class Case
       entity_from(document_rec.case, [document_rec])
     end
 
-    def find_with_documents(case_id)
+    def find_with_documents_and_referral(case_id)
       case_rec = Case::Record
         .find(case_id)
 
@@ -52,7 +52,10 @@ class Case
       document_recs = Document::Record
         .where(case_id: case_id)
 
-      entity_from(case_rec, document_recs)
+      is_referrer = Case::Record
+        .exists?(referrer_id: case_id)
+
+      entity_from(case_rec, document_recs, is_referrer)
     end
 
     def find_opened_with_documents(case_id)
@@ -83,7 +86,7 @@ class Case
     end
 
     # -- queries/many
-    def find_all_open
+    def find_all_opened
       case_recs = Case::Record
         .where(completed_at: nil)
         .order(updated_at: :desc)
@@ -111,7 +114,10 @@ class Case
 
     def find_all_for_dhs
       case_recs = Case::Record
-        .where(status: [:opened, :pending])
+        .where(
+          program: :meap,
+          status: [:opened, :pending]
+        )
         .order(created_at: :desc)
         .includes(:recipient)
 
@@ -144,17 +150,12 @@ class Case
     end
 
     # -- commands --
-    def save_account_and_recipient_profile(kase)
+    def save_opened(kase)
       # start a new case record
       case_rec = Case::Record.new
 
       # update the case record
-      c = kase
-      case_rec.assign_attributes(
-        enroller_id: c.enroller_id,
-        supplier_id: c.supplier_id,
-      )
-
+      assign_partners(kase, case_rec)
       assign_account(kase, case_rec)
 
       # find or update a recipient record with a matching phone number
@@ -177,7 +178,7 @@ class Case
       @domain_events.consume(kase.events)
     end
 
-    def save_status_and_dhs_account(kase)
+    def save_pending(kase)
       case_rec = kase.record
       recipient_rec = kase.recipient.record
 
@@ -199,7 +200,12 @@ class Case
       @domain_events.consume(kase.events)
     end
 
-    def save_all_fields_and_new_documents(kase)
+    def save_all_fields_and_documents(kase, referrer = nil)
+      if not referrer.nil?
+        save_referral(kase, referrer)
+        return
+      end
+
       case_rec = kase.record
       recipient_rec = kase.recipient.record
 
@@ -284,7 +290,45 @@ class Case
       @domain_events.consume(kase.events)
     end
 
+    private def save_referral(referral, referrer)
+      # start a new record for the referral
+      referral_rec = Case::Record.new
+
+      # update the referral record
+      c = referrer
+      r = referral
+      referral_rec.assign_attributes(
+        program: r.program,
+        recipient_id: r.recipient.id,
+        referrer_id: c.id.val
+      )
+
+      assign_status(referral, referral_rec)
+      assign_partners(referral, referral_rec)
+
+      # save the records
+      transaction do
+        referral_rec.save!
+        create_documents!(referral_rec.id, referral.new_documents)
+      end
+
+      # send creation events back to entities
+      referral.did_save(referral_rec)
+
+      # consume all entity events
+      @domain_events.consume(referrer.events)
+      @domain_events.consume(referral.events)
+    end
+
     # -- commands/helpers
+    private def assign_partners(kase, case_rec)
+      c = kase
+      case_rec.assign_attributes(
+        enroller_id: c.enroller_id,
+        supplier_id: c.supplier_id
+      )
+    end
+
     private def assign_status(kase, case_rec)
       c = kase
       case_rec.assign_attributes(
@@ -294,10 +338,10 @@ class Case
     end
 
     private def assign_account(kase, case_rec)
-      a = kase.account
+      a = kase.supplier_account
       case_rec.assign_attributes(
-        account_number: a.number,
-        account_arrears_cents: a.arrears_cents
+        supplier_account_number: a.number,
+        supplier_account_arrears_cents: a.arrears_cents
       )
     end
 
@@ -345,15 +389,16 @@ class Case
         return
       end
 
-      document_recs_attrs = documents.map do |d|
+      document_attrs = documents.map do |d|
         _attrs = {
           case_id: case_id,
           classification: d.classification,
-          source_url: d.source_url
+          source_url: d.source_url,
+          file: d.file&.attachment&.blob
         }
       end
 
-      document_recs = Document::Record.create!(document_recs_attrs)
+      document_recs = Document::Record.create!(document_attrs)
 
       # send creation events back to entities
       document_recs.each_with_index do |r, i|
@@ -367,22 +412,25 @@ class Case
     end
 
     # -- factories --
-    def self.map_record(r, document_recs = nil)
+    def self.map_record(r, document_recs = nil, is_referrer = false)
       Case.new(
         record: r,
         id: Id.new(r.id),
         program: r.program.to_sym,
         status: r.status.to_sym,
+        recipient: map_recipient(r.recipient),
         enroller_id: r.enroller_id,
         supplier_id: r.supplier_id,
-        account: Case::Account.new(
-          number: r.account_number,
-          arrears_cents: r.account_arrears_cents,
+        supplier_account: Case::Account.new(
+          number: r.supplier_account_number,
+          arrears_cents: r.supplier_account_arrears_cents,
         ),
         documents: document_recs&.map { |d|
           map_document(d)
         },
-        recipient: map_recipient(r.recipient),
+        is_referrer: is_referrer,
+        is_referral: r.referrer_id.present?,
+        received_message_at: r.received_message_at,
         updated_at: r.updated_at,
         completed_at: r.completed_at
       )

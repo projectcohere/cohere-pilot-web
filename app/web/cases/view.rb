@@ -19,6 +19,10 @@ module Cases
       @case.status.to_s.camelize
     end
 
+    def program_name
+      @case.program.to_s.upcase
+    end
+
     def approved?
       @case.status == :approved
     end
@@ -42,15 +46,15 @@ module Cases
 
     # -- queries/account
     def account_number
-      account.number
+      supplier_account.number
     end
 
     def account_arrears
-      "$#{account.arrears_dollars}"
+      "$#{supplier_account.arrears_dollars}"
     end
 
-    private def account
-      @case.account
+    private def supplier_account
+      @case.supplier_account
     end
 
     # -- queries/dhs-account

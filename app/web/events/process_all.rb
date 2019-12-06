@@ -18,11 +18,13 @@ module Events
       @domain_events.drain do |event|
         case event
         when Case::Events::DidOpen
-          CasesMailer.did_open(event.case_id.val).deliver_later
+          if not event.case_is_referral
+            CasesMailer.did_open(event.case_id.val).deliver_later
+          end
         when Case::Events::DidSubmit
           CasesMailer.did_submit(event.case_id.val).deliver_later
         when Case::Events::DidComplete
-          if event.case_status != :removed
+          if event.case_status != Case::Status::Removed
             CasesMailer.did_complete(event.case_id.val).deliver_later
           end
         when Case::Events::DidUploadMessageAttachment

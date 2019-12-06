@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_03_220628) do
+ActiveRecord::Schema.define(version: 2019_12_05_185214) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -44,12 +44,14 @@ ActiveRecord::Schema.define(version: 2019_12_03_220628) do
     t.bigint "enroller_id", null: false
     t.integer "status", default: 0
     t.bigint "supplier_id", null: false
-    t.string "account_number", null: false
-    t.integer "account_arrears_cents", null: false
+    t.string "supplier_account_number"
+    t.integer "supplier_account_arrears_cents"
     t.datetime "received_message_at", precision: 6
     t.integer "program", default: 0
+    t.bigint "referrer_id"
     t.index ["enroller_id"], name: "index_cases_on_enroller_id"
     t.index ["recipient_id"], name: "index_cases_on_recipient_id"
+    t.index ["referrer_id"], name: "index_cases_on_referrer_id"
     t.index ["status"], name: "index_cases_on_status"
     t.index ["supplier_id"], name: "index_cases_on_supplier_id"
   end
@@ -89,6 +91,8 @@ ActiveRecord::Schema.define(version: 2019_12_03_220628) do
     t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "program", default: 0
+    t.index ["program"], name: "index_suppliers_on_program"
   end
 
   create_table "users", force: :cascade do |t|

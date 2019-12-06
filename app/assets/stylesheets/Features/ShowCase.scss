@@ -6,6 +6,19 @@
     max-width: $width1;
   }
 
+  /* ShowCase-details */
+  &-status {
+    grid-column: 1 / 9;
+  }
+
+  &-program {
+    grid-column: 1 / 4;
+  }
+
+  &-enroller {
+    grid-column: 4 / 8;
+  }
+
   /* ShowCase-contact */
   &-phoneNumber {
     grid-column: 1 / 5;

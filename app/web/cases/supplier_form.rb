@@ -6,24 +6,22 @@ module Cases
     field(:last_name, :string, presence: true)
 
     # -- fields/phone
-    field(:phone_number, :string, presence: true,
-      numericality: true,
-      length: { is: 10 }
+    field(:phone_number, :string,
+      presence: true, numericality: true, length: { is: 10 }
     )
 
     # -- fields/address
     field(:street, :string, presence: true)
     field(:street2, :string)
     field(:city, :string, presence: true)
-    field(:zip, :string, presence: true,
-      numericality: true
+    field(:zip, :string,
+      presence: true, numericality: true
     )
 
     # -- fields/utility-account
-    field(:account_number, :string, presence: true)
-    field(:arrears, :string, presence: true,
-      numericality: true
-    )
+    field(:account_number, :string)
+    field(:arrears, :string, numericality: true, allow_blank: true)
+    validate(:has_account_unless_referral)
 
     # -- lifetime --
     def initialize(
@@ -44,10 +42,10 @@ module Cases
       if not kase.nil?
         # set initial values from case
         c = kase
-        a = c.account
+        a = c.supplier_account
         assign_defaults!(attrs, {
-          account_number: a.number,
-          arrears: a.arrears_dollars.to_s
+          account_number: a&.number,
+          arrears: a&.arrears_dollars&.to_s
         })
 
         # set initial values from recipient
@@ -86,11 +84,11 @@ module Cases
       supplier = @supplier_repo.find_current
 
       new_case = supplier.open_case(enroller,
-        account: map_to_supplier_account,
         profile: map_to_recipient_profile,
+        account: map_to_supplier_account,
       )
 
-      @case_repo.save_account_and_recipient_profile(new_case)
+      @case_repo.save_opened(new_case)
 
       # set underlying model
       @model = new_case
@@ -166,6 +164,21 @@ module Cases
     # -- queries --
     def case_id
       @model&.id
+    end
+
+    # -- validations --
+    def has_account_unless_referral
+      if validation_context == :referral
+        return
+      end
+
+      if account_number.blank?
+        errors.add(:account_number, "can't be blank")
+      end
+
+      if arrears.blank?
+        errors.add(:arrears, "can't be blank")
+      end
     end
 
     # -- ApplicationForm --

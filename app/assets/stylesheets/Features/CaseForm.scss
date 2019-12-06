@@ -5,14 +5,26 @@
 
   /* CaseForm-details */
   &-status {
-    grid-column: 1 / 4;
+    grid-columN: 1 / 3;
+  }
+
+  &-program {
+    grid-column: 3 / 5;
+
+    &--referral {
+      grid-column: 1 / 3;
+    }
   }
 
   &-enroller {
-    grid-column: 4 / 8;
+    grid-column: 5 / 10;
+
+    &--referral {
+      grid-column: 3 / 10;
+    }
   }
 
-  &-signedContract {
+  &-contract {
     grid-column: 1 / 10;
   }
 
@@ -60,7 +72,7 @@
   }
 
   /* CaseForm-utilityAccount */
-  &-accountSupplier {
+  &-supplier {
     grid-column: 1 / 10;
     margin-bottom: $spacing4;
   }

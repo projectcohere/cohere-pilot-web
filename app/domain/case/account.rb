@@ -6,6 +6,10 @@ class Case
 
     # -- queries --
     def arrears_dollars
+      if arrears_cents.nil?
+        return nil
+      end
+
       arrears_cents / 100.0
     end
   end

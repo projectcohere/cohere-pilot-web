@@ -51,7 +51,7 @@ module Cases
       end
 
       @model.attach_dhs_account(map_to_dhs_account)
-      @case_repo.save_status_and_dhs_account(@model)
+      @case_repo.save_pending(@model)
 
       true
     end

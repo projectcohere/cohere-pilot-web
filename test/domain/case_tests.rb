@@ -4,15 +4,15 @@ class CaseTests < ActiveSupport::TestCase
   # -- creation --
   test "opens the case" do
     kase = Case.open(
-      program: Case::Program::Meap,
+      program: Program::Name::Meap,
       profile: :test_profile,
-      account: :test_account,
-      enroller: Enroller.new(id: 1, name: :enroller),
-      supplier: Supplier.new(id: 2, name: :supplier)
+      enroller: Enroller.stub(id: 1),
+      supplier: Supplier.stub(id: 2),
+      supplier_account: :test_account
     )
 
     assert_equal(kase.recipient.profile, :test_profile)
-    assert_equal(kase.account, :test_account)
+    assert_equal(kase.supplier_account, :test_account)
     assert_equal(kase.enroller_id, 1)
     assert_equal(kase.supplier_id, 2)
 
@@ -23,13 +23,13 @@ class CaseTests < ActiveSupport::TestCase
   # -- commands --
   test "becomes pending with the dhs account" do
     kase = Case.stub(
-      status: :opened,
+      status: Case::Status::Opened,
       recipient: Recipient.stub,
     )
 
     kase.attach_dhs_account(:test_account)
     assert_equal(kase.recipient.dhs_account, :test_account)
-    assert_equal(kase.status, :pending)
+    assert_equal(kase.status, Case::Status::Pending)
 
     assert_length(kase.events, 1)
     assert_instance_of(Case::Events::DidBecomePending, kase.events[0])
@@ -37,22 +37,22 @@ class CaseTests < ActiveSupport::TestCase
 
   test "doesn't revert back to pending after submission" do
     kase = Case.stub(
-      status: :submitted,
+      status: Case::Status::Submitted,
       recipient: Recipient.stub
     )
 
     kase.attach_dhs_account(:test_account)
-    assert_equal(kase.status, :submitted)
+    assert_equal(kase.status, Case::Status::Submitted)
   end
 
   test "submits a pending case to an enroller" do
     kase = Case.stub(
-      status: :pending,
+      status: Case::Status::Pending,
       recipient: Recipient.stub
     )
 
     kase.submit_to_enroller
-    assert_equal(kase.status, :submitted)
+    assert_equal(kase.status, Case::Status::Submitted)
 
     assert_length(kase.events, 1)
     assert_instance_of(Case::Events::DidSubmit, kase.events[0])
@@ -60,11 +60,11 @@ class CaseTests < ActiveSupport::TestCase
 
   test "completes a submitted case" do
     kase = Case.stub(
-      status: :submitted
+      status: Case::Status::Submitted
     )
 
-    kase.complete(:approved)
-    assert_equal(kase.status, :approved)
+    kase.complete(Case::Status::Approved)
+    assert_equal(kase.status, Case::Status::Approved)
     assert_in_delta(Time.zone.now, kase.completed_at, 1.0)
 
     assert_length(kase.events, 1)
@@ -73,15 +73,78 @@ class CaseTests < ActiveSupport::TestCase
 
   test "removes a case from the pilot" do
     kase = Case.stub(
-      status: :pending
+      status: Case::Status::Pending
     )
 
     kase.remove_from_pilot
-    assert_equal(kase.status, :removed)
+    assert_equal(kase.status, Case::Status::Removed)
     assert_in_delta(Time.zone.now, kase.completed_at, 1.0)
 
     assert_length(kase.events, 1)
     assert_instance_of(Case::Events::DidComplete, kase.events[0])
+  end
+
+  test "makes a referral to a new program" do
+    kase = Case.stub(
+      status: Case::Status::Approved,
+      program: Program::Name::Meap,
+      documents: [
+        Document.stub(
+          classification: :unknown
+        )
+      ]
+    )
+
+    referral = kase.make_referral_to_program(Program::Name::Wrap)
+    assert(kase.referrer?)
+
+    assert_not_nil(referral)
+    assert(referral.referral?)
+    assert_equal(referral.program, Program::Name::Wrap)
+
+    new_documents = referral.new_documents
+    assert_length(new_documents, kase.documents.length)
+
+    assert_length(kase.events, 1)
+    event = kase.events[0]
+    assert_instance_of(Case::Events::DidMakeReferral, event)
+    assert_equal(event.case_program, Program::Name::Wrap)
+
+    assert_length(referral.events, 1)
+    event = referral.events[0]
+    assert_instance_of(Case::Events::DidOpen, event)
+    assert(event.case_is_referral)
+  end
+
+  test "does not make a referral to the same program" do
+    kase = Case.stub(
+      status: Case::Status::Approved,
+      program: Program::Name::Meap,
+      is_referrer: false
+    )
+
+    referral = kase.make_referral_to_program(Program::Name::Meap)
+    assert_nil(referral)
+  end
+
+  test "does not make a second referral" do
+    kase = Case.stub(
+      status: Case::Status::Approved,
+      program: Program::Name::Meap,
+      is_referrer: true
+    )
+
+    referral = kase.make_referral_to_program(Program::Name::Wrap)
+    assert_nil(referral)
+
+    kase = Case.stub(
+      status: Case::Status::Approved,
+      program: Program::Name::Wrap,
+      is_referral: true
+    )
+
+    referral = kase.make_referral_to_program(Program::Name::Meap)
+    assert_nil(referral)
   end
 
   # -- commands/messages
@@ -121,9 +184,16 @@ class CaseTests < ActiveSupport::TestCase
   end
 
   test "signs a contract" do
-    kase = Case.stub
+    kase = Case.stub(
+      program: Program::Name::Wrap
+    )
 
-    kase.sign_contract
+    contract = Program::Contract.new(
+      program: Program::Name::Wrap,
+      variant: Program::Contract::Wrap3h
+    )
+
+    kase.sign_contract(contract)
     assert_length(kase.new_documents, 1)
     assert_length(kase.events, 1)
     assert_instance_of(Case::Events::DidSignContract, kase.events[0])
@@ -139,7 +209,22 @@ class CaseTests < ActiveSupport::TestCase
       ]
     )
 
-    kase.sign_contract
+    kase.sign_contract(nil)
+    assert_nil(kase.new_documents)
+    assert_length(kase.events, 0)
+  end
+
+  test "doesn't sign a contract for the wrong program" do
+    kase = Case.stub(
+      program: Program::Name::Meap
+    )
+
+    contract = Program::Contract.new(
+      program: Program::Name::Wrap,
+      variant: Program::Contract::Wrap1k
+    )
+
+    kase.sign_contract(contract)
     assert_nil(kase.new_documents)
     assert_length(kase.events, 0)
   end
@@ -177,7 +262,7 @@ class CaseTests < ActiveSupport::TestCase
   end
 
   # -- queries --
-  test "calcuates an fpl percentage from the household" do
+  test "has an fpl percentage with a household" do
     household = Recipient::Household.new(
       size: 5,
       income_cents: 2493_33
@@ -216,11 +301,11 @@ class CaseTests < ActiveSupport::TestCase
     assert_nil(kase.fpl_percentage)
   end
 
-  test "has an contract" do
+  test "has a contract document" do
     kase = Case.stub(
       documents: [Document.stub(classification: :contract)]
     )
 
-    assert_not_nil(kase.contract)
+    assert_not_nil(kase.contract_document)
   end
 end

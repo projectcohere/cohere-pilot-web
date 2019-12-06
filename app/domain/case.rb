@@ -5,13 +5,15 @@ class Case < ::Entity
 
   # -- props --
   prop(:id, default: Id::None)
-  prop(:program)
   prop(:status)
+  prop(:program)
   prop(:recipient)
-  prop(:account)
-  prop(:documents, default: nil)
   prop(:enroller_id)
   prop(:supplier_id)
+  prop(:supplier_account)
+  prop(:documents, default: nil)
+  prop(:is_referrer, default: false)
+  prop(:is_referral, default: false)
   prop(:received_message_at, default: nil)
   prop(:updated_at, default: nil)
   prop(:completed_at, default: nil)
@@ -22,18 +24,18 @@ class Case < ::Entity
   attr(:selected_document)
 
   # -- lifetime --
-  def self.open(program:, profile:, account:, enroller:, supplier:)
+  def self.open(program:, profile:, enroller:, supplier:, supplier_account:)
     recipient = Recipient.new(
       profile: profile
     )
 
     kase = Case.new(
+      status: Status::Opened,
       program: program,
-      status: :opened,
-      account: account,
       recipient: recipient,
       enroller_id: enroller.id,
-      supplier_id: supplier.id
+      supplier_id: supplier.id,
+      supplier_account: supplier_account
     )
 
     kase.events << Events::DidOpen.from_entity(kase)
@@ -45,22 +47,22 @@ class Case < ::Entity
     @recipient.update_profile(profile)
   end
 
-  def update_supplier_account(account)
-    @account = account
+  def update_supplier_account(supplier_account)
+    @supplier_account = supplier_account
   end
 
   def attach_dhs_account(dhs_account)
     @recipient.attach_dhs_account(dhs_account)
 
-    if @status == :opened
-      @status = :pending
+    if @status == Status::Opened
+      @status = Status::Pending
       events << Events::DidBecomePending.from_entity(self)
     end
   end
 
   def remove_from_pilot
     @completed_at = Time.zone.now
-    @status = :removed
+    @status = Status::Removed
     @events << Events::DidComplete.from_entity(self)
   end
 
@@ -69,7 +71,7 @@ class Case < ::Entity
       return
     end
 
-    @status = :submitted
+    @status = Status::Submitted
     @events << Events::DidSubmit.from_entity(self)
   end
 
@@ -81,6 +83,40 @@ class Case < ::Entity
     @completed_at = Time.zone.now
     @status = status
     @events << Events::DidComplete.from_entity(self)
+  end
+
+  def make_referral_to_program(program, supplier_id: nil)
+    if not can_make_referral?(program)
+      return nil
+    end
+
+    # mark as referrer
+    @is_referrer = true
+    @events << Events::DidMakeReferral.from_entity(self,
+      program: program
+    )
+
+    # create referral
+    new_referral = Case.new(
+      program: program,
+      status: Status::Opened,
+      recipient: recipient,
+      enroller_id: enroller_id,
+      supplier_id: supplier_id,
+      supplier_account: nil,
+      documents: new_documents,
+      is_referral: true
+    )
+
+    documents&.each do |d|
+      if d.classification != :contract
+        new_referral.copy_document(d)
+      end
+    end
+
+    new_referral.events << Events::DidOpen.from_entity(new_referral)
+
+    new_referral
   end
 
   # -- commands/messages
@@ -98,14 +134,22 @@ class Case < ::Entity
   end
 
   # -- commands/documents
-  def sign_contract
-    if signed_contract?
+  def sign_contract(program_contract)
+    if not contract_document.nil?
       return
     end
 
-    new_document = Document.sign_contract
+    if program_contract.program != program
+      return
+    end
+
+    new_document = Document.sign_contract(program_contract)
     add_document(new_document)
     @events << Events::DidSignContract.from_entity(self, new_document)
+  end
+
+  def copy_document(document)
+    add_document(Document.copy(document))
   end
 
   private def add_document(document)
@@ -131,14 +175,41 @@ class Case < ::Entity
   end
 
   # -- queries --
+  # -- queries/states
+  alias :referrer? :is_referrer
+  alias :referral? :is_referral
+
   def can_submit?
-    @status == :opened || @status == :pending
+    @status == Status::Opened || @status == Status::Pending
   end
 
   def can_complete?
-    @status == :submitted
+    @status == Status::Submitted
   end
 
+  def can_make_referral?(program)
+    @status == Status::Approved &&
+    @program != program &&
+    !@is_referral &&
+    !@is_referrer
+  end
+
+  # -- queries/documents
+  def documents
+    @documents || @new_documents
+  end
+
+  def contract_document
+    documents&.find do |d|
+      d.classification == :contract
+    end
+  end
+
+  def contract_variant
+    contract_document&.source_url&.to_sym
+  end
+
+  # -- queries/household
   def fpl_percentage
     household = recipient&.dhs_account&.household
     if household.nil?
@@ -159,16 +230,6 @@ class Case < ::Entity
     fpl_percentage = hh_year_cents * 100 / fpl_year_cents.to_f
 
     fpl_percentage.round(0)
-  end
-
-  def contract
-    @documents&.find do |d|
-      d.classification == :contract
-    end
-  end
-
-  def signed_contract?
-    not contract.nil?
   end
 
   # -- callbacks --

@@ -4,13 +4,17 @@ class Case
       # -- props --
       prop(:case_id)
       prop(:case_status)
+      prop(:case_program)
+      prop(:case_is_referral)
       props_end!
 
       # -- factories --
       def self.from_entity(kase)
         DidComplete.new(
           case_id: kase.id,
-          case_status: kase.status
+          case_status: kase.status,
+          case_program: kase.program,
+          case_is_referral: kase.referral?
         )
       end
     end

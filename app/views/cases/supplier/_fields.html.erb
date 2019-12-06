@@ -34,15 +34,10 @@
 <% end %>
 
 <%= f.section("Utility Account", class: "CaseForm-utilityAccount") do %>
-  <% if form.respond_to?(:supplier_name) %>
-    <label class="CaseForm-accountSupplier DetailField">
-      <span class="DetailField-hint">
-        Supplier
-      </span>
-      <p class="DetailField-text">
-        <%= form.supplier_name %>
-      </p>
-    </label>
+  <% if form.respond_to?(:supplier_id) %>
+    <%= f.field(:supplier, background: false, class: "CaseForm-supplier") do %>
+      <%= f.select(:supplier_id, @form.supplier_options) %>
+    <% end %>
   <% end %>
   <%= f.field(:account_number, "Account #", class: "CaseForm-accountNumber") do %>
     <%= f.text_field(:account_number) %>

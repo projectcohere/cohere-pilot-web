@@ -48,13 +48,23 @@ module Db
       end
     end
 
+    test "finds a case with its documents and referral" do
+      case_repo = Case::Repo.new
+      case_rec = cases(:approved_2)
+
+      kase = case_repo.find_with_documents_and_referral(case_rec.id)
+      assert_equal(kase.id.val, case_rec.id)
+      assert_length(kase.documents, 2)
+      assert(kase.is_referrer)
+    end
+
     test "finds a submitted case by id for an enroller" do
       case_repo = Case::Repo.new
       case_rec = cases(:submitted_1)
 
       kase = case_repo.find_by_enroller_with_documents(case_rec.id, case_rec.enroller_id)
       assert_not_nil(kase)
-      assert_equal(kase.status, :submitted)
+      assert_equal(kase.status, Case::Status::Submitted)
     end
 
     test "can't find a non-submitted case for an enroller" do
@@ -82,7 +92,7 @@ module Db
 
       kase = case_repo.find_opened_with_documents(case_rec.id)
       assert_not_nil(kase)
-      assert_equal(kase.status, :opened)
+      assert_equal(kase.status, Case::Status::Opened)
     end
 
     test "can't find an opened case by id" do
@@ -94,16 +104,16 @@ module Db
       end
     end
 
-    test "finds all open cases" do
+    test "finds all opened cases" do
       case_repo = Case::Repo.new
-      cases = case_repo.find_all_open
-      assert_length(cases, 6)
+      cases = case_repo.find_all_opened
+      assert_length(cases, 7)
     end
 
     test "finds all completed cases" do
       case_repo = Case::Repo.new
       cases = case_repo.find_all_completed
-      assert_length(cases, 1)
+      assert_length(cases, 2)
     end
 
     test "finds all submitted cases for an enroller" do
@@ -111,10 +121,10 @@ module Db
       case_rec = cases(:submitted_1)
 
       cases = case_repo.find_all_for_enroller(case_rec.enroller_id)
-      assert_length(cases, 2)
+      assert_length(cases, 3)
     end
 
-    test "finds all opened cases" do
+    test "finds all dhs cases" do
       case_repo = Case::Repo.new
       cases = case_repo.find_all_for_dhs
       assert_length(cases, 4)
@@ -125,7 +135,7 @@ module Db
       domain_events = ArrayQueue.new
 
       kase = Case.open(
-        program: Case::Program::Meap,
+        program: Program::Name::Meap,
         profile: Recipient::Profile.new(
           phone: Recipient::Phone.new(
             number: Faker::PhoneNumber.phone_number
@@ -141,17 +151,17 @@ module Db
             zip: "12345"
           )
         ),
-        account: Case::Account.new(
+        enroller: Enroller::Repo.map_record(enrollers(:enroller_1)),
+        supplier: Supplier::Repo.map_record(suppliers(:supplier_1)),
+        supplier_account: Case::Account.new(
           number: "12345",
           arrears_cents: 1000_00
-        ),
-        enroller: Enroller::Repo.map_record(enrollers(:enroller_1)),
-        supplier: Supplier::Repo.map_record(suppliers(:supplier_1))
+        )
       )
 
       case_repo = Case::Repo.new(domain_events: domain_events)
       act = -> do
-        case_repo.save_account_and_recipient_profile(kase)
+        case_repo.save_opened(kase)
       end
 
       assert_difference(
@@ -173,7 +183,7 @@ module Db
       domain_events = ArrayQueue.new
 
       kase = Case.open(
-        program: Case::Program::Meap,
+        program: Program::Name::Meap,
         profile: Recipient::Profile.new(
           phone: Recipient::Phone.new(
             number: recipients(:recipient_1).phone_number
@@ -189,17 +199,17 @@ module Db
             zip: "12345"
           )
         ),
-        account: Case::Account.new(
+        enroller: Enroller::Repo.map_record(enrollers(:enroller_1)),
+        supplier: Supplier::Repo.map_record(suppliers(:supplier_1)),
+        supplier_account: Case::Account.new(
           number: "12345",
           arrears_cents: 1000_00
-        ),
-        enroller: Enroller::Repo.map_record(enrollers(:enroller_1)),
-        supplier: Supplier::Repo.map_record(suppliers(:supplier_1))
+        )
       )
 
       case_repo = Case::Repo.new(domain_events: domain_events)
       act = -> do
-        case_repo.save_account_and_recipient_profile(kase)
+        case_repo.save_opened(kase)
       end
 
       assert_difference(
@@ -231,7 +241,7 @@ module Db
       )
 
       case_repo = Case::Repo.new
-      case_repo.save_status_and_dhs_account(kase)
+      case_repo.save_pending(kase)
 
       case_rec = kase.record
       assert_equal(case_rec.status, "pending")
@@ -246,6 +256,7 @@ module Db
       domain_events = ArrayQueue.new
 
       case_rec = cases(:opened_1)
+
       account = Recipient::DhsAccount.new(
         number: "11111",
         household: Recipient::Household.new(
@@ -254,14 +265,19 @@ module Db
         )
       )
 
+      contract = Program::Contract.new(
+        program: Program::Name::Meap,
+        variant: Program::Contract::Meap
+      )
+
       kase = Case::Repo.map_record(case_rec)
       kase.attach_dhs_account(account)
-      kase.sign_contract
+      kase.sign_contract(contract)
       kase.submit_to_enroller
-      kase.complete(:approved)
+      kase.complete(Case::Status::Approved)
 
       case_repo = Case::Repo.new(domain_events: domain_events)
-      case_repo.save_all_fields_and_new_documents(kase)
+      case_repo.save_all_fields_and_documents(kase)
 
       case_rec = kase.record
       assert_equal(case_rec.status, "approved")
@@ -348,12 +364,58 @@ module Db
     test "saves completed" do
       case_rec = cases(:submitted_1)
       kase = Case::Repo.map_record(case_rec, case_rec.documents)
-      kase.complete(:approved)
+      kase.complete(Case::Status::Approved)
       case_repo = Case::Repo.new
 
       case_repo.save_completed(kase)
       assert_equal(case_rec.status, "approved")
       assert_not_nil(case_rec.completed_at)
+    end
+
+    test "saves a referral" do
+      supplier_rec = suppliers(:supplier_3)
+      case_rec = cases(:approved_1)
+
+      referrer = Case::Repo.map_record(case_rec, case_rec.documents)
+      referral = referrer.make_referral_to_program(
+        Program::Name::Wrap,
+        supplier_id: supplier_rec.id
+      )
+
+      referral.sign_contract(Program::Contract.new(
+        program: Program::Name::Wrap,
+        variant: Program::Contract::Wrap3h
+      )
+)
+      domain_events = ArrayQueue.new
+      case_repo = Case::Repo.new(domain_events: domain_events)
+
+      act = -> do
+        case_repo.save_all_fields_and_documents(referral, referrer)
+      end
+
+      assert_difference(
+        -> { Case::Record.count } => 1,
+        -> { Document::Record.count } => 2,
+        -> { ActiveStorage::Attachment.count } => 1,
+        -> { ActiveStorage::Blob.count } => 0,
+        &act
+      )
+
+      assert_not_nil(referral.record)
+      assert_not_nil(referral.id.val)
+
+      referral_rec = referral.record
+      assert_equal(referral_rec.status, "opened")
+      assert_equal(referral_rec.program, "wrap")
+      assert_equal(referral_rec.referrer_id, referrer.id.val)
+
+      document_recs = referral_rec.documents
+      assert_same_elements(document_recs.map(&:classification), %w[contract unknown])
+
+      assert_length(referrer.events, 0)
+      assert_length(referral.events, 0)
+      assert_length(domain_events, 3)
     end
   end
 end

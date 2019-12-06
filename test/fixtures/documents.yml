@@ -1,18 +1,39 @@
 document_p1_1:
   classification: :contract
+  source_url: meap
   case: pending_1
 
 document_p1_2:
   classification: :unknown
-  source_url: https://website.com/image2.jpg
+  source_url: https://website.com/image.jpg
   case: pending_1
 
 document_s1_1:
   classification: :contract
-  source_url: https://website.com/image1.jpg
+  source_url: meap
   case: submitted_1
 
 document_s1_2:
   classification: :unknown
-  source_url: https://website.com/image3.jpg
+  source_url: https://website.com/image.jpg
   case: submitted_1
+
+document_a1_1:
+  classification: :contract
+  source_url: meap
+  case: approved_1
+
+document_a1_2:
+  classification: :unknown
+  source_url: https://website.com/image.jpg
+  case: approved_1
+
+document_a2_1:
+  classification: :contract
+  source_url: meap
+  case: approved_2
+
+document_a2_2:
+  classification: :unknown
+  source_url: https://website.com/image.jpg
+  case: approved_2

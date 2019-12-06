@@ -9,7 +9,25 @@ module Cases
     end
 
     def call(kase)
-      pdf_html = @render_html.("cases/pdfs/contract", {
+      document = kase.selected_document
+      if document.nil?
+        raise "can't generate contract without a selected document"
+      end
+
+      variant_path = case document.source_url&.to_sym
+      when Program::Contract::Meap
+        "cases/pdfs/meap"
+      when Program::Contract::Wrap3h
+        "cases/pdfs/wrap_3h"
+      when Program::Contract::Wrap1k
+        "cases/pdfs/wrap_1k"
+      end
+
+      if variant_path.nil?
+        raise "can't generate contract with an invalid source_url: #{document}"
+      end
+
+      pdf_html = @render_html.(variant_path, {
         date: Date.today,
         kase: kase
       })

@@ -4,6 +4,11 @@
   font-weight: $fontWeightRegular;
   font-style: normal;
 
+  // -- utilties --
+  .u-break {
+    page-break-before: always;
+  }
+
   // -- sections --
   // -- sections/meap
   &-meapSignatures {

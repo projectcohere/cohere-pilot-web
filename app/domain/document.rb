@@ -19,9 +19,18 @@ class Document < ::Entity
     )
   end
 
-  def self.sign_contract
+  def self.sign_contract(program_contract)
     Document.new(
       classification: :contract,
+      source_url: program_contract.variant.to_s
+    )
+  end
+
+  def self.copy(document)
+    Document.new(
+      classification: document.classification,
+      file: document.file,
+      source_url: document.source_url
     )
   end
 

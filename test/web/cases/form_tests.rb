@@ -15,13 +15,13 @@ module Cases
       assert_present(form.account_number)
       assert_present(form.dhs_number)
       assert_present(form.income)
-      assert(form.signed_contract)
+      assert_present(form.contract_variant)
     end
 
     test "saves a case" do
       kase = Case::Repo.map_record(cases(:pending_1))
       case_repo = Minitest::Mock.new
-        .expect(:save_all_fields_and_new_documents, nil, [kase])
+        .expect(:save_all_fields_and_documents, nil, [kase])
 
       form_attrs = {
         "first_name" => "Edith"
@@ -53,7 +53,7 @@ module Cases
       case_rec = cases(:pending_1)
       kase = Case::Repo.map_record(case_rec, case_rec.documents)
       case_repo = Minitest::Mock.new
-        .expect(:save_all_fields_and_new_documents, nil, [kase])
+        .expect(:save_all_fields_and_documents, nil, [kase])
 
       form_attrs = {
         "status" => "submitted"
@@ -67,7 +67,7 @@ module Cases
 
       did_save = form.save
       assert(did_save, "expected no errors saving, but got #{form.errors.full_messages}")
-      assert_equal(kase.status, :submitted)
+      assert_equal(kase.status, Case::Status::Submitted)
     end
 
     test "does not submit an invalid case" do
@@ -87,7 +87,7 @@ module Cases
       case_rec = cases(:submitted_1)
       kase = Case::Repo.map_record(case_rec, case_rec.documents)
       case_repo = Minitest::Mock.new
-        .expect(:save_all_fields_and_new_documents, nil, [kase])
+        .expect(:save_all_fields_and_documents, nil, [kase])
 
       form_attrs = {
         "status" => "approved"
@@ -101,17 +101,17 @@ module Cases
 
       did_save = form.save
       assert(did_save, "expected no errors saving, but got #{form.errors.full_messages}")
-      assert_equal(kase.status, :approved)
+      assert_equal(kase.status, Case::Status::Approved)
       assert_not_nil(kase.completed_at)
     end
 
     test "creates a signed contract for a case" do
       kase = Case::Repo.map_record(cases(:pending_1))
       case_repo = Minitest::Mock.new
-        .expect(:save_all_fields_and_new_documents, nil, [kase])
+        .expect(:save_all_fields_and_documents, nil, [kase])
 
       form_attrs = {
-        "signed_contract" => true
+        "contract_variant" => 0
       }
 
       form = Form.new(

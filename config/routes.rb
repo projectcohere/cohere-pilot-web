@@ -90,6 +90,11 @@ Rails.application.routes.draw do
 
       patch(:submit)
       patch(:complete)
+
+      resources(:referrals, module: :cases, only: %i[
+        new
+        create
+      ])
     end
   end
 

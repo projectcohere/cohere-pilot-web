@@ -3,6 +3,7 @@
 
   &.is-disabled {
     opacity: $opacityDisabled;
+    pointer-events: none;
   }
 
   &-hint {

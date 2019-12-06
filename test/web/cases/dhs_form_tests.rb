@@ -33,7 +33,7 @@ module Cases
     test "saves household updates" do
       kase = Case::Repo.map_record(cases(:opened_1))
       case_repo = Minitest::Mock.new
-        .expect(:save_status_and_dhs_account, nil, [kase])
+        .expect(:save_pending, nil, [kase])
 
       form_attrs = {
         "dhs_number" => "11111",

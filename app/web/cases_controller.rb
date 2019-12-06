@@ -12,14 +12,14 @@ class CasesController < ApplicationController
 
     case @scope
     when "open"
-      @cases = Case::Repo.get.find_all_open
+      @cases = Case::Repo.get.find_all_opened
     when "completed"
       @cases = Case::Repo.get.find_all_completed
     end
   end
 
   def edit
-    @case = Case::Repo.get.find_with_documents(params[:id])
+    @case = Case::Repo.get.find_with_documents_and_referral(params[:id])
 
     if policy.forbid?(:edit)
       deny_access
@@ -29,7 +29,7 @@ class CasesController < ApplicationController
   end
 
   def update
-    @case = Case::Repo.get.find_with_documents(params[:id])
+    @case = Case::Repo.get.find_with_documents_and_referral(params[:id])
     if policy.forbid?(:edit)
       deny_access
     end
@@ -52,14 +52,14 @@ class CasesController < ApplicationController
   end
 
   def submit
-    @case = Case::Repo.get.find_with_documents(params[:case_id])
+    @case = Case::Repo.get.find_with_documents_and_referral(params[:case_id])
     if policy.forbid?(:edit_status)
       deny_access
       return
     end
 
     @form = Cases::Form.new(@case, {
-      "status" => :submitted
+      "status" => Case::Status::Submitted
     })
 
     if not @form.save
@@ -76,7 +76,7 @@ class CasesController < ApplicationController
   def complete
     case_repo = Case::Repo.get
 
-    @case = case_repo.find_with_documents(params[:case_id])
+    @case = case_repo.find_with_documents_and_referral(params[:case_id])
     if policy.forbid?(:edit_status)
       deny_access
       return
@@ -100,7 +100,7 @@ class CasesController < ApplicationController
   end
 
   def show
-    @case = Case::Repo.get.find(params[:id])
+    @case = Case::Repo.get.find_with_documents_and_referral(params[:id])
 
     if policy.forbid?(:view)
       deny_access

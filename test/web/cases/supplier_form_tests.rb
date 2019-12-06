@@ -16,19 +16,19 @@ module Cases
     test "saves an supplier case" do
       case_repo = Minitest::Mock.new
         .expect(
-          :save_account_and_recipient_profile, nil, [Case]
+          :save_opened, nil, [Case]
         )
 
       enroller_repo = Minitest::Mock.new
         .expect(
           :find_default,
-          Enroller.new(id: "enroller-id", name: nil)
+          Enroller.stub(id: "enroller-id")
         )
 
       supplier_repo = Minitest::Mock.new
         .expect(
           :find_current,
-          Supplier.new(id: "supplier-id", name: nil)
+          Supplier.stub(id: "supplier-id")
         )
 
       form_params = {
