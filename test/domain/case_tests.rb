@@ -89,7 +89,9 @@ class CaseTests < ActiveSupport::TestCase
       status: Case::Status::Approved,
       program: Program::Name::Meap,
       documents: [
-        Document.stub
+        Document.stub(
+          classification: :unknown
+        )
       ]
     )
 
@@ -100,8 +102,8 @@ class CaseTests < ActiveSupport::TestCase
     assert(referral.referral?)
     assert_equal(referral.program, Program::Name::Wrap)
 
-    documents = referral.documents
-    assert_length(documents, kase.documents.length)
+    new_documents = referral.new_documents
+    assert_length(new_documents, kase.documents.length)
 
     assert_length(kase.events, 1)
     event = kase.events[0]

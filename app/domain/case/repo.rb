@@ -389,15 +389,16 @@ class Case
         return
       end
 
-      document_recs_attrs = documents.map do |d|
+      document_attrs = documents.map do |d|
         _attrs = {
           case_id: case_id,
           classification: d.classification,
-          source_url: d.source_url
+          source_url: d.source_url,
+          file: d.file&.attachment&.blob
         }
       end
 
-      document_recs = Document::Record.create!(document_recs_attrs)
+      document_recs = Document::Record.create!(document_attrs)
 
       # send creation events back to entities
       document_recs.each_with_index do |r, i|

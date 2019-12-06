@@ -382,6 +382,11 @@ module Db
         supplier_id: supplier_rec.id
       )
 
+      referral.sign_contract(Program::Contract.new(
+        program: Program::Name::Wrap,
+        variant: Program::Contract::Wrap3h
+      )
+)
       domain_events = ArrayQueue.new
       case_repo = Case::Repo.new(domain_events: domain_events)
 
@@ -391,6 +396,9 @@ module Db
 
       assert_difference(
         -> { Case::Record.count } => 1,
+        -> { Document::Record.count } => 2,
+        -> { ActiveStorage::Attachment.count } => 1,
+        -> { ActiveStorage::Blob.count } => 0,
         &act
       )
 
@@ -402,9 +410,12 @@ module Db
       assert_equal(referral_rec.program, "wrap")
       assert_equal(referral_rec.referrer_id, referrer.id.val)
 
+      document_recs = referral_rec.documents
+      assert_same_elements(document_recs.map(&:classification), %w[contract unknown])
+
       assert_length(referrer.events, 0)
       assert_length(referral.events, 0)
-      assert_length(domain_events, 2)
+      assert_length(domain_events, 3)
     end
   end
 end

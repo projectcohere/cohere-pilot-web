@@ -97,13 +97,6 @@ class Case < ::Entity
     )
 
     # create referral
-    new_documents = []
-    documents&.each do |d|
-      if d.classification != :contract
-        new_documents << d
-      end
-    end
-
     new_referral = Case.new(
       program: program,
       status: Status::Opened,
@@ -114,6 +107,12 @@ class Case < ::Entity
       documents: new_documents,
       is_referral: true
     )
+
+    documents&.each do |d|
+      if d.classification != :contract
+        new_referral.copy_document(d)
+      end
+    end
 
     new_referral.events << Events::DidOpen.from_entity(new_referral)
 
@@ -149,6 +148,10 @@ class Case < ::Entity
     @events << Events::DidSignContract.from_entity(self, new_document)
   end
 
+  def copy_document(document)
+    add_document(Document.copy(document))
+  end
+
   private def add_document(document)
     @new_documents ||= []
     @new_documents << document
@@ -172,6 +175,7 @@ class Case < ::Entity
   end
 
   # -- queries --
+  # -- queries/states
   alias :referrer? :is_referrer
   alias :referral? :is_referral
 
@@ -190,6 +194,22 @@ class Case < ::Entity
     !@is_referrer
   end
 
+  # -- queries/documents
+  def documents
+    @documents || @new_documents
+  end
+
+  def contract_document
+    documents&.find do |d|
+      d.classification == :contract
+    end
+  end
+
+  def contract_variant
+    contract_document&.source_url&.to_sym
+  end
+
+  # -- queries/household
   def fpl_percentage
     household = recipient&.dhs_account&.household
     if household.nil?
@@ -210,16 +230,6 @@ class Case < ::Entity
     fpl_percentage = hh_year_cents * 100 / fpl_year_cents.to_f
 
     fpl_percentage.round(0)
-  end
-
-  def contract_document
-    @documents&.find do |d|
-      d.classification == :contract
-    end
-  end
-
-  def contract_variant
-    contract_document&.source_url&.to_sym
   end
 
   # -- callbacks --

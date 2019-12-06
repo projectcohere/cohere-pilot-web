@@ -26,6 +26,14 @@ class Document < ::Entity
     )
   end
 
+  def self.copy(document)
+    Document.new(
+      classification: document.classification,
+      file: document.file,
+      source_url: document.source_url
+    )
+  end
+
   # -- commands --
   def attach_file(file)
     @new_file = file

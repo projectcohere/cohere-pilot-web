@@ -1,4 +1,9 @@
-attachment_2_1:
+attachment_s2_1:
   name: file
   record: document_s1_1 (Document::Record)
-  blob: blob_2_1
+  blob: blob_1
+
+attachment_a1_2:
+  name: file
+  record: document_a1_2 (Document::Record)
+  blob: blob_1
