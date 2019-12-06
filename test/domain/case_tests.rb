@@ -86,8 +86,8 @@ class CaseTests < ActiveSupport::TestCase
 
   test "makes a referral to a new program" do
     kase = Case.stub(
-      program: Program::Name::Meap,
       status: Case::Status::Approved,
+      program: Program::Name::Meap,
       documents: [
         Document.stub
       ]
@@ -112,6 +112,37 @@ class CaseTests < ActiveSupport::TestCase
     event = referral.events[0]
     assert_instance_of(Case::Events::DidOpen, event)
     assert(event.case_is_referral)
+  end
+
+  test "does not make a referral to the same program" do
+    kase = Case.stub(
+      status: Case::Status::Approved,
+      program: Program::Name::Meap,
+      is_referrer: false
+    )
+
+    referral = kase.make_referral_to_program(Program::Name::Meap)
+    assert_nil(referral)
+  end
+
+  test "does not make a second referral" do
+    kase = Case.stub(
+      status: Case::Status::Approved,
+      program: Program::Name::Meap,
+      is_referrer: true
+    )
+
+    referral = kase.make_referral_to_program(Program::Name::Wrap)
+    assert_nil(referral)
+
+    kase = Case.stub(
+      status: Case::Status::Approved,
+      program: Program::Name::Wrap,
+      is_referral: true
+    )
+
+    referral = kase.make_referral_to_program(Program::Name::Meap)
+    assert_nil(referral)
   end
 
   # -- commands/messages
@@ -268,7 +299,7 @@ class CaseTests < ActiveSupport::TestCase
     assert_nil(kase.fpl_percentage)
   end
 
-  test "has an contract document" do
+  test "has a contract document" do
     kase = Case.stub(
       documents: [Document.stub(classification: :contract)]
     )

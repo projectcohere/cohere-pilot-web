@@ -86,7 +86,7 @@ class Case < ::Entity
   end
 
   def make_referral_to_program(program, supplier_id: nil)
-    if not can_make_referral?
+    if not can_make_referral?(program)
       return nil
     end
 
@@ -183,8 +183,11 @@ class Case < ::Entity
     @status == Status::Submitted
   end
 
-  def can_make_referral?
-    @status == Status::Approved
+  def can_make_referral?(program)
+    @status == Status::Approved &&
+    @program != program &&
+    !@is_referral &&
+    !@is_referrer
   end
 
   def fpl_percentage
