@@ -47,7 +47,7 @@
   <% end %>
   <% if form.respond_to?(:has_active_service) && form.wrap? %>
     <%= f.field(:has_active_service, "", background: false, class: "CaseForm-activeService") do %>
-      <%= f.check_box(:has_active_service) %> Active Service?
+      <%= f.check_box(:has_active_service, class: "Checkbox") %> Active?
     <%- end %>
   <% end %>
 <% end %>
