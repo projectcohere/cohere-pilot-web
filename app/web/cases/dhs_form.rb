@@ -68,7 +68,7 @@ module Cases
         number: dhs_number,
         household: Recipient::Household.new(
           size: household_size.to_i,
-          income_cents: (income.to_f * 100.0).to_i
+          income_cents: (income.to_f * 100.0).to_i,
         )
       )
     end

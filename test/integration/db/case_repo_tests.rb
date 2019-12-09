@@ -233,7 +233,7 @@ module Db
       kase.attach_dhs_account(
         Recipient::DhsAccount.new(
           number: "11111",
-          household: Recipient::Household.new(
+          household: Recipient::Household.stub(
             size: 3,
             income_cents: 999_00
           )
@@ -259,7 +259,7 @@ module Db
 
       account = Recipient::DhsAccount.new(
         number: "11111",
-        household: Recipient::Household.new(
+        household: Recipient::Household.stub(
           size: 3,
           income_cents: 999_00
         )

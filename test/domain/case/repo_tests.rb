@@ -39,6 +39,11 @@ class Case
       kase = Case::Repo.map_record(case_rec, case_rec.documents)
       assert_not(kase.is_referrer)
       assert(kase.is_referral)
+      assert(kase.supplier_account.has_active_service)
+
+      household = kase.recipient.dhs_account.household
+      assert_equal(household.ownership, :unknown)
+      assert(household.is_primary_residence)
     end
   end
 end

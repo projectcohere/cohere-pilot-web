@@ -2,6 +2,7 @@ class Case
   class Account < ::Value
     prop(:number)
     prop(:arrears_cents)
+    prop(:has_active_service, default: true)
     props_end!
 
     # -- queries --

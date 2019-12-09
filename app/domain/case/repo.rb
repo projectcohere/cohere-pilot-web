@@ -424,6 +424,7 @@ class Case
         supplier_account: Case::Account.new(
           number: r.supplier_account_number,
           arrears_cents: r.supplier_account_arrears_cents,
+          has_active_service: r.supplier_account_active_service
         ),
         documents: document_recs&.map { |d|
           map_document(d)
@@ -471,7 +472,9 @@ class Case
             number: number,
             household: Recipient::Household.new(
               size: r.household_size,
-              income_cents: r.household_income_cents
+              income_cents: r.household_income_cents,
+              ownership: r.household_ownership.to_sym,
+              is_primary_residence: r.household_primary_residence
             )
           )
         }
