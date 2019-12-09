@@ -194,6 +194,10 @@ class Case < ::Entity
     !@is_referrer
   end
 
+  def wrap?
+    @program == Program::Name::Wrap
+  end
+
   # -- queries/documents
   def documents
     @documents || @new_documents

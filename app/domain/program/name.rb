@@ -1,5 +1,6 @@
 class Program
   module Name
+    # -- options --
     Meap = :meap
     Wrap = :wrap
 

@@ -33,6 +33,10 @@
     grid-column: 1 / 4;
   }
 
+  &-hasActiveService {
+    grid-column: 4 / 9;
+  }
+
   &-accountNumber {
     grid-column: 1 / 4;
   }
@@ -53,6 +57,14 @@
 
   &-monthlyIncome {
     grid-column: 2 / 5;
+  }
+
+  &-ownership {
+    grid-column: 1 / 4;
+  }
+
+  &-isPrimaryResidence {
+    grid-column: 4 / 9;
   }
 
   &-fpl {

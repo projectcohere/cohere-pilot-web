@@ -156,7 +156,7 @@ class Case
 
       # update the case record
       assign_partners(kase, case_rec)
-      assign_account(kase, case_rec)
+      assign_supplier_account(kase, case_rec)
 
       # find or update a recipient record with a matching phone number
       p = kase.recipient.profile.phone
@@ -215,7 +215,7 @@ class Case
 
       # update records
       assign_status(kase, case_rec)
-      assign_account(kase, case_rec)
+      assign_supplier_account(kase, case_rec)
       assign_recipient_profile(kase, recipient_rec)
       assign_dhs_account(kase, recipient_rec)
 
@@ -293,6 +293,11 @@ class Case
     private def save_referral(referral, referrer)
       # start a new record for the referral
       referral_rec = Case::Record.new
+      recipient_rec = referral.recipient.record
+
+      if recipient_rec.nil?
+        raise "recipient must be fetched from the db!"
+      end
 
       # update the referral record
       c = referrer
@@ -304,11 +309,15 @@ class Case
       )
 
       assign_status(referral, referral_rec)
+      assign_supplier_account(referral, referral_rec)
+      assign_recipient_profile(referral, recipient_rec)
+      assign_dhs_account(referral, recipient_rec)
       assign_partners(referral, referral_rec)
 
       # save the records
       transaction do
         referral_rec.save!
+        recipient_rec.save!
         create_documents!(referral_rec.id, referral.new_documents)
       end
 
@@ -337,11 +346,12 @@ class Case
       )
     end
 
-    private def assign_account(kase, case_rec)
+    private def assign_supplier_account(kase, case_rec)
       a = kase.supplier_account
       case_rec.assign_attributes(
-        supplier_account_number: a.number,
-        supplier_account_arrears_cents: a.arrears_cents
+        supplier_account_number: a&.number,
+        supplier_account_arrears_cents: a&.arrears_cents,
+        supplier_account_active_service: a.nil? ? true : a.has_active_service
       )
     end
 
@@ -379,8 +389,10 @@ class Case
 
       h = a.household
       recipient_rec.assign_attributes(
-        household_size: a.household.size,
-        household_income_cents: a.household.income_cents
+        household_size: h.size,
+        household_income_cents: h.income_cents,
+        household_ownership: h.ownership,
+        household_primary_residence: h.is_primary_residence
       )
     end
 
@@ -424,6 +436,7 @@ class Case
         supplier_account: Case::Account.new(
           number: r.supplier_account_number,
           arrears_cents: r.supplier_account_arrears_cents,
+          has_active_service: r.supplier_account_active_service
         ),
         documents: document_recs&.map { |d|
           map_document(d)
@@ -471,7 +484,9 @@ class Case
             number: number,
             household: Recipient::Household.new(
               size: r.household_size,
-              income_cents: r.household_income_cents
+              income_cents: r.household_income_cents,
+              ownership: r.household_ownership.to_sym,
+              is_primary_residence: r.household_primary_residence
             )
           )
         }

@@ -17,6 +17,12 @@ module Cases
       on: { submitted: { presence: true } }
     )
 
+    field(:ownership, :string,
+      on: { submitted: { presence: true } }
+    )
+
+    field(:is_primary_residence, :boolean)
+
     # -- lifetime --
     def initialize(
       kase,
@@ -38,7 +44,9 @@ module Cases
       h = r.dhs_account&.household
       assign_defaults!(attrs, {
         household_size: h&.size&.to_s,
-        income: h&.income_dollars&.to_s
+        income: h&.income_dollars&.to_s,
+        ownership: h&.ownership,
+        is_primary_residence: h&.is_primary_residence
       })
 
       super(attrs)
@@ -68,7 +76,9 @@ module Cases
         number: dhs_number,
         household: Recipient::Household.new(
           size: household_size.to_i,
-          income_cents: (income.to_f * 100.0).to_i
+          income_cents: (income.to_f * 100.0).to_i,
+          ownership: ownership.nil? ? Recipient::Household::Ownership::Unknown : ownership,
+          is_primary_residence: is_primary_residence.nil? ? true : is_primary_residence
         )
       )
     end
@@ -86,6 +96,10 @@ module Cases
       @model.documents.filter do |document|
         document.classification != :contract
       end
+    end
+
+    def wrap?
+      false
     end
 
     # -- ApplicationForm --

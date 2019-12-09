@@ -73,7 +73,7 @@
 
   /* CaseForm-utilityAccount */
   &-supplier {
-    grid-column: 1 / 10;
+    grid-column: 1 / 5;
     margin-bottom: $spacing4;
   }
 
@@ -83,6 +83,10 @@
 
   &-arrears {
     grid-column: 5 / 8;
+  }
+
+  &-activeService {
+    grid-column: 1 / 10;
   }
 
   /* CaseForm-dhs */
@@ -97,6 +101,14 @@
 
   &-monthlyIncome {
     grid-column: 2 / 5;
+  }
+
+  &-ownership {
+    grid-column: 1 / 4;
+  }
+
+  &-isPrimaryResidence {
+    grid-column: 4 / 10;
   }
 
   &-fpl {

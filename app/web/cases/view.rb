@@ -23,6 +23,10 @@ module Cases
       @case.program.to_s.upcase
     end
 
+    def wrap?
+      @case.wrap?
+    end
+
     def approved?
       @case.status == :approved
     end
@@ -53,6 +57,10 @@ module Cases
       "$#{supplier_account.arrears_dollars}"
     end
 
+    def active_service?
+      supplier_account.has_active_service
+    end
+
     private def supplier_account
       @case.supplier_account
     end
@@ -63,12 +71,20 @@ module Cases
     end
 
     def household_size
-      dhs_account&.household&.size || "Unknown"
+      household&.size || "Unknown"
     end
 
     def household_income
-      income_dollars = dhs_account&.household&.income_dollars
+      income_dollars = household&.income_dollars
       income_dollars.nil? ? "Unknown" : "$#{income_dollars}"
+    end
+
+    def ownership
+      household&.ownership&.to_s&.titlecase
+    end
+
+    def primary_residence?
+      household&.is_primary_residence
     end
 
     def fpl_percentage
@@ -78,6 +94,10 @@ module Cases
 
     private def dhs_account
       @case.recipient.dhs_account
+    end
+
+    private def household
+      dhs_account&.household
     end
 
     # -- queries/documents

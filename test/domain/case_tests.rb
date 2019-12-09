@@ -263,7 +263,7 @@ class CaseTests < ActiveSupport::TestCase
 
   # -- queries --
   test "has an fpl percentage with a household" do
-    household = Recipient::Household.new(
+    household = Recipient::Household.stub(
       size: 5,
       income_cents: 2493_33
     )
@@ -285,7 +285,7 @@ class CaseTests < ActiveSupport::TestCase
   end
 
   test "has no fpl percentage with an incomplete household" do
-    household = Recipient::Household.new(
+    household = Recipient::Household.stub(
       size: nil,
       income_cents: 2493_33
     )
