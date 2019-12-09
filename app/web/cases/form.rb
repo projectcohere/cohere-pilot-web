@@ -2,15 +2,19 @@ module Cases
   # A form object for all the case info
   class Form < ::ApplicationForm
     # -- fields --
+    # -- fields/details
     field(:status, :string,
       inclusion: %w[opened pending submitted approved denied removed]
     )
 
-    field(:supplier_id, :integer)
     field(:contract_variant, :integer,
       on: { submitted: { presence: true } }
     )
 
+    # -- fields/account
+    field(:supplier_id, :integer)
+
+    # -- fields/children
     fields_from(:supplier, SupplierForm)
     fields_from(:dhs, DhsForm)
 
@@ -35,12 +39,12 @@ module Cases
       # construct subforms
       @supplier = SupplierForm.new(
         kase,
-        attrs.slice(SupplierForm.attribute_names)
+        attrs.slice(*SupplierForm.attribute_names)
       )
 
       @dhs = DhsForm.new(
         kase,
-        attrs.slice(DhsForm.attribute_names)
+        attrs.slice(*DhsForm.attribute_names)
       )
 
       # set initial values from case
@@ -48,7 +52,7 @@ module Cases
       assign_defaults!(attrs, {
         status: c.status.to_s,
         supplier_id: c.supplier_id,
-        contract_variant: contracts.find_index { |c| c.variant == @model.contract_variant }
+        contract_variant: contracts.find_index { |c| c.variant == @model.contract_variant },
       })
 
       super(attrs)
@@ -103,12 +107,12 @@ module Cases
     end
 
     # -- queries --
-    def name
-      @model.recipient.profile.name
+    def wrap?
+      @model.wrap?
     end
 
-    def fpl_percentage
-      @model.fpl_percentage
+    def name
+      @model.recipient.profile.name
     end
 
     def program_name
@@ -117,6 +121,16 @@ module Cases
 
     def enroller_name
       @enroller_repo.find(@model.enroller_id).name
+    end
+
+    def ownership_options
+      Recipient::Household::Ownership.all.map do |o|
+        [o.to_s.titlecase, o]
+      end
+    end
+
+    def fpl_percentage
+      @model.fpl_percentage
     end
 
     def supplier_options

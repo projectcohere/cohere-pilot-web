@@ -10,7 +10,17 @@
   <% end %>
   <%= f.field(:income, "Monthly Income", prefix: "$", class: "CaseForm-monthlyIncome") do %>
     <%= f.text_field(:income) %>
-<% end %>
+  <% end %>
+  <% if form.respond_to?(:ownership) && form.wrap? %>
+    <%= f.field(:ownership, "Rent or Own", background: false, class: "CaseForm-ownership") do %>
+      <%= f.select(:ownership, @form.ownership_options) %>
+    <%- end %>
+  <% end %>
+  <% if form.respond_to?(:is_primary_residence) && form.wrap? %>
+    <%= f.field(:is_primary_residence, "&nbsp".html_safe, background: false, class: "CaseForm-isPrimaryResidence") do %>
+      <%= f.check_box(:is_primary_residence) %> Primary Residence?
+    <%- end %>
+  <% end %>
   <% if form.respond_to?(:fpl_percentage) %>
     <%= f.field(:fpl, "FPL Percentage", background: false, class: "CaseForm-fpl") do %>
       <%= f.value(form.fpl_percentage, suffix: "%", fallback: "Unknown. Please add household info.") %>
