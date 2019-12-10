@@ -2,7 +2,7 @@ import { IComponent } from "./Component"
 
 // -- impls --
 export class Passwords implements IComponent {
-  isDocumentDependent = true
+  isOnLoad = true
 
   // -- props --
   private $password: HTMLInputElement
@@ -16,6 +16,10 @@ export class Passwords implements IComponent {
 
     const $showPassword = document.getElementById("show_password")
     $showPassword.addEventListener("change", this.didChangeShowPassword.bind(this))
+  }
+
+  cleanup() {
+    this.$password = null
   }
 
   // -- queries --

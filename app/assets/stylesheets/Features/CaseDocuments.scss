@@ -1,9 +1,6 @@
 .CaseDocuments {
-  width: $width5;
-  margin-left: $spacing2;
-
   > h1 {
-    @extend .u-subtitle;
+    @extend .u-section-name;
     margin-bottom: $spacing4;
   }
 

@@ -10,7 +10,7 @@
     grid-template-columns: repeat(8, 1fr) $height1;
 
     > h1 {
-      @extend .u-section;
+      @extend .u-section-name;
       grid-column: 1 / 10;
 
       > span {

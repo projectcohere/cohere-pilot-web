@@ -7,7 +7,9 @@
     display: none;
 
     &.is-visible {
-      display: block;
+      display: flex;
+      flex-direction: column;
+      gap: $spacing1;
     }
   }
 
@@ -17,7 +19,8 @@
     grid-template-columns: repeat(8, 1fr) $height1;
 
     > h1 {
-      @extend .u-section;
+      @extend .u-section-name;
+
       grid-column: 1 / 10;
       margin-bottom: $spacing5;
 
@@ -40,8 +43,14 @@
     }
   }
 
-  &-submit {
-    min-width: $width6;
-    justify-self: start;
+  &-actions {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+
+    &-submit {
+      min-width: $width6;
+      justify-self: start;
+    }
   }
 }

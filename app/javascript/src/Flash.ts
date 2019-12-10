@@ -2,7 +2,7 @@ import { IComponent } from "./Component"
 
 // -- impls --
 export class Flash implements IComponent {
-  isDocumentDependent = true
+  isOnLoad = true
 
   // -- IComponent --
   start() {

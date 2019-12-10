@@ -3,6 +3,9 @@ body {
   @extend .u-body;
   font-family: $fontFamily, system-ui, sans-serif;
   background-color: $colorBackground;
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
 }
 
 /* typography */

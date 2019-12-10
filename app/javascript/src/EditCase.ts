@@ -1,14 +1,14 @@
 import { IComponent } from "./Component"
 
 // -- constants --
-const kClassFilter = "Filter"
-const kClassTab = "Form-tab"
+const kQueryFilters = ".EditCase .Filter"
+const kQueryTabs = ".EditCase .Form-tab"
 const kClassSelected = "is-selected"
 const kClassVisible = "is-visible"
 
 // -- impls --
 export class EditCase implements IComponent {
-  isDocumentDependent = true
+  isOnLoad = true
 
   // -- props --
   private $filters: HTMLLinkElement[]
@@ -16,14 +16,14 @@ export class EditCase implements IComponent {
 
   // -- IComponent --
   start() {
-    const $filters = document.querySelectorAll<HTMLLinkElement>(`.${kClassFilter}`)
+    const $filters = document.querySelectorAll<HTMLLinkElement>(kQueryFilters)
     if ($filters.length == 0) {
       return
     }
 
     // query elements
     this.$filters = Array.from($filters)
-    this.$tabs = Array.from(document.querySelectorAll(`.${kClassTab}`))
+    this.$tabs = Array.from(document.querySelectorAll(kQueryTabs))
 
     // bind events
     for (const $filter of this.$filters) {
@@ -31,23 +31,29 @@ export class EditCase implements IComponent {
     }
   }
 
+  cleanup() {
+    this.$filters = null
+    this.$tabs = null
+  }
+
   // -- events --
   private didClickFilter(event: Event) {
+    event.preventDefault()
+
     const clicked = event.target as HTMLLinkElement
 
-    // select the clicked filter
+    // select the filter
     for (const $filter of this.$filters) {
       $filter.classList.toggle(kClassSelected, $filter == clicked)
     }
 
-    // show the tab with the matching id
+    // get the query params
     const location = clicked as unknown as Location
-    const id = location.hash.substr(1)
+    const id = location.hash.slice(1)
 
+    // show the matching tab
     for (const $tab of this.$tabs) {
       $tab.classList.toggle(kClassVisible, $tab.id === id)
     }
-
-    event.preventDefault()
   }
 }

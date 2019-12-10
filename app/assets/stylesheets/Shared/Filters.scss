@@ -1,5 +1,6 @@
 .Filters {
-  display: flex;
+  display: inline-flex;
   gap: $spacing3;
   max-width: $width1;
+  border-bottom: 1px solid fade-out($brandBlack, 0.8);
 }

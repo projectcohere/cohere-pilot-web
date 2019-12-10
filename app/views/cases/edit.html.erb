@@ -1,6 +1,7 @@
-<main class="Main">
+<main class="EditCase Main">
   <%- view = Cases::View.new(@case) %>
   <header class="Main-header">
+    <%= link_to("Back to Cases", :back, class: "Main-back") %>
     <h1 class="Main-title">
       <%= view.recipient_name %>'s case
     </h1>
@@ -48,39 +49,40 @@
         %>
       <% end %>
     </div>
+    <div class="Main-filters">
+      <nav class="Filters">
+        <%= link_to("Details", "#details", class: "Filter is-selected", data: { turbolinks: false }) %>
+        <%= link_to("Profile", "#profile", class: "Filter", data: { turbolinks: false }) %>
+        <%= link_to("Accounts", "#accounts", class: "Filter", data: { turbolinks: false }) %>
+        <%= link_to("Documents", "#documents", class: "Filter", data: { turbolinks: false }) %>
+      </nav>
+    </div>
   </header>
 
-  <div class="EditCase">
-    <nav class="Filters">
-      <%= link_to("Details", "#details", class: "Filter is-selected") %>
-      <%= link_to("Profile", "#profile", class: "Filter") %>
-      <%= link_to("Accounts", "#accounts", class: "Filter") %>
-      <%= link_to("Documents", "#documents", class: "Filter") %>
-    </nav>
+  <%= form_for(@form, url: case_path(@form.id), html: { class: "CaseForm Form" }) do |f| %>
+    <%- form_locals = { f: f, form: @form, view: view } %>
 
-    <%= form_for(@form, url: case_path(@form.id), html: { class: "CaseForm Form" }) do |f| %>
-      <%- form_locals = { f: f, form: @form, view: view } %>
+    <section id="details" class="Form-tab is-visible">
+      <%= render(partial: "cases/fields/details", locals: form_locals) %>
+    </section>
 
-      <section id="details" class="Form-tab is-visible">
-        <%= render(partial: "cases/fields/details", locals: form_locals) %>
-      </section>
+    <section id="profile" class="Form-tab">
+      <%= render(partial: "cases/fields/contact", locals: form_locals) %>
+      <%= render(partial: "cases/fields/address", locals: form_locals) %>
+    </section>
 
-      <section id="profile" class="Form-tab">
-        <%= render(partial: "cases/fields/contact", locals: form_locals) %>
-        <%= render(partial: "cases/fields/address", locals: form_locals) %>
-      </section>
+    <section id="accounts" class="Form-tab">
+      <%= render(partial: "cases/fields/mdhhs", locals: form_locals) %>
+      <%= render(partial: "cases/fields/utility", locals: form_locals) %>
+      <%= render(partial: "cases/fields/household", locals: form_locals) %>
+    </section>
 
-      <section id="accounts" class="Form-tab">
-        <%= render(partial: "cases/fields/mdhhs", locals: form_locals) %>
-        <%= render(partial: "cases/fields/utility", locals: form_locals) %>
-        <%= render(partial: "cases/fields/household", locals: form_locals) %>
-      </section>
+    <section id="documents" class="Form-tab">
+      <%= render(partial: "cases/documents", locals: { documents: @form.documents }) %>
+    </section>
 
-      <section id="documents" class="Form-tab">
-        <%= render(partial: "cases/documents", locals: { documents: @form.documents }) %>
-      </section>
-
+    <div class="Form-actions">
       <%= f.submit(class: "Form-submit Button--action") %>
-    <% end %>
-  <div>
+    </div>
+  <% end %>
 </main>
