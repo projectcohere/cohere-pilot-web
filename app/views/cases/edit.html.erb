@@ -1,20 +1,11 @@
 <main class="EditCase Main">
   <header class="Main-header">
-    <%= link_to("Back to Cases", :back, class: "Main-back") %>
+    <%= link_to("Back to Cases", cases_path, class: "Main-back") %>
     <h1 class="Main-title">
       <%= @view.recipient_name %>'s case
     </h1>
     <div class="Main-actions">
       <% if @case.can_submit? %>
-        <%=
-          button_to("Submit Case", [@case, :submit],
-            method: :patch,
-            class: "Button--action",
-            data: {
-              confirm: "Are you sure you want to submit this case?"
-            }
-          )
-        %>
         <%=
           button_to("Remove from Pilot", [@case, :complete],
             method: :patch,
@@ -22,27 +13,6 @@
             class: "Button--destructive",
             data: {
               confirm: "Are you sure you want to remove this case from the pilot?"
-            }
-          )
-        %>
-      <% elsif @case.can_complete? %>
-        <%=
-          button_to("Approve Case", [@case, :complete],
-            method: :patch,
-            params: { case: { status: Case::Status::Approved } },
-            class: "Button--action",
-            data: {
-              confirm: "Are you sure you want to approve this case?"
-            }
-          )
-        %>
-        <%=
-          button_to("Deny Case", [@case, :complete],
-            method: :patch,
-            params: { case: { status: Case::Status::Denied } },
-            class: "Button--destructive",
-            data: {
-              confirm: "Are you sure you want to deny this case?"
             }
           )
         %>
@@ -58,7 +28,7 @@
     </div>
   </header>
 
-  <%= form_for(@form, url: case_path(@form.id), html: { class: "CaseForm Form" }) do |f| %>
+  <%= form_for(@form, url: case_path(@case.id), html: { class: "CaseForm Form" }) do |f| %>
     <% form_locals = { f: f, form: @form, view: @view } %>
     <section id="details" class="Form-tab is-visible">
       <%= render(partial: "cases/fields/details", locals: form_locals) %>
@@ -80,7 +50,38 @@
     </section>
 
     <div class="Form-actions">
-      <%= f.submit(class: "Form-submit Button--action") %>
+      <%= f.submit("Save", class: "Form-submit Button--action") %>
+
+      <%- if @case.can_submit? %>
+        <%=
+          f.submit("Save & Submit to Enroller",
+            formaction: case_save_path(@case.id, :submit),
+            class: "Form-submit Button--secondary",
+            data: {
+              confirm: "Are you sure you want to submit this case?"
+            }
+          )
+        %>
+      <% elsif @case.can_complete? %>
+        <%=
+          f.submit("Save & Approve",
+            formaction: case_save_path(@case.id, :approve),
+            class: "Form-submit Button--secondary",
+            data: {
+              confirm: "Are you sure you want to approve this case?"
+            }
+          )
+        %>
+        <%=
+          f.submit("Save & Deny",
+            formaction: case_save_path(@case.id, :deny),
+            class: "Form-submit Button--destructive",
+            data: {
+              confirm: "Are you sure you want to deny this case?"
+            }
+          )
+        %>
+      <%- end %>
     </div>
   <% end %>
 </main>

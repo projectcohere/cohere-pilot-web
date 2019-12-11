@@ -180,16 +180,28 @@ class Case < ::Entity
   end
 
   # -- queries --
-  # -- queries/states
+  # -- queries/status
   alias :referrer? :is_referrer
   alias :referral? :is_referral
 
-  def can_submit?
-    @status == Status::Opened || @status == Status::Pending
+  def submitted?
+    @status == Status::Submitted
   end
 
-  def can_complete?
-    @status == Status::Submitted
+  def complete?
+    @status == Status::Approved ||
+    @status == Status::Denied ||
+    @status == Status::Removed
+  end
+
+  def wrap?
+    @program == Program::Name::Wrap
+  end
+
+  alias :can_complete? :submitted?
+
+  def can_submit?
+    @status == Status::Opened || @status == Status::Pending
   end
 
   def can_make_referral?(program)
@@ -197,10 +209,6 @@ class Case < ::Entity
     @program != program &&
     !@is_referral &&
     !@is_referrer
-  end
-
-  def wrap?
-    @program == Program::Name::Wrap
   end
 
   # -- queries/documents

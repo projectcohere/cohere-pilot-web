@@ -1,25 +1,23 @@
 module Cases
   class SaveForm
-    def initialize(form, case_repo: Case::Repo.get)
+    def initialize(form, action, case_repo: Case::Repo.get)
       @form = form
+      @case = form.model
+      @action = action
       @case_repo = case_repo
     end
 
     # -- command --
     def call
-      # new_status = @form.status.to_sym
+      scope = if @action == :submit || @case.can_complete?
+        :submitted
+      end
 
-      # scope = case new_status
-      # when Case::Status::Submitted, Case::Status::Approved, Case::Status::Denied
-      #   :submitted
-      # end
-
-      if not @form.valid?
+      if not @form.valid?(scope)
         return false
       end
 
-      kase = @form.model
-      kase.contribute_cohere_data(
+      @case.contribute_cohere_data(
         map_form_to_supplier_account,
         map_form_to_profile,
         map_form_to_dhs_account,
@@ -28,19 +26,21 @@ module Cases
       # sign the contract if necessary
       selected_contract = @form.details.selected_contract
       if not selected_contract.nil?
-        kase.sign_contract(selected_contract)
+        @case.sign_contract(selected_contract)
       end
 
-      # case new_status
-      # when Case::Status::Submitted
-      #   model.submit_to_enroller
-      # when Case::Status::Removed
-      #   model.remove_from_pilot
-      # when Case::Status::Approved, Case::Status::Denied
-      #   model.complete(status)
-      # end
+      case @action
+      when :submit
+        @case.submit_to_enroller
+      when :remove
+        @case.remove_from_pilot
+      when :approve
+        @case.complete(Case::Status::Approved)
+      when :deny
+        @case.complete(Case::Status::Denied)
+      end
 
-      @case_repo.save_all_fields_and_documents(kase)
+      @case_repo.save_all_fields_and_documents(@case)
 
       true
     end

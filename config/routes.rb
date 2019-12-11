@@ -85,11 +85,22 @@ Rails.application.routes.draw do
       update
       show
     ]) do
-      get("/:scope", on: :collection, action: :index, constraints: { scope: /open|completed/ })
-      get("/", on: :collection, to: redirect("/cases/open"))
+      get("/:scope",
+        on: :collection,
+        action: :index,
+        constraints: { scope: /open|completed/ }
+      )
 
-      patch(:submit)
-      patch(:complete)
+      get("/",
+        on: :collection,
+        to: redirect("/cases/open")
+      )
+
+      patch("/:save_action",
+        as: :save,
+        action: :update,
+        constraints: { save_action: /submit|approve|deny|remove/ }
+      )
 
       resources(:referrals, module: :cases, only: %i[
         new

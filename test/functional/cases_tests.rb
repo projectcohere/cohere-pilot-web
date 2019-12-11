@@ -293,34 +293,34 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:alert])
   end
 
-  # -- submit --
-  test "can't submit a case if signed-out" do
+  # -- edit/save --
+  test "can't update a case with an action if signed-out" do
     assert_raises(ActionController::RoutingError) do
-      patch("/cases/3/submit")
+      patch("/cases/3/approve")
     end
   end
 
-  test "can't submit a case without permission" do
-    user_rec = users(:enroller_1)
+  test "can't update a case with an action without permission" do
+    user_rec = users(:supplier_1)
 
     assert_raises(ActionController::RoutingError) do
-      patch(auth("/cases/4/submit", as: user_rec))
+      patch(auth("/cases/4/deny", as: user_rec))
     end
   end
 
-  test "show errors when submitting an invalid case as a cohere user" do
-    case_rec = cases(:pending_2)
+  test "can't update a case with an unknown action" do
+    user_rec = users(:cohere_1)
+    case_rec = cases(:submitted_1)
 
-    patch(auth("/cases/#{case_rec.id}/submit"))
-
-    assert_response(:success)
-    assert_present(flash[:alert])
+    assert_raises(ActionController::RoutingError) do
+      patch(auth("/cases/#{case_rec.id}/unknown", as: user_rec))
+    end
   end
 
   test "submit a case as a cohere user" do
     case_rec = cases(:pending_1)
-    patch(auth("/cases/#{case_rec.id}/submit"))
 
+    patch(auth("/cases/#{case_rec.id}/submit"))
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
 
@@ -335,19 +335,12 @@ class CasesTests < ActionDispatch::IntegrationTest
     end
   end
 
-  # -- complete --
-  test "can't complete a case if signed-out" do
-    assert_raises(ActionController::RoutingError) do
-      patch("/cases/3/complete")
-    end
-  end
+  test "show errors when submitting an invalid case as a cohere user" do
+    case_rec = cases(:pending_2)
 
-  test "can't complete a case without permission" do
-    user_rec = users(:supplier_1)
-
-    assert_raises(ActionController::RoutingError) do
-      patch(auth("/cases/4/complete", as: user_rec))
-    end
+    patch(auth("/cases/#{case_rec.id}/submit"))
+    assert_response(:success)
+    assert_present(flash[:alert])
   end
 
   test "can't complete another enroller's case as an enroller" do
@@ -355,34 +348,15 @@ class CasesTests < ActionDispatch::IntegrationTest
     case_rec = cases(:submitted_2)
 
     assert_raises(ActiveRecord::RecordNotFound) do
-      patch(auth("/cases/#{case_rec.id}/complete", as: user_rec))
+      patch(auth("/cases/#{case_rec.id}/approve", as: user_rec))
     end
-  end
-
-  test "can't complete a case with an unknown status" do
-    user_rec = users(:cohere_1)
-    case_rec = cases(:submitted_1)
-
-    patch(auth("/cases/#{case_rec.id}/complete", as: user_rec), params: {
-      case: {
-        status: :malicious
-      }
-    })
-
-    assert_response(:success)
-    assert_present(flash[:alert])
   end
 
   test "complete a case as a cohere user" do
     user_rec = users(:cohere_1)
     case_rec = cases(:submitted_1)
 
-    patch(auth("/cases/#{case_rec.id}/complete", as: user_rec), params: {
-      case: {
-        status: Case::Status::Approved
-      }
-    })
-
+    patch(auth("/cases/#{case_rec.id}/approve", as: user_rec))
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
 
@@ -403,12 +377,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     user_rec = users(:enroller_1)
     case_rec = cases(:submitted_1)
 
-    patch(auth("/cases/#{case_rec.id}/complete", as: user_rec), params: {
-      case: {
-        status: Case::Status::Approved
-      }
-    })
-
+    patch(auth("/cases/#{case_rec.id}/deny", as: user_rec))
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
 
@@ -421,7 +390,7 @@ class CasesTests < ActionDispatch::IntegrationTest
         assert_match(%r[#{ENV["HOST"]}/cases/\d+], el[0][:href])
       end
 
-      assert_select("p", text: /approved/)
+      assert_select("p", text: /denied/)
     end
   end
 
@@ -429,12 +398,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     user_rec = users(:cohere_1)
     case_rec = cases(:pending_1)
 
-    patch(auth("/cases/#{case_rec.id}/complete", as: user_rec), params: {
-      case: {
-        status: Case::Status::Removed
-      }
-    })
-
+    patch(auth("/cases/#{case_rec.id}/remove", as: user_rec))
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
 

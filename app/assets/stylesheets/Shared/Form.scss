@@ -47,6 +47,7 @@
     flex: 1;
     display: flex;
     align-items: flex-end;
+    gap: $spacing4;
 
     &-submit {
       min-width: $width6;

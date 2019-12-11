@@ -20,7 +20,6 @@ class CasesController < ApplicationController
 
   def edit
     @case = Case::Repo.get.find_with_documents_and_referral(params[:id])
-
     if policy.forbid?(:edit)
       deny_access
     end
@@ -30,7 +29,7 @@ class CasesController < ApplicationController
   end
 
   def update
-    @case = Case::Repo.get.find_with_documents_and_referral(params[:id])
+    @case = Case::Repo.get.find_with_documents_and_referral(params[:id] || params[:case_id])
     if policy.forbid?(:edit)
       deny_access
     end
@@ -38,18 +37,28 @@ class CasesController < ApplicationController
     @view = Cases::View.new(@case)
     @form = Cases::Form::V2.new(@case,
       params
-        .require(:case)
+        .fetch(:case, {})
         .permit(Cases::Form::V2.params_shape)
     )
 
-    save_form = Cases::SaveForm.new(@form)
+    save_form = Cases::SaveForm.new(
+      @form,
+      params[:save_action]&.to_sym
+    )
+
     if not save_form.()
       flash.now[:alert] = "Please check #{@view.recipient_name}'s case for errors."
       render(:edit)
       return
     end
 
-    redirect_to(cases_path,
+    redirect_path = if @case.complete?
+      case_path(@case.id)
+    else
+      edit_case_path(@case.id)
+    end
+
+    redirect_to(redirect_path,
       notice: "Updated #{@view.recipient_name}'s case!"
     )
   end
