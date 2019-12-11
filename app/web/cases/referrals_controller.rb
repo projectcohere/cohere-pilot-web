@@ -7,8 +7,13 @@ module Cases
         return
       end
 
-      @case = @case.make_referral_to_program(Program::Name::Wrap)
-      @form = Cases::Form.new(@case)
+      referral = @case.make_referral_to_program(
+        Program::Name::Wrap
+      )
+
+      @case = referral.referred
+      @view = Cases::View.new(@case)
+      @form = Cases::Form::V2.new(@case)
     end
 
     def create
@@ -18,29 +23,36 @@ module Cases
         return
       end
 
-      referrer = @case
-
       case_params = params
         .require(:case)
-        .permit(Cases::Form.params_shape)
+        .permit(Cases::Form::V2.params_shape)
 
-      @case = referrer.make_referral_to_program(
+      referral = @case.make_referral_to_program(
         Program::Name::Wrap,
-        supplier_id: case_params[:supplier_id]
+        supplier_id: case_params.dig(:supplier_account, :supplier_id)
       )
 
-      @form = Cases::Form.new(@case, case_params)
+      @case = referral.referred
+      @view = Cases::View.new(@case)
+      @form = Cases::Form::V2.new(@case, case_params)
 
-      if not @form.save(referrer: referrer)
+      save_form = Cases::Referrals::SaveForm.new(referral, @form, save_action)
+      if not save_form.()
         flash.now[:alert] = "Please check the case for errors."
         render(:new)
         return
       end
 
-      redirect_to(cases_path, notice: "Created referral!")
+      redirect_to(edit_case_path(@case.id), notice: "Created referral!")
     end
 
     # -- queries --
+    private def save_action
+      if params.key?(:submit)
+        :submit
+      end
+    end
+
     private def policy
       Case::Policy.new(User::Repo.get.find_current, @case)
     end

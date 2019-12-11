@@ -46,8 +46,8 @@
     <%= f.text_field(:arrears) %>
   <% end %>
   <% if form.respond_to?(:has_active_service) && form.wrap? %>
-    <%= f.field(:has_active_service, "", background: false, class: "CaseForm-activeService") do %>
-      <%= f.check_box(:has_active_service, class: "Checkbox") %> Active?
+    <%= f.field(:has_active_service, "", background: false, class: "CaseForm-hasActiveService") do %>
+      <%= f.check_box(:has_active_service) %> Active?
     <%- end %>
   <% end %>
 <% end %>

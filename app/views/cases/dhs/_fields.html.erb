@@ -18,7 +18,7 @@
   <% end %>
   <% if form.respond_to?(:is_primary_residence) && form.wrap? %>
     <%= f.field(:is_primary_residence, "&nbsp".html_safe, background: false, class: "CaseForm-isPrimaryResidence") do %>
-      <%= f.check_box(:is_primary_residence, class: "Checkbox") %> Primary Residence?
+      <%= f.check_box(:is_primary_residence) %> Primary Residence?
     <%- end %>
   <% end %>
   <% if form.respond_to?(:fpl_percentage) %>

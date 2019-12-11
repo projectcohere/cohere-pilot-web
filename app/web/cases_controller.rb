@@ -41,7 +41,7 @@ class CasesController < ApplicationController
         .permit(Cases::Form::V2.params_shape)
     )
 
-    save_form = Cases::SaveForm.new(@form, save_action)
+    save_form = Cases::SaveForm.new(@case, @form, save_action)
     if not save_form.()
       flash.now[:alert] = "Please check #{@view.recipient_name}'s case for errors."
       render(:edit)
@@ -56,54 +56,6 @@ class CasesController < ApplicationController
 
     redirect_to(redirect_path,
       notice: "Updated #{@view.recipient_name}'s case!"
-    )
-  end
-
-  def submit
-    @case = Case::Repo.get.find_with_documents_and_referral(params[:case_id])
-    if policy.forbid?(:edit_status)
-      deny_access
-      return
-    end
-
-    @form = Cases::Form.new(@case, {
-      "status" => Case::Status::Submitted
-    })
-
-    if not @form.save
-      flash.now[:alert] = "Please check #{@form.name}'s case for errors."
-      render(:edit)
-      return
-    end
-
-    redirect_to(cases_path,
-      notice: "Submitted #{@form.name}'s case!"
-    )
-  end
-
-  def complete
-    case_repo = Case::Repo.get
-
-    @case = case_repo.find_with_documents_and_referral(params[:case_id])
-    if policy.forbid?(:edit_status)
-      deny_access
-      return
-    end
-
-    @form = Cases::Form.new(@case,
-      params
-        .require(:case)
-        .permit(:status)
-    )
-
-    if not @form.save
-      flash.now[:alert] = "May not set case status to #{@form.status}."
-      render(:edit)
-      return
-    end
-
-    redirect_to(cases_path,
-      notice: "#{@form.status.to_s.capitalize} #{@case.recipient.profile.name}'s case!"
     )
   end
 

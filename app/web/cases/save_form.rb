@@ -1,19 +1,24 @@
 module Cases
   class SaveForm
-    def initialize(form, action, case_repo: Case::Repo.get)
-      @form = form
-      @case = form.model
-      @action = action
+    def initialize(kase, form, action, case_repo: Case::Repo.get)
       @case_repo = case_repo
+      @case = kase
+      @form = form
+      @action = action
     end
 
     # -- command --
     def call
-      scope = if @action == :submit || @case.can_complete?
-        :submitted
+      scopes = []
+      if @action == :submit || @case.submitted?
+        scopes << :submitted
       end
 
-      if not @form.valid?(scope)
+      if @action == :complete
+        scopes << :completed
+      end
+
+      if not @form.valid?(scopes)
         return false
       end
 
@@ -69,7 +74,7 @@ module Cases
     end
 
     private def map_form_to_supplier_account
-      a = @form.utility_account
+      a = @form.supplier_account
 
       Case::Account.new(
         number: a.account_number,

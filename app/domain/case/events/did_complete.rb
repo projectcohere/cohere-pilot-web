@@ -5,7 +5,7 @@ class Case
       prop(:case_id)
       prop(:case_status)
       prop(:case_program)
-      prop(:case_is_referral)
+      prop(:case_is_referred)
       props_end!
 
       # -- factories --
@@ -14,7 +14,7 @@ class Case
           case_id: kase.id,
           case_status: kase.status,
           case_program: kase.program,
-          case_is_referral: kase.referral?
+          case_is_referred: kase.referral?
         )
       end
     end

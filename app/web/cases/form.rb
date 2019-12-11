@@ -1,14 +1,14 @@
 module Cases
   # A form object for all the case info
-  class Form < ::ApplicationForm
-    class V2 < ::ApplicationForm
+  class Form < ApplicationForm
+    class V2 < ApplicationForm
       # -- fields --
       subform(:details, Forms::Details)
       subform(:address, Forms::Address)
       subform(:contact, Forms::Contact)
       subform(:household, Forms::Household)
       subform(:mdhhs, Forms::Mdhhs)
-      subform(:utility_account, Forms::UtilityAccount)
+      subform(:supplier_account, Forms::SupplierAccount)
 
       # -- ApplicationForm --
       def self.entity_type

@@ -96,24 +96,27 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     referral = kase.make_referral_to_program(Program::Name::Wrap)
-    assert(kase.referrer?)
-
     assert_not_nil(referral)
-    assert(referral.referral?)
-    assert_equal(referral.program, Program::Name::Wrap)
 
-    new_documents = referral.new_documents
-    assert_length(new_documents, kase.documents.length)
+    referrer = referral.referrer
+    assert(referral.referrer.referrer?)
 
-    assert_length(kase.events, 1)
-    event = kase.events[0]
+    referred = referral.referred
+    assert(referred.referral?)
+    assert_equal(referred.program, Program::Name::Wrap)
+
+    new_documents = referred.new_documents
+    assert_length(new_documents, referrer.documents.length)
+
+    assert_length(referrer.events, 1)
+    event = referrer.events[0]
     assert_instance_of(Case::Events::DidMakeReferral, event)
     assert_equal(event.case_program, Program::Name::Wrap)
 
-    assert_length(referral.events, 1)
-    event = referral.events[0]
+    assert_length(referred.events, 1)
+    event = referred.events[0]
     assert_instance_of(Case::Events::DidOpen, event)
-    assert(event.case_is_referral)
+    assert(event.case_is_referred)
   end
 
   test "does not make a referral to the same program" do
@@ -140,7 +143,7 @@ class CaseTests < ActiveSupport::TestCase
     kase = Case.stub(
       status: Case::Status::Approved,
       program: Program::Name::Wrap,
-      is_referral: true
+      is_referred: true
     )
 
     referral = kase.make_referral_to_program(Program::Name::Meap)

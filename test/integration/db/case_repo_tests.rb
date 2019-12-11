@@ -382,16 +382,17 @@ module Db
         supplier_id: supplier_rec.id
       )
 
-      referral.sign_contract(Program::Contract.new(
+      referred = referral.referred
+      referred.sign_contract(Program::Contract.new(
         program: Program::Name::Wrap,
         variant: Program::Contract::Wrap3h
-      )
-)
+      ))
+
       domain_events = ArrayQueue.new
       case_repo = Case::Repo.new(domain_events: domain_events)
 
       act = -> do
-        case_repo.save_all_fields_and_documents(referral, referrer)
+        case_repo.save_referral(referral)
       end
 
       assert_difference(
@@ -402,19 +403,19 @@ module Db
         &act
       )
 
-      assert_not_nil(referral.record)
-      assert_not_nil(referral.id.val)
+      assert_not_nil(referred.record)
+      assert_not_nil(referred.id.val)
 
-      referral_rec = referral.record
-      assert_equal(referral_rec.status, "opened")
-      assert_equal(referral_rec.program, "wrap")
-      assert_equal(referral_rec.referrer_id, referrer.id.val)
+      referred_rec = referred.record
+      assert_equal(referred_rec.status, "opened")
+      assert_equal(referred_rec.program, "wrap")
+      assert_equal(referred_rec.referrer_id, referrer.id.val)
 
-      document_recs = referral_rec.documents
+      document_recs = referred_rec.documents
       assert_same_elements(document_recs.map(&:classification), %w[contract unknown])
 
       assert_length(referrer.events, 0)
-      assert_length(referral.events, 0)
+      assert_length(referred.events, 0)
       assert_length(domain_events, 3)
     end
   end

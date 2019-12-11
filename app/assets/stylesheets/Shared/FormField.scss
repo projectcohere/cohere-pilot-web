@@ -1,5 +1,6 @@
 .FormField {
   overflow-x: hidden;
+  cursor: pointer;
 
   &.is-disabled {
     opacity: $opacityDisabled;
@@ -34,14 +35,17 @@
   }
 
   &-input--background {
-    display: flex;
-    align-items: center;
-    height: $height1;
+    @extend .FormField-input;
+
     padding: $spacing4;
     border-bottom: 2px solid $brandBlack;
     border-top-left-radius: $radiusField;
     border-top-right-radius: $radiusField;
     background-color: $colorField;
+
+    &:hover {
+      background-color: fade-out($brandPrimary, 0.85);
+    }
 
     &:focus-within {
       border-bottom-color: $brandPrimary;
@@ -74,6 +78,7 @@
     transform: translateX(4px);
   }
 
+  // -- inputs
   input {
     flex: 1;
     width: 0;
@@ -95,11 +100,51 @@
   }
 
   input[type="checkbox"] {
+    @extend .Checkbox;
+
     appearance: none;
     -moz-appearance: none;
 
     &:checked {
       @include u-checkmark;
     }
+  }
+
+  // -- .FormField--select
+  &--select &-input {
+    position: relative;
+
+    &::before, &::after {
+      content: "";
+      pointer-events: none;
+      position: absolute;
+      right: 0;
+      width: 10px;
+      height: 2px;
+      background-color: $brandBlack;
+    }
+
+    &:before {
+      transform: translateX(-$spacing4 - 6px) rotate(45deg);
+    }
+
+    &:after {
+      transform: translateX(-$spacing4) rotate(-45deg);
+    }
+
+    &:focus-within {
+      &::before, &::after {
+        background-color: $brandPrimary;
+      }
+    }
+  }
+
+  &--select select {
+    width: 100%;
+    border: none;
+    background: none;
+    appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
   }
 }

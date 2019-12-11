@@ -1,13 +1,14 @@
 module Cases
   module Forms
-    class UtilityAccount < ApplicationForm
+    class SupplierAccount < ApplicationForm
       # -- fields --
       field(:supplier_id, :integer)
       field(:account_number, :string)
       field(:arrears, :string, numericality: true, allow_blank: true)
       field(:has_active_service, :boolean)
 
-      validate(:has_account_unless_referral)
+      validates(:account_number, presence: true, if: :is_account_required)
+      validates(:arrears, presence: true, if: :is_account_required)
 
       # -- lifecycle --
       def initialize(model, attrs = {}, supplier_repo: Supplier::Repo.get)
@@ -52,6 +53,15 @@ module Cases
       def supplier_options
         @supplier_repo.find_all_by_program(@model.program).map do |s|
           [s.name, s.id]
+        end
+      end
+
+      private def is_account_required
+        case @model.program
+        when Program::Name::Wrap
+          validation_context&.include?(:complete) == true
+        when Program::Name::Meap
+          false
         end
       end
     end

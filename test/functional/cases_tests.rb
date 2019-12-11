@@ -454,18 +454,19 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     post(auth("/cases/#{case_rec.id}/referrals", as: user_rec), params: {
       case: {
-        supplier_id: supplier_rec.id
+        supplier_account: {
+          supplier_id: supplier_rec.id
+        }
       }
     })
 
-    assert_redirected_to("/cases")
+    assert_redirected_to(%r[/cases/\d+/edit])
     assert_present(flash[:notice])
 
     assert_send_emails(0)
-    assert_analytics_events(3) do |events|
+    assert_analytics_events(2) do |events|
       assert_match(/Did Make Referral/, events[0])
       assert_match(/Did Open/, events[1])
-      assert_match(/Did Become Pending/, events[2])
     end
   end
 
@@ -476,8 +477,12 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     post(auth("/cases/#{case_rec.id}/referrals", as: user_rec), params: {
       case: {
-        supplier_id: supplier_rec.id,
-        first_name: nil
+        contact: {
+          first_name: ""
+        },
+        supplier_account: {
+          supplier_id: supplier_rec.id,
+        }
       }
     })
 

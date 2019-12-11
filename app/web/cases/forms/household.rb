@@ -33,6 +33,13 @@ module Cases
       def income=(value)
         super(value&.gsub(/[^\d\.]+/, ""))
       end
+
+      # -- queries --
+      def ownership_options
+        Recipient::Household::Ownership.all.map do |o|
+          [o.to_s.titlecase, o]
+        end
+      end
     end
   end
 end

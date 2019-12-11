@@ -14,7 +14,7 @@
     <%- end %>
 
     <%- disabled = form.contract_variant.present? %>
-    <%= f.field(:contract_variant, "Contract", disabled: disabled, background: false, class: "CaseForm-contract") do %>
+    <%= f.field(:contract_variant, "Signed Contract?", disabled: disabled, class: "CaseForm-contract FormField--select") do %>
       <%= f.select(:contract_variant, form.contract_options, include_blank: "None") %>
     <%- end %>
   <% end %>
