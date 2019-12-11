@@ -60,8 +60,7 @@
   </header>
 
   <%= form_for(@form, url: case_path(@form.id), html: { class: "CaseForm Form" }) do |f| %>
-    <%- form_locals = { f: f, form: @form, view: view } %>
-
+    <% form_locals = { f: f, form: @form, view: view } %>
     <section id="details" class="Form-tab is-visible">
       <%= render(partial: "cases/fields/details", locals: form_locals) %>
     </section>
@@ -73,12 +72,12 @@
 
     <section id="accounts" class="Form-tab">
       <%= render(partial: "cases/fields/mdhhs", locals: form_locals) %>
-      <%= render(partial: "cases/fields/utility", locals: form_locals) %>
+      <%= render(partial: "cases/fields/utility_account", locals: form_locals) %>
       <%= render(partial: "cases/fields/household", locals: form_locals) %>
     </section>
 
     <section id="documents" class="Form-tab">
-      <%= render(partial: "cases/documents", locals: { documents: @form.documents }) %>
+      <%= render(partial: "cases/documents", locals: { documents: view.documents }) %>
     </section>
 
     <div class="Form-actions">

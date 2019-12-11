@@ -1,15 +1,18 @@
-<%= f.section("Household", class: "CaseForm-household") do %>
-  <%= f.field(:household_size, "Size", class: "CaseForm-householdSize") do %>
-    <%= f.text_field(:household_size) %>
-  <% end %>
+<%- form = form.household %>
+<%= f.fields_for(:household, form) do |f| %>
+  <%= f.section("Household", class: "CaseForm-household") do %>
+    <%= f.field(:household_size, "Size", class: "CaseForm-householdSize") do %>
+      <%= f.text_field(:household_size) %>
+    <% end %>
 
-  <%= f.field(:income, "Monthly Income", prefix: "$", class: "CaseForm-monthlyIncome") do %>
-    <%= f.text_field(:income) %>
-  <% end %>
+    <%= f.field(:income, "Monthly Income", prefix: "$", class: "CaseForm-monthlyIncome") do %>
+      <%= f.text_field(:income) %>
+    <% end %>
 
-  <% if form.respond_to?(:fpl_percentage) %>
-    <%= f.field(:fpl, "FPL Percentage", background: false, class: "CaseForm-fpl") do %>
-      <%= f.value(view.fpl_percentage, suffix: "%", fallback: "Unknown. Please add household info.") %>
+    <% if form.respond_to?(:fpl_percentage) %>
+      <%= f.field(:fpl, "FPL Percentage", background: false, class: "CaseForm-fpl") do %>
+        <%= f.value(view.fpl_percentage, suffix: "%", fallback: "Unknown. Please add household info.") %>
+      <% end %>
     <% end %>
   <% end %>
 <% end %>

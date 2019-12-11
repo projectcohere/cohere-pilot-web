@@ -27,53 +27,50 @@ module Cases
 
     # -- lifetime --
     def initialize(
-      kase = nil,
+      model = nil,
       attrs = {},
       case_repo: Case::Repo.get,
       supplier_repo: Supplier::Repo.get,
       enroller_repo: Enroller::Repo.get
     )
-      # set dependencies
       @case_repo = case_repo
       @supplier_repo = supplier_repo
       @enroller_repo = enroller_repo
+      super(model, attrs)
+    end
 
-      # set underlying model
-      @model = kase
-
-      if not kase.nil?
-        # set initial values from case
-        c = kase
-        a = c.supplier_account
-        assign_defaults!(attrs, {
-          account_number: a&.number,
-          arrears: a&.arrears_dollars&.to_s,
-          has_active_service: a&.has_active_service
-        })
-
-        # set initial values from recipient
-        r = kase.recipient
-        p = r.profile.phone
-        assign_defaults!(attrs, {
-          phone_number: p.number
-        })
-
-        n = r.profile.name
-        assign_defaults!(attrs, {
-          first_name: n.first,
-          last_name: n.last
-        })
-
-        a = r.profile.address
-        assign_defaults!(attrs, {
-          street: a.street,
-          street2: a.street2,
-          city: a.city,
-          zip: a.zip,
-        })
+    protected def initialize_attrs(attrs)
+      if @model.nil?
+        return
       end
 
-      super(attrs)
+      c = @model
+      a = c.supplier_account
+      assign_defaults!(attrs, {
+        account_number: a&.number,
+        arrears: a&.arrears_dollars&.to_s,
+        has_active_service: a&.has_active_service
+      })
+
+      r = c.recipient
+      p = r.profile.phone
+      assign_defaults!(attrs, {
+        phone_number: p.number
+      })
+
+      n = r.profile.name
+      assign_defaults!(attrs, {
+        first_name: n.first,
+        last_name: n.last
+      })
+
+      a = r.profile.address
+      assign_defaults!(attrs, {
+        street: a.street,
+        street2: a.street2,
+        city: a.city,
+        zip: a.zip,
+      })
     end
 
     # -- commands --

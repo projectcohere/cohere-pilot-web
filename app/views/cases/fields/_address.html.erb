@@ -1,21 +1,24 @@
-<%= f.section("Primary Residential Address", class: "CaseForm-address") do %>
-  <%= f.field(:street, class: "CaseForm-street") do %>
-    <%= f.text_field(:street) %>
-  <% end %>
+<%- form = form.address %>
+<%= f.fields_for(:address, form) do |f| %>
+  <%= f.section("Primary Residential Address", class: "CaseForm-address") do %>
+    <%= f.field(:street, class: "CaseForm-street") do %>
+      <%= f.text_field(:street) %>
+    <% end %>
 
-  <%= f.field(:street2, "", class: "CaseForm-street2") do %>
-    <%= f.text_field(:street2) %>
-  <% end %>
+    <%= f.field(:street2, "", class: "CaseForm-street2") do %>
+      <%= f.text_field(:street2) %>
+    <% end %>
 
-  <%= f.field(:city, class: "CaseForm-city") do %>
-    <%= f.text_field(:city) %>
-  <% end %>
+    <%= f.field(:city, class: "CaseForm-city") do %>
+      <%= f.text_field(:city) %>
+    <% end %>
 
-  <%= f.field(:state, background: false, class: "CaseForm-state") do %>
-    <%= f.value("MI") %>
-  <% end %>
+    <%= f.field(:state, background: false, class: "CaseForm-state") do %>
+      <%= f.value("MI") %>
+    <% end %>
 
-  <%= f.field(:zip, class: "CaseForm-zip") do %>
-    <%= f.text_field(:zip) %>
+    <%= f.field(:zip, class: "CaseForm-zip") do %>
+      <%= f.text_field(:zip) %>
+    <% end %>
   <% end %>
 <% end %>

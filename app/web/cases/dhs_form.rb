@@ -24,19 +24,13 @@ module Cases
     field(:is_primary_residence, :boolean)
 
     # -- lifetime --
-    def initialize(
-      kase,
-      attrs = {},
-      case_repo: Case::Repo.get
-    )
-      # set dependencies
+    def initialize(model, attrs = {}, case_repo: Case::Repo.get)
       @case_repo = case_repo
+      super(model, attrs)
+    end
 
-      # set underlying model(s)
-      @model = kase
-
-      # set initial values from case
-      r = kase.recipient
+    protected def initialize_attrs(attrs)
+      r = @model.recipient
       assign_defaults!(attrs, {
         dhs_number: r.dhs_account&.number
       })
@@ -48,8 +42,6 @@ module Cases
         ownership: h&.ownership,
         is_primary_residence: h&.is_primary_residence
       })
-
-      super(attrs)
     end
 
     # -- commands --

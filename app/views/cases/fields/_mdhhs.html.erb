@@ -1,5 +1,8 @@
-<%= f.section("MDHHS", class: "CaseForm-dhs") do %>
-  <%= f.field(:dhs_number, "Case #", class: "CaseForm-dhsNumber") do %>
-    <%= f.text_field(:dhs_number) %>
+<%- form = form.mdhhs %>
+<%= f.fields_for(:mdhhs, form) do |f| %>
+  <%= f.section("MDHHS", class: "CaseForm-dhs") do %>
+    <%= f.field(:dhs_number, "Case #", class: "CaseForm-dhsNumber") do %>
+      <%= f.text_field(:dhs_number) %>
+    <% end %>
   <% end %>
 <% end %>

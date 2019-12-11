@@ -1,6 +1,21 @@
 module Cases
   # A form object for all the case info
   class Form < ::ApplicationForm
+    class V2 < ::ApplicationForm
+      # -- fields --
+      subform(:details, Forms::Details)
+      subform(:address, Forms::Address)
+      subform(:contact, Forms::Contact)
+      subform(:household, Forms::Household)
+      subform(:mdhhs, Forms::Mdhhs)
+      subform(:utility_account, Forms::UtilityAccount)
+
+      # -- ApplicationForm --
+      def self.entity_type
+        Case
+      end
+    end
+
     # -- fields --
     # -- fields/details
     field(:status, :string,
@@ -20,7 +35,7 @@ module Cases
 
     # -- lifetime --
     def initialize(
-      kase,
+      model,
       attrs = {},
       case_repo: Case::Repo.get,
       program_repo: Program::Repo.get,
@@ -33,29 +48,27 @@ module Cases
       @supplier_repo = supplier_repo
       @enroller_repo = enroller_repo
 
-      # set underlying model
-      @model = kase
-
       # construct subforms
       @supplier = SupplierForm.new(
-        kase,
+        model,
         attrs.slice(*SupplierForm.attribute_names)
       )
 
       @dhs = DhsForm.new(
-        kase,
+        model,
         attrs.slice(*DhsForm.attribute_names)
       )
 
-      # set initial values from case
-      c = kase
+      super(model, attrs)
+    end
+
+    def initialize_attrs(attrs)
+      c = @model
       assign_defaults!(attrs, {
         status: c.status.to_s,
         supplier_id: c.supplier_id,
         contract_variant: contracts.find_index { |c| c.variant == @model.contract_variant },
       })
-
-      super(attrs)
     end
 
     # -- commands --

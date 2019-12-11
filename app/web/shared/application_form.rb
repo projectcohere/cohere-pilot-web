@@ -4,7 +4,27 @@ class ApplicationForm
   # -- attrs --
   attr(:model)
 
-  # -- fields --
+  # -- lifetime --
+  def initialize(model, attrs = {})
+    @model = model
+
+    # set initial values
+    initialize_attrs(attrs)
+
+    # initialize subforms
+    self.class.subform_map&.each do |sf_name, sf_class|
+      sf_attrs = attrs[sf_name] || {}
+      instance_variable_set("@#{sf_name}", sf_class.new(model, sf_attrs))
+    end
+
+    super(attrs)
+  end
+
+  # -- lifecycle --
+  protected def initialize_attrs(attrs)
+  end
+
+  # -- definition --
   def self.field(name, type, **validations)
     attribute(name, type)
 
@@ -21,6 +41,22 @@ class ApplicationForm
         validates(name, validations)
       end
     end
+  end
+
+  def self.subform_map
+    @subform_map.freeze
+  end
+
+  def self.subform(form_name, form_class)
+    # add to list of subforms
+    @subform_map ||= {}
+    @subform_map[form_name] = form_class
+
+    # declare attr
+    attr(form_name)
+
+    # validate the child form
+    validates(form_name, child: true)
   end
 
   def self.fields_from(form_name, form_class)
@@ -94,6 +130,10 @@ class ApplicationForm
     nested_params.merge!(f_nested_params)
 
     # join subform params
+    @subform_map&.each do |sf_name, sf_class|
+      nested_params[sf_name] = sf_class.params_shape
+    end
+
     @subform_classes&.each do |sf_class|
       sf_params = sf_class.params_shape
 

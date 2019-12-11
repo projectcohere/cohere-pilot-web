@@ -25,7 +25,7 @@ class CasesController < ApplicationController
       deny_access
     end
 
-    @form = Cases::Form.new(@case)
+    @form = Cases::Form::V2.new(@case)
   end
 
   def update
@@ -34,7 +34,7 @@ class CasesController < ApplicationController
       deny_access
     end
 
-    @form = Cases::Form.new(@case,
+    @form = Cases::Form::V2.new(@case,
       params
         .require(:case)
         .permit(Cases::Form.params_shape)
