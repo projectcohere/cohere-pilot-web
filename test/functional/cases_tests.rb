@@ -245,7 +245,7 @@ class CasesTests < ActionDispatch::IntegrationTest
       }
     })
 
-    assert_redirected_to("/cases")
+    assert_redirected_to("/cases/#{case_rec.id}/edit")
     assert_present(flash[:notice])
   end
 
@@ -296,7 +296,9 @@ class CasesTests < ActionDispatch::IntegrationTest
   # -- edit/save --
   test "can't update a case with an action if signed-out" do
     assert_raises(ActionController::RoutingError) do
-      patch("/cases/3/approve")
+      patch("/cases/3", params: {
+        approve: :ignored
+      })
     end
   end
 
@@ -304,24 +306,21 @@ class CasesTests < ActionDispatch::IntegrationTest
     user_rec = users(:supplier_1)
 
     assert_raises(ActionController::RoutingError) do
-      patch(auth("/cases/4/deny", as: user_rec))
-    end
-  end
-
-  test "can't update a case with an unknown action" do
-    user_rec = users(:cohere_1)
-    case_rec = cases(:submitted_1)
-
-    assert_raises(ActionController::RoutingError) do
-      patch(auth("/cases/#{case_rec.id}/unknown", as: user_rec))
+      patch(auth("/cases/4", as: user_rec), params: {
+        deny: :ignored
+      })
     end
   end
 
   test "submit a case as a cohere user" do
+    user_rec = users(:cohere_1)
     case_rec = cases(:pending_1)
 
-    patch(auth("/cases/#{case_rec.id}/submit"))
-    assert_redirected_to("/cases")
+    patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
+      submit: :ignored
+    })
+
+    assert_redirected_to("/cases/#{case_rec.id}/edit")
     assert_present(flash[:notice])
 
     assert_analytics_events(1) do |events|
@@ -338,17 +337,24 @@ class CasesTests < ActionDispatch::IntegrationTest
   test "show errors when submitting an invalid case as a cohere user" do
     case_rec = cases(:pending_2)
 
-    patch(auth("/cases/#{case_rec.id}/submit"))
+    patch(auth("/cases/#{case_rec.id}"), params: {
+      submit: :ignored
+    })
+
     assert_response(:success)
     assert_present(flash[:alert])
   end
 
   test "can't complete another enroller's case as an enroller" do
+    skip
+
     user_rec = users(:enroller_1)
     case_rec = cases(:submitted_2)
 
     assert_raises(ActiveRecord::RecordNotFound) do
-      patch(auth("/cases/#{case_rec.id}/approve", as: user_rec))
+      patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
+        deny: :ignored
+      })
     end
   end
 
@@ -356,8 +362,11 @@ class CasesTests < ActionDispatch::IntegrationTest
     user_rec = users(:cohere_1)
     case_rec = cases(:submitted_1)
 
-    patch(auth("/cases/#{case_rec.id}/approve", as: user_rec))
-    assert_redirected_to("/cases")
+    patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
+      approve: :ignored
+    })
+
+    assert_redirected_to("/cases/#{case_rec.id}")
     assert_present(flash[:notice])
 
     assert_analytics_events(1) do |events|
@@ -374,11 +383,16 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "complete a case as an enroller" do
+    skip
+
     user_rec = users(:enroller_1)
     case_rec = cases(:submitted_1)
 
-    patch(auth("/cases/#{case_rec.id}/deny", as: user_rec))
-    assert_redirected_to("/cases")
+    patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
+      deny: :ignored
+    })
+
+    assert_redirected_to("/cases/#{case_rec.id}")
     assert_present(flash[:notice])
 
     assert_analytics_events(1) do |events|
@@ -398,8 +412,11 @@ class CasesTests < ActionDispatch::IntegrationTest
     user_rec = users(:cohere_1)
     case_rec = cases(:pending_1)
 
-    patch(auth("/cases/#{case_rec.id}/remove", as: user_rec))
-    assert_redirected_to("/cases")
+    patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
+      remove: :ignored
+    })
+
+    assert_redirected_to("/cases/#{case_rec.id}")
     assert_present(flash[:notice])
 
     assert_analytics_events(1) do |events|

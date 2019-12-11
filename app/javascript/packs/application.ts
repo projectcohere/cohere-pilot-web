@@ -7,5 +7,5 @@ start(
   require("turbolinks"),
   new Flash(),
   new Passwords(),
-  new EditCase()
+  new EditCase(),
 )

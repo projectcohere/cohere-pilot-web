@@ -96,12 +96,6 @@ Rails.application.routes.draw do
         to: redirect("/cases/open")
       )
 
-      patch("/:save_action",
-        as: :save,
-        action: :update,
-        constraints: { save_action: /submit|approve|deny|remove/ }
-      )
-
       resources(:referrals, module: :cases, only: %i[
         new
         create

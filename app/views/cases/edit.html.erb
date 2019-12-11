@@ -7,13 +7,13 @@
     <div class="Main-actions">
       <% if @case.can_submit? %>
         <%=
-          button_to("Remove from Pilot", [@case, :complete],
+          button_to("Remove from Pilot", @case,
+            name: :remove,
             method: :patch,
-            params: { case: { status: Case::Status::Removed } },
             class: "Button--destructive",
             data: {
               confirm: "Are you sure you want to remove this case from the pilot?"
-            }
+            },
           )
         %>
       <% end %>
@@ -55,17 +55,17 @@
       <%- if @case.can_submit? %>
         <%=
           f.submit("Save & Submit to Enroller",
-            formaction: case_save_path(@case.id, :submit),
+            name: :submit,
             class: "Form-submit Button--secondary",
             data: {
               confirm: "Are you sure you want to submit this case?"
-            }
+            },
           )
         %>
       <% elsif @case.can_complete? %>
         <%=
           f.submit("Save & Approve",
-            formaction: case_save_path(@case.id, :approve),
+            name: :approve,
             class: "Form-submit Button--secondary",
             data: {
               confirm: "Are you sure you want to approve this case?"
@@ -74,11 +74,11 @@
         %>
         <%=
           f.submit("Save & Deny",
-            formaction: case_save_path(@case.id, :deny),
+            name: :deny,
             class: "Form-submit Button--destructive",
             data: {
               confirm: "Are you sure you want to deny this case?"
-            }
+            },
           )
         %>
       <%- end %>
