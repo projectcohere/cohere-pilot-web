@@ -13,7 +13,7 @@ class ApplicationForm
 
     # initialize subforms
     self.class.subform_map&.each do |sf_name, sf_class|
-      sf_attrs = attrs[sf_name] || {}
+      sf_attrs = attrs.delete(sf_name) || {}
       instance_variable_set("@#{sf_name}", sf_class.new(model, sf_attrs))
     end
 

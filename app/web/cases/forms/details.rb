@@ -19,6 +19,12 @@ module Cases
       end
 
       # -- queries --
+      def selected_contract
+        if not contract_variant.nil?
+          contracts[contract_variant]
+        end
+      end
+
       def contracts
         @program_repo.find_by_name(@model.program).contracts
       end

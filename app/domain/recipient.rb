@@ -16,6 +16,11 @@ class Recipient < ::Entity
     @dhs_account = dhs_account
   end
 
+  def contribute_cohere_data(profile, dhs_account)
+    @profile = profile
+    @dhs_account = dhs_account
+  end
+
   # -- events --
   def did_save(record)
     @record = record

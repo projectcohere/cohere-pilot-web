@@ -239,7 +239,9 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     patch(auth("/cases/#{case_rec.id}"), params: {
       case: {
-        income: "$300.00"
+        household: {
+          income: "$300.00"
+        }
       }
     })
 
@@ -255,7 +257,9 @@ class CasesTests < ActionDispatch::IntegrationTest
     act = ->() do
       patch(auth("/cases/#{case_rec.id}"), params: {
         case: {
-          contract_variant: 0
+          details: {
+            contract_variant: 0
+          }
         }
       })
     end
@@ -279,7 +283,9 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     patch(auth("/cases/#{case_rec.id}"), params: {
       case: {
-        first_name: nil
+        contact: {
+          first_name: ""
+        }
       }
     })
 

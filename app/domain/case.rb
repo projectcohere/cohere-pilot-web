@@ -60,6 +60,11 @@ class Case < ::Entity
     end
   end
 
+  def contribute_cohere_data(supplier_account, profile, dhs_account)
+    @supplier_account = supplier_account
+    @recipient.contribute_cohere_data(profile, dhs_account)
+  end
+
   def remove_from_pilot
     @completed_at = Time.zone.now
     @status = Status::Removed

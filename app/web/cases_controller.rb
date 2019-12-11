@@ -25,6 +25,7 @@ class CasesController < ApplicationController
       deny_access
     end
 
+    @view = Cases::View.new(@case)
     @form = Cases::Form::V2.new(@case)
   end
 
@@ -34,20 +35,22 @@ class CasesController < ApplicationController
       deny_access
     end
 
+    @view = Cases::View.new(@case)
     @form = Cases::Form::V2.new(@case,
       params
         .require(:case)
-        .permit(Cases::Form.params_shape)
+        .permit(Cases::Form::V2.params_shape)
     )
 
-    if not @form.save
-      flash.now[:alert] = "Please check #{@form.name}'s case for errors."
+    save_form = Cases::SaveForm.new(@form)
+    if not save_form.()
+      flash.now[:alert] = "Please check #{@view.recipient_name}'s case for errors."
       render(:edit)
       return
     end
 
     redirect_to(cases_path,
-      notice: "Updated #{@form.name}'s case!"
+      notice: "Updated #{@view.recipient_name}'s case!"
     )
   end
 

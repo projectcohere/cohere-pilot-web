@@ -1,9 +1,8 @@
 <main class="EditCase Main">
-  <%- view = Cases::View.new(@case) %>
   <header class="Main-header">
     <%= link_to("Back to Cases", :back, class: "Main-back") %>
     <h1 class="Main-title">
-      <%= view.recipient_name %>'s case
+      <%= @view.recipient_name %>'s case
     </h1>
     <div class="Main-actions">
       <% if @case.can_submit? %>
@@ -60,7 +59,7 @@
   </header>
 
   <%= form_for(@form, url: case_path(@form.id), html: { class: "CaseForm Form" }) do |f| %>
-    <% form_locals = { f: f, form: @form, view: view } %>
+    <% form_locals = { f: f, form: @form, view: @view } %>
     <section id="details" class="Form-tab is-visible">
       <%= render(partial: "cases/fields/details", locals: form_locals) %>
     </section>
@@ -77,7 +76,7 @@
     </section>
 
     <section id="documents" class="Form-tab">
-      <%= render(partial: "cases/documents", locals: { documents: view.documents }) %>
+      <%= render(partial: "cases/documents", locals: { documents: @view.documents }) %>
     </section>
 
     <div class="Form-actions">

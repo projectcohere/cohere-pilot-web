@@ -1,8 +1,8 @@
 <%- form = form.household %>
 <%= f.fields_for(:household, form) do |f| %>
   <%= f.section("Household", class: "CaseForm-household") do %>
-    <%= f.field(:household_size, "Size", class: "CaseForm-householdSize") do %>
-      <%= f.text_field(:household_size) %>
+    <%= f.field(:size, "Size", class: "CaseForm-householdSize") do %>
+      <%= f.text_field(:size) %>
     <% end %>
 
     <%= f.field(:income, "Monthly Income", prefix: "$", class: "CaseForm-monthlyIncome") do %>
