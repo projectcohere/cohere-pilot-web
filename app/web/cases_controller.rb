@@ -25,7 +25,7 @@ class CasesController < ApplicationController
     end
 
     @view = Cases::View.new(@case)
-    @form = Cases::Form::V2.new(@case)
+    @form = Cases::Form.new(@case)
   end
 
   def update
@@ -35,10 +35,10 @@ class CasesController < ApplicationController
     end
 
     @view = Cases::View.new(@case)
-    @form = Cases::Form::V2.new(@case,
+    @form = Cases::Form.new(@case,
       params
         .fetch(:case, {})
-        .permit(Cases::Form::V2.params_shape)
+        .permit(Cases::Form.params_shape)
     )
 
     save_form = Cases::SaveForm.new(@case, @form, save_action)

@@ -13,7 +13,7 @@ module Cases
 
       @case = referral.referred
       @view = Cases::View.new(@case)
-      @form = Cases::Form::V2.new(@case)
+      @form = Cases::Form.new(@case)
     end
 
     def create
@@ -25,7 +25,7 @@ module Cases
 
       case_params = params
         .require(:case)
-        .permit(Cases::Form::V2.params_shape)
+        .permit(Cases::Form.params_shape)
 
       referral = @case.make_referral_to_program(
         Program::Name::Wrap,
@@ -34,7 +34,7 @@ module Cases
 
       @case = referral.referred
       @view = Cases::View.new(@case)
-      @form = Cases::Form::V2.new(@case, case_params)
+      @form = Cases::Form.new(@case, case_params)
 
       save_form = Cases::Referrals::SaveForm.new(referral, @form, save_action)
       if not save_form.()
