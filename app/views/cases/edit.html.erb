@@ -29,7 +29,7 @@
   </header>
 
   <%= form_for(@form, url: case_path(@case.id), html: { class: "CaseForm Form" }) do |f| %>
-    <% form_locals = { f: f, form: @form, view: @view } %>
+    <% form_locals = { f: f, form: @form, view: @view, policy: policy } %>
     <section id="profile" class="Form-tab is-visible">
       <%= render(partial: "cases/fields/details", locals: form_locals) %>
       <%= render(partial: "cases/fields/contact", locals: form_locals) %>

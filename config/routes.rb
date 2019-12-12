@@ -55,11 +55,13 @@ Rails.application.routes.draw do
   end
 
   constraints(signed_in(role: :supplier)) do
-    resources(:cases, controller: "cases/supplier", only: %i[
-      index
-      new
-      create
-    ])
+    scope(module: :supplier) do
+      resources(:cases, only: %i[
+        index
+        new
+        create
+      ])
+    end
   end
 
   constraints(signed_in(role: :dhs)) do

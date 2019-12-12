@@ -1,5 +1,5 @@
-module Cases
-  class SupplierController < ApplicationController
+class Supplier
+  class CasesController < ApplicationController
     # -- helpers --
     helper_method(:policy)
 
@@ -10,7 +10,7 @@ module Cases
       end
 
       @cases = Case::Repo.get.find_all_for_supplier(
-        User::Repo.get.find_current.role.organization_id
+        User::Repo.get.find_current.organization_id
       )
     end
 
@@ -19,8 +19,8 @@ module Cases
         deny_access
       end
 
-      @form = Cases::SupplierForm.new
-      events << Events::DidViewSupplierForm.new
+      @form = CasesForm::new
+      events << Cases::Events::DidViewSupplierForm.new
     end
 
     def create
@@ -28,14 +28,15 @@ module Cases
         deny_access
       end
 
-      @form = Cases::SupplierForm.new(nil,
+      @form = CasesForm.new(nil,
         params
           .require(:case)
-          .permit(Cases::SupplierForm.attribute_names)
+          .permit(CasesForm.params_shape)
       )
 
       # render errors if form failed to save
-      if not @form.save
+      save_form = SaveCasesForm.new(@form)
+      if not save_form.()
         flash.now[:alert] = "Please check the case for errors."
         render(:new)
         return
@@ -46,7 +47,7 @@ module Cases
 
     # -- queries --
     private def policy
-      @policy ||= Case::Policy.new(User::Repo.get.find_current)
+      Case::Policy.new(User::Repo.get.find_current)
     end
   end
 end

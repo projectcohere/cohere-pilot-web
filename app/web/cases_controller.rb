@@ -4,11 +4,11 @@ class CasesController < ApplicationController
 
   # -- actions --
   def index
-    @scope = params[:scope]
-
     if policy.forbid?(:list)
       deny_access
     end
+
+    @scope = params[:scope]
 
     case @scope
     when "open"

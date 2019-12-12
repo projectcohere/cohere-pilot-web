@@ -24,7 +24,11 @@ class User < ::Entity
 
   # -- queries --
   def role_name
-    role.name
+    @role.name
+  end
+
+  def organization_id
+    @role.organization_id
   end
 
   # -- events --

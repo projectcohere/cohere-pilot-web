@@ -13,28 +13,22 @@ module Cases
     end
 
     def edit
-      repo = Case::Repo.get
-      kase = repo.find_opened_with_documents(params[:id])
-
-      policy.case = kase
+      @case = Case::Repo.get.find_opened_with_documents(params[:id])
       if policy.forbid?(:edit)
         deny_access
       end
 
-      @form = Cases::DhsForm.new(kase)
-      events << Events::DidViewDhsForm.from_entity(kase)
+      @form = Cases::DhsForm.new(@case)
+      events << Events::DidViewDhsForm.from_entity(@case)
     end
 
     def update
-      repo = Case::Repo.get
-      kase = repo.find_opened_with_documents(params[:id])
-
-      policy.case = kase
+      @case = Case::Repo.get.find_opened_with_documents(params[:id])
       if policy.forbid?(:edit)
         deny_access
       end
 
-      @form = Cases::DhsForm.new(kase,
+      @form = Cases::DhsForm.new(@case,
         params
           .require(:case)
           .permit(Cases::DhsForm.params_shape)
@@ -49,7 +43,7 @@ module Cases
 
     # -- queries --
     private def policy
-      @policy ||= Case::Policy.new(User::Repo.get.find_current)
+      Case::Policy.new(User::Repo.get.find_current, @case)
     end
   end
 end

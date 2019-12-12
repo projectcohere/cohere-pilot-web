@@ -1,14 +1,16 @@
 <%- form = form.supplier_account %>
 <%= f.fields_for(:supplier_account, form) do |f| %>
   <%= f.section("Utility Account", class: "CaseForm-utilityAccount") do %>
-    <% if form.respond_to?(:supplier_id) %>
+    <% if policy.permit?(:edit_supplier) %>
       <%= f.field(:supplier, class: "CaseForm-supplier FormField--select") do %>
         <%= f.select(:supplier_id, form.supplier_options) %>
       <% end %>
     <% end %>
 
-    <%= f.field(:has_active_service, "&nbsp".html_safe, background: false, class: "CaseForm-hasActiveService") do %>
-      <%= f.check_box(:has_active_service) %> Active?
+    <% if policy.permit?(:edit_has_active_service) %>
+      <%= f.field(:has_active_service, "&nbsp".html_safe, background: false, class: "CaseForm-hasActiveService") do %>
+        <%= f.check_box(:has_active_service) %> Active?
+      <% end %>
     <% end %>
 
     <%= f.field(:account_number, "Account #", class: "CaseForm-accountNumber") do %>

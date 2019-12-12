@@ -1,5 +1,9 @@
 module Cases
   class ReferralsController < ApplicationController
+    # -- helpers --
+    helper_method(:policy)
+
+    # -- actions --
     def new
       @case = Case::Repo.get.find_with_documents_and_referral(params[:case_id])
       if policy.forbid?(:referral)

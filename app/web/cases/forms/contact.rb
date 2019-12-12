@@ -12,6 +12,10 @@ module Cases
 
       # -- lifecycle --
       protected def initialize_attrs(attrs)
+        if @model.nil?
+          return
+        end
+
         r = @model.recipient
         n = r.profile.name
         assign_defaults!(attrs, {

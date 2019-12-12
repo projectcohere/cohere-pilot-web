@@ -17,6 +17,10 @@ module Cases
       end
 
       protected def initialize_attrs(attrs)
+        if @model.nil?
+          return
+        end
+
         assign_defaults!(attrs, {
           supplier_id: @model.supplier_id,
         })
@@ -34,21 +38,6 @@ module Cases
         super(value&.gsub(/[^\d\.]+/, "")) # strip non-decimal characters
       end
 
-      # -- validation --
-      def has_account_unless_referral
-        if validation_context == :referral
-          return
-        end
-
-        if account_number.blank?
-          errors.add(:account_number, "can't be blank")
-        end
-
-        if arrears.blank?
-          errors.add(:arrears, "can't be blank")
-        end
-      end
-
       # -- queries --
       def supplier_options
         @supplier_repo.find_all_by_program(@model.program).map do |s|
@@ -57,6 +46,10 @@ module Cases
       end
 
       private def is_account_required
+        if @model.nil?
+          return false
+        end
+
         case @model.program
         when Program::Name::Wrap
           validation_context&.include?(:complete) == true

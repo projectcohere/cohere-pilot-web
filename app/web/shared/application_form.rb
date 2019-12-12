@@ -5,7 +5,7 @@ class ApplicationForm
   attr(:model)
 
   # -- lifetime --
-  def initialize(model, attrs = {})
+  def initialize(model = nil, attrs = {})
     @model = model
 
     # set initial values

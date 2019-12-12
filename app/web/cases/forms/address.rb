@@ -11,6 +11,10 @@ module Cases
 
       # -- lifecycle --
       protected def initialize_attrs(attrs)
+        if @model.nil?
+          return
+        end
+
         a = @model.recipient.profile.address
         assign_defaults!(attrs, {
           street: a.street,
