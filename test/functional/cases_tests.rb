@@ -318,6 +318,17 @@ class CasesTests < ActionDispatch::IntegrationTest
     end
   end
 
+  test "show errors submitting an invalid case as a cohere user" do
+    case_rec = cases(:pending_2)
+
+    patch(auth("/cases/#{case_rec.id}"), params: {
+      submit: :ignored
+    })
+
+    assert_response(:success)
+    assert_present(flash[:alert])
+  end
+
   test "submit a case as a cohere user" do
     user_rec = users(:cohere_1)
     case_rec = cases(:pending_1)
@@ -340,27 +351,43 @@ class CasesTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "show errors when submitting an invalid case as a cohere user" do
-    case_rec = cases(:pending_2)
+  test "can't complete a case with an unknown status as an enroller" do
+    user_rec = users(:enroller_1)
 
-    patch(auth("/cases/#{case_rec.id}"), params: {
-      submit: :ignored
-    })
-
-    assert_response(:success)
-    assert_present(flash[:alert])
+    assert_raises(ActionController::RoutingError) do
+      patch(auth("/cases/0/remove", as: user_rec))
+    end
   end
 
   test "can't complete another enroller's case as an enroller" do
-    skip
-
     user_rec = users(:enroller_1)
     case_rec = cases(:submitted_2)
 
     assert_raises(ActiveRecord::RecordNotFound) do
-      patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
+      patch(auth("/cases/#{case_rec.id}/approve", as: user_rec), params: {
         deny: :ignored
       })
+    end
+  end
+
+  test "complete a case as an enroller" do
+    user_rec = users(:enroller_1)
+    case_rec = cases(:submitted_1)
+
+    patch(auth("/cases/#{case_rec.id}/deny", as: user_rec))
+    assert_redirected_to("/cases/#{case_rec.id}")
+    assert_present(flash[:notice])
+
+    assert_analytics_events(1) do |events|
+      assert_match(/Did Complete/, events[0])
+    end
+
+    assert_send_emails(1) do
+      assert_select("a", text: /Johnice Sample/) do |el|
+        assert_match(%r[#{ENV["HOST"]}/cases/\d+], el[0][:href])
+      end
+
+      assert_select("p", text: /denied/)
     end
   end
 
@@ -385,32 +412,6 @@ class CasesTests < ActionDispatch::IntegrationTest
       end
 
       assert_select("p", text: /approved/)
-    end
-  end
-
-  test "complete a case as an enroller" do
-    skip
-
-    user_rec = users(:enroller_1)
-    case_rec = cases(:submitted_1)
-
-    patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
-      deny: :ignored
-    })
-
-    assert_redirected_to("/cases/#{case_rec.id}")
-    assert_present(flash[:notice])
-
-    assert_analytics_events(1) do |events|
-      assert_match(/Did Complete/, events[0])
-    end
-
-    assert_send_emails(1) do
-      assert_select("a", text: /Johnice Sample/) do |el|
-        assert_match(%r[#{ENV["HOST"]}/cases/\d+], el[0][:href])
-      end
-
-      assert_select("p", text: /denied/)
     end
   end
 

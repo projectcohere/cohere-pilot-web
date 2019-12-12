@@ -8,9 +8,8 @@
     <div class="Main-actions">
       <% if @case.can_complete? %>
         <%=
-          button_to("Approve Case", [@case, :complete],
+          button_to("Approve Case", case_complete_path(@case, completion: :approve),
             method: :patch,
-            params: { case: { status: Case::Status::Approved } },
             class: "Button--action",
             data: {
               confirm: "Are you sure you want to approve this case?"
@@ -18,9 +17,8 @@
           )
         %>
         <%=
-          button_to("Deny Case", [@case, :complete],
+          button_to("Deny Case", case_complete_path(@case, completion: :deny),
             method: :patch,
-            params: { case: { status: Case::Status::Denied } },
             class: "Button--destructive",
             data: {
               confirm: "Are you sure you want to deny this case?"

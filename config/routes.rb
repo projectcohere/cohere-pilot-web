@@ -75,11 +75,17 @@ Rails.application.routes.draw do
   end
 
   constraints(signed_in(role: :enroller)) do
-    resources(:cases, controller: "cases/enroller", only: %i[
-      index
-      show
-    ]) do
-      patch(:complete)
+    scope(module: :enroller) do
+      resources(:cases, only: %i[
+        index
+        show
+      ]) do
+        patch("/:completion",
+          as: :complete,
+          action: :complete,
+          constraints: { completion: /approve|deny/ }
+        )
+      end
     end
   end
 
