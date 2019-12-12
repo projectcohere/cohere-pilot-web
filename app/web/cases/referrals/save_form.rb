@@ -19,7 +19,7 @@ module Cases
           return false
         end
 
-        @referral.referred.contribute_cohere_data(
+        @referral.referred.add_cohere_data(
           map_form_to_supplier_account,
           map_form_to_profile,
           map_form_to_dhs_account,

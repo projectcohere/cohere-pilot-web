@@ -22,7 +22,7 @@ module Cases
         return false
       end
 
-      @case.contribute_cohere_data(
+      @case.add_cohere_data(
         map_form_to_supplier_account,
         map_form_to_profile,
         map_form_to_dhs_account,
@@ -45,7 +45,7 @@ module Cases
         @case.complete(Case::Status::Denied)
       end
 
-      @case_repo.save_all_fields_and_documents(@case)
+      @case_repo.save_cohere_contribution(@case)
 
       true
     end

@@ -1,0 +1,19 @@
+<main class="EditCase Main">
+  <header class="Main-header">
+    <h1 class="Main-title">
+      <%= @view.recipient_name %>'s case
+    </h1>
+  </header>
+
+  <%= form_for(@form, url: case_path(@case.id), html: { class: "CaseForm Form" }) do |f| %>
+    <% form_locals = { f: f, form: @form, view: @view, policy: policy } %>
+
+    <%= render(partial: "cases/fields/mdhhs", locals: form_locals) %>
+    <%= render(partial: "cases/fields/household", locals: form_locals) %>
+    <%= render(partial: "cases/documents", locals: { documents: @view.documents }) %>
+
+    <div class="Form-actions">
+      <%= f.submit("Save", class: "Form-submit Button--action") %>
+    </div>
+  <%- end %>
+</main>

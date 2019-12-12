@@ -65,11 +65,13 @@ Rails.application.routes.draw do
   end
 
   constraints(signed_in(role: :dhs)) do
-    resources(:cases, controller: "cases/dhs", only: %i[
-      index
-      edit
-      update
-    ])
+    scope(module: :dhs) do
+      resources(:cases, only: %i[
+        index
+        edit
+        update
+      ])
+    end
   end
 
   constraints(signed_in(role: :enroller)) do

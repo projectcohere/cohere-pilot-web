@@ -8,15 +8,11 @@ class Recipient < ::Entity
   props_end!
 
   # -- commands --
-  def update_profile(profile)
-    @profile = profile
-  end
-
-  def attach_dhs_account(dhs_account)
+  def add_dhs_data(dhs_account)
     @dhs_account = dhs_account
   end
 
-  def contribute_cohere_data(profile, dhs_account)
+  def add_cohere_data(profile, dhs_account)
     @profile = profile
     @dhs_account = dhs_account
   end

@@ -43,16 +43,8 @@ class Case < ::Entity
   end
 
   # -- commands --
-  def update_recipient_profile(profile)
-    @recipient.update_profile(profile)
-  end
-
-  def update_supplier_account(supplier_account)
-    @supplier_account = supplier_account
-  end
-
-  def attach_dhs_account(dhs_account)
-    @recipient.attach_dhs_account(dhs_account)
+  def add_dhs_data(dhs_account)
+    @recipient.add_dhs_data(dhs_account)
 
     if @status == Status::Opened
       @status = Status::Pending
@@ -60,9 +52,9 @@ class Case < ::Entity
     end
   end
 
-  def contribute_cohere_data(supplier_account, profile, dhs_account)
+  def add_cohere_data(supplier_account, profile, dhs_account)
     @supplier_account = supplier_account
-    @recipient.contribute_cohere_data(profile, dhs_account)
+    @recipient.add_cohere_data(profile, dhs_account)
   end
 
   def remove_from_pilot

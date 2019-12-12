@@ -178,7 +178,7 @@ class Case
       @domain_events.consume(kase.events)
     end
 
-    def save_pending(kase)
+    def save_dhs_contribution(kase)
       case_rec = kase.record
       recipient_rec = kase.recipient.record
 
@@ -200,7 +200,7 @@ class Case
       @domain_events.consume(kase.events)
     end
 
-    def save_all_fields_and_documents(kase)
+    def save_cohere_contribution(kase)
       case_rec = kase.record
       recipient_rec = kase.recipient.record
 

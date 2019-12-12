@@ -227,10 +227,11 @@ module Db
       assert_length(domain_events, 1)
     end
 
-    test "saves the status and dhs account" do
+    test "saves the dhs contribution" do
       case_rec = cases(:opened_1)
+
       kase = Case::Repo.map_record(case_rec)
-      kase.attach_dhs_account(
+      kase.add_dhs_data(
         Recipient::DhsAccount.new(
           number: "11111",
           household: Recipient::Household.stub(
@@ -241,7 +242,7 @@ module Db
       )
 
       case_repo = Case::Repo.new
-      case_repo.save_pending(kase)
+      case_repo.save_dhs_contribution(kase)
 
       case_rec = kase.record
       assert_equal(case_rec.status, "pending")
@@ -271,13 +272,13 @@ module Db
       )
 
       kase = Case::Repo.map_record(case_rec)
-      kase.attach_dhs_account(account)
+      kase.add_dhs_data(account)
       kase.sign_contract(contract)
       kase.submit_to_enroller
       kase.complete(Case::Status::Approved)
 
       case_repo = Case::Repo.new(domain_events: domain_events)
-      case_repo.save_all_fields_and_documents(kase)
+      case_repo.save_cohere_contribution(kase)
 
       case_rec = kase.record
       assert_equal(case_rec.status, "approved")

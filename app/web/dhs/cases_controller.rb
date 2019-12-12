@@ -1,5 +1,5 @@
-module Cases
-  class DhsController < ApplicationController
+module Dhs
+  class CasesController < ApplicationController
     # -- helpers --
     helper_method(:policy)
 
@@ -18,8 +18,10 @@ module Cases
         deny_access
       end
 
-      @form = Cases::DhsForm.new(@case)
-      events << Events::DidViewDhsForm.from_entity(@case)
+      @view = Cases::View.new(@case)
+      @form = CasesForm.new(@case)
+
+      events << Cases::Events::DidViewDhsForm.from_entity(@case)
     end
 
     def update
@@ -28,13 +30,15 @@ module Cases
         deny_access
       end
 
-      @form = Cases::DhsForm.new(@case,
+      @view = Cases::View.new(@case)
+      @form = CasesForm.new(@case,
         params
           .require(:case)
-          .permit(Cases::DhsForm.params_shape)
+          .permit(CasesForm.params_shape)
       )
 
-      if @form.save
+      save_form = SaveCasesForm.new(@case, @form)
+      if save_form.()
         redirect_to(cases_path, notice: "Case updated!")
       else
         render(:edit)
