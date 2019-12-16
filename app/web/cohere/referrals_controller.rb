@@ -17,7 +17,7 @@ module Cohere
 
       @case = referral.referred
       @view = Cases::View.new(@case)
-      @form = CasesForm.new(@case)
+      @form = CaseForm.new(@case)
     end
 
     def create
@@ -29,7 +29,7 @@ module Cohere
 
       case_params = params
         .require(:case)
-        .permit(CasesForm.params_shape)
+        .permit(CaseForm.params_shape)
 
       referral = @case.make_referral_to_program(
         Program::Name::Wrap,
@@ -38,7 +38,11 @@ module Cohere
 
       @case = referral.referred
       @view = Cases::View.new(@case)
-      @form = CasesForm.new(@case, case_params)
+      @form = CaseForm.new(@case, case_params)
+
+      save_action = %i[submit].find do |key|
+        params.key?(key)
+      end
 
       save_form = SaveReferralForm.new(referral, @form, save_action)
       if not save_form.()
@@ -51,12 +55,6 @@ module Cohere
     end
 
     # -- queries --
-    private def save_action
-      if params.key?(:submit)
-        :submit
-      end
-    end
-
     private def policy
       Case::Policy.new(User::Repo.get.find_current, @case)
     end

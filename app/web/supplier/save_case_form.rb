@@ -1,5 +1,5 @@
 class Supplier
-  class SaveCasesForm < ::ApplicationForm
+  class SaveCaseForm < ::ApplicationForm
     # -- lifetime --
     def initialize(
       form,

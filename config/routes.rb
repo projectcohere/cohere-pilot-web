@@ -80,10 +80,10 @@ Rails.application.routes.draw do
         index
         show
       ]) do
-        patch("/:completion",
+        patch("/:complete_action",
           as: :complete,
           action: :complete,
-          constraints: { completion: /approve|deny/ }
+          constraints: { complete_action: /approve|deny/ }
         )
       end
     end

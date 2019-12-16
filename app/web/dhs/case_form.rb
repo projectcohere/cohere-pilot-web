@@ -1,5 +1,5 @@
 module Dhs
-  class CasesForm < ApplicationForm
+  class CaseForm < ApplicationForm
     # -- fields --
     subform(:mdhhs, Cases::Forms::Mdhhs)
     subform(:household, Cases::Forms::Household)

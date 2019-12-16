@@ -26,7 +26,7 @@ module Cohere
       end
 
       @view = Cases::View.new(@case)
-      @form = CasesForm.new(@case)
+      @form = CaseForm.new(@case)
     end
 
     def update
@@ -36,13 +36,17 @@ module Cohere
       end
 
       @view = Cases::View.new(@case)
-      @form = CasesForm.new(@case,
+      @form = CaseForm.new(@case,
         params
           .fetch(:case, {})
-          .permit(CasesForm.params_shape)
+          .permit(CaseForm.params_shape)
       )
 
-      save_form = SaveCasesForm.new(@case, @form, save_action)
+      save_action = %i[submit approve deny remove].find do |key|
+        params.key?(key)
+      end
+
+      save_form = SaveCaseForm.new(@case, @form, save_action)
       if not save_form.()
         flash.now[:alert] = "Please check #{@view.recipient_name}'s case for errors."
         render(:edit)
@@ -69,18 +73,6 @@ module Cohere
     end
 
     # -- queries --
-    private def save_action
-      if params.key?(:submit)
-        :submit
-      elsif params.key?(:approve)
-        :approve
-      elsif params.key?(:deny)
-        :deny
-      elsif params.key?(:remove)
-        :remove
-      end
-    end
-
     private def policy
       Case::Policy.new(User::Repo.get.find_current, @case)
     end

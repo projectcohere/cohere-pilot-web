@@ -1,5 +1,5 @@
 module Dhs
-  class SaveCasesForm
+  class SaveCaseForm
     def initialize(kase, form, case_repo: Case::Repo.get)
       @case_repo = case_repo
       @case = kase

@@ -19,7 +19,7 @@ module Dhs
       end
 
       @view = Cases::View.new(@case)
-      @form = CasesForm.new(@case)
+      @form = CaseForm.new(@case)
 
       events << Cases::Events::DidViewDhsForm.from_entity(@case)
     end
@@ -31,18 +31,20 @@ module Dhs
       end
 
       @view = Cases::View.new(@case)
-      @form = CasesForm.new(@case,
+      @form = CaseForm.new(@case,
         params
           .require(:case)
-          .permit(CasesForm.params_shape)
+          .permit(CaseForm.params_shape)
       )
 
-      save_form = SaveCasesForm.new(@case, @form)
-      if save_form.()
-        redirect_to(cases_path, notice: "Case updated!")
-      else
+      save_form = SaveCaseForm.new(@case, @form)
+      if not save_form.()
+        flash.now[:alert] = "Please check the case for errors."
         render(:edit)
+        return
       end
+
+      redirect_to(cases_path, notice: "Case updated!")
     end
 
     # -- queries --

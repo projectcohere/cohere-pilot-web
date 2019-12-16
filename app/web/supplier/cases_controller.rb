@@ -19,7 +19,7 @@ class Supplier
         deny_access
       end
 
-      @form = CasesForm::new
+      @form = CaseForm::new
       events << Cases::Events::DidViewSupplierForm.new
     end
 
@@ -28,14 +28,13 @@ class Supplier
         deny_access
       end
 
-      @form = CasesForm.new(nil,
+      @form = CaseForm.new(nil,
         params
           .require(:case)
-          .permit(CasesForm.params_shape)
+          .permit(CaseForm.params_shape)
       )
 
-      # render errors if form failed to save
-      save_form = SaveCasesForm.new(@form)
+      save_form = SaveCaseForm.new(@form)
       if not save_form.()
         flash.now[:alert] = "Please check the case for errors."
         render(:new)

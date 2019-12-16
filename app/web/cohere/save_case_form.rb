@@ -1,5 +1,5 @@
 module Cohere
-  class SaveCasesForm
+  class SaveCaseForm
     def initialize(kase, form, action, case_repo: Case::Repo.get)
       @case_repo = case_repo
       @case = kase
@@ -46,7 +46,6 @@ module Cohere
       end
 
       @case_repo.save_cohere_contribution(@case)
-
       true
     end
   end

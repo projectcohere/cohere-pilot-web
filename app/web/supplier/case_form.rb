@@ -1,12 +1,8 @@
-module Cohere
-  # A form object for all the case info
-  class CasesForm < ApplicationForm
+class Supplier
+  class CaseForm < ApplicationForm
     # -- fields --
-    subform(:details, Cases::Forms::Details)
     subform(:address, Cases::Forms::Address)
     subform(:contact, Cases::Forms::Contact)
-    subform(:household, Cases::Forms::Household)
-    subform(:mdhhs, Cases::Forms::Mdhhs)
     subform(:supplier_account, Cases::Forms::SupplierAccount)
 
     # -- queries --
@@ -19,13 +15,6 @@ module Cohere
         phone: contact.map_to_recipient_phone,
         name: contact.map_to_recipient_name,
         address: address.map_to_recipient_address,
-      )
-    end
-
-    def map_to_recipient_dhs_account
-      Recipient::DhsAccount.new(
-        number: mdhhs.dhs_number,
-        household: household.map_to_recipient_household,
       )
     end
 
