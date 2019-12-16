@@ -44,6 +44,17 @@ module Cases
       def city=(value)
         super(value&.strip&.titlecase)
       end
+
+      # -- queries --
+      def map_to_recipient_address
+        Recipient::Address.new(
+          street: street,
+          street2: street2,
+          city: city,
+          state: "MI",
+          zip: zip,
+        )
+      end
     end
   end
 end

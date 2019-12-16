@@ -41,6 +41,20 @@ module Cases
       def phone_number=(value)
         super(value&.gsub(/\D+/, "")) # strip non-numeric characters
       end
+
+      # -- queries --
+      def map_to_recipient_phone
+        Recipient::Phone.new(
+          number: phone_number,
+        )
+      end
+
+      def map_to_recipient_name
+        Recipient::Name.new(
+          first: first_name,
+          last: last_name,
+        )
+      end
     end
   end
 end

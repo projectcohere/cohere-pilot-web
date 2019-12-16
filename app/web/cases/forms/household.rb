@@ -40,6 +40,15 @@ module Cases
           [o.to_s.titlecase, o]
         end
       end
+
+      def map_to_recipient_household
+        Recipient::Household.new(
+          size: size.to_i,
+          income_cents: (income.to_f * 100.0).to_i,
+          ownership: ownership.nil? ? Recipient::Household::Ownership::Unknown : ownership,
+          is_primary_residence: is_primary_residence.nil? ? true : is_primary_residence
+        )
+      end
     end
   end
 end

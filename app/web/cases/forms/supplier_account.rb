@@ -45,6 +45,14 @@ module Cases
         end
       end
 
+      def map_to_case_supplier_account
+        Case::Account.new(
+          number: account_number,
+          arrears_cents: (arrears.to_f * 100.0).to_i,
+          has_active_service: has_active_service.nil? ? true : has_active_service
+        )
+      end
+
       private def is_account_required
         if @model.nil?
           return false
