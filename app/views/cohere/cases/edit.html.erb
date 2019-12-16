@@ -31,18 +31,18 @@
   <%= form_for(@form, url: case_path(@case.id), html: { class: "CaseForm Form" }) do |f| %>
     <% form_locals = { f: f, form: @form, view: @view, policy: policy } %>
     <section id="profile" class="Form-tab is-visible">
-      <%= render(partial: "cases/fields/details", locals: form_locals) %>
-      <%= render(partial: "cases/fields/contact", locals: form_locals) %>
+      <%= render(partial: "cases/forms/details", locals: form_locals) %>
+      <%= render(partial: "cases/forms/contact", locals: form_locals) %>
     </section>
 
     <section id="household" class="Form-tab">
-      <%= render(partial: "cases/fields/address", locals: form_locals) %>
-      <%= render(partial: "cases/fields/household", locals: form_locals) %>
+      <%= render(partial: "cases/forms/address", locals: form_locals) %>
+      <%= render(partial: "cases/forms/household", locals: form_locals) %>
     </section>
 
     <section id="accounts" class="Form-tab">
-      <%= render(partial: "cases/fields/mdhhs", locals: form_locals) %>
-      <%= render(partial: "cases/fields/supplier_account", locals: form_locals) %>
+      <%= render(partial: "cases/forms/mdhhs", locals: form_locals) %>
+      <%= render(partial: "cases/forms/supplier_account", locals: form_locals) %>
     </section>
 
     <section id="documents" class="Form-tab">

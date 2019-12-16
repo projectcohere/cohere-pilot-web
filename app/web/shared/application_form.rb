@@ -78,7 +78,7 @@ class ApplicationForm
     validates(form_name, child: true)
   end
 
-  # -- fields/types
+  # -- forms/types
   class ListField < ActiveModel::Type::Value
     attr(:form_type)
 
@@ -94,7 +94,7 @@ class ApplicationForm
     end
   end
 
-  # -- fields/validators
+  # -- forms/validators
   class ListValidator < ActiveModel::EachValidator
     def validate_each(record, attribute, list)
       if not list.all? { |v| v.valid?(record.validation_context) }

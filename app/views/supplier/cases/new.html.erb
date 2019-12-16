@@ -8,9 +8,9 @@
   <%= form_for(@form, url: cases_path, html: { class: "CaseForm Form" }) do |f| %>
     <%- form_locals = { f: f, form: @form, view: @view, policy: policy } %>
 
-    <%= render(partial: "cases/fields/contact", locals: form_locals) %>
-    <%= render(partial: "cases/fields/address", locals: form_locals) %>
-    <%= render(partial: "cases/fields/supplier_account", locals: form_locals) %>
+    <%= render(partial: "cases/forms/contact", locals: form_locals) %>
+    <%= render(partial: "cases/forms/address", locals: form_locals) %>
+    <%= render(partial: "cases/forms/supplier_account", locals: form_locals) %>
 
     <div class="Form-actions">
       <%= f.submit("Save", class: "Form-submit Button--action") %>
