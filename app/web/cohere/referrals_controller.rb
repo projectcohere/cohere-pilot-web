@@ -1,4 +1,4 @@
-module Cases
+module Cohere
   class ReferralsController < ApplicationController
     # -- helpers --
     helper_method(:policy)
@@ -17,7 +17,7 @@ module Cases
 
       @case = referral.referred
       @view = Cases::View.new(@case)
-      @form = Cases::Form.new(@case)
+      @form = CasesForm.new(@case)
     end
 
     def create
@@ -29,7 +29,7 @@ module Cases
 
       case_params = params
         .require(:case)
-        .permit(Cases::Form.params_shape)
+        .permit(CasesForm.params_shape)
 
       referral = @case.make_referral_to_program(
         Program::Name::Wrap,
@@ -38,9 +38,9 @@ module Cases
 
       @case = referral.referred
       @view = Cases::View.new(@case)
-      @form = Cases::Form.new(@case, case_params)
+      @form = CasesForm.new(@case, case_params)
 
-      save_form = Cases::Referrals::SaveForm.new(referral, @form, save_action)
+      save_form = SaveReferralForm.new(referral, @form, save_action)
       if not save_form.()
         flash.now[:alert] = "Please check the case for errors."
         render(:new)
