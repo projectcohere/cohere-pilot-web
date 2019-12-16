@@ -20,10 +20,10 @@
     </div>
     <div class="Main-filters">
       <nav class="Filters">
-        <%= link_to("Profile", "#profile", class: "Filter is-selected", data: { turbolinks: false }) %>
-        <%= link_to("Household", "#household", class: "Filter", data: { turbolinks: false }) %>
-        <%= link_to("Accounts", "#accounts", class: "Filter", data: { turbolinks: false }) %>
-        <%= link_to("Documents", "#documents", class: "Filter", data: { turbolinks: false }) %>
+        <%= filter_for(:profile, is_error: errors?(@form.details, @form.contact), is_selected: true) %>
+        <%= filter_for(:household, is_error: errors?(@form.address, @form.household)) %>
+        <%= filter_for(:accounts, is_error: errors?(@form.mdhhs, @form.supplier_account)) %>
+        <%= filter_for(:documents) %>
       </nav>
     </div>
   </header>

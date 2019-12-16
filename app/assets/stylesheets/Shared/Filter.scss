@@ -1,6 +1,8 @@
 .Filter {
+  display: flex;
+  align-items: center;
   position: relative;
-  padding: 0 $spacing5;
+  padding: 0 $spacing4;
   line-height: $height2;
   opacity: 0.4;
   text-decoration: none;
@@ -10,7 +12,7 @@
   }
 
   &.is-selected {
-    &:after {
+    &::after {
       content: "";
       position: absolute;
       bottom: -2px;
@@ -18,6 +20,20 @@
       width: 100%;
       height: 3px;
       background-color: $brandPrimary;
+    }
+  }
+
+  &.is-error {
+    &::before {
+      $dot-size: 4px;
+
+      content: "";
+      position: absolute;
+      left: 4px;
+      width: $dot-size;
+      height: $dot-size;
+      border-radius: $dot-size / 2;
+      background-color: $colorError;
     }
   }
 }
