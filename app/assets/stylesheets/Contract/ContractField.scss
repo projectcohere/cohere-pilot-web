@@ -4,7 +4,7 @@
 
   &-hint {
     @extend .u-hint;
-    margin-bottom: $spacing5;
+    margin-bottom: $spacing6;
     color: $brandBlack;
     // https://github.com/wkhtmltopdf/wkhtmltopdf/issues/3256
     letter-spacing: 0;
@@ -17,14 +17,14 @@
   }
 
   &-input + &-input {
-    margin-top: $spacing4;
+    margin-top: $spacing5;
   }
 
   &-value {
     height: $height2 - 1px;
     padding-top: 7px;
-    padding-left: $spacing4;
-    padding-right: $spacing4;
+    padding-left: $spacing5;
+    padding-right: $spacing5;
   }
 
   &-border {

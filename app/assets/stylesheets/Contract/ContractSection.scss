@@ -10,7 +10,7 @@
   }
 
   &-titleBorder {
-    margin-top: $spacing5;
+    margin-top: $spacing6;
     height: 3px;
     background-color: fade-out($brandPrimary, 0.7);
   }
@@ -38,7 +38,7 @@
     display: -webkit-box;
 
     * + .ContractField {
-      margin-left: $spacing4;
+      margin-left: $spacing5;
     }
   }
 }

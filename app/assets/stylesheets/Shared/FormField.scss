@@ -10,7 +10,7 @@
   &-hint {
     @extend .u-hint;
     display: block;
-    margin-bottom: $spacing5;
+    margin-bottom: $spacing6;
     color: $colorError;
     overflow-x: hidden;
     white-space: nowrap;
@@ -25,8 +25,8 @@
     display: flex;
     align-items: center;
     height: $height1;
-    padding-top: $spacing4;
-    padding-bottom: $spacing4;
+    padding-top: $spacing5;
+    padding-bottom: $spacing5;
   }
 
   &-input--bare {
@@ -37,7 +37,7 @@
   &-input--background {
     @extend .FormField-input;
 
-    padding: $spacing4;
+    padding: $spacing5;
     border-bottom: 2px solid $brandBlack;
     border-top-left-radius: $radiusField;
     border-top-right-radius: $radiusField;
@@ -53,14 +53,14 @@
   }
 
   &-prefix {
-    margin-right: $spacing5;
+    margin-right: $spacing6;
     color: $gray1;
   }
 
   &-value {
     height: $height1;
-    padding-top: $spacing4;
-    padding-bottom: $spacing4;
+    padding-top: $spacing5;
+    padding-bottom: $spacing5;
 
     &.is-missing {
       color: $gray1;
@@ -125,11 +125,11 @@
     }
 
     &:before {
-      transform: translateX(-$spacing4 - 6px) rotate(45deg);
+      transform: translateX(-$spacing5 - 6px) rotate(45deg);
     }
 
     &:after {
-      transform: translateX(-$spacing4) rotate(-45deg);
+      transform: translateX(-$spacing5) rotate(-45deg);
     }
 
     &:focus-within {

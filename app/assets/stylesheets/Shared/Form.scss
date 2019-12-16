@@ -15,19 +15,19 @@
 
   &-section {
     display: grid;
-    gap: $spacing4;
+    gap: $spacing5;
     grid-template-columns: repeat(8, 1fr) $height1;
 
     > h1 {
       @extend .u-section-name;
 
       grid-column: 1 / 10;
-      margin-bottom: $spacing5;
+      margin-bottom: $spacing6;
 
       > span {
         position: relative;
         display: inline-block;
-        padding-bottom: $spacing4;
+        padding-bottom: $spacing5;
 
         /* bottom-border */
         &::after {
@@ -47,7 +47,7 @@
     flex: 1;
     display: flex;
     align-items: flex-end;
-    gap: $spacing4;
+    gap: $spacing5;
 
     &-submit {
       min-width: $width6;

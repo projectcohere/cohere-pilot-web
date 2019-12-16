@@ -36,7 +36,7 @@
 
   /* CaseForm-address */
   &-address--read {
-    gap: $spacing6;
+    gap: $spacing7;
   }
 
   &-addressLine {
@@ -66,12 +66,12 @@
   /* CaseForm-utilityAccount */
   &-supplier {
     grid-column: 1 / 5;
-    margin-bottom: $spacing4;
+    margin-bottom: $spacing5;
   }
 
   &-hasActiveService {
     grid-column: 5 / 10;
-    padding-left: $spacing4;
+    padding-left: $spacing5;
   }
 
   &-accountNumber {

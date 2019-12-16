@@ -127,10 +127,10 @@
   &-helpers {
     display: grid;
     grid-column: 1 / 10;
-    margin-top: $spacing4;
+    margin-top: $spacing5;
 
     > * + * {
-      margin-top: $spacing4;
+      margin-top: $spacing5;
     }
   }
 
@@ -147,7 +147,7 @@
 
     > h2 {
       line-height: 1.5;
-      margin-top: $spacing4;
+      margin-top: $spacing5;
     }
   }
 }
