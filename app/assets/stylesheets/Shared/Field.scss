@@ -23,9 +23,6 @@
   &-value {
     display: flex;
     align-items: center;
-    height: $height1;
-    padding-top: $spacing5;
-    padding-bottom: $spacing5;
   }
 
   &-fallback {
@@ -38,6 +35,13 @@
   }
 
   // -- variants --
+  // .Field-fixed
+  &--fixed &-value {
+    height: $height1;
+    padding-top: $spacing5;
+    padding-bottom: $spacing5;
+  }
+
   // .Field-input
   &--input {
     overflow-x: hidden;

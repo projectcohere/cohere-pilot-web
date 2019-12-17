@@ -1,15 +1,7 @@
 .CaseDocuments {
-  > h1 {
-    @extend .u-section-name;
-    margin-bottom: $spacing5;
-  }
-
   &-list {
+    grid-column: 1 / 10;
     display: flex;
     gap: $spacing3;
-  }
-
-  &-item {
-    width: 50%;
   }
 }

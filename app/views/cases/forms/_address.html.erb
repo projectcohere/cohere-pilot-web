@@ -3,22 +3,22 @@
   <%= section_tag("Primary Residential Address", class: "CaseForm-address") do %>
     <%= f.field(:street, class: "CaseForm-street") do %>
       <%= f.text_field(:street) %>
-    <% end %>
+    <%- end %>
 
     <%= f.field(:street2, "", class: "CaseForm-street2") do %>
       <%= f.text_field(:street2) %>
-    <% end %>
+    <%- end %>
 
     <%= f.field(:city, class: "CaseForm-city") do %>
       <%= f.text_field(:city) %>
-    <% end %>
+    <%- end %>
 
-    <%= field_tag(:state, class: "CaseForm-state") do %>
+    <%= field_tag(:state, class: "CaseForm-state Field--fixed") do %>
       MI
-    <% end %>
+    <%- end %>
 
     <%= f.field(:zip, class: "CaseForm-zip") do %>
       <%= f.text_field(:zip) %>
-    <% end %>
+    <%- end %>
   <% end %>
 <% end %>

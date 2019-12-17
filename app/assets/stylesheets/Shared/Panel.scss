@@ -1,6 +1,13 @@
-.Panel {
-  display: grid;
+// -- utilities --
+%u-flow {
+  display: flex;
+  flex-direction: column;
   gap: $spacing1;
+}
+
+// -- main --
+.Panel {
+  @extend %u-flow;
   padding: $spacing1;
 
   // -- elements --
@@ -8,9 +15,7 @@
     display: none;
 
     &.is-visible {
-      display: flex;
-      flex-direction: column;
-      gap: $spacing1;
+      @extend %u-flow;
     }
   }
 
@@ -49,5 +54,14 @@
     display: flex;
     align-items: flex-end;
     gap: $spacing5;
+  }
+
+  // -- variants --
+  &--read, &--read &-tab {
+    gap: $spacing2;
+  }
+
+  &--read &-section {
+    row-gap: $spacing4;
   }
 }

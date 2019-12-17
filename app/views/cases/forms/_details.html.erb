@@ -1,15 +1,15 @@
 <%- form = form.details %>
 <%= f.fields_for(:details, form) do |f| %>
   <%= section_tag("Details", class: "CaseForm-details") do %>
-    <%= field_tag(:status, class: "CaseForm-status") do %>
+    <%= field_tag(:status, class: "CaseForm-status Field--fixed") do %>
       <%= view.status %>
     <%- end %>
 
-    <%= field_tag(:program, class: "CaseForm-program") do %>
+    <%= field_tag(:program, class: "CaseForm-program Field--fixed") do %>
       <%= view.program_name %>
     <%- end %>
 
-    <%= field_tag(:enroller, class: "CaseForm-enroller") do %>
+    <%= field_tag(:enroller, class: "CaseForm-enroller Field--fixed") do %>
       <%= view.enroller_name %>
     <%- end %>
 

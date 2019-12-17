@@ -1,11 +1,10 @@
-<section class="CaseDocuments">
-  <h1>Documents</h1>
+<%= section_tag("Documents", class: "CaseDocuments") do %>
   <ul class="CaseDocuments-list">
     <% if documents.blank? %>
       <p>This case has no documents yet.</p>
     <% else %>
       <% documents.each do |d| %>
-        <li class="CaseDocuments-item CaseDocument">
+        <li class="CaseDocument">
           <%- file_url = d.file.attached? ? url_for(d.file) : nil %>
 
           <% if file_url.nil? %>
@@ -33,4 +32,4 @@
       <% end %>
     <% end %>
   </ul>
-</section>
+<% end %>

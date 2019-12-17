@@ -1,6 +1,9 @@
 <main class="Main">
   <%- view = Cases::View.new(@case) %>
+
   <header class="Main-header">
+    <%= link_to("Back to Cases", cases_path, class: "Main-back") %>
+
     <h1 class="Main-title">
       <%= view.recipient_name %>'s case
     </h1>
@@ -27,137 +30,92 @@
         %>
       <% end %>
     </div>
+
+    <div class="Main-filters">
+      <nav class="Filters">
+        <%= filter_for(:application, is_selected: true) %>
+        <%= filter_for(:documents) %>
+      </nav>
+    </div>
   </header>
 
-  <div class="ShowCase">
-    <article class="ShowCase-case Detail">
-      <section class="ShowCase-details Detail-section">
-        <h1><span>Case Status</span></h1>
-        <p class="DetailField-text">
+  <article class="ShowCase-case Panel--read Panel">
+    <section id="application" class="Panel-tab is-visible">
+      <%= section_tag("Details", class: "ShowCase-details") do %>
+        <%= field_tag("Status", class: "ShowCase-status") do %>
           <%= view.status %>
-        </p>
-      </section>
+        <%- end %>
 
-      <section class="ShowCase-contact Detail-section">
-        <h1><span>Contact</span></h1>
-        <label class="ShowCase-phoneNumber DetailField">
-          <span class="DetailField-hint">
-            Phone #
-          </span>
-          <p class="DetailField-text">
-            +1 <%= number_to_phone(view.phone_number) %>
-          </p>
-        </label>
-        <label class="ShowCase-address DetailField">
-          <span class="DetailField-hint">
-            Primary Residential Address
-          </span>
-          <p class="DetailField-text">
-            <% view.address.each do |line| %>
-              <%= line %>
-              <br>
-            <% end %>
-          </p>
-        </section>
-      </section>
+        <%= field_tag("Program", class: "ShowCase-program") do %>
+          <%= view.program_name %>
+        <%- end %>
 
-      <section class="ShowCase-utilityAccount Detail-section">
-        <h1><span>Utility Account</span></h1>
-        <label class="ShowCase-supplier DetailField">
-          <span class="DetailField-hint">
-            Supplier
-          </span>
-          <p class="DetailField-text">
-            <%= view.supplier_name %>
-          </p>
-        </label>
+        <%= field_tag("Enroller", class: "ShowCase-enroller") do %>
+          <%= view.enroller_name %>
+        <%- end %>
+      <%- end %>
+
+      <%= section_tag("Contact", class: "ShowCase-contact") do %>
+        <%= field_tag("Phone #", class: "ShowCase-phoneNumber") do %>
+          +1 <%= number_to_phone(view.phone_number) %>
+        <%- end %>
+
+        <%= field_tag("Primary Residential Address", class: "ShowCase-address") do %>
+          <% view.address.each do |line| %>
+            <%= line %>
+            <br>
+          <% end %>
+        <%- end %>
+      <%- end %>
+
+      <%= section_tag("Utility Account", class: "ShowCase-utilityAccount") do %>
+        <%= field_tag("Supplier", class: "ShowCase-supplier") do %>
+          <%= view.supplier_name %>
+        <%- end %>
         <% if view.wrap? %>
-          <label class="ShowCase-hasActiveService DetailField">
-            <span class="DetailField-hint">
-              &nbsp
-            </span>
-            <p class="DetailField-text">
-              <span class="<%= cx("Checkbox", "is-checked" => view.active_service?) %>"></span> Active?
-            </p>
-          </label>
+          <%= field_tag(nil, "&nbsp".html_safe, class: "ShowCase-hasActiveService") do %>
+            <span class="<%= cx("Checkbox", "is-checked" => view.active_service?) %>"></span> Active?
+          <%- end %>
         <% end %>
-        <label class="ShowCase-accountNumber DetailField">
-          <span class="DetailField-hint">
-            Account #
-          </span>
-          <p class="DetailField-text">
-            <%= view.account_number %>
-          </p>
-        </label>
-        <label class="ShowCase-arrears DetailField">
-          <span class="DetailField-hint">
-            Arrears
-          </span>
-          <p class="DetailField-text">
-            <%= view.account_arrears %>
-          </p>
-        </label>
-      </section>
+        <%= field_tag("Account #", class: "ShowCase-accountNumber") do %>
+          <%= view.account_number %>
+        <%- end %>
+        <%= field_tag("Arrears", class: "ShowCase-arrears") do %>
+          <%= view.account_arrears %>
+        <%- end %>
+      <%- end %>
 
-      <section class="ShowCase-dhs Detail-section">
-        <h1><span>MDHHS</span></h1>
-        <label class="ShowCase-dhsNumber DetailField">
-          <span class="DetailField-hint">
-            Case #
-          </span>
-          <p class="DetailField-text">
-            <%= view.dhs_number %>
-          </p>
-        </label>
-      </section>
+      <%= section_tag("MDHHS", class: "ShowCase-dhs") do %>
+        <%= field_tag("Case #", class: "ShowCase-dhsNumber") do %>
+          <%= view.dhs_number %>
+        <%- end %>
+      <%- end %>
 
-      <section class="ShowCase-household Detail-section">
-        <h1><span>Household</span></h1>
-        <label class="ShowCase-householdSize DetailField">
-          <span class="DetailField-hint">
-            Size
-          </span>
-          <p class="DetailField-text">
-            <%= view.household_size %>
-          </p>
-        </label>
-        <label class="ShowCase-monthlyIncome DetailField">
-          <span class="DetailField-hint">
-            Monthly Income
-          </span>
-          <p class="DetailField-text">
-            <%= view.household_income %>
-          </p>
-        </label>
+      <%= section_tag("Household", class: "ShowCase-household") do %>
+        <%= field_tag("Size", class: "ShowCase-householdSize") do %>
+          <%= view.household_size %>
+        <%- end %>
+        <%= field_tag("Monthly Income", class: "ShowCase-monthlyIncome") do %>
+          <%= view.household_income %>
+        <%- end %>
+
         <% if view.wrap? %>
-          <label class="ShowCase-ownership DetailField">
-            <span class="DetailField-hint">
-              Rent or Own?
-            </span>
-            <p class="DetailField-text">
-              <%= view.ownership %>
-            </p>
-          </label>
-          <label class="ShowCase-isPrimaryResidence DetailField">
-            <span class="DetailField-hint">
-              &nbsp
-            </span>
-            <p class="DetailField-text">
-              <span class="<%= cx("Checkbox", "is-checked" => view.primary_residence?) %>"></span> Primary Residence?
-            </p>
-          </label>
+          <%= field_tag("Rent or Own?", class: "ShowCase-ownership") do %>
+            <%= view.ownership %>
+          <%- end %>
+          <%= field_tag(nil, "&nbsp".html_safe, class: "ShowCase-isPrimaryResidence") do %>
+            <span class="<%= cx("Checkbox", "is-checked" => view.primary_residence?) %>"></span> Primary Residence?
+          <%- end %>
         <% end %>
-        <label class="ShowCase-fpl DetailField">
-          <span class="DetailField-hint">
-            FPL Percentage
-          </span>
-          <p class="DetailField-text">
-            <%= view.fpl_percentage %>
-          </p>
-        </label>
-      </section>
-    </article>
 
-    <%= render(partial: "cases/documents", locals: { documents: view.documents }) %>
-  </div>
+        <%= field_tag("FPL Percentage", class: "ShowCase-fpl") do %>
+          <%= view.fpl_percentage %>
+        <%- end %>
+      <%- end %>
+    </section>
+
+    <section id="documents" class="Panel-tab">
+      <%= render(partial: "cases/documents", locals: { documents: view.documents }) %>
+    </section>
+  </article>
 </main>

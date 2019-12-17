@@ -16,7 +16,7 @@ class ApplicationFormBuilder < ::ActionView::Helpers::FormBuilder
     field_content = @template.capture(&children)
 
     # render the children & tag
-    field_class = @template.cx(a_class, "Field--input",
+    field_class = @template.cx(a_class, "Field--input Field--fixed",
       "is-disabled" => disabled
     )
 
