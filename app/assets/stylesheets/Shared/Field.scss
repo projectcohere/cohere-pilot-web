@@ -1,7 +1,4 @@
-.FormField {
-  overflow-x: hidden;
-  cursor: pointer;
-
+.Field {
   &.is-disabled {
     opacity: $opacityDisabled;
     pointer-events: none;
@@ -9,8 +6,10 @@
 
   &-hint {
     @extend .u-hint;
+
     display: block;
     margin-bottom: $spacing6;
+
     color: $colorError;
     overflow-x: hidden;
     white-space: nowrap;
@@ -21,7 +20,7 @@
     }
   }
 
-  &-input {
+  &-value {
     display: flex;
     align-items: center;
     height: $height1;
@@ -29,14 +28,23 @@
     padding-bottom: $spacing5;
   }
 
-  &-input--bare {
-    display: flex;
-    align-items: center;
+  &-fallback {
+    color: $gray1;
   }
 
-  &-input--background {
-    @extend .FormField-input;
+  &-prefix {
+    margin-right: $spacing6;
+    color: $gray1;
+  }
 
+  // -- variants --
+  // .Field-input
+  &--input {
+    overflow-x: hidden;
+    cursor: pointer;
+  }
+
+  &--input &-value {
     padding: $spacing5;
     border-bottom: 2px solid $brandBlack;
     border-top-left-radius: $radiusField;
@@ -52,34 +60,20 @@
     }
   }
 
-  &-prefix {
-    margin-right: $spacing6;
-    color: $gray1;
-  }
-
-  &-value {
-    height: $height1;
-    padding-top: $spacing5;
-    padding-bottom: $spacing5;
-
-    &.is-missing {
-      color: $gray1;
-    }
-  }
-
-  &-errors {
+  // .Field-input/errors
+  &--input &-errors {
     color: $colorError;
     font-weight: $fontWeightRegular;
     background-color: $white;
   }
 
-  &.is-error:hover &-errors {
+  &--input.is-error:hover &-errors {
     position: absolute;
     transform: translateX(4px);
   }
 
-  // -- inputs
-  input {
+  // .Field-input/inputs
+  &--input input {
     flex: 1;
     width: 0;
     min-width: 0;
@@ -90,7 +84,7 @@
     }
   }
 
-  input[type="number"] {
+  &--input input[type="number"] {
     -moz-appearance: textfield;
 
     &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
@@ -99,7 +93,21 @@
     }
   }
 
-  input[type="checkbox"] {
+  // .Field--checkbox
+  &--checkbox &-hint {
+    color: transparent;
+  }
+
+  &--checkbox &-value {
+    border: none;
+    background: none;
+
+    &:hover {
+      background-color: inherit;
+    }
+  }
+
+  &--checkbox input[type="checkbox"] {
     @extend .Checkbox;
 
     appearance: none;
@@ -110,8 +118,22 @@
     }
   }
 
-  // -- .FormField--select
-  &--select &-input {
+  &--checkbox:hover input[type="checkbox"] {
+    background-color: fade-out($brandPrimary, 0.85);
+  }
+
+  // .Field--bare
+  &--bare &-hint {
+    display: none;
+  }
+
+  &--bare &-value {
+    padding: 0;
+    height: initial;
+  }
+
+  // .Field--select
+  &--select &-value {
     position: relative;
 
     &::before, &::after {
@@ -139,6 +161,7 @@
     }
   }
 
+  // .Field-select/select
   &--select select {
     width: 100%;
     border: none;

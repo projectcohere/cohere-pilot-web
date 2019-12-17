@@ -5,8 +5,11 @@
   }
 
   &-list {
-    > * + * {
-      margin-top: $spacing3;
-    }
+    display: flex;
+    gap: $spacing3;
+  }
+
+  &-item {
+    width: 50%;
   }
 }

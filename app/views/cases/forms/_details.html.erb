@@ -1,20 +1,20 @@
 <%- form = form.details %>
 <%= f.fields_for(:details, form) do |f| %>
-  <%= f.section("Details", class: "CaseForm-details") do %>
-    <%= f.field(:status, background: false, class: "CaseForm-status") do %>
-      <%= f.value(view.status) %>
+  <%= section_tag("Details", class: "CaseForm-details") do %>
+    <%= field_tag(:status, class: "CaseForm-status") do %>
+      <%= view.status %>
     <%- end %>
 
-    <%= f.field(:program, background: false, class: "CaseForm-program") do %>
-      <%= f.value(view.program_name) %>
+    <%= field_tag(:program, class: "CaseForm-program") do %>
+      <%= view.program_name %>
     <%- end %>
 
-    <%= f.field(:enroller, background: false, class: "CaseForm-enroller") do %>
-      <%= f.value(view.enroller_name) %>
+    <%= field_tag(:enroller, class: "CaseForm-enroller") do %>
+      <%= view.enroller_name %>
     <%- end %>
 
     <%- disabled = form.contract_variant.present? %>
-    <%= f.field(:contract_variant, "Signed Contract?", disabled: disabled, class: "CaseForm-contract FormField--select") do %>
+    <%= f.field(:contract_variant, "Signed Contract?", disabled: disabled, class: "CaseForm-contract Field--select") do %>
       <%= f.select(:contract_variant, form.contract_options, include_blank: "None") %>
     <%- end %>
   <% end %>

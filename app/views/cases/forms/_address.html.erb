@@ -1,6 +1,6 @@
 <%- form = form.address %>
 <%= f.fields_for(:address, form) do |f| %>
-  <%= f.section("Primary Residential Address", class: "CaseForm-address") do %>
+  <%= section_tag("Primary Residential Address", class: "CaseForm-address") do %>
     <%= f.field(:street, class: "CaseForm-street") do %>
       <%= f.text_field(:street) %>
     <% end %>
@@ -13,8 +13,8 @@
       <%= f.text_field(:city) %>
     <% end %>
 
-    <%= f.field(:state, background: false, class: "CaseForm-state") do %>
-      <%= f.value("MI") %>
+    <%= field_tag(:state, class: "CaseForm-state") do %>
+      MI
     <% end %>
 
     <%= f.field(:zip, class: "CaseForm-zip") do %>

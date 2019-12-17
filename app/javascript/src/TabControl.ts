@@ -1,29 +1,29 @@
 import { IComponent } from "./Component"
 
 // -- constants --
-const kQueryFilters = ".EditCase .Filter"
-const kQueryTabs = ".EditCase .Form-tab"
+const kQueryFilters = ".Filter"
+const kQueryTabs = ".Panel-tab"
 const kClassSelected = "is-selected"
 const kClassVisible = "is-visible"
 
 // -- impls --
-export class EditCase implements IComponent {
+export class TabControl implements IComponent {
   isOnLoad = true
 
   // -- props --
-  private $filters: HTMLLinkElement[]
   private $tabs: HTMLElement[]
+  private $filters: HTMLLinkElement[]
 
   // -- IComponent --
   start() {
-    const $filters = document.querySelectorAll<HTMLLinkElement>(kQueryFilters)
-    if ($filters.length == 0) {
+    const $tabs = document.querySelectorAll<HTMLElement>(kQueryTabs)
+    if ($tabs.length === 0) {
       return
     }
 
     // query elements
-    this.$filters = Array.from($filters)
-    this.$tabs = Array.from(document.querySelectorAll(kQueryTabs))
+    this.$tabs = Array.from($tabs)
+    this.$filters = Array.from(document.querySelectorAll(kQueryFilters))
 
     // bind events
     for (const $filter of this.$filters) {

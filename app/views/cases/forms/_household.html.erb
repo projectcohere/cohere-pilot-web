@@ -1,6 +1,6 @@
 <%- form = form.household %>
 <%= f.fields_for(:household, form) do |f| %>
-  <%= f.section("Household", class: "CaseForm-household") do %>
+  <%= section_tag("Household", class: "CaseForm-household") do %>
     <%= f.field(:size, "Size", class: "CaseForm-householdSize") do %>
       <%= f.text_field(:size) %>
     <% end %>
@@ -9,16 +9,16 @@
       <%= f.text_field(:income) %>
     <% end %>
 
-    <%= f.field(:ownership, "Rent or Own", class: "CaseForm-ownership FormField--select") do %>
+    <%= f.field(:ownership, "Rent or Own", class: "CaseForm-ownership Field--select") do %>
       <%= f.select(:ownership, form.ownership_options) %>
     <%- end %>
 
-    <%= f.field(:is_primary_residence, "&nbsp".html_safe, background: false, class: "CaseForm-isPrimaryResidence") do %>
+    <%= f.field(:is_primary_residence, "&nbsp".html_safe, class: "CaseForm-isPrimaryResidence Field--checkbox") do %>
       <%= f.check_box(:is_primary_residence) %> Primary Residence?
     <%- end %>
 
-    <%= f.field(:fpl, "FPL Percentage", background: false, class: "CaseForm-fpl") do %>
-      <%= f.value(view.fpl_percentage, suffix: "%", fallback: "Unknown. Please add household info.") %>
+    <%= field_tag(:fpl, "FPL Percentage", class: "CaseForm-fpl") do %>
+      <%= field_value(view.fpl_percentage, fallback: "Unknown. Please add household info.") %>
     <% end %>
   <% end %>
 <% end %>

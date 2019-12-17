@@ -5,15 +5,15 @@
     </h1>
   </header>
 
-  <%= form_for(@form, url: case_path(@case.id), html: { class: "CaseForm Form" }) do |f| %>
+  <%= form_for(@form, url: case_path(@case.id), html: { class: "CaseForm Panel" }) do |f| %>
     <% form_locals = { f: f, form: @form, view: @view, policy: policy } %>
 
     <%= render(partial: "cases/forms/mdhhs", locals: form_locals) %>
     <%= render(partial: "cases/forms/household", locals: form_locals) %>
     <%= render(partial: "cases/documents", locals: { documents: @view.documents }) %>
 
-    <div class="Form-actions">
-      <%= f.submit("Save", class: "Form-submit Button--action") %>
+    <div class="Panel-actions">
+      <%= f.submit("Save", class: "Button--action") %>
     </div>
   <%- end %>
 </main>

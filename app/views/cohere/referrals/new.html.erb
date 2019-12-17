@@ -1,46 +1,48 @@
 <main class="EditCase Main">
   <header class="Main-header">
     <%= link_to("Back to Cases", cases_path, class: "Main-back") %>
+
     <h1 class="Main-title">
       <%= @view.recipient_name %>'s case
     </h1>
+
     <div class="Main-filters">
       <nav class="Filters">
-        <%= link_to("Profile", "#profile", class: "Filter is-selected", data: { turbolinks: false }) %>
-        <%= link_to("Household", "#household", class: "Filter", data: { turbolinks: false }) %>
-        <%= link_to("Accounts", "#accounts", class: "Filter", data: { turbolinks: false }) %>
-        <%= link_to("Documents", "#documents", class: "Filter", data: { turbolinks: false }) %>
+        <%= filter_for(:profile, is_error: errors?(@form.details, @form.contact), is_selected: true) %>
+        <%= filter_for(:household, is_error: errors?(@form.address, @form.household)) %>
+        <%= filter_for(:accounts, is_error: errors?(@form.mdhhs, @form.supplier_account)) %>
+        <%= filter_for(:documents) %>
       </nav>
     </div>
   </header>
 
-  <%= form_for(@form, url: case_referrals_path, html: { class: "CaseForm Form" }) do |f| %>
+  <%= form_for(@form, url: case_referrals_path, html: { class: "CaseForm Panel" }) do |f| %>
     <% form_locals = { f: f, form: @form, view: @view, policy: policy } %>
-    <section id="profile" class="Form-tab is-visible">
+    <section id="profile" class="Panel-tab is-visible">
       <%= render(partial: "cases/forms/details", locals: form_locals) %>
       <%= render(partial: "cases/forms/contact", locals: form_locals) %>
     </section>
 
-    <section id="household" class="Form-tab">
+    <section id="household" class="Panel-tab">
       <%= render(partial: "cases/forms/address", locals: form_locals) %>
       <%= render(partial: "cases/forms/household", locals: form_locals) %>
     </section>
 
-    <section id="accounts" class="Form-tab">
+    <section id="accounts" class="Panel-tab">
       <%= render(partial: "cases/forms/mdhhs", locals: form_locals) %>
       <%= render(partial: "cases/forms/supplier_account", locals: form_locals) %>
     </section>
 
-    <section id="documents" class="Form-tab">
+    <section id="documents" class="Panel-tab">
       <%= render(partial: "cases/documents", locals: { documents: @view.documents }) %>
     </section>
 
-    <div class="Form-actions">
-      <%= f.submit("Save", class: "Form-submit Button--action") %>
+    <div class="Panel-actions">
+      <%= f.submit("Save", class: "Button--action") %>
       <%=
         f.submit("Save & Submit to Enroller",
           name: :submit,
-          class: "Form-submit Button--secondary",
+          class: "Button--secondary",
           data: {
             confirm: "Are you sure you want to submit this case?"
           },

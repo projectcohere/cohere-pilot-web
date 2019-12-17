@@ -1,6 +1,6 @@
 <%- form = form.contact %>
 <%= f.fields_for(:contact, form) do |f| %>
-  <%= f.section("Contact", class: "CaseForm-contact") do %>
+  <%= section_tag("Contact", class: "CaseForm-contact") do %>
     <%= f.field(:first_name, class: "CaseForm-firstName") do %>
       <%= f.text_field(:first_name) %>
     <% end %>

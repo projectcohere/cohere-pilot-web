@@ -5,7 +5,7 @@
       <p>This case has no documents yet.</p>
     <% else %>
       <% documents.each do |d| %>
-        <li class="CaseDocument">
+        <li class="CaseDocuments-item CaseDocument">
           <%- file_url = d.file.attached? ? url_for(d.file) : nil %>
 
           <% if file_url.nil? %>
@@ -17,11 +17,9 @@
           <% end %>
 
           <div class="CaseDocument-info">
-            <% if d.classification != :unknown %>
-              <label class="CaseDocument-classification">
-                <%= d.classification.to_s.titlecase %>
-              </label>
-            <% end %>
+            <label class="CaseDocument-classification">
+              <%= d.classification.to_s.titlecase %>
+            </label>
 
             <%=
               link_to("View Document", file_url || "",
