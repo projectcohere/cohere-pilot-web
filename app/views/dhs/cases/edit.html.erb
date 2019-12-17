@@ -5,14 +5,26 @@
     <h1 class="Main-title">
       <%= @view.recipient_name %>'s case
     </h1>
+
+    <div class="Main-filters">
+      <nav class="Filters">
+        <%= filter_for(:application, is_error: errors?(@form.mdhhs, @form.household), is_selected: true) %>
+        <%= filter_for(:documents) %>
+      </nav>
+    </div>
   </header>
 
   <%= form_for(@form, url: case_path(@case.id), html: { class: "CaseForm Panel" }) do |f| %>
     <% form_locals = { f: f, form: @form, view: @view, policy: policy } %>
 
-    <%= render(partial: "cases/forms/mdhhs", locals: form_locals) %>
-    <%= render(partial: "cases/forms/household", locals: form_locals) %>
-    <%= render(partial: "cases/documents", locals: { documents: @view.documents }) %>
+    <div id="application" class="Panel-tab is-visible">
+      <%= render(partial: "cases/forms/mdhhs", locals: form_locals) %>
+      <%= render(partial: "cases/forms/household", locals: form_locals) %>
+    </div>
+
+    <div id="documents" class="Panel-tab">
+      <%= render(partial: "cases/documents", locals: { documents: @view.documents }) %>
+    </div>
 
     <div class="Panel-actions">
       <%= f.submit("Save", class: "Button--action") %>

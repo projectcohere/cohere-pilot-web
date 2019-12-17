@@ -99,7 +99,7 @@
 
   // .Field--checkbox
   &--checkbox &-hint {
-    color: transparent;
+    visibility: hidden;
   }
 
   &--checkbox &-value {
