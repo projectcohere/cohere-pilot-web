@@ -1,0 +1,7 @@
+chat_1:
+  remember_token: "1F9A0JP"
+  remember_token_expires_at: <%= Time.zone.now + 1.days %>
+
+chat_2:
+  remember_token: "2RJQA04"
+  remember_token_expires_at: <%= Time.zone.now - 5.minutes %>

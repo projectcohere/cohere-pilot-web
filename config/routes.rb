@@ -39,6 +39,12 @@ Rails.application.routes.draw do
       post(:front, constraints: { format: :json })
     end
 
+    # chats
+    resource(:chat, only: [:show]) do
+      get("/connect", action: :connect)
+      get("/join", action: :join)
+    end
+
     # fallback
     get("*path", to: redirect(sign_in_path))
   end
