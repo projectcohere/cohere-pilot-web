@@ -1,5 +1,4 @@
-<section class="CaseDocuments">
-  <h1>Documents</h1>
+<%= section_tag("Documents", class: "CaseDocuments") do %>
   <ul class="CaseDocuments-list">
     <% if documents.blank? %>
       <p>This case has no documents yet.</p>
@@ -17,11 +16,9 @@
           <% end %>
 
           <div class="CaseDocument-info">
-            <% if d.classification != :unknown %>
-              <label class="CaseDocument-classification">
-                <%= d.classification.to_s.titlecase %>
-              </label>
-            <% end %>
+            <label class="CaseDocument-classification">
+              <%= d.classification.to_s.titlecase %>
+            </label>
 
             <%=
               link_to("View Document", file_url || "",
@@ -35,4 +32,4 @@
       <% end %>
     <% end %>
   </ul>
-</section>
+<% end %>

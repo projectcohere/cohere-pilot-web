@@ -4,7 +4,7 @@ class Case
       # -- props --
       prop(:case_id)
       prop(:case_program)
-      prop(:case_is_referral)
+      prop(:case_is_referred)
       props_end!
 
       # -- factories --
@@ -12,7 +12,7 @@ class Case
         DidOpen.new(
           case_id: kase.id,
           case_program: kase.program,
-          case_is_referral: kase.referral?
+          case_is_referred: kase.referral?
         )
       end
     end

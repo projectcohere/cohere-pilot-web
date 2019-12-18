@@ -1,10 +1,10 @@
-<main class="Main SignIn">
+<main class="SignIn Main">
   <div class="SignIn-panel">
     <div class="SignIn-left">
       <%= image_tag("logo-large-full.svg", height: 67, class: "SignIn-logo", alt: "Cohere Logo") %>
 
-      <%= form_for(:session, url: sessions_path, html: { class: "SignIn-form Form" }) do |f| %>
-        <%= f.section(class: "SignIn-credentials") do %>
+      <%= form_for(:session, url: sessions_path, html: { class: "SignIn-form Panel--empty Panel" }) do |f| %>
+        <%= section_tag(class: "SignIn-credentials") do %>
           <%= f.field(:email, t("users.email.label"), class: "SignIn-email") do %>
             <% f.text_field(:email, type: "email", placeholder: t("users.email.placeholder")) %>
           <% end %>
@@ -14,16 +14,15 @@
           <% end %>
 
           <div class="SignIn-helpers">
-            <%= f.field(:show_password, for: :show_password, bare: true, class: "SignIn-showPassword") do %>
-              <%= check_box_tag(:show_password) %>
-              <span>Show Password?</span>
+            <%= field_tag(:show_password, class: "SignIn-showPassword Field--bare Field--checkbox") do %>
+              <%= check_box_tag(:show_password) %> Show Password?
             <% end %>
 
             <%= link_to(t(".forgot-password"), forgot_passwords_path, class: "SignIn-redirectLink") %>
           </div>
         <% end %>
 
-        <%= f.section(class: "SignIn-actions") do %>
+        <%= section_tag(class: "SignIn-actions") do %>
           <%= f.submit(class: "SignIn-submit Form-submit Button--action") %>
         <% end %>
       <% end %>

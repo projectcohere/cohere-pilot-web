@@ -1,10 +1,12 @@
 .Header {
+  top: 0;
   position: sticky;
   display: flex;
   justify-content: space-between;
-  padding: $spacing4 $spacing3;
+  padding: $spacing5 $spacing3;
   background-color: $white;
   box-shadow: 0px 2px 2px $colorShadow;
+  z-index: 1;
 
   &-logo {
     position: relative;
@@ -38,6 +40,6 @@
 
   &-signOut {
     @extend .u-link;
-    margin-left: $spacing4;
+    margin-left: $spacing5;
   }
 }

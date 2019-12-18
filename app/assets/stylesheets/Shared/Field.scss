@@ -1,0 +1,177 @@
+.Field {
+  &.is-disabled {
+    opacity: $opacityDisabled;
+    pointer-events: none;
+  }
+
+  &-hint {
+    @extend .u-hint;
+
+    display: block;
+    margin-bottom: $spacing6;
+
+    color: $colorError;
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    > span:first-child {
+      color: $brandBlack;
+    }
+  }
+
+  &-value {
+    display: flex;
+    align-items: center;
+  }
+
+  &-fallback {
+    color: $gray1;
+  }
+
+  &-prefix {
+    margin-right: $spacing6;
+    color: $gray1;
+  }
+
+  // -- variants --
+  // .Field-fixed
+  &--fixed &-value {
+    height: $height1;
+    padding-top: $spacing5;
+    padding-bottom: $spacing5;
+  }
+
+  // .Field-input
+  &--input {
+    overflow-x: hidden;
+    cursor: pointer;
+  }
+
+  &--input &-value {
+    padding: $spacing5;
+    border-bottom: 2px solid $brandBlack;
+    border-top-left-radius: $radiusField;
+    border-top-right-radius: $radiusField;
+    background-color: $colorField;
+
+    &:hover {
+      background-color: fade-out($brandPrimary, 0.85);
+    }
+
+    &:focus-within {
+      border-bottom-color: $brandPrimary;
+    }
+  }
+
+  // .Field-input/errors
+  &--input &-errors {
+    color: $colorError;
+    font-weight: $fontWeightRegular;
+    background-color: $white;
+  }
+
+  &--input.is-error:hover &-errors {
+    position: absolute;
+    transform: translateX(4px);
+  }
+
+  // .Field-input/inputs
+  &--input input {
+    flex: 1;
+    width: 0;
+    min-width: 0;
+
+    &::placeholder {
+      color: $gray1;
+      opacity: 1;
+    }
+  }
+
+  &--input input[type="number"] {
+    -moz-appearance: textfield;
+
+    &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+
+  // .Field--checkbox
+  &--checkbox &-hint {
+    visibility: hidden;
+  }
+
+  &--checkbox &-value {
+    border: none;
+    background: none;
+
+    &:hover {
+      background-color: inherit;
+    }
+  }
+
+  &--checkbox input[type="checkbox"] {
+    @extend .Checkbox;
+
+    appearance: none;
+    -moz-appearance: none;
+
+    &:checked {
+      @include u-checkmark;
+    }
+  }
+
+  &--checkbox:hover input[type="checkbox"] {
+    background-color: fade-out($brandPrimary, 0.85);
+  }
+
+  // .Field--bare
+  &--bare &-hint {
+    display: none;
+  }
+
+  &--bare &-value {
+    padding: 0;
+    height: initial;
+  }
+
+  // .Field--select
+  &--select &-value {
+    position: relative;
+
+    &::before, &::after {
+      content: "";
+      pointer-events: none;
+      position: absolute;
+      right: 0;
+      width: 10px;
+      height: 2px;
+      background-color: $brandBlack;
+    }
+
+    &:before {
+      transform: translateX(-$spacing5 - 6px) rotate(45deg);
+    }
+
+    &:after {
+      transform: translateX(-$spacing5) rotate(-45deg);
+    }
+
+    &:focus-within {
+      &::before, &::after {
+        background-color: $brandPrimary;
+      }
+    }
+  }
+
+  // .Field-select/select
+  &--select select {
+    width: 100%;
+    border: none;
+    background: none;
+    appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+  }
+}

@@ -89,14 +89,20 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     post(auth("/cases", as: user_rec), params: {
       case: {
-        first_name: "Janice",
-        last_name: "Sample",
-        phone_number: Faker::Number.number(digits: 10),
-        street: "123 Test Street",
-        city: "Testopolis",
-        zip: "11111",
-        account_number: "22222",
-        arrears: "1000.00"
+        contact: {
+          first_name: "Janice",
+          last_name: "Sample",
+          phone_number: Faker::Number.number(digits: 10),
+        },
+        address: {
+          street: "123 Test Street",
+          city: "Testopolis",
+          zip: "11111",
+        },
+        supplier_account: {
+          account_number: "22222",
+          arrears: "1000.00"
+        }
       }
     })
 
@@ -239,11 +245,13 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     patch(auth("/cases/#{case_rec.id}"), params: {
       case: {
-        income: "$300.00"
+        household: {
+          income: "$300.00"
+        }
       }
     })
 
-    assert_redirected_to("/cases")
+    assert_redirected_to("/cases/#{case_rec.id}/edit")
     assert_present(flash[:notice])
   end
 
@@ -255,7 +263,9 @@ class CasesTests < ActionDispatch::IntegrationTest
     act = ->() do
       patch(auth("/cases/#{case_rec.id}"), params: {
         case: {
-          contract_variant: 0
+          details: {
+            contract_variant: 0
+          }
         }
       })
     end
@@ -279,7 +289,9 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     patch(auth("/cases/#{case_rec.id}"), params: {
       case: {
-        first_name: nil
+        contact: {
+          first_name: ""
+        }
       }
     })
 
@@ -287,35 +299,45 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:alert])
   end
 
-  # -- submit --
-  test "can't submit a case if signed-out" do
+  # -- edit/save --
+  test "can't update a case with an action if signed-out" do
     assert_raises(ActionController::RoutingError) do
-      patch("/cases/3/submit")
+      patch("/cases/3", params: {
+        approve: :ignored
+      })
     end
   end
 
-  test "can't submit a case without permission" do
-    user_rec = users(:enroller_1)
+  test "can't update a case with an action without permission" do
+    user_rec = users(:supplier_1)
 
     assert_raises(ActionController::RoutingError) do
-      patch(auth("/cases/4/submit", as: user_rec))
+      patch(auth("/cases/4", as: user_rec), params: {
+        deny: :ignored
+      })
     end
   end
 
-  test "show errors when submitting an invalid case as a cohere user" do
+  test "show errors submitting an invalid case as a cohere user" do
     case_rec = cases(:pending_2)
 
-    patch(auth("/cases/#{case_rec.id}/submit"))
+    patch(auth("/cases/#{case_rec.id}"), params: {
+      submit: :ignored
+    })
 
     assert_response(:success)
     assert_present(flash[:alert])
   end
 
   test "submit a case as a cohere user" do
+    user_rec = users(:cohere_1)
     case_rec = cases(:pending_1)
-    patch(auth("/cases/#{case_rec.id}/submit"))
 
-    assert_redirected_to("/cases")
+    patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
+      submit: :ignored
+    })
+
+    assert_redirected_to("/cases/#{case_rec.id}/edit")
     assert_present(flash[:notice])
 
     assert_analytics_events(1) do |events|
@@ -329,18 +351,11 @@ class CasesTests < ActionDispatch::IntegrationTest
     end
   end
 
-  # -- complete --
-  test "can't complete a case if signed-out" do
-    assert_raises(ActionController::RoutingError) do
-      patch("/cases/3/complete")
-    end
-  end
-
-  test "can't complete a case without permission" do
-    user_rec = users(:supplier_1)
+  test "can't complete a case with an unknown status as an enroller" do
+    user_rec = users(:enroller_1)
 
     assert_raises(ActionController::RoutingError) do
-      patch(auth("/cases/4/complete", as: user_rec))
+      patch(auth("/cases/0/remove", as: user_rec))
     end
   end
 
@@ -349,35 +364,18 @@ class CasesTests < ActionDispatch::IntegrationTest
     case_rec = cases(:submitted_2)
 
     assert_raises(ActiveRecord::RecordNotFound) do
-      patch(auth("/cases/#{case_rec.id}/complete", as: user_rec))
+      patch(auth("/cases/#{case_rec.id}/approve", as: user_rec), params: {
+        deny: :ignored
+      })
     end
   end
 
-  test "can't complete a case with an unknown status" do
-    user_rec = users(:cohere_1)
+  test "complete a case as an enroller" do
+    user_rec = users(:enroller_1)
     case_rec = cases(:submitted_1)
 
-    patch(auth("/cases/#{case_rec.id}/complete", as: user_rec), params: {
-      case: {
-        status: :malicious
-      }
-    })
-
-    assert_response(:success)
-    assert_present(flash[:alert])
-  end
-
-  test "complete a case as a cohere user" do
-    user_rec = users(:cohere_1)
-    case_rec = cases(:submitted_1)
-
-    patch(auth("/cases/#{case_rec.id}/complete", as: user_rec), params: {
-      case: {
-        status: Case::Status::Approved
-      }
-    })
-
-    assert_redirected_to("/cases")
+    patch(auth("/cases/#{case_rec.id}/deny", as: user_rec))
+    assert_redirected_to("/cases/#{case_rec.id}")
     assert_present(flash[:notice])
 
     assert_analytics_events(1) do |events|
@@ -389,21 +387,19 @@ class CasesTests < ActionDispatch::IntegrationTest
         assert_match(%r[#{ENV["HOST"]}/cases/\d+], el[0][:href])
       end
 
-      assert_select("p", text: /approved/)
+      assert_select("p", text: /denied/)
     end
   end
 
-  test "complete a case as an enroller" do
-    user_rec = users(:enroller_1)
+  test "complete a case as a cohere user" do
+    user_rec = users(:cohere_1)
     case_rec = cases(:submitted_1)
 
-    patch(auth("/cases/#{case_rec.id}/complete", as: user_rec), params: {
-      case: {
-        status: Case::Status::Approved
-      }
+    patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
+      approve: :ignored
     })
 
-    assert_redirected_to("/cases")
+    assert_redirected_to("/cases/#{case_rec.id}")
     assert_present(flash[:notice])
 
     assert_analytics_events(1) do |events|
@@ -423,13 +419,11 @@ class CasesTests < ActionDispatch::IntegrationTest
     user_rec = users(:cohere_1)
     case_rec = cases(:pending_1)
 
-    patch(auth("/cases/#{case_rec.id}/complete", as: user_rec), params: {
-      case: {
-        status: Case::Status::Removed
-      }
+    patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
+      remove: :ignored
     })
 
-    assert_redirected_to("/cases")
+    assert_redirected_to("/cases/#{case_rec.id}")
     assert_present(flash[:notice])
 
     assert_analytics_events(1) do |events|
@@ -467,18 +461,19 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     post(auth("/cases/#{case_rec.id}/referrals", as: user_rec), params: {
       case: {
-        supplier_id: supplier_rec.id
+        supplier_account: {
+          supplier_id: supplier_rec.id
+        }
       }
     })
 
-    assert_redirected_to("/cases")
+    assert_redirected_to(%r[/cases/\d+/edit])
     assert_present(flash[:notice])
 
     assert_send_emails(0)
-    assert_analytics_events(3) do |events|
+    assert_analytics_events(2) do |events|
       assert_match(/Did Make Referral/, events[0])
       assert_match(/Did Open/, events[1])
-      assert_match(/Did Become Pending/, events[2])
     end
   end
 
@@ -489,8 +484,12 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     post(auth("/cases/#{case_rec.id}/referrals", as: user_rec), params: {
       case: {
-        supplier_id: supplier_rec.id,
-        first_name: nil
+        contact: {
+          first_name: ""
+        },
+        supplier_account: {
+          supplier_id: supplier_rec.id,
+        }
       }
     })
 

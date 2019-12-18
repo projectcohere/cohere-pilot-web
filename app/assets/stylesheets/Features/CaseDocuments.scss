@@ -1,15 +1,7 @@
 .CaseDocuments {
-  width: $width5;
-  margin-left: $spacing2;
-
-  > h1 {
-    @extend .u-subtitle;
-    margin-bottom: $spacing4;
-  }
-
   &-list {
-    > * + * {
-      margin-top: $spacing3;
-    }
+    grid-column: 1 / 10;
+    display: flex;
+    gap: $spacing3;
   }
 }

@@ -55,46 +55,63 @@ Rails.application.routes.draw do
   end
 
   constraints(signed_in(role: :supplier)) do
-    resources(:cases, controller: "cases/supplier", only: %i[
-      index
-      new
-      create
-    ])
+    scope(module: :supplier) do
+      resources(:cases, only: %i[
+        index
+        new
+        create
+      ])
+    end
   end
 
   constraints(signed_in(role: :dhs)) do
-    resources(:cases, controller: "cases/dhs", only: %i[
-      index
-      edit
-      update
-    ])
+    scope(module: :dhs) do
+      resources(:cases, only: %i[
+        index
+        edit
+        update
+      ])
+    end
   end
 
   constraints(signed_in(role: :enroller)) do
-    resources(:cases, controller: "cases/enroller", only: %i[
-      index
-      show
-    ]) do
-      patch(:complete)
+    scope(module: :enroller) do
+      resources(:cases, only: %i[
+        index
+        show
+      ]) do
+        patch("/:complete_action",
+          as: :complete,
+          action: :complete,
+          constraints: { complete_action: /approve|deny/ }
+        )
+      end
     end
   end
 
   constraints(signed_in(role: :cohere)) do
-    resources(:cases, constraints: { id: /\d+/ }, only: %i[
-      edit
-      update
-      show
-    ]) do
-      get("/:scope", on: :collection, action: :index, constraints: { scope: /open|completed/ })
-      get("/", on: :collection, to: redirect("/cases/open"))
+    scope(module: :cohere) do
+      resources(:cases, constraints: { id: /\d+/ }, only: %i[
+        edit
+        update
+        show
+      ]) do
+        get("/:scope",
+          on: :collection,
+          action: :index,
+          constraints: { scope: /open|completed/ }
+        )
 
-      patch(:submit)
-      patch(:complete)
+        get("/",
+          on: :collection,
+          to: redirect("/cases/open")
+        )
 
-      resources(:referrals, module: :cases, only: %i[
-        new
-        create
-      ])
+        resources(:referrals, only: %i[
+          new
+          create
+        ])
+      end
     end
   end
 

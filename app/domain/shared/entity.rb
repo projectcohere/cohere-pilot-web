@@ -21,4 +21,9 @@ class Entity
   def persisted?
     @id != nil
   end
+
+  # -- debugging --
+  def inspect
+    "<#{self.class.name}:#{object_id} id=#{@id}>"
+  end
 end

@@ -1,4 +1,4 @@
-<main class="Main SignIn">
+<main class="SignIn Main">
   <div class="SignIn-panel">
     <div class="SignIn-left--inverted">
       <div class="SignIn-title">
@@ -17,22 +17,21 @@
       <%= image_tag("logo-large-full.svg", height: 67, class: "SignIn-logo", alt: "Cohere Logo") %>
 
       <%- form_url = user_password_path(@user, token: @user.confirmation_token) %>
-      <%= form_for(:password_reset, url: form_url, html: { method: :patch, class: "SignIn-form Form" }) do |f| %>
-        <%= f.section(class: "SignIn-credentials") do %>
+      <%= form_for(:password_reset, url: form_url, html: { method: :patch, class: "SignIn-form Panel" }) do |f| %>
+        <%= section_tag(class: "SignIn-credentials") do %>
           <%= f.field(:password, t("users.password.label"), class: "SignIn-password") do %>
             <% f.password_field(:password) %>
           <% end %>
 
           <div class="SignIn-helpers">
-            <%= f.field(:show_password, for: :show_password, bare: true, class: "SignIn-showPassword") do %>
-              <%= check_box_tag(:show_password) %>
-              <span>Show Password?</span>
+            <%= f.field(:show_password, class: "SignIn-showPassword Field--bare Field--checkbox") do %>
+              <%= check_box_tag(:show_password) %> Show Password?
             <% end %>
           </div>
         <% end %>
 
-        <%= f.section(class: "SignIn-actions") do %>
-          <%= f.submit(class: "SignIn-submit Form-submit Button--action") %>
+        <%= section_tag(class: "SignIn-actions") do %>
+          <%= f.submit(class: "SignIn-submit Button--action") %>
         <% end %>
       <% end %>
     </div>

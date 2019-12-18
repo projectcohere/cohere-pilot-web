@@ -18,7 +18,7 @@ module Events
       @domain_events.drain do |event|
         case event
         when Case::Events::DidOpen
-          if not event.case_is_referral
+          if not event.case_is_referred
             CasesMailer.did_open(event.case_id.val).deliver_later
           end
         when Case::Events::DidSubmit

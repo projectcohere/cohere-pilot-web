@@ -178,7 +178,7 @@ class Case
       @domain_events.consume(kase.events)
     end
 
-    def save_pending(kase)
+    def save_dhs_contribution(kase)
       case_rec = kase.record
       recipient_rec = kase.recipient.record
 
@@ -200,12 +200,7 @@ class Case
       @domain_events.consume(kase.events)
     end
 
-    def save_all_fields_and_documents(kase, referrer = nil)
-      if not referrer.nil?
-        save_referral(kase, referrer)
-        return
-      end
-
+    def save_cohere_contribution(kase)
       case_rec = kase.record
       recipient_rec = kase.recipient.record
 
@@ -290,43 +285,43 @@ class Case
       @domain_events.consume(kase.events)
     end
 
-    private def save_referral(referral, referrer)
-      # start a new record for the referral
-      referral_rec = Case::Record.new
-      recipient_rec = referral.recipient.record
+    def save_referral(referral)
+      # start a new record for the referred
+      referred_rec = Case::Record.new
+      recipient_rec = referral.referred.recipient.record
 
       if recipient_rec.nil?
         raise "recipient must be fetched from the db!"
       end
 
-      # update the referral record
-      c = referrer
-      r = referral
-      referral_rec.assign_attributes(
-        program: r.program,
-        recipient_id: r.recipient.id,
-        referrer_id: c.id.val
+      # update the referred record
+      referrer = referral.referrer
+      referred = referral.referred
+      referred_rec.assign_attributes(
+        program: referred.program,
+        recipient_id: referred.recipient.id,
+        referrer_id: referrer.id.val
       )
 
-      assign_status(referral, referral_rec)
-      assign_supplier_account(referral, referral_rec)
-      assign_recipient_profile(referral, recipient_rec)
-      assign_dhs_account(referral, recipient_rec)
-      assign_partners(referral, referral_rec)
+      assign_status(referred, referred_rec)
+      assign_supplier_account(referred, referred_rec)
+      assign_recipient_profile(referred, recipient_rec)
+      assign_dhs_account(referred, recipient_rec)
+      assign_partners(referred, referred_rec)
 
       # save the records
       transaction do
-        referral_rec.save!
+        referred_rec.save!
         recipient_rec.save!
-        create_documents!(referral_rec.id, referral.new_documents)
+        create_documents!(referred_rec.id, referred.new_documents)
       end
 
       # send creation events back to entities
-      referral.did_save(referral_rec)
+      referred.did_save(referred_rec)
 
       # consume all entity events
       @domain_events.consume(referrer.events)
-      @domain_events.consume(referral.events)
+      @domain_events.consume(referred.events)
     end
 
     # -- commands/helpers
@@ -442,7 +437,7 @@ class Case
           map_document(d)
         },
         is_referrer: is_referrer,
-        is_referral: r.referrer_id.present?,
+        is_referred: r.referrer_id.present?,
         received_message_at: r.received_message_at,
         updated_at: r.updated_at,
         completed_at: r.completed_at

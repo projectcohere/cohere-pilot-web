@@ -20,25 +20,30 @@
   }
 }
 
-.Button--destructive {
-  @extend .Button;
-
-  border: 2px solid $colorField;
-  line-height: $height2 - 4px;
-
-  &:hover {
-    background-color: $colorField;
-  }
-}
-
 .Button--secondary {
   @extend .Button;
 
   color: $brandPrimary;
   border: 2px solid $brandPrimary;
+  line-height: $height2 - 4px;
 
   &:hover {
     color: lighten($brandPrimary, 5%);
     border-color: lighten($brandPrimary, 5%);
+    background-color: $colorField;
+  }
+}
+
+.Button--destructive {
+  @extend .Button;
+
+  color: $brandPrimary;
+  border: 2px solid $brandPrimary;
+  line-height: $height2 - 4px;
+
+  &:hover {
+    color: $colorError;
+    border-color: $colorError;
+    background-color: $colorField;
   }
 }

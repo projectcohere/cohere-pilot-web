@@ -17,7 +17,7 @@ class Case
       assert_not_nil(kase.updated_at)
       assert_not_nil(kase.completed_at)
       assert(kase.is_referrer)
-      assert_not(kase.is_referral)
+      assert_not(kase.is_referred)
 
       recipient = kase.recipient
       assert_not_nil(recipient.record)
@@ -38,7 +38,7 @@ class Case
 
       kase = Case::Repo.map_record(case_rec, case_rec.documents)
       assert_not(kase.is_referrer)
-      assert(kase.is_referral)
+      assert(kase.is_referred)
       assert(kase.supplier_account.has_active_service)
 
       household = kase.recipient.dhs_account.household

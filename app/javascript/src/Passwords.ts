@@ -2,13 +2,13 @@ import { IComponent } from "./Component"
 
 // -- impls --
 export class Passwords implements IComponent {
-  isDocumentDependent = true
+  isOnLoad = true
 
   // -- props --
   private $password: HTMLInputElement
 
-  // -- lifecycle --
-  private onMount() {
+  // -- IComponent --
+  start() {
     this.$password = this.findPasswordInput()
     if (this.$password == null) {
       return
@@ -18,7 +18,11 @@ export class Passwords implements IComponent {
     $showPassword.addEventListener("change", this.didChangeShowPassword.bind(this))
   }
 
-  // -- elements --
+  cleanup() {
+    this.$password = null
+  }
+
+  // -- queries --
   private findPasswordInput(): HTMLInputElement | null {
     let $password = document.getElementById("session_password")
 
@@ -35,10 +39,5 @@ export class Passwords implements IComponent {
     const inputType = $showPassword.checked ? "text" : "password"
 
     this.$password.setAttribute("type", inputType)
-  }
-
-  // -- IComponent --
-  start() {
-    this.onMount()
   }
 }

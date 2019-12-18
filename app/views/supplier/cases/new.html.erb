@@ -1,0 +1,21 @@
+<main class="EditCase Main">
+  <header class="Main-header">
+    <%= link_to("Back to Cases", cases_path, class: "Main-back") %>
+
+    <h1 class="Main-title">
+      Add a Case
+    </h1>
+  </header>
+
+  <%= form_for(@form, url: cases_path, html: { class: "CaseForm Panel" }) do |f| %>
+    <%- form_locals = { f: f, form: @form, view: @view, policy: policy } %>
+
+    <%= render(partial: "cases/forms/contact", locals: form_locals) %>
+    <%= render(partial: "cases/forms/address", locals: form_locals) %>
+    <%= render(partial: "cases/forms/supplier_account", locals: form_locals) %>
+
+    <div class="Panel-actions">
+      <%= f.submit("Save", class: "Button--action") %>
+    </div>
+  <%- end %>
+</main>

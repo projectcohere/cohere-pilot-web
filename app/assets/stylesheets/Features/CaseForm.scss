@@ -1,31 +1,24 @@
 .CaseForm {
   @extend .u-panel-cozy;
+
   flex: 1;
   max-width: $width1;
 
   /* CaseForm-details */
   &-status {
-    grid-columN: 1 / 3;
+    grid-column: 1 / 3;
   }
 
   &-program {
     grid-column: 3 / 5;
-
-    &--referral {
-      grid-column: 1 / 3;
-    }
   }
 
   &-enroller {
     grid-column: 5 / 10;
-
-    &--referral {
-      grid-column: 3 / 10;
-    }
   }
 
   &-contract {
-    grid-column: 1 / 10;
+    grid-column: 1 / 4;
   }
 
   /* CaseForm-name */
@@ -44,7 +37,7 @@
 
   /* CaseForm-address */
   &-address--read {
-    gap: $spacing6;
+    gap: $spacing7;
   }
 
   &-addressLine {
@@ -74,19 +67,20 @@
   /* CaseForm-utilityAccount */
   &-supplier {
     grid-column: 1 / 5;
-    margin-bottom: $spacing4;
+    margin-bottom: $spacing5;
+  }
+
+  &-hasActiveService {
+    grid-column: 5 / 10;
+    padding-left: $spacing5;
   }
 
   &-accountNumber {
-    grid-column: 1 / 5;
+    grid-column: 1 / 6;
   }
 
   &-arrears {
-    grid-column: 5 / 8;
-  }
-
-  &-activeService {
-    grid-column: 1 / 10;
+    grid-column: 6 / 8;
   }
 
   /* CaseForm-dhs */

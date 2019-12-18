@@ -55,8 +55,8 @@ module Events
         event_attrs[:case_program] = event.case_program
       end
 
-      if event.respond_to?(:case_is_referral)
-        event_attrs[:case_is_referral] = event.case_is_referral
+      if event.respond_to?(:case_is_referred)
+        event_attrs[:case_is_referred] = event.case_is_referred
       end
 
       other_attrs = case event

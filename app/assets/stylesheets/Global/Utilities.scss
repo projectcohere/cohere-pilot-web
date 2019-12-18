@@ -13,7 +13,7 @@
   line-height: 1;
 }
 
-.u-section {
+.u-section-name {
   font-size: $fontSize4;
   font-weight: $fontWeightBold;
   color: $brandBlack;
@@ -56,6 +56,7 @@
 
 .u-panel-cozy {
   @extend .u-panel;
+
   padding: $spacing3;
   background-color: $white;
 }

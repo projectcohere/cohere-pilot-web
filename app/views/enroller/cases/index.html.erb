@@ -1,0 +1,37 @@
+<main class="Main">
+  <header class="Main-header">
+    <h1 class="Main-title">
+      Submitted Cases
+    </h1>
+  </header>
+
+  <ul class="CaseList">
+    <% if @cases.blank? %>
+      <h2 class="CaseList-fallback">
+        No submitted cases left.
+      </h2>
+    <% else %>
+      <% @cases.each do |kase| %>
+        <%- view = Cases::View.new(kase) %>
+        <li class="CaseCell">
+          <div class="CaseCell-row">
+            <%= link_to(view.recipient_name, case_path(kase), class: "CaseCell-name") %>
+          </div>
+          <div class="CaseCell-row">
+            <p class="CaseCell-organizations">
+              <%= view.program_name %>, <%= view.supplier_name %>
+            </p>
+          </div>
+          <div class="CaseCell-row">
+            <p class="CaseCell-status">
+              <%= view.status %>
+            </p>
+            <p class="CaseCell-updateTime">
+              Updated <%= time_ago_in_words(view.updated_at) %> ago
+            </p>
+          </div>
+        </li>
+      <% end %>
+    <% end %>
+  </ul>
+</main>

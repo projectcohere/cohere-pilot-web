@@ -1,4 +1,4 @@
-<main class="Main SignIn">
+<main class="SignIn Main">
   <div class="SignIn-panel">
     <div class="SignIn-left--inverted">
       <div class="SignIn-title">
@@ -10,8 +10,8 @@
     <div class="SignIn-right--inverted">
       <%= image_tag("logo-large-full.svg", height: 67, class: "SignIn-logo", alt: "Cohere Logo") %>
 
-      <%= form_for(:password, url: passwords_path, html: { class: "SignIn-form Form" }) do |f| %>
-        <%= f.section(class: "SignIn-credentials") do %>
+      <%= form_for(:password, url: passwords_path, html: { class: "SignIn-form Panel" }) do |f| %>
+        <%= section_tag(class: "SignIn-credentials") do %>
           <%= f.field(:email, t("users.email.label"), class: "SignIn-email") do %>
             <% f.text_field(:email, type: "email", placeholder: t("users.email.placeholder")) %>
           <% end %>
@@ -21,8 +21,8 @@
           </div>
         <% end %>
 
-        <%= f.section(class: "SignIn-actions") do %>
-          <%= f.submit(class: "SignIn-submit Form-submit Button--action") %>
+        <%= section_tag(class: "SignIn-actions") do %>
+          <%= f.submit(class: "SignIn-submit Button--action") %>
         <% end %>
 
         <% if message.present? %>
