@@ -1,8 +1,8 @@
-import { createConsumer } from "@rails/actioncable"
+import ActionCable from "@rails/actioncable"
 import { IComponent } from "./Component"
 
 // -- constants --
-const kConsumer = createConsumer()
+const kConsumer = ActionCable.createConsumer()
 const kIdChat = "chat"
 const kIdChatForm = "chat-form"
 const kIdChatField = "chat-field"
