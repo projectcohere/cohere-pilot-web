@@ -7,6 +7,7 @@
     "@rails/activestorage": "^6.0.0-alpha",
     "@rails/ujs": "^6.0.0-alpha",
     "@rails/webpacker": "^4.0.7",
+    "@types/actioncable": "^5.2.3",
     "@types/node": "^12.11.5",
     "ts-loader": "^6.2.0",
     "turbolinks": "^5.2.0",
@@ -15,8 +16,6 @@
     "webpack-cli": "^3.3.9"
   },
   "devDependencies": {
-    "@types/actioncable": "^5.2.3",
-    "@types/turbolinks": "^5.2.0",
     "webpack-dev-server": "^3.8.2"
   }
 }
