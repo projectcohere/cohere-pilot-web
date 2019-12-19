@@ -5,14 +5,14 @@
 
   &-title {
     display: inline-block;
-    color: $brandBlack;
-    font-size: $fontSize1;
+    color: $brand-black;
+    font-size: $font-size1;
   }
 
   &-titleBorder {
     margin-top: $spacing6;
     height: 3px;
-    background-color: fade-out($brandPrimary, 0.7);
+    background-color: fade-out($brand-primary, 0.7);
   }
 
   /* -- terms -- */

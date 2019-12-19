@@ -1,35 +1,35 @@
 @font-face {
-  font-family: $fontFamily;
+  font-family: $font-family;
   src:
     font-url("EuclidFlex-Thin.woff2") format("woff2"),
     font-url("EuclidFlex-Thin.woff") format("woff");
-  font-weight: $fontWeightThin;
+  font-weight: $font-weight-thin;
   font-style: normal;
 }
 
 @font-face {
-  font-family: $fontFamily;
+  font-family: $font-family;
   src:
     font-url("EuclidFlex-Regular.woff2") format("woff2"),
     font-url("EuclidFlex-Regular.woff") format("woff");
-  font-weight: $fontWeightRegular;
+  font-weight: $font-weight-regular;
   font-style: normal;
 }
 
 @font-face {
-  font-family: $fontFamily;
+  font-family: $font-family;
   src:
     font-url("EuclidFlex-Medium.woff2") format("woff2"),
     font-url("EuclidFlex-Medium.woff") format("woff");
-  font-weight: $fontWeightMedium;
+  font-weight: $font-weight-medium;
   font-style: normal;
 }
 
 @font-face {
-  font-family: $fontFamily;
+  font-family: $font-family;
   src:
     font-url("EuclidFlex-SemiBold.woff2") format("woff2"),
     font-url("EuclidFlex-SemiBold.woff") format("woff");
-  font-weight: $fontWeightBold;
+  font-weight: $font-weight-bold;
   font-style: normal;
 }

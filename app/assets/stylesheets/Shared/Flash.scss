@@ -3,12 +3,12 @@
   top: $spacing3;
   right: $spacing3;
   padding: $spacing5;
-  background-color: $colorNotice;
+  background-color: $color-notice;
   border-radius: $radius;
   transition: opacity 0.3s;
 
   &.is-alert {
-    background-color: $colorAlert;
+    background-color: $color-alert;
   }
 
   &.is-hidden {

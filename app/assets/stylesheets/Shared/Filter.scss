@@ -4,7 +4,7 @@
   position: relative;
   padding: 0 $spacing4;
   line-height: $height2;
-  opacity: 0.4;
+  opacity: $opacity-inactive;
   text-decoration: none;
 
   &:hover, &.is-selected {
@@ -19,7 +19,7 @@
       left: 0;
       width: 100%;
       height: 3px;
-      background-color: $brandPrimary;
+      background-color: $brand-primary;
     }
   }
 
@@ -33,7 +33,7 @@
       width: $dot-size;
       height: $dot-size;
       border-radius: $dot-size / 2;
-      background-color: $colorError;
+      background-color: $color-error;
     }
   }
 }

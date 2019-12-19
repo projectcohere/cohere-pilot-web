@@ -21,7 +21,7 @@
   .u-half-panel-primary {
     @extend .u-half-panel;
     color: $white;
-    background-color: $brandPrimary;
+    background-color: $brand-primary;
 
     // TODO: utilities should be colorless, and their inclusion in h1...n should
     // be scoped to specific screens.
@@ -59,7 +59,7 @@
       right: -$triangle-width;
       transform-origin: bottom left;
       transform: rotate(-$triangle-angle);
-      background-color: $brandPrimary;
+      background-color: $brand-primary;
     }
   }
 
@@ -104,7 +104,7 @@
       left: -$triangle-width;
       transform-origin: bottom right;
       transform: rotate($triangle-angle);
-      background-color: $brandPrimary;
+      background-color: $brand-primary;
     }
   }
 

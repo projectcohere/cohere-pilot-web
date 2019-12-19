@@ -6,11 +6,11 @@
   // -- elements --
   &-sender {
     display: block;
-    font-size: $fontSize6;
+    font-size: $font-size6;
   }
 
   // -- variants --
   &--received {
-    background-color: $colorField;
+    background-color: $color-field;
   }
 }

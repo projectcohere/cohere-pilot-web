@@ -12,38 +12,38 @@
   @extend .Button;
 
   color: $white;
-  background-color: $brandPrimary;
+  background-color: $brand-primary;
 
   &:hover {
     color: $white;
-    background-color: lighten($brandPrimary, 5%);
+    background-color: lighten($brand-primary, 5%);
   }
 }
 
 .Button--secondary {
   @extend .Button;
 
-  color: $brandPrimary;
-  border: 2px solid $brandPrimary;
+  color: $brand-primary;
+  border: 2px solid $brand-primary;
   line-height: $height2 - 4px;
 
   &:hover {
-    color: lighten($brandPrimary, 5%);
-    border-color: lighten($brandPrimary, 5%);
-    background-color: $colorField;
+    color: lighten($brand-primary, 5%);
+    border-color: lighten($brand-primary, 5%);
+    background-color: $color-field;
   }
 }
 
 .Button--destructive {
   @extend .Button;
 
-  color: $brandPrimary;
-  border: 2px solid $brandPrimary;
+  color: $brand-primary;
+  border: 2px solid $brand-primary;
   line-height: $height2 - 4px;
 
   &:hover {
-    color: $colorError;
-    border-color: $colorError;
-    background-color: $colorField;
+    color: $color-error;
+    border-color: $color-error;
+    background-color: $color-field;
   }
 }
