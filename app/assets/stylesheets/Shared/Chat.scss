@@ -1,9 +1,92 @@
-
 .Chat {
   @extend .u-panel-cozy;
 
-  align-self: center;
+  display: flex;
+  flex-direction: column;
   width: 375px;
   height: 667px;
   border: 1px solid $brand-black;
+  border-radius: $radius-chat;
+
+  // -- elements --
+  &-messages {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    row-gap: $spacing4;
+  }
+
+  // -- elements/form
+  $form-height: 44px;
+  $form-spacing: 10px;
+
+  &-form {
+    display: flex;
+    align-items: flex-end;
+  }
+
+  &-send {
+    $send-size: 34px;
+
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: $send-size;
+    height: $send-size;
+    margin-left: $form-spacing;
+    margin-bottom: ($form-height - $send-size) / 2;
+    border-radius: $send-size / 2;
+    background-color: $brand-primary;
+    cursor: pointer;
+
+    &::before, &::after {
+      content: "";
+      pointer-events: none;
+      position: absolute;
+      width: 10px;
+      height: 2px;
+      translate: 1px 2px;
+      background-color: $white;
+    }
+
+    &:before {
+      transform: translateY(-6px) rotate(45deg);
+    }
+
+    &:after {
+      transform: translateY(0) rotate(-45deg);
+    }
+  }
+
+  // -- elements/field
+  $field-spacing: $spacing5;
+
+  &-field {
+    flex: 1;
+    position: relative;
+    max-width: 100%;
+    background-color: $color-field;
+    border-radius: $form-height / 2;
+  }
+
+  &-input {
+    box-sizing: content-box;
+    display: block;
+    padding: $field-spacing;
+    min-height: $form-height - $form-spacing * 2;
+    overflow-wrap: break-word;
+  }
+
+  &-placeholder {
+    position: absolute;
+    top: $field-spacing;
+    left: $field-spacing;
+    color: $gray1;
+    pointer-events: none;
+  }
+
+  &-input:not(:empty) + &-placeholder {
+    display: none;
+  }
 }

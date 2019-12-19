@@ -1,6 +1,6 @@
 .ChatMessage {
   padding: 12px;
-  border-radius: 15px;
+  border-radius: $radius-chat;
   width: 80%;
 
   // -- elements --
@@ -10,6 +10,11 @@
   }
 
   // -- variants --
+  &--sent {
+    align-self: flex-end;
+    background-color: $color-alert;
+  }
+
   &--received {
     background-color: $color-field;
   }

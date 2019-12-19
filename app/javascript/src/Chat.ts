@@ -3,35 +3,47 @@ import { IComponent } from "./Component"
 
 // -- constants --
 const kConsumer = createConsumer()
+const kIdChat = "chat"
+const kIdChatForm = "chat-form"
+const kIdChatField = "chat-field"
+const kSenderMe = "me"
 
 // -- types --
 interface IMessage<T, B> {
-  user: string,
   type: T,
   body: B
 }
 
 type Message = IMessage<"text", string>
 
+interface Received {
+  sender: string,
+  message: Message
+}
+
 // -- impls --
 export class Chat implements IComponent {
   isOnLoad = true
   // -- props --
-  // -- props/singleton
-
-  // -- props/ephemeral
   private channel: ActionCable.Channel
   private $chat: HTMLElement
+  private $chatField: HTMLElement
 
   // -- IComponent --
   start() {
-    const $chat = document.getElementById("chat")
+    const $chat = document.getElementById(kIdChat)
     if ($chat == null) {
       return
     }
 
     // capture elements
     this.$chat = $chat
+    this.$chatField = document.getElementById(kIdChatField)
+
+    const $chatForm = document.getElementById(kIdChatForm)
+
+    // bind to events
+    $chatForm.addEventListener("submit", this.didSubmitMessage.bind(this))
 
     // subscribe to channel
     const name = "Chats::Channel"
@@ -52,16 +64,45 @@ export class Chat implements IComponent {
   }
 
   // -- commands --
-  private addMessage(message: Message) {
-    this.$chat.insertAdjacentHTML("beforeend", this.renderMessage(message))
+  private sendMessage() {
+    const field = this.$chatField
+    if (field.textContent.length == 0) {
+      return
+    }
+
+    const message: Message = {
+      type: "text",
+      body: field.textContent
+    }
+
+    this.channel.send(message)
+    this.addMessage(kSenderMe, message)
+
+    field.textContent = ""
+  }
+
+  private receiveMesasage(received: Received) {
+    console.debug("Chat - received:", received)
+    this.addMessage(received.sender, received.message)
+  }
+
+  private addMessage(sender: string, message: Message) {
+    this.$chat.insertAdjacentHTML("beforeend", this.render(sender, message))
   }
 
   // -- view --
-  private renderMessage(message: Message) {
+  private render(sender: string, message: Message) {
+    const classes = ["ChatMessage"]
+    if (sender === kSenderMe) {
+      classes.unshift("ChatMessage--sent")
+    } else {
+      classes.unshift("ChatMessage--received")
+    }
+
     return `
-      <li class="ChatMessage--received ChatMessage">
+      <li class="${classes.join(" ")}">
         <label class="ChatMessage-sender">
-          ${message.user}
+          ${sender === kSenderMe ? "Me" : sender}
         </label>
         <p class="ChatMessage-body">
           ${message.body}
@@ -72,6 +113,11 @@ export class Chat implements IComponent {
 
   // -- events --
   private didReceiveData(data: any) {
-    this.addMessage(data)
+    this.receiveMesasage(data)
+  }
+
+  private didSubmitMessage(event: Event) {
+    event.preventDefault()
+    this.sendMessage()
   }
 }
