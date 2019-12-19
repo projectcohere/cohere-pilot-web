@@ -21,7 +21,7 @@ export class TabControl implements IComponent {
       return
     }
 
-    // query elements
+    // capture elements
     this.$tabs = Array.from($tabs)
     this.$filters = Array.from(document.querySelectorAll(kQueryFilters))
 

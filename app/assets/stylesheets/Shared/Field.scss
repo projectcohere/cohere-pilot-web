@@ -1,9 +1,5 @@
 .Field {
-  &.is-disabled {
-    opacity: $opacityDisabled;
-    pointer-events: none;
-  }
-
+  // -- elements --
   &-hint {
     @extend .u-hint;
 
@@ -32,6 +28,12 @@
   &-prefix {
     margin-right: $spacing6;
     color: $gray1;
+  }
+
+  // -- states ---
+  &.is-disabled {
+    opacity: $opacityDisabled;
+    pointer-events: none;
   }
 
   // -- variants --

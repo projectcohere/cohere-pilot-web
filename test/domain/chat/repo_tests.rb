@@ -5,9 +5,9 @@ class Chat
     test "maps a record" do
       chat = Chat::Repo.map_record(chats(:chat_1))
       assert_not_nil(chat.id)
-      assert_not_nil(chat.remember_token)
+      assert_not_nil(chat.recipient_token)
 
-      token = chat.remember_token
+      token = chat.recipient_token
       assert_not_nil(token.value)
       assert_not_nil(token.expires_at)
     end

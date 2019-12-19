@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_18_155905) do
+ActiveRecord::Schema.define(version: 2019_12_18_233615) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -58,8 +58,8 @@ ActiveRecord::Schema.define(version: 2019_12_18_155905) do
   end
 
   create_table "chats", force: :cascade do |t|
-    t.string "remember_token", limit: 128
-    t.datetime "remember_token_expires_at"
+    t.string "recipient_token", limit: 128
+    t.datetime "recipient_token_expires_at"
     t.bigint "recipient_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

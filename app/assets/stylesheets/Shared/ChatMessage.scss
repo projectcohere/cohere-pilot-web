@@ -1,0 +1,16 @@
+.ChatMessage {
+  padding: 12px;
+  border-radius: 15px;
+  width: 80%;
+
+  // -- elements --
+  &-sender {
+    display: block;
+    font-size: $fontSize6;
+  }
+
+  // -- variants --
+  &--received {
+    background-color: $colorField;
+  }
+}

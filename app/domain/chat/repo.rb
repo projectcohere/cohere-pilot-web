@@ -7,10 +7,10 @@ class Chat
 
     # -- queries --
     # -- queries/one
-    def find_by_remember_token(remember_token)
+    def find_by_recipient_token(recipient_token)
       record = Chat::Record
-        .where("remember_token_expires_at >= ?", Time.zone.now)
-        .find_by(remember_token: remember_token)
+        .where("recipient_token_expires_at >= ?", Time.zone.now)
+        .find_by(recipient_token: recipient_token)
 
       entity_from(record)
     end
@@ -19,9 +19,9 @@ class Chat
     def self.map_record(r)
       Chat.new(
         id: Id.new(r.id),
-        remember_token: Chat::Token.new(
-          value: r.remember_token,
-          expires_at: r.remember_token_expires_at
+        recipient_token: Chat::Token.new(
+          value: r.recipient_token,
+          expires_at: r.recipient_token_expires_at
         )
       )
     end
