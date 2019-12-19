@@ -1,3 +1,3 @@
 declare module "@rails/actioncable" {
-  export = ActionCable;
+  export var createConsumer: typeof ActionCable.createConsumer
 }

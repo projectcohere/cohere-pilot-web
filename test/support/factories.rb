@@ -17,7 +17,9 @@ module Support
         Supplier,
         Message,
         Message::Sender,
-        Message::Attachment
+        Message::Attachment,
+        Chat,
+        Chat::Message,
       ]
 
       types_to_stub.each do |type_to_stub|

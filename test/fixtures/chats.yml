@@ -1,7 +1,14 @@
 chat_1:
+  recipient: recipient_1
   recipient_token: "1F9A0JP"
   recipient_token_expires_at: <%= Time.zone.now + 1.year %>
+  messages:
+    - id: 0
+      sender: cohere
+      type: text
+      body: Test 1.
 
 chat_2:
+  recipient: recipient_2
   recipient_token: "2RJQA04"
   recipient_token_expires_at: <%= Time.zone.now - 5.minutes %>

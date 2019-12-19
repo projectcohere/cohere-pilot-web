@@ -19,7 +19,7 @@ module Events
         case event
         when Case::Events::DidOpen
           if not event.case_is_referred
-            CasesMailer.did_open(event.case_id.val).deliver_later
+            CasesMailer.did_open(event.case_id.val).deliver_later if not event.case_is_referred
           end
         when Case::Events::DidSubmit
           CasesMailer.did_submit(event.case_id.val).deliver_later
@@ -33,6 +33,8 @@ module Events
           Cases::AttachContractWorker.perform_async(event.case_id.val, event.document_id.val)
         when User::Events::DidInvite
           UsersMailer.did_invite(event.user_id.val).deliver_later
+        when Chat::Events::DidReceiveMessage
+          Chats::DeliverMessage.perform_async(event.chat_id.val, event.chat_message_id)
         end
 
         @process_analytics.(event)

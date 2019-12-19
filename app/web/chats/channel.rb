@@ -6,16 +6,30 @@ module Chats
         stream_for(current_chat)
 
         broadcast_to(current_chat, {
-          sender: "Gaby",
+          sender: Chat::Sender::Cohere,
           message: {
-            type: :text,
-            body: "Hello! Welcome to the chat."
+            type: Chat::Type::Text,
+            body: "Hi there, let's get started on your application."
           }
         })
       end
     end
 
     def receive(data)
+      current_chat.add_message(
+        sender: Chat::Sender::Recipient,
+        type: data["type"].to_sym,
+        body: data["body"]
+      )
+
+      Chat::Repo.get.save_new_messages(current_chat)
+
+      process_events
+    end
+
+    # -- callbacks --
+    def process_events
+      Events::ProcessAll.get.()
     end
 
     # -- queries --
