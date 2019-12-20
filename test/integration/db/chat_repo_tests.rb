@@ -3,6 +3,15 @@ require "test_helper"
 module Db
   class ChatRepoTests < ActiveSupport::TestCase
     # -- queries --
+    test "find a chat by recipient" do
+      chat_repo = Chat::Repo.new
+      chat_rec = chats(:chat_1)
+
+      chat = chat_repo.find_by_recipient(chat_rec.recipient_id)
+      assert_not_nil(chat)
+      assert_equal(chat.id.val, chat_rec.id)
+    end
+
     test "find a chat by recipient token" do
       chat_repo = Chat::Repo.new
       chat_rec = chats(:chat_1)

@@ -1,0 +1,26 @@
+<article class="Chat">
+  <%- data = { sender: sender, receiver: receiver } %>
+  <%- data.merge!(local_assigns[:data] || {}) %>
+
+  <%= tag.ul(id: "chat", class: "Chat-messages", data: data) do %>
+    <%- chat.messages.each do |msg| %>
+      <% is_sent = msg.sender.to_sym == sender %>
+      <li class="<%= cx("ChatMessage", "ChatMessage--sent" => is_sent, "ChatMessage--received" => !is_sent) %>">
+        <label class="ChatMessage-sender">
+          <%= is_sent ? "Me" : receiver %>
+        </label>
+        <p class="ChatMessage-body">
+          <%= msg.body %>
+        </p>
+      </li>
+    <%- end %>
+  <%- end %>
+
+  <form id="chat-form" class="Chat-form">
+    <div class="Chat-field">
+      <span id="chat-field" contenteditable="true" class="Chat-input"></span>
+      <span class="Chat-placeholder">Enter your message...</span>
+    </div>
+    <button class="Chat-send" alt="Send Message"></button>
+  </form>
+</article>

@@ -2,16 +2,8 @@ require "test_helper"
 
 class ChatsTests < ActionDispatch::IntegrationTest
   # -- connect --
-  test "can't start a chat chat session with an invalid token" do
-    get("/chat/connect?recipient_token=fake")
-    assert_redirected_to("/chat/join")
-  end
-
-  test "start a new chat session" do
-    chat_rec = chats(:chat_1)
-    chat_token = chat_rec.recipient_token
-
-    get("/chat/connect?recipient_token=#{chat_token}")
+  test "connect to a new chat session" do
+    get("/chat/connect?recipient_token=test-token")
     assert_not_nil(cookies[:recipient_token])
     assert_redirected_to("/chat")
   end
@@ -22,6 +14,25 @@ class ChatsTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/chat/join")
   end
 
+  test "can't chat with an unknown token" do
+    get("/chat/connect?recipient_token=fake-token")
+    follow_redirect!
+
+    assert_redirected_to("/chat/join")
+    assert_blank(cookies[:recipient_token])
+  end
+
+  test "can't chat with an expired token" do
+    chat_rec = chats(:chat_2)
+    chat_token = chat_rec.recipient_token
+
+    get("/chat/connect?recipient_token=#{chat_token}")
+    follow_redirect!
+
+    assert_redirected_to("/chat/join")
+    assert_blank(cookies[:recipient_token])
+  end
+
   test "show the chat view" do
     chat_rec = chats(:chat_1)
     chat_token = chat_rec.recipient_token
@@ -30,6 +41,7 @@ class ChatsTests < ActionDispatch::IntegrationTest
     follow_redirect!
 
     assert_response(:success)
+    assert_not_nil(cookies[:recipient_token])
   end
 end
 
@@ -37,33 +49,74 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
   tests(Chats::Channel)
 
   # -- tests --
+  test "subscribe a cohere user" do
+    chat_rec = chats(:chat_1)
+    chat = Chat::Repo.map_record(chat_rec)
+    user_rec = users(:cohere_1)
+    user = User::Repo.map_record(user_rec)
+    stub_connection(current_user: user, current_chat: nil)
+
+    subscribe(chat: chat_rec.id)
+    assert_has_stream_for(chat)
+  end
+
   test "subscribe a recipient" do
     chat_rec = chats(:chat_1)
     chat = Chat::Repo.map_record(chat_rec)
-    stub_connection(current_chat: chat)
+    stub_connection(current_user: nil, current_chat: chat)
 
     subscribe
     assert_has_stream_for(chat)
   end
 
-  test "receives and broadcasts a text message" do
+  test "receives and broadcasts a text message from a cohere user" do
     Sidekiq::Testing.inline!
 
     chat_rec = chats(:chat_1)
     chat = Chat::Repo.map_record(chat_rec)
-    stub_connection(current_chat: chat)
+    user_rec = users(:cohere_1)
+    user = User::Repo.map_record(user_rec)
+    stub_connection(current_user: user, current_chat: nil)
 
     subscribe
     perform(:receive, {
-      type: Chat::Type::Text,
-      body: "Test body."
+      "chat" => chat_rec.id,
+      "message" => {
+        "type" => Chat::Type::Text.to_s,
+        "body" => "Test from Cohere."
+      }
+    })
+
+    assert_broadcast_on(chat, {
+      sender: Chat::Sender::Cohere,
+      message: {
+        type: Chat::Type::Text,
+        body: "Test from Cohere."
+      }
+    })
+  end
+
+  test "receives and broadcasts a text message from a recipient" do
+    Sidekiq::Testing.inline!
+
+    chat_rec = chats(:chat_1)
+    chat = Chat::Repo.map_record(chat_rec)
+    stub_connection(current_user: nil, current_chat: chat)
+
+    subscribe
+    perform(:receive, {
+      "chat" => nil,
+      "message" => {
+        "type" => Chat::Type::Text.to_s,
+        "body" => "Test from recipient."
+      }
     })
 
     assert_broadcast_on(chat, {
       sender: Chat::Sender::Recipient,
       message: {
         type: Chat::Type::Text,
-        body: "Test body."
+        body: "Test from recipient."
       }
     })
   end

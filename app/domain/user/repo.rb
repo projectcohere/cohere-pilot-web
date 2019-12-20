@@ -22,6 +22,13 @@ class User
       entity_from(record)
     end
 
+    def find_by_remember_token(remember_token)
+      user_rec = User::Record
+        .find_by(remember_token: remember_token)
+
+      entity_from(user_rec)
+    end
+
     # -- queries/many
     def find_all_for_opened_case
       records = User::Record

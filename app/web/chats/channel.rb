@@ -2,27 +2,30 @@ module Chats
   class Channel < ActionCable::Channel::Base
     # -- ActionCable::Channel::Base
     def subscribed
-      if not current_chat.nil?
-        stream_for(current_chat)
-
-        broadcast_to(current_chat, {
-          sender: Chat::Sender::Cohere,
-          message: {
-            type: Chat::Type::Text,
-            body: "Hi there, let's get started on your application."
-          }
-        })
-      end
+      chat = find_current_chat(params[:chat])
+      stream_for(chat)
     end
 
     def receive(data)
-      current_chat.add_message(
-        sender: Chat::Sender::Recipient,
-        type: data["type"].to_sym,
-        body: data["body"]
+      chat = find_current_chat(data["chat"])
+
+      # determine sender based on auth method
+      chat_sender = if connection.current_user != nil
+        Chat::Sender::Cohere
+      else
+        Chat::Sender::Recipient
+      end
+
+      # receive message
+      message_data = data["message"]
+      chat.add_message(
+        sender: chat_sender,
+        type: message_data["type"].to_sym,
+        body: message_data["body"]
       )
 
-      Chat::Repo.get.save_new_messages(current_chat)
+      # save entity
+      Chat::Repo.get.save_new_messages(chat)
 
       process_events
     end
@@ -33,8 +36,12 @@ module Chats
     end
 
     # -- queries --
-    private def current_chat
-      connection.current_chat
+    private def find_current_chat(chat_id)
+      if connection.current_chat != nil
+        return connection.current_chat
+      elsif chat_id != nil
+        return Chat::Repo.get.find(chat_id)
+      end
     end
   end
 end

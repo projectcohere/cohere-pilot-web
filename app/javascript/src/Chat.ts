@@ -6,22 +6,31 @@ const kConsumer = createConsumer()
 const kIdChat = "chat"
 const kIdChatForm = "chat-form"
 const kIdChatField = "chat-field"
-const kSenderMe = "recipient"
 
 // -- types --
 type Sender = "cohere" | "recipient"
 type Message = { type: "text", body: string }
 
-interface Received {
+interface Incoming {
   sender: Sender,
+  message: Message
+}
+
+interface Outgoing {
+  chat: string
   message: Message
 }
 
 // -- impls --
 export class Chat implements IComponent {
   isOnLoad = true
+
   // -- props --
   private channel: ActionCable.Channel
+  private id: string | null
+  private sender: Sender
+  private receiver: string
+
   private $chat: HTMLElement
   private $chatField: HTMLElement
 
@@ -32,56 +41,80 @@ export class Chat implements IComponent {
       return
     }
 
+    // extract element data
+    this.id = $chat.dataset.id
+    this.sender = $chat.dataset.sender as Sender
+    this.receiver = $chat.dataset.receiver
+
     // capture elements
     this.$chat = $chat
     this.$chatField = document.getElementById(kIdChatField)
 
-    const $chatForm = document.getElementById(kIdChatForm)
+    // set initial view state
+    this.$chat.scrollTop = this.$chat.scrollHeight - 50;
 
     // bind to events
+    const $chatForm = document.getElementById(kIdChatForm)
     $chatForm.addEventListener("submit", this.didSubmitMessage.bind(this))
 
     // subscribe to channel
-    const name = "Chats::Channel"
-    this.channel = kConsumer.subscriptions.create(name, {
-      received: this.didReceiveData.bind(this)
-    })
+    this.subscribe()
   }
 
   cleanup() {
+    // cleanup props
+    this.id = null
+    this.sender = null
+    this.receiver = null
+
     // cleanup elements
     this.$chat = null
+    this.$chatField = null
 
     // unsubscribe from channel
-    if (this.channel) {
+    if (this.channel != null) {
       this.channel.unsubscribe()
       this.channel = null
     }
   }
 
   // -- commands --
+  private subscribe() {
+    const subscription = {
+      channel: "Chats::Channel",
+      chat: this.id
+    }
+
+    this.channel = kConsumer.subscriptions.create(subscription, {
+      received: this.didReceiveData.bind(this)
+    })
+  }
+
   private sendMessage() {
     const field = this.$chatField
     if (field.textContent.length == 0) {
       return
     }
 
-    const message: Message = {
-      type: "text",
-      body: field.textContent
+    const outgoing: Outgoing = {
+      chat: this.id,
+      message: {
+        type: "text",
+        body: field.textContent
+      }
     }
 
-    this.channel.send(message)
-    this.addMessage(kSenderMe, message)
+    this.channel.send(outgoing)
+    this.addMessage(this.sender, outgoing.message)
 
     field.textContent = ""
   }
 
-  private receiveMesasage(received: Received) {
-    console.debug("Chat - received:", received)
+  private receiveMesasage(incoming: Incoming) {
+    console.debug("Chat - received:", incoming)
 
-    if (received.sender !== kSenderMe) {
-      this.addMessage(received.sender, received.message)
+    if (incoming.sender !== this.sender) {
+      this.addMessage(incoming.sender, incoming.message)
     }
   }
 
@@ -90,27 +123,8 @@ export class Chat implements IComponent {
       "beforeend",
       this.render(sender, message)
     )
-  }
 
-  // -- view --
-  private render(sender: Sender, message: Message) {
-    const classes = ["ChatMessage"]
-    if (sender === kSenderMe) {
-      classes.unshift("ChatMessage--sent")
-    } else {
-      classes.unshift("ChatMessage--received")
-    }
-
-    return `
-      <li class="${classes.join(" ")}">
-        <label class="ChatMessage-sender">
-          ${sender === kSenderMe ? "Me" : "Gaby"}
-        </label>
-        <p class="ChatMessage-body">
-          ${message.body}
-        </p>
-      </li>
-    `
+    this.$chat.scrollTo(0, this.$chat.scrollHeight)
   }
 
   // -- events --
@@ -121,5 +135,26 @@ export class Chat implements IComponent {
   private didSubmitMessage(event: Event) {
     event.preventDefault()
     this.sendMessage()
+  }
+
+  // -- view --
+  private render(sender: Sender, message: Message) {
+    const classes = ["ChatMessage"]
+    if (sender === this.sender) {
+      classes.push("ChatMessage--sent")
+    } else {
+      classes.push("ChatMessage--received")
+    }
+
+    return `
+      <li class="${classes.join(" ")}">
+        <label class="ChatMessage-sender">
+          ${sender === this.sender ? "Me" : this.receiver}
+        </label>
+        <p class="ChatMessage-body">
+          ${message.body}
+        </p>
+      </li>
+    `
   }
 }

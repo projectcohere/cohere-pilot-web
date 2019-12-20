@@ -11,6 +11,20 @@ class Chat
 
     # -- queries --
     # -- queries/one
+    def find(id)
+      record = Chat::Record
+        .find(id)
+
+      entity_from(record)
+    end
+
+    def find_by_recipient(recipient_id)
+      record = Chat::Record
+        .find_by(recipient_id: recipient_id)
+
+      entity_from(record)
+    end
+
     def find_by_recipient_token(recipient_token)
       record = Chat::Record
         .where("recipient_token_expires_at >= ?", Time.zone.now)
@@ -64,7 +78,7 @@ class Chat
         record: r,
         id: Id.new(r.id),
         recipient_token: Chat::Token.new(
-          value: r.recipient_token,
+          val: r.recipient_token,
           expires_at: r.recipient_token_expires_at
         ),
         messages: r.messages.map { |m|

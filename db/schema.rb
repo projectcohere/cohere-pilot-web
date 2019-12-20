@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_19_170751) do
+ActiveRecord::Schema.define(version: 2019_12_20_184011) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -64,7 +64,8 @@ ActiveRecord::Schema.define(version: 2019_12_19_170751) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.jsonb "messages", default: []
-    t.index ["recipient_id"], name: "index_chats_on_recipient_id"
+    t.index ["recipient_id"], name: "index_chats_on_recipient_id", unique: true
+    t.index ["recipient_token"], name: "index_chats_on_recipient_token", unique: true
   end
 
   create_table "documents", force: :cascade do |t|

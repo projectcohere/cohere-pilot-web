@@ -9,7 +9,7 @@ class Chat
       assert_not_nil(chat.recipient_token)
 
       token = chat.recipient_token
-      assert_not_nil(token.value)
+      assert_not_nil(token.val)
       assert_not_nil(token.expires_at)
     end
   end
