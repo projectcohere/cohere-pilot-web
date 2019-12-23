@@ -2,6 +2,9 @@
   &-body {
     flex: 1;
     display: flex;
-    column-gap: $spacing3;
+
+    > * + * {
+      margin-left: $spacing3;
+    }
   }
 }

@@ -1,7 +1,11 @@
 .CaseDocuments {
-  &-list {
+  &-list[class] {
     grid-column: 1 / 10;
     display: flex;
-    gap: $spacing3;
+    margin: -$spacing3;
+
+    > * {
+      margin: $spacing3;
+    }
   }
 }

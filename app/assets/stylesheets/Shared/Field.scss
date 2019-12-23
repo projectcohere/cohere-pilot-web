@@ -84,6 +84,10 @@
     width: 0;
     min-width: 0;
 
+    &:focus {
+      outline: none;
+    }
+
     &::placeholder {
       color: $gray1;
       opacity: 1;
@@ -118,6 +122,7 @@
 
     appearance: none;
     -moz-appearance: none;
+    -webkit-appearance: none;
 
     &:checked {
       @include u-checkmark;
@@ -174,6 +179,7 @@
     background: none;
     appearance: none;
     -moz-appearance: none;
+    -webkit-appearance: none;
     cursor: pointer;
   }
 }

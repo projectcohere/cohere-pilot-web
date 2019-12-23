@@ -14,7 +14,6 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    row-gap: $spacing4;
     padding: 0 $spacing3;
     overflow-y: auto;
     scroll-snap-type: y mandatory;
@@ -27,6 +26,10 @@
       to {
         opacity: 1;
       }
+    }
+
+    > * + * {
+      margin-top: $spacing4;
     }
   }
 
