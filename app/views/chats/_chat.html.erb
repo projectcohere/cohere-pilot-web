@@ -4,7 +4,7 @@
 
   <%= tag.ul(id: "chat", class: "Chat-messages", data: data) do %>
     <%- chat.messages.each do |msg| %>
-      <% is_sent = msg.sender.to_sym == sender %>
+      <% is_sent = msg.sent_by?(sender) %>
       <li class="<%= cx("ChatMessage", "ChatMessage--sent" => is_sent, "ChatMessage--received" => !is_sent) %>">
         <label class="ChatMessage-sender">
           <%= is_sent ? "Me" : receiver %>

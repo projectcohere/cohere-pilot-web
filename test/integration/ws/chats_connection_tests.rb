@@ -19,21 +19,20 @@ module Ws
     # -- tests --
     test "connect a user by remember token" do
       user_rec = users(:cohere_1)
-      user_token = user_rec.remember_token
-      cookies[:remember_token] = user_token
+      cookies[:remember_token] = user_rec.remember_token
+      cookies.signed[:chat_user_id] = "test-id"
 
       connect
-      assert_not_nil(connection.current_user)
-      assert_equal(connection.current_user.id.val, user_rec.id)
+      assert_equal(connection.chat_user_id, "test-id")
     end
 
     test "connect a chat by recipient token" do
       chat_rec = chats(:chat_1)
-      cookies.encrypted.signed[:recipient_token] = chat_rec.recipient_token
+      cookies.encrypted.signed[:chat_recipient_token] = chat_rec.recipient_token
 
       connect
-      assert_not_nil(connection.current_chat)
-      assert_equal(connection.current_chat.id.val, chat_rec.id)
+      assert_not_nil(connection.chat)
+      assert_equal(connection.chat.id.val, chat_rec.id)
     end
   end
 end

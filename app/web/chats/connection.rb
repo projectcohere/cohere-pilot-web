@@ -1,8 +1,8 @@
 module Chats
   class Connection < ActionCable::Connection::Base
     identified_by(
-      :current_user,
-      :current_chat
+      :chat_user_id,
+      :chat
     )
 
     # -- commands --
@@ -16,17 +16,26 @@ module Chats
         return false
       end
 
-      @current_user = User::Repo.get.find_by_remember_token(remember_token)
+      user = User::Repo.get.find_by_remember_token(remember_token)
+      if user == nil
+        reject_unauthorized_connection
+      end
+
+      @chat_user_id = cookies.signed[:chat_user_id]
+      if @chat_user_id.blank?
+        reject_unauthorized_connection
+      end
+
       return true
     end
 
     private def connect_by_chat
-      recipient_token = cookies.encrypted.signed[:recipient_token]
-      if recipient_token.nil?
+      chat_token = cookies.encrypted.signed[:chat_recipient_token]
+      if chat_token.blank?
         return false
       end
 
-      @current_chat = Chat::Repo.get.find_by_recipient_token(recipient_token)
+      @chat = Chat::Repo.get.find_by_recipient_token(chat_token)
       return true
     end
   end

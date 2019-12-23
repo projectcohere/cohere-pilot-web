@@ -8,7 +8,7 @@ const kIdChatForm = "chat-form"
 const kIdChatField = "chat-field"
 
 // -- types --
-type Sender = "cohere" | "recipient"
+type Sender = string | "recipient"
 type Message = { type: "text", body: string }
 
 interface Incoming {
@@ -105,7 +105,7 @@ export class Chat implements IComponent {
     }
 
     this.channel.send(outgoing)
-    this.addMessage(this.sender, outgoing.message)
+    this.addMessage(outgoing.message, this.sender)
 
     field.textContent = ""
   }
@@ -114,17 +114,27 @@ export class Chat implements IComponent {
     console.debug("Chat - received:", incoming)
 
     if (incoming.sender !== this.sender) {
-      this.addMessage(incoming.sender, incoming.message)
+      this.addMessage(incoming.message, incoming.sender)
     }
   }
 
-  private addMessage(sender: Sender, message: Message) {
+  private addMessage(message: Message, sender: Sender) {
     this.$chat.insertAdjacentHTML(
       "beforeend",
-      this.render(sender, message)
+      this.render(message, sender)
     )
 
     this.$chat.scrollTo(0, this.$chat.scrollHeight)
+  }
+
+  // -- queries --
+  isSentBy(message: Message, sender: Sender) {
+    switch (this.sender) {
+      case "recipient":
+        return sender === "recipient"
+      default:
+        return sender !== "recipient"
+    }
   }
 
   // -- events --
@@ -138,9 +148,11 @@ export class Chat implements IComponent {
   }
 
   // -- view --
-  private render(sender: Sender, message: Message) {
+  private render(message: Message, sender: Sender) {
     const classes = ["ChatMessage"]
-    if (sender === this.sender) {
+
+    const isSent = this.isSentBy(message, sender)
+    if (isSent) {
       classes.push("ChatMessage--sent")
     } else {
       classes.push("ChatMessage--received")
@@ -149,7 +161,7 @@ export class Chat implements IComponent {
     return `
       <li class="${classes.join(" ")}">
         <label class="ChatMessage-sender">
-          ${sender === this.sender ? "Me" : this.receiver}
+          ${isSent ? "Me" : this.receiver}
         </label>
         <p class="ChatMessage-body">
           ${message.body}

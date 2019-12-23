@@ -54,7 +54,7 @@ module Db
       chat_rec = chats(:chat_2)
       chat = Chat::Repo.map_record(chat_rec)
       chat.add_message(
-        sender: Chat::Sender::Cohere,
+        sender: Chat::Sender.recipient,
         type: Chat::Type::Text,
         body: "Test."
       )
@@ -71,7 +71,7 @@ module Db
 
       message_rec = chat_rec.messages[0]
       assert_equal(message_rec["id"], 0)
-      assert_equal(message_rec["sender"], Chat::Sender::Cohere.to_s)
+      assert_equal(message_rec["sender"], Chat::Sender.recipient)
       assert_equal(message_rec["type"], Chat::Type::Text.to_s)
       assert_equal(message_rec["body"], "Test.")
 

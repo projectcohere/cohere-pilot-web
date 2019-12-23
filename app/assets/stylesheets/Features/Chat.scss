@@ -1,18 +1,21 @@
 .Chat {
-  @extend .u-panel-cozy;
+  @extend .u-panel;
 
   display: flex;
   flex-direction: column;
   width: 320px;
   height: 568px;
+  padding: $spacing3 0;
   border-radius: $radius-chat;
+  background-color: $white;
 
   // -- elements --
-  &-messages {
+  &-messages[class] {
     flex: 1;
     display: flex;
     flex-direction: column;
     row-gap: $spacing4;
+    padding: 0 $spacing3;
     overflow-y: auto;
     scroll-snap-type: y mandatory;
     animation: messages-appear 0.75s;
@@ -35,6 +38,7 @@
     display: flex;
     align-items: flex-end;
     margin-top: $spacing3;
+    padding: 0 $spacing3;
   }
 
   &-send {

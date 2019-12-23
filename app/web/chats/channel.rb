@@ -10,10 +10,10 @@ module Chats
       chat = find_current_chat(data["chat"])
 
       # determine sender based on auth method
-      chat_sender = if connection.current_user != nil
-        Chat::Sender::Cohere
+      chat_sender = if connection.chat_user_id != nil
+        Chat::Sender.cohere(connection.chat_user_id)
       else
-        Chat::Sender::Recipient
+        Chat::Sender.recipient
       end
 
       # receive message
@@ -37,8 +37,8 @@ module Chats
 
     # -- queries --
     private def find_current_chat(chat_id)
-      if connection.current_chat != nil
-        return connection.current_chat
+      if connection.chat != nil
+        return connection.chat
       elsif chat_id != nil
         return Chat::Repo.get.find(chat_id)
       end

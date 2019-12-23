@@ -4,7 +4,7 @@ chat_1:
   recipient_token_expires_at: <%= Time.zone.now + 1.year %>
   messages:
     - id: 0
-      sender: cohere
+      sender: "FO19FJE"
       type: text
       body: Test 1.
 

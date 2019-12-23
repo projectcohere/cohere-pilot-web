@@ -2,7 +2,7 @@
   <%=
     render(partial: "chats/chat", locals: {
       chat: @chat,
-      sender: Chat::Sender::Recipient,
+      sender: Chat::Sender.recipient,
       receiver: "Gaby",
     })
   %>

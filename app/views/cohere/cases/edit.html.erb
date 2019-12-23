@@ -93,7 +93,7 @@
       <%=
         render(partial: "chats/chat", locals: {
           chat: @chat,
-          sender: Chat::Sender::Cohere,
+          sender: Chat::Sender.cohere(cookies.signed[:chat_user_id]),
           receiver: @view.recipient_first_name,
           data: {
             id: @chat.id.val,

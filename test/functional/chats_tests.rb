@@ -4,7 +4,7 @@ class ChatsTests < ActionDispatch::IntegrationTest
   # -- connect --
   test "connect to a new chat session" do
     get("/chat/connect?recipient_token=test-token")
-    assert_not_nil(cookies[:recipient_token])
+    assert_not_nil(cookies[:chat_recipient_token])
     assert_redirected_to("/chat")
   end
 
@@ -19,7 +19,7 @@ class ChatsTests < ActionDispatch::IntegrationTest
     follow_redirect!
 
     assert_redirected_to("/chat/join")
-    assert_blank(cookies[:recipient_token])
+    assert_blank(cookies[:chat_recipient_token])
   end
 
   test "can't chat with an expired token" do
@@ -30,18 +30,18 @@ class ChatsTests < ActionDispatch::IntegrationTest
     follow_redirect!
 
     assert_redirected_to("/chat/join")
-    assert_blank(cookies[:recipient_token])
+    assert_blank(cookies[:chat_recipient_token])
   end
 
   test "show the chat view" do
     chat_rec = chats(:chat_1)
     chat_token = chat_rec.recipient_token
 
-    get("/chat/connect?recipient_token=#{chat_token}")
+    get("/chat/connect?chat_recipient_token=#{chat_token}")
     follow_redirect!
 
     assert_response(:success)
-    assert_not_nil(cookies[:recipient_token])
+    assert_present(cookies[:chat_recipient_token])
   end
 end
 
@@ -54,7 +54,7 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
     chat = Chat::Repo.map_record(chat_rec)
     user_rec = users(:cohere_1)
     user = User::Repo.map_record(user_rec)
-    stub_connection(current_user: user, current_chat: nil)
+    stub_connection(chat_user_id: user, chat: nil)
 
     subscribe(chat: chat_rec.id)
     assert_has_stream_for(chat)
@@ -63,7 +63,7 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
   test "subscribe a recipient" do
     chat_rec = chats(:chat_1)
     chat = Chat::Repo.map_record(chat_rec)
-    stub_connection(current_user: nil, current_chat: chat)
+    stub_connection(chat_user_id: nil, chat: chat)
 
     subscribe
     assert_has_stream_for(chat)
@@ -74,9 +74,7 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
 
     chat_rec = chats(:chat_1)
     chat = Chat::Repo.map_record(chat_rec)
-    user_rec = users(:cohere_1)
-    user = User::Repo.map_record(user_rec)
-    stub_connection(current_user: user, current_chat: nil)
+    stub_connection(chat_user_id: "test-id", chat: nil)
 
     subscribe
     perform(:receive, {
@@ -88,7 +86,7 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
     })
 
     assert_broadcast_on(chat, {
-      sender: Chat::Sender::Cohere,
+      sender: Chat::Sender.cohere("test-id"),
       message: {
         type: Chat::Type::Text,
         body: "Test from Cohere."
@@ -101,7 +99,7 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
 
     chat_rec = chats(:chat_1)
     chat = Chat::Repo.map_record(chat_rec)
-    stub_connection(current_user: nil, current_chat: chat)
+    stub_connection(chat_user_id: nil, chat: chat)
 
     subscribe
     perform(:receive, {
@@ -113,7 +111,7 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
     })
 
     assert_broadcast_on(chat, {
-      sender: Chat::Sender::Recipient,
+      sender: Chat::Sender.recipient,
       message: {
         type: Chat::Type::Text,
         body: "Test from recipient."
