@@ -1,0 +1,60 @@
+.ChatFile {
+  $size: 33px;
+
+  display: flex;
+  align-items: center;
+
+  &-preview {
+    width: $size;
+    height: $size;
+    border-radius: $radius;
+    border: 2px solid $brand-primary;
+    background-color: $color-field;
+    overflow: hidden;
+  }
+
+  &-name {
+    flex: 1;
+    max-height: 3em;
+    overflow: hidden;
+    margin-left: $spacing5;
+    font-size: $font-size6;
+  }
+
+  &-removeButton {
+    $size: 24px;
+    --icon-color: #{$brand-black};
+
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: $size;
+    height: $size;
+    margin-left: $spacing5;
+    cursor: pointer;
+
+    &:hover {
+      --icon-color: #{$color-error};
+    }
+
+    // ChatFile-removeButton > icon
+    &::before, &::after {
+      content: "";
+      pointer-events: none;
+      position: absolute;
+      width: 14px;
+      height: 2px;
+      translate: 1px 2px;
+      background-color: var(--icon-color);
+    }
+
+    &::before {
+      transform: translate(-1px, -2px) rotate(-45deg);
+    }
+
+    &::after {
+      transform: translate(-1px, -2px) rotate(45deg);
+    }
+  }
+}

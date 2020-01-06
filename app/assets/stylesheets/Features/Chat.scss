@@ -34,31 +34,76 @@
   }
 
   // -- elements/form
-  $form-height: 44px;
-  $form-spacing: 10px;
-
   &-form {
-    display: flex;
-    align-items: flex-end;
     margin-top: $spacing3;
     padding: 0 $spacing3;
   }
 
-  &-send {
-    $send-size: 34px;
+  // -- elements/controls
+  $controls-height: 44px;
+  $controls-spacing: 10px;
+
+  &-controls {
+    display: flex;
+    align-items: flex-end;
+  }
+
+  %primary-action {
+    $size: 34px;
+
+    width: $size;
+    height: $size;
+    margin-left: $controls-spacing;
+    margin-bottom: ($controls-height - $size) / 2;
+    border-radius: $size / 2;
+    background-color: $brand-primary;
+    cursor: pointer;
+  }
+
+  &-addFile {
+    @extend %primary-action;
 
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: $send-size;
-    height: $send-size;
-    margin-left: $form-spacing;
-    margin-bottom: ($form-height - $send-size) / 2;
-    border-radius: $send-size / 2;
-    background-color: $brand-primary;
-    cursor: pointer;
 
+    // Chat-addFile > input
+    > input {
+      position: absolute;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    // Chat-addFile > icon
+    &::before, &::after {
+      content: "";
+      pointer-events: none;
+      position: absolute;
+      width: 14px;
+      height: 2px;
+      translate: 1px 2px;
+      background-color: $white;
+    }
+
+    &:before {
+      transform: translate(-1px, -2px) rotate(90deg);
+    }
+
+    &:after {
+      transform: translate(-1px, -2px);
+    }
+  }
+
+  &-send {
+    @extend %primary-action;
+
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    // Chat-send > icon
     &::before, &::after {
       content: "";
       pointer-events: none;
@@ -84,17 +129,20 @@
   &-field {
     flex: 1;
     position: relative;
-    max-width: 100%;
     background-color: $color-field;
-    border-radius: $form-height / 2;
+    border-radius: $controls-height / 2;
   }
 
   &-input {
     box-sizing: content-box;
     display: block;
     padding: $field-spacing;
-    min-height: $form-height - $form-spacing * 2;
-    overflow-wrap: break-word;
+    min-height: $controls-height - $controls-spacing * 2;
+    overflow-wrap: anywhere;
+
+    &:focus {
+      outline: none;
+    }
   }
 
   &-placeholder {
@@ -107,5 +155,18 @@
 
   &-input:not(:empty) + &-placeholder {
     display: none;
+  }
+
+  // -- elements/files
+  &-files[class] {
+    margin-bottom: $spacing3;
+
+    &.is-empty {
+      display: none;
+    }
+
+    > * + * {
+      margin-top: $spacing5;
+    }
   }
 }

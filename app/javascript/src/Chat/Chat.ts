@@ -1,11 +1,12 @@
 import { createConsumer } from "@rails/actioncable"
-import { IComponent } from "./Component"
+import { Files } from "./Files"
+import { IComponent } from "../Component"
 
 // -- constants --
 const kConsumer = createConsumer()
 const kIdChat = "chat"
 const kIdChatForm = "chat-form"
-const kIdChatField = "chat-field"
+const kIdChatInput = "chat-input"
 
 // -- types --
 type Sender = string | "recipient"
@@ -25,6 +26,9 @@ interface Outgoing {
 export class Chat implements IComponent {
   isOnLoad = true
 
+  // -- deps --
+  private files = new Files()
+
   // -- props --
   private channel: ActionCable.Channel
   private id: string | null
@@ -32,7 +36,7 @@ export class Chat implements IComponent {
   private receiver: string
 
   private $chat: HTMLElement
-  private $chatField: HTMLElement
+  private $chatInput: HTMLElement
 
   // -- IComponent --
   start() {
@@ -48,7 +52,7 @@ export class Chat implements IComponent {
 
     // capture elements
     this.$chat = $chat
-    this.$chatField = document.getElementById(kIdChatField)
+    this.$chatInput = document.getElementById(kIdChatInput)
 
     // set initial view state
     this.$chat.scrollTop = this.$chat.scrollHeight - 50;
@@ -59,9 +63,15 @@ export class Chat implements IComponent {
 
     // subscribe to channel
     this.subscribe()
+
+    // start deps
+    this.files.start()
   }
 
   cleanup() {
+    // cleanup deps
+    this.files.cleanup()
+
     // cleanup props
     this.id = null
     this.sender = null
@@ -69,7 +79,7 @@ export class Chat implements IComponent {
 
     // cleanup elements
     this.$chat = null
-    this.$chatField = null
+    this.$chatInput = null
 
     // unsubscribe from channel
     if (this.channel != null) {
@@ -91,7 +101,7 @@ export class Chat implements IComponent {
   }
 
   private sendMessage() {
-    const field = this.$chatField
+    const field = this.$chatInput
     if (field.textContent.length == 0) {
       return
     }

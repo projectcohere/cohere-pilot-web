@@ -1,6 +1,6 @@
 // -- types --
 export interface IComponent {
-  isOnLoad: boolean
+  isOnLoad?: boolean
   start(): void
   cleanup?(): void
 }

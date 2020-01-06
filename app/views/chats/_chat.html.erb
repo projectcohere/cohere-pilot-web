@@ -2,7 +2,7 @@
   <%- data = { sender: sender, receiver: receiver } %>
   <%- data.merge!(local_assigns[:data] || {}) %>
 
-  <%= tag.ul(id: "chat", class: "Chat-messages", data: data) do %>
+  <%= tag.ol(id: "chat", class: "Chat-messages", data: data) do %>
     <%- chat.messages.each do |msg| %>
       <% is_sent = msg.sent_by?(sender) %>
       <li class="<%= cx("ChatMessage", "ChatMessage--sent" => is_sent, "ChatMessage--received" => !is_sent) %>">
@@ -17,10 +17,18 @@
   <%- end %>
 
   <form id="chat-form" class="Chat-form">
-    <div class="Chat-field">
-      <span id="chat-field" contenteditable="true" class="Chat-input"></span>
-      <span class="Chat-placeholder">Enter your message...</span>
+    <ol id="chat-files" class="Chat-files is-empty"></ol>
+
+    <div class="Chat-controls">
+      <div class="Chat-field">
+        <span id="chat-input" contenteditable="true" class="Chat-input"></span>
+        <span class="Chat-placeholder">Enter your message...</span>
+      </div>
+
+      <label class="Chat-addFile">
+        <input id="chat-file-input" type="file" multiple="true" />
+      </label>
+      <button class="Chat-send" alt="Send Message"></button>
     </div>
-    <button class="Chat-send" alt="Send Message"></button>
   </form>
 </article>
