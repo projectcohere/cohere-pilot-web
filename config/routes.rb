@@ -41,7 +41,7 @@ Rails.application.routes.draw do
 
     # chats
     resource(:chat, only: [:show]) do
-      get("/connect", action: :connect)
+      get("/connect/:token", action: :connect)
       get("/join", action: :join)
     end
 

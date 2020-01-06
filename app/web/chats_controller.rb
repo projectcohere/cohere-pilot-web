@@ -1,6 +1,6 @@
 class ChatsController < ApplicationController
   def connect
-    cookies.encrypted.signed[:chat_recipient_token] = params[:chat_recipient_token]
+    cookies.encrypted.signed[:chat_recipient_token] = params[:token]
     redirect_to(chat_path)
   end
 

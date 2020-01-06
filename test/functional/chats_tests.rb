@@ -3,7 +3,7 @@ require "test_helper"
 class ChatsTests < ActionDispatch::IntegrationTest
   # -- connect --
   test "connect to a new chat session" do
-    get("/chat/connect?recipient_token=test-token")
+    get("/chat/connect/test-token")
     assert_not_nil(cookies[:chat_recipient_token])
     assert_redirected_to("/chat")
   end
@@ -15,7 +15,7 @@ class ChatsTests < ActionDispatch::IntegrationTest
   end
 
   test "can't chat with an unknown token" do
-    get("/chat/connect?recipient_token=fake-token")
+    get("/chat/connect/fake-token")
     follow_redirect!
 
     assert_redirected_to("/chat/join")
@@ -26,7 +26,7 @@ class ChatsTests < ActionDispatch::IntegrationTest
     chat_rec = chats(:chat_2)
     chat_token = chat_rec.recipient_token
 
-    get("/chat/connect?recipient_token=#{chat_token}")
+    get("/chat/connect/#{chat_token}")
     follow_redirect!
 
     assert_redirected_to("/chat/join")
@@ -37,7 +37,7 @@ class ChatsTests < ActionDispatch::IntegrationTest
     chat_rec = chats(:chat_1)
     chat_token = chat_rec.recipient_token
 
-    get("/chat/connect?chat_recipient_token=#{chat_token}")
+    get("/chat/connect/#{chat_token}")
     follow_redirect!
 
     assert_response(:success)
