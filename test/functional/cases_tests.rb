@@ -281,7 +281,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     pdf_text = text_from_pdf_file(case_rec.documents[0].file)
     assert_match(/MEAP\s*Agreement/, pdf_text)
-    assert_match(/Danice\s*Sample/, pdf_text)
+    assert_match(/Janice\s*Sample/, pdf_text)
   end
 
   test "show errors when saving an invalid case as a cohere user" do

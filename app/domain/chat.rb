@@ -6,6 +6,7 @@ class Chat < Entity
   prop(:id, default: Id::None)
   prop(:recipient_token, default: nil)
   prop(:messages, default: [])
+  prop(:current_case_id, default: nil)
   props_end!
 
   # -- props/temporary

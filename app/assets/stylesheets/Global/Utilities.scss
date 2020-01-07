@@ -61,6 +61,19 @@
   background-color: $white;
 }
 
+/* breakpoints */
+@mixin mobile {
+  @media(max-width: 667px) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media(min-width: 668px) {
+    @content;
+  }
+}
+
 /* icons */
 @mixin u-checkmark-arm {
   position: absolute;

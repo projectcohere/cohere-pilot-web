@@ -43,6 +43,9 @@ Rails.application.routes.draw do
     resource(:chat, only: [:show]) do
       get("/connect/:token", action: :connect)
       get("/join", action: :join)
+      post("/files", action: :files, constraints: ->(req) {
+        req.content_type == "multipart/form-data"
+      })
     end
 
     # fallback

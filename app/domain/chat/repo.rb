@@ -12,35 +12,47 @@ class Chat
     # -- queries --
     # -- queries/one
     def find(id)
-      record = Chat::Record
+      chat_rec = Chat::Record
         .find(id)
 
-      entity_from(record)
+      entity_from(chat_rec)
     end
 
     def find_by_recipient(recipient_id)
-      record = Chat::Record
+      chat_rec = Chat::Record
         .find_by(recipient_id: recipient_id)
 
-      entity_from(record)
+      entity_from(chat_rec)
     end
 
     def find_by_recipient_token(recipient_token)
-      record = Chat::Record
+      chat_rec = Chat::Record
         .where("recipient_token_expires_at >= ?", Time.zone.now)
         .find_by(recipient_token: recipient_token)
 
-      entity_from(record)
+      entity_from(chat_rec)
+    end
+
+    def find_by_recipient_token_with_current_case(recipient_token)
+      chat_rec = Chat::Record
+        .where("recipient_token_expires_at >= ?", Time.zone.now)
+        .find_by!(recipient_token: recipient_token)
+
+      case_rec = chat_rec.recipient.cases
+        .where.not(status: [:submitted, :approved, :denied])
+        .first!
+
+      entity_from(chat_rec, case_rec.id)
     end
 
     def find_with_message(id, message_id)
-      record = Chat::Record
+      chat_rec = Chat::Record
         .select(Chat::Record.column_names - ["messages"])
         .select("jsonb_build_array(messages->#{message_id}) as messages")
         .where("messages->0 IS NOT NULL")
         .find(id)
 
-      entity_from(record).tap do |chat|
+      entity_from(chat_rec).tap do |chat|
         chat.select_message(0)
       end
     end
@@ -73,7 +85,7 @@ class Chat
     end
 
     # -- factories --
-    def self.map_record(r)
+    def self.map_record(r, current_case_id = nil)
       Chat.new(
         record: r,
         id: Id.new(r.id),
@@ -84,6 +96,7 @@ class Chat
         messages: r.messages.map { |m|
           map_message(m)
         },
+        current_case_id: current_case_id,
       )
     end
 

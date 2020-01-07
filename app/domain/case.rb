@@ -134,6 +134,13 @@ class Case < ::Entity
     end
   end
 
+  def attach_chat_files(files)
+    files.each do |file|
+      new_document = Document.attach(file)
+      add_document(new_document)
+    end
+  end
+
   # -- commands/documents
   def sign_contract(program_contract)
     if not contract_document.nil?

@@ -19,6 +19,12 @@ class Document < ::Entity
     )
   end
 
+  def self.attach(new_file)
+    document = Document.new(classification: :unknown)
+    document.attach_file(new_file)
+    return document
+  end
+
   def self.sign_contract(program_contract)
     Document.new(
       classification: :contract,
@@ -35,8 +41,8 @@ class Document < ::Entity
   end
 
   # -- commands --
-  def attach_file(file)
-    @new_file = file
+  def attach_file(new_file)
+    @new_file = new_file
   end
 
   # -- callbacks --

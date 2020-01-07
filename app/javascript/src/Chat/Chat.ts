@@ -8,6 +8,9 @@ const kIdChat = "chat"
 const kIdChatForm = "chat-form"
 const kIdChatInput = "chat-input"
 
+const kFieldAuthenticityToken = "authenticity_token"
+const kQueryAuthenticityToken = `input[name=${kFieldAuthenticityToken}]`
+
 // -- types --
 type Sender = string | "recipient"
 type Message = { type: "text", body: string }
@@ -34,14 +37,17 @@ export class Chat implements IComponent {
   private id: string | null
   private sender: Sender
   private receiver: string
+  private authenticityToken: string
 
+  // -- props/el
   private $chat: HTMLElement
   private $chatInput: HTMLElement
 
   // -- IComponent --
   start() {
     const $chat = document.getElementById(kIdChat)
-    if ($chat == null) {
+    const $chatForm = document.getElementById(kIdChatForm)
+    if ($chat == null || $chatForm == null) {
       return
     }
 
@@ -49,6 +55,7 @@ export class Chat implements IComponent {
     this.id = $chat.dataset.id
     this.sender = $chat.dataset.sender as Sender
     this.receiver = $chat.dataset.receiver
+    this.authenticityToken = $chatForm.querySelector(kQueryAuthenticityToken).getAttribute("value")
 
     // capture elements
     this.$chat = $chat
@@ -58,7 +65,6 @@ export class Chat implements IComponent {
     this.$chat.scrollTop = this.$chat.scrollHeight - 50;
 
     // bind to events
-    const $chatForm = document.getElementById(kIdChatForm)
     $chatForm.addEventListener("submit", this.didSubmitMessage.bind(this))
 
     // subscribe to channel
@@ -100,9 +106,35 @@ export class Chat implements IComponent {
     })
   }
 
+  private sendFiles() {
+    const files = this.files.all()
+    if (files.length === 0) {
+      return
+    }
+
+    // construct the form body
+    const body = new FormData()
+    body.append("authenticity_token", this.authenticityToken)
+
+    let index = 0
+    for (const file of files) {
+      body.append(`files[${index++}]`, file)
+    }
+
+    // post the request
+    const url = `http://localhost:3000/chat/files`
+    window.fetch(url, {
+      method: "POST",
+      body
+    })
+
+    // update the ui
+    this.files.clear()
+  }
+
   private sendMessage() {
     const field = this.$chatInput
-    if (field.textContent.length == 0) {
+    if (field.textContent.length === 0) {
       return
     }
 
@@ -154,6 +186,8 @@ export class Chat implements IComponent {
 
   private didSubmitMessage(event: Event) {
     event.preventDefault()
+
+    this.sendFiles()
     this.sendMessage()
   }
 

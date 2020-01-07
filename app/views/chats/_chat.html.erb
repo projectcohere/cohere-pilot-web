@@ -17,7 +17,7 @@
       <%- end %>
     <%- end %>
 
-    <form id="chat-form" class="Chat-form">
+    <%= form_for(:chat, html: { id: "chat-form", class: "Chat-form" }) do |f| %>
       <ol id="chat-files" class="Chat-files is-empty"></ol>
 
       <div class="Chat-controls">
@@ -31,6 +31,6 @@
         </label>
         <button class="Chat-send" alt="Send Message"></button>
       </div>
-    </form>
+    <% end %>
   </div>
 </article>

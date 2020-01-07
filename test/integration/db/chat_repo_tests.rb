@@ -29,6 +29,24 @@ module Db
       assert_nil(chat)
     end
 
+    test "find a chat by recipient token with its current case" do
+      chat_repo = Chat::Repo.new
+      chat_rec = chats(:chat_1)
+
+      chat = chat_repo.find_by_recipient_token_with_current_case(chat_rec.recipient_token)
+      assert_not_nil(chat)
+      assert_not_nil(chat.current_case_id)
+    end
+
+    test "does not find a chat with a missing current case" do
+      chat_repo = Chat::Repo.new
+      chat_rec = chats(:chat_3)
+
+      assert_raises(ActiveRecord::RecordNotFound) do
+        chat_repo.find_by_recipient_token_with_current_case(chat_rec.recipient_token)
+      end
+    end
+
     test "find a chat with a selected message" do
       chat_repo = Chat::Repo.new
       chat_rec = chats(:chat_1)

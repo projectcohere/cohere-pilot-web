@@ -6,14 +6,25 @@ class ChatsController < ApplicationController
 
   def show
     chat_token = cookies.encrypted.signed[:chat_recipient_token]
-    @chat = if not chat_token.nil?
+    @chat = if chat_token != nil
       Chat::Repo.get.find_by_recipient_token(chat_token)
     end
 
+    # if the chat expired, redirect to join page
     if @chat.nil?
       cookies.delete(:chat_recipient_token)
       redirect_to(join_chat_path)
       return
     end
+  end
+
+  def files
+    chat_token = cookies.encrypted.signed[:chat_recipient_token]
+    if chat_token == nil
+      raise(ActionController::RoutingError, "No chat session connected.")
+    end
+
+    attach_files = Chats::AttachFiles.new
+    attach_files.(chat_token, params[:files].values)
   end
 end

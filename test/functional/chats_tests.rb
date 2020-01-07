@@ -43,6 +43,46 @@ class ChatsTests < ActionDispatch::IntegrationTest
     assert_response(:success)
     assert_present(cookies[:chat_recipient_token])
   end
+
+  # -- files --
+  test "can't upload files with an unknown request format" do
+    assert_raises(ActionController::RoutingError) do
+      post("/chat/files", as: :json)
+    end
+  end
+
+  test "can't upload files if not connected" do
+    assert_raises(ActionController::RoutingError) do
+      post("/chat/files", params: {
+        files: [
+          fixture_file_upload("files/test.txt", "text/plain", :binary)
+        ]
+      })
+    end
+  end
+
+  test "upload files for the current chat" do
+    chat_rec = chats(:chat_1)
+    chat_token = chat_rec.recipient_token
+    get("/chat/connect/#{chat_token}")
+
+    act = -> do
+      post("/chat/files", params: {
+        files: {
+          "0" => fixture_file_upload("files/test.txt", "text/plain", :binary)
+        }
+      })
+    end
+
+    assert_difference(
+      -> { Document::Record.count } => 1,
+      -> { ActiveStorage::Attachment.count } => 1,
+      -> { ActiveStorage::Blob.count } => 1,
+      &act
+    )
+
+    assert_response(:success)
+  end
 end
 
 class ChatsChannelTests < ActionCable::Channel::TestCase

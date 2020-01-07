@@ -1,72 +1,120 @@
 import { IComponent } from "../Component"
 
 // -- constants --
-const kIdFiles = "chat-files"
+const kIdFileList = "chat-files"
 const kIdFileInput = "chat-file-input"
 const kClassEmpty = "is-empty"
+const kNameRemove = "remove-file"
+
+// -- types --
+interface ChatFile {
+  id: string
+  file: File
+}
 
 // -- impls --
 export class Files implements IComponent {
   // -- props --
-  private $files: HTMLElement
+  private files: ChatFile[] = []
+
+  // -- props/el
+  private $fileList: HTMLElement
   private $fileInput: HTMLInputElement
 
   // -- IComponent --
   start() {
     // capture elements
-    this.$files = document.getElementById(kIdFiles)
+    this.$fileList = document.getElementById(kIdFileList)
     this.$fileInput = document.getElementById(kIdFileInput) as HTMLInputElement
 
     // bind to events
-    this.$files.addEventListener("click", this.didRemoveFile.bind(this))
+    this.$fileList.addEventListener("click", this.didRemoveFile.bind(this))
     this.$fileInput.addEventListener("change", this.didChangeFiles.bind(this))
   }
 
   cleanup() {
-    this.$files = null
+    this.resetFiles()
+    this.$fileList = null
     this.$fileInput = null
+  }
+
+  // -- commands --
+  clear() {
+    this.resetFiles()
+    this.render()
+  }
+
+  private resetFiles() {
+    this.files.splice(0, this.files.length)
+  }
+
+  // -- queries --
+  all(): File[] {
+    return this.files.map((f) => f.file)
   }
 
   // -- events --
   private didChangeFiles() {
-    const files = Array.from(this.$fileInput.files)
-    this.render(files)
+    this.resetFiles()
+
+    // add files from the input
+    const files = this.$fileInput.files
+    for (let i = 0; i < files.length; i++) {
+      this.files.push({
+        id: i.toString(),
+        file: files[i]
+      })
+    }
+
+    // re-render the view
+    this.render()
   }
 
   private didRemoveFile(event: Event) {
+    // make sure this click was on the delete button
     const $button = event.target as HTMLButtonElement
-    if ($button.name !== "remove-file") {
+    if ($button.name !== kNameRemove) {
       return
     }
 
-    const $file = $button.parentElement
+    const $file = $button.parentElement as HTMLElement
+
+    // remove the file by id
+    const id = $file.dataset.id
+    const index = this.files.findIndex((file) => {
+      return file.id == id
+    })
+
+    this.files.splice(index, 1)
+
+    // remove the dom node
     $file.remove()
 
     // set visibility class
-    this.$files.classList.toggle(kClassEmpty, this.$files.childElementCount === 0)
+    this.$fileList.classList.toggle(kClassEmpty, this.$fileList.childElementCount === 0)
   }
 
   // -- view --
-  private render(files: File[]) {
+  private render() {
     // set visibility class
-    this.$files.classList.toggle(kClassEmpty, files.length === 0)
+    this.$fileList.classList.toggle(kClassEmpty, this.files.length === 0)
 
     // clear previews
-    while (this.$files.lastChild) {
-      this.$files.removeChild(this.$files.lastChild)
+    while (this.$fileList.lastChild) {
+      this.$fileList.removeChild(this.$fileList.lastChild)
     }
 
-    // add file previews
-    for (const file of files) {
-      this.$files.insertAdjacentHTML("beforeend", this.renderFile(file))
+    // add previews
+    for (const file of this.files) {
+      this.$fileList.insertAdjacentHTML("beforeend", this.renderFile(file))
     }
   }
 
-  private renderFile(file: File): string {
+  private renderFile({ id, file }: ChatFile): string {
     const isPreviewable = file.type.startsWith("image")
 
     return `
-      <li class="ChatFile">
+      <li class="ChatFile" data-id=${id}>
         <figure class="ChatFile-preview" alt="File Preview">
           ${isPreviewable ? `<img src=${URL.createObjectURL(file)} />` : ""}
         </figure>

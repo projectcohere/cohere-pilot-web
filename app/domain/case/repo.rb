@@ -245,7 +245,7 @@ class Case
       @domain_events.consume(kase.events)
     end
 
-    def save_attached_file(kase)
+    def save_selected_attachment(kase)
       document = kase.selected_document
       if document.nil?
         raise "no document was selected"
@@ -267,6 +267,13 @@ class Case
         filename: f.name,
         content_type: f.mime_type
       )
+
+      # consume all entity events
+      @domain_events.consume(kase.events)
+    end
+
+    def save_new_attachments(kase)
+      create_documents!(kase.id.val, kase.new_documents)
 
       # consume all entity events
       @domain_events.consume(kase.events)
@@ -401,7 +408,7 @@ class Case
           case_id: case_id,
           classification: d.classification,
           source_url: d.source_url,
-          file: d.file&.attachment&.blob
+          file: d.new_file || d.file&.attachment&.blob
         }
       end
 

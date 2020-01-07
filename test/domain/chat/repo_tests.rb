@@ -3,10 +3,11 @@ require "test_helper"
 class Chat
   class RepoTests < ActiveSupport::TestCase
     test "maps a record" do
-      chat = Chat::Repo.map_record(chats(:chat_1))
+      chat = Chat::Repo.map_record(chats(:chat_1), 2)
       assert_not_nil(chat.record)
       assert_not_nil(chat.id&.val)
       assert_not_nil(chat.recipient_token)
+      assert_not_nil(chat.current_case_id)
 
       token = chat.recipient_token
       assert_not_nil(token.val)

@@ -36,7 +36,7 @@ pending_1:
 
 pending_2:
   status: pending
-  recipient: recipient_3
+  recipient: recipient_1
   enroller: enroller_2
   supplier: supplier_1
   supplier_account_number: A1

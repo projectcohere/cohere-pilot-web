@@ -349,7 +349,7 @@ module Db
 
       case_repo = Case::Repo.new
       act = -> do
-        case_repo.save_attached_file(kase)
+        case_repo.save_selected_attachment(kase)
       end
 
       assert_difference(
