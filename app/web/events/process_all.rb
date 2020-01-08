@@ -34,7 +34,7 @@ module Events
         when User::Events::DidInvite
           UsersMailer.did_invite(event.user_id.val).deliver_later
         when Chat::Events::DidReceiveMessage
-          Chats::DeliverMessage.perform_async(event.chat_id.val, event.chat_message_id)
+          Chats::DeliverMessage.perform_async(event.chat_message_id.val)
         end
 
         @process_analytics.(event)

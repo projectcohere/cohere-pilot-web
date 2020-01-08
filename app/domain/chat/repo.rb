@@ -15,46 +15,50 @@ class Chat
       chat_rec = Chat::Record
         .find(id)
 
-      entity_from(chat_rec)
+      return entity_from(chat_rec)
     end
 
-    def find_by_recipient(recipient_id)
+    def find_by_recipient_with_messages(recipient_id)
       chat_rec = Chat::Record
         .find_by(recipient_id: recipient_id)
 
-      entity_from(chat_rec)
+      chat_message_recs = Chat::Message::Record
+        .where(chat_id: chat_rec.id)
+
+      return entity_from(chat_rec, chat_message_recs)
     end
 
     def find_by_recipient_token(recipient_token)
       chat_rec = Chat::Record
-        .where("recipient_token_expires_at >= ?", Time.zone.now)
+        .with_an_unexpired_recipient_token
+        .find_by!(recipient_token: recipient_token)
+
+      return entity_from(chat_rec)
+    end
+
+    def find_by_recipient_token_with_messages(recipient_token)
+      chat_rec = Chat::Record
+        .with_an_unexpired_recipient_token
         .find_by(recipient_token: recipient_token)
 
-      entity_from(chat_rec)
+      chat_message_recs = if chat_rec != nil
+        Chat::Message::Record
+          .where(chat_id: chat_rec.id)
+      end
+
+      return entity_from(chat_rec, chat_message_recs)
     end
 
     def find_by_recipient_token_with_current_case(recipient_token)
       chat_rec = Chat::Record
-        .where("recipient_token_expires_at >= ?", Time.zone.now)
+        .with_an_unexpired_recipient_token
         .find_by!(recipient_token: recipient_token)
 
       case_rec = chat_rec.recipient.cases
         .where.not(status: [:submitted, :approved, :denied])
         .first!
 
-      entity_from(chat_rec, case_rec.id)
-    end
-
-    def find_with_message(id, message_id)
-      chat_rec = Chat::Record
-        .select(Chat::Record.column_names - ["messages"])
-        .select("jsonb_build_array(messages->#{message_id}) as messages")
-        .where("messages->0 IS NOT NULL")
-        .find(id)
-
-      entity_from(chat_rec).tap do |chat|
-        chat.select_message(0)
-      end
+      return entity_from(chat_rec, [], case_rec)
     end
 
     # -- commands --
@@ -64,20 +68,26 @@ class Chat
         raise "chat must be fetched from the db!"
       end
 
-      # update the record
-      chat.new_messages.each do |m|
-        chat_rec.messages << {
-          id: m.id,
+      messages = chat.new_messages
+
+      # build list of attributes
+      message_attrs = chat.new_messages.map do |m|
+        _attrs = {
           sender: m.sender,
-          type: m.type,
+          mtype: m.type,
           body: m.body,
+          chat_id: m.chat_id,
         }
       end
 
-      # save the record
-      chat_rec.save!
+      # create the records
+      message_recs = Chat::Message::Record.create!(message_attrs)
 
-      # send callbacks to entity
+      # send callbacks to entities
+      message_recs.each_with_index do |r, i|
+        messages[i].did_save(r)
+      end
+
       chat.did_save_new_messages
 
       # consume all entity events
@@ -85,7 +95,7 @@ class Chat
     end
 
     # -- factories --
-    def self.map_record(r, current_case_id = nil)
+    def self.map_record(r, message_recs = [], current_case_rec = nil)
       Chat.new(
         record: r,
         id: Id.new(r.id),
@@ -93,20 +103,18 @@ class Chat
           val: r.recipient_token,
           expires_at: r.recipient_token_expires_at
         ),
-        messages: r.messages.map { |m|
-          map_message(m)
+        messages: message_recs.map { |m|
+          Chat::Message::Repo.map_record(m)
         },
-        current_case_id: current_case_id,
+        current_case_id: current_case_rec&.id,
       )
     end
+  end
 
-    def self.map_message(r)
-      Chat::Message.new(
-        id: r["id"],
-        sender: r["sender"],
-        type: r["type"]&.to_sym,
-        body: r["body"],
-      )
+  class Record
+    # -- scopes --
+    def self.with_an_unexpired_recipient_token
+      where("recipient_token_expires_at >= ?", Time.zone.now)
     end
   end
 end

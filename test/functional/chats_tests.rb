@@ -109,14 +109,14 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
     assert_has_stream_for(chat)
   end
 
-  test "receives and broadcasts a text message from a cohere user" do
+  test "receives and delivers a text message from a cohere user" do
     Sidekiq::Testing.inline!
 
     chat_rec = chats(:chat_1)
     chat = Chat::Repo.map_record(chat_rec)
     stub_connection(chat_user_id: "test-id", chat: nil)
 
-    subscribe
+    subscribe(chat: chat_rec.id)
     perform(:receive, {
       "chat" => chat_rec.id,
       "message" => {
@@ -134,7 +134,7 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
     })
   end
 
-  test "receives and broadcasts a text message from a recipient" do
+  test "receives and delivers a text message from a recipient" do
     Sidekiq::Testing.inline!
 
     chat_rec = chats(:chat_1)

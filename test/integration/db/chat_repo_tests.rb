@@ -3,13 +3,14 @@ require "test_helper"
 module Db
   class ChatRepoTests < ActiveSupport::TestCase
     # -- queries --
-    test "find a chat by recipient" do
+    test "find a chat by recipient with messages" do
       chat_repo = Chat::Repo.new
       chat_rec = chats(:chat_1)
 
-      chat = chat_repo.find_by_recipient(chat_rec.recipient_id)
+      chat = chat_repo.find_by_recipient_with_messages(chat_rec.recipient_id)
       assert_not_nil(chat)
       assert_equal(chat.id.val, chat_rec.id)
+      assert_length(chat.messages, 1)
     end
 
     test "find a chat by recipient token" do
@@ -25,8 +26,19 @@ module Db
       chat_repo = Chat::Repo.new
       chat_rec = chats(:chat_2)
 
-      chat = chat_repo.find_by_recipient_token(chat_rec.recipient_token)
-      assert_nil(chat)
+      assert_raises(ActiveRecord::RecordNotFound) do
+        chat_repo.find_by_recipient_token(chat_rec.recipient_token)
+      end
+    end
+
+    test "find a chat by recipient token with messages" do
+      chat_repo = Chat::Repo.new
+      chat_rec = chats(:chat_1)
+
+      chat = chat_repo.find_by_recipient_token_with_messages(chat_rec.recipient_token)
+      assert_not_nil(chat)
+      assert_equal(chat.id.val, chat_rec.id)
+      assert_length(chat.messages, 1)
     end
 
     test "find a chat by recipient token with its current case" do
@@ -44,24 +56,6 @@ module Db
 
       assert_raises(ActiveRecord::RecordNotFound) do
         chat_repo.find_by_recipient_token_with_current_case(chat_rec.recipient_token)
-      end
-    end
-
-    test "find a chat with a selected message" do
-      chat_repo = Chat::Repo.new
-      chat_rec = chats(:chat_1)
-
-      chat = chat_repo.find_with_message(chat_rec.id, 0)
-      assert_equal(chat&.id&.val, chat_rec.id)
-      assert_equal(chat&.selected_message&.id, 0)
-    end
-
-    test "does not find a chat with a missing message" do
-      chat_repo = Chat::Repo.new
-      chat_rec = chats(:chat_2)
-
-      assert_raises(ActiveRecord::RecordNotFound) do
-        chat_repo.find_with_message(chat_rec.id, 0)
       end
     end
 
@@ -83,15 +77,15 @@ module Db
       end
 
       assert_difference(
-        -> { chat_rec.messages.count } => 1,
+        -> { Chat::Message::Record.count } => 1,
         &act
       )
 
-      message_rec = chat_rec.messages[0]
-      assert_equal(message_rec["id"], 0)
-      assert_equal(message_rec["sender"], Chat::Sender.recipient)
-      assert_equal(message_rec["type"], Chat::Type::Text.to_s)
-      assert_equal(message_rec["body"], "Test.")
+      message_rec = chat_rec.messages.reload[0]
+      assert_not_nil(message_rec.id)
+      assert_equal(message_rec.sender, Chat::Sender.recipient)
+      assert_equal(message_rec.mtype.to_sym, Chat::Type::Text)
+      assert_equal(message_rec.body, "Test.")
 
       assert_nil(chat.new_messages)
       assert_length(chat.events, 0)

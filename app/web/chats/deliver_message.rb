@@ -1,17 +1,17 @@
 module Chats
   class DeliverMessage < ApplicationWorker
-    def initialize(chat_repo: Chat::Repo.get)
-      @chat_repo = chat_repo
+    def initialize(chat_message_repo: Chat::Message::Repo.get)
+      @chat_message_repo = chat_message_repo
     end
 
-    def call(chat_id, chat_message_id)
-      chat = @chat_repo.find_with_message(chat_id, chat_message_id)
+    def call(chat_message_id)
+      chat_message = @chat_message_repo.find(chat_message_id)
 
-      Chats::Channel.broadcast_to(chat, {
-        sender: chat.selected_message.sender,
+      Chats::Channel.broadcast_to(chat_message.chat_id, {
+        sender: chat_message.sender,
         message: {
-          type: chat.selected_message.type,
-          body: chat.selected_message.body,
+          type: chat_message.type,
+          body: chat_message.body,
         },
       })
     end

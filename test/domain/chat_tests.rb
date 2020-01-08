@@ -4,6 +4,7 @@ class ChatTests < ActiveSupport::TestCase
   # -- commands --
   test "add a message" do
     chat = Chat.stub(
+      id: Id.new(42),
       messages: [
         Chat::Message.stub,
         Chat::Message.stub,
@@ -20,28 +21,14 @@ class ChatTests < ActiveSupport::TestCase
     assert_length(chat.new_messages, 1)
 
     message = chat.new_messages[0]
-    assert_equal(message.id, 2)
+    assert_equal(message.id, Id::None)
     assert_equal(message.sender, Chat::Sender.recipient)
     assert_equal(message.type, Chat::Type::Text)
     assert_equal(message.body, "This is a test.")
+    assert_equal(message.chat_id, 42)
 
     assert_length(chat.events, 1)
     assert_instance_of(Chat::Events::DidReceiveMessage, chat.events[0])
-  end
-
-  # -- commands/selection
-  test "selects a message" do
-    chat = Chat.stub(messages: [Chat::Message.stub])
-
-    chat.select_message(0)
-    assert_equal(chat.selected_message, chat.messages[0])
-  end
-
-  test "doesn't select a missing message" do
-    kase = Case.stub
-
-    assert_raises do
-      chat.select_message(0)
-    end
+    assert_not_nil(chat.events[0].chat_message_id)
   end
 end

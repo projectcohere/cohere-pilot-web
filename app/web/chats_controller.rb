@@ -7,7 +7,7 @@ class ChatsController < ApplicationController
   def show
     chat_token = cookies.encrypted.signed[:chat_recipient_token]
     @chat = if chat_token != nil
-      Chat::Repo.get.find_by_recipient_token(chat_token)
+      Chat::Repo.get.find_by_recipient_token_with_messages(chat_token)
     end
 
     # if the chat expired, redirect to join page

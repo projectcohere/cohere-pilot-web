@@ -405,10 +405,10 @@ class Case
 
       document_attrs = documents.map do |d|
         _attrs = {
-          case_id: case_id,
           classification: d.classification,
           source_url: d.source_url,
-          file: d.new_file || d.file&.attachment&.blob
+          file: d.new_file || d.file&.attachment&.blob,
+          case_id: case_id,
         }
       end
 

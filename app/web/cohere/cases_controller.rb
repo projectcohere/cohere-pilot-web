@@ -25,7 +25,7 @@ module Cohere
         deny_access
       end
 
-      @chat = Chat::Repo.get.find_by_recipient(@case.recipient.id)
+      @chat = Chat::Repo.get.find_by_recipient_with_messages(@case.recipient.id)
       @view = Cases::View.new(@case)
       @form = CaseForm.new(@case)
     end
@@ -36,7 +36,7 @@ module Cohere
         deny_access
       end
 
-      @chat = Chat::Repo.get.find_by_recipient(@case.recipient.id)
+      @chat = Chat::Repo.get.find_by_recipient_with_messages(@case.recipient.id)
       @view = Cases::View.new(@case)
       @form = CaseForm.new(@case,
         params

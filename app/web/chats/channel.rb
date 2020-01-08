@@ -3,7 +3,7 @@ module Chats
     # -- ActionCable::Channel::Base
     def subscribed
       chat = find_current_chat(params[:chat])
-      stream_for(chat)
+      stream_for(chat.id)
     end
 
     def receive(data)

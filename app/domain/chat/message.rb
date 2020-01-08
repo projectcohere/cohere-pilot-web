@@ -1,9 +1,10 @@
 class Chat
   class Message < ::Entity
-    prop(:id, default: 0)
+    prop(:id, default: Id::None)
     prop(:type)
     prop(:body)
     prop(:sender)
+    prop(:chat_id)
     props_end!
 
     # -- queries --
@@ -14,6 +15,11 @@ class Chat
       else
         other != Chat::Sender::Recipient
       end
+    end
+
+    # -- callbacks --
+    def did_save(record)
+      @id.set(record.id)
     end
   end
 end
