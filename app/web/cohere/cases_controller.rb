@@ -6,7 +6,7 @@ module Cohere
     # -- actions --
     def index
       if policy.forbid?(:list)
-        deny_access
+        return deny_access
       end
 
       @scope = params[:scope]
@@ -22,7 +22,7 @@ module Cohere
     def edit
       @case = Case::Repo.get.find_with_documents_and_referral(params[:id])
       if policy.forbid?(:edit)
-        deny_access
+        return deny_access
       end
 
       @chat = Chat::Repo.get.find_by_recipient_with_messages(@case.recipient.id)
@@ -33,7 +33,7 @@ module Cohere
     def update
       @case = Case::Repo.get.find_with_documents_and_referral(params[:id])
       if policy.forbid?(:edit)
-        deny_access
+        return deny_access
       end
 
       @chat = Chat::Repo.get.find_by_recipient_with_messages(@case.recipient.id)
@@ -51,8 +51,7 @@ module Cohere
       save_form = SaveCaseForm.new(@case, @form, save_action)
       if not save_form.()
         flash.now[:alert] = "Please check #{@view.recipient_name}'s case for errors."
-        render(:edit)
-        return
+        return render(:edit)
       end
 
       redirect_path = if @case.complete?
@@ -70,7 +69,7 @@ module Cohere
       @case = Case::Repo.get.find_with_documents_and_referral(params[:id])
 
       if policy.forbid?(:view)
-        deny_access
+        return deny_access
       end
     end
 
