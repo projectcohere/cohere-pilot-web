@@ -32,7 +32,13 @@ class ChatsController < ApplicationController
       raise(ActionController::RoutingError, "No chat session connected.")
     end
 
-    attach_files = Chats::AttachFiles.new
-    attach_files.(session_token, params[:files].values)
+    files = params[:files].values
+    file_ids = File::Repo.get.save_uploaded_files(files)
+
+    render(json: {
+      data: {
+        file_ids: file_ids
+      }
+    })
   end
 end

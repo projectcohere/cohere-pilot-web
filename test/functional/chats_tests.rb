@@ -54,9 +54,9 @@ class ChatsTests < ActionDispatch::IntegrationTest
   test "can't upload files if not connected" do
     assert_raises(ActionController::RoutingError) do
       post("/chat/files", params: {
-        files: [
-          fixture_file_upload("files/test.txt", "text/plain", :binary)
-        ]
+        files: {
+          "0" => fixture_file_upload("files/test.txt", "text/plain")
+        }
       })
     end
   end
@@ -69,19 +69,20 @@ class ChatsTests < ActionDispatch::IntegrationTest
     act = -> do
       post("/chat/files", params: {
         files: {
-          "0" => fixture_file_upload("files/test.txt", "text/plain", :binary)
+          "0" => fixture_file_upload("files/test.txt", "text/plain")
         }
       })
     end
 
     assert_difference(
-      -> { Document::Record.count } => 1,
-      -> { ActiveStorage::Attachment.count } => 1,
       -> { ActiveStorage::Blob.count } => 1,
       &act
     )
 
     assert_response(:success)
+
+    res = JSON.parse(response.body)
+    assert_length(res["data"]["file_ids"], 1)
   end
 end
 
