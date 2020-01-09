@@ -22,7 +22,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /Open Cases/)
-    assert_select(".CaseCell", 4)
+    assert_select(".CaseCell", 5)
   end
 
   test "can list cases as a cohere user" do
@@ -38,7 +38,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases/open", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /Open Cases/)
-    assert_select(".CaseCell", 7)
+    assert_select(".CaseCell", 8)
   end
 
   test "can list completed cases as a cohere user" do

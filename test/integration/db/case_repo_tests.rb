@@ -107,7 +107,7 @@ module Db
     test "finds all opened cases" do
       case_repo = Case::Repo.new
       cases = case_repo.find_all_opened
-      assert_length(cases, 7)
+      assert_length(cases, 8)
     end
 
     test "finds all completed cases" do
@@ -127,7 +127,7 @@ module Db
     test "finds all dhs cases" do
       case_repo = Case::Repo.new
       cases = case_repo.find_all_for_dhs
-      assert_length(cases, 4)
+      assert_length(cases, 5)
     end
 
     # -- test/save

@@ -7,7 +7,7 @@ module Chats
 
     # -- commands --
     def connect
-      connect_by_user || connect_by_chat
+      connect_by_user || connect_by_chat_session
     end
 
     private def connect_by_user
@@ -29,13 +29,13 @@ module Chats
       return true
     end
 
-    private def connect_by_chat
-      chat_token = cookies.encrypted.signed[:chat_recipient_token]
+    private def connect_by_chat_session
+      chat_token = cookies.encrypted.signed[:chat_session_token]
       if chat_token.blank?
         return false
       end
 
-      @chat = Chat::Repo.get.find_by_recipient_token(chat_token)
+      @chat = Chat::Repo.get.find_by_session(chat_token)
       return true
     end
   end

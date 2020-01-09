@@ -41,7 +41,7 @@ Rails.application.routes.draw do
 
     # chats
     resource(:chat, only: [:show]) do
-      get("/connect/:token", action: :connect)
+      get("/start/:invitation_token", action: :start)
       get("/join", action: :join)
       post("/files", action: :files, constraints: ->(req) {
         req.content_type == "multipart/form-data"

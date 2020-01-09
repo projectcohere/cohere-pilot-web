@@ -2,7 +2,17 @@ require "test_helper"
 
 class ChatTests < ActiveSupport::TestCase
   # -- commands --
-  test "add a message" do
+  test "starts a session" do
+    chat = Chat.stub(
+      invitation: Chat::Invitation.stub
+    )
+
+    chat.start_session
+    assert_nil(chat.invitation)
+    assert_not_nil(chat.session)
+  end
+
+  test "adds a message" do
     chat = Chat.stub(
       id: Id.new(42),
       messages: [

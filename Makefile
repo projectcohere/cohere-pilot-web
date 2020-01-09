@@ -187,9 +187,9 @@ d/m/undo:
 	$(tools-rails) db:rollback
 .PHONY: d/reset
 
-## reapplies previous migration
-d/m/redo: d/m/undo d/migrate
-.PHONY: d/reset
+## runs and rolls back migration
+d/m/check: d/migrate d/m/undo
+.PHONY: d/m/check
 
 ## starts the rails dev console
 d/console:

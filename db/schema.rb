@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_07_225222) do
+ActiveRecord::Schema.define(version: 2020_01_09_143049) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -68,13 +68,15 @@ ActiveRecord::Schema.define(version: 2020_01_07_225222) do
   end
 
   create_table "chats", force: :cascade do |t|
-    t.string "recipient_token", limit: 128
-    t.datetime "recipient_token_expires_at"
+    t.string "invitation_token", limit: 128
+    t.datetime "invitation_token_expires_at"
     t.bigint "recipient_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "session_token"
+    t.index ["invitation_token"], name: "index_chats_on_invitation_token", unique: true
     t.index ["recipient_id"], name: "index_chats_on_recipient_id", unique: true
-    t.index ["recipient_token"], name: "index_chats_on_recipient_token", unique: true
+    t.index ["session_token"], name: "index_chats_on_session_token", unique: true
   end
 
   create_table "documents", force: :cascade do |t|

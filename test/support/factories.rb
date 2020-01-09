@@ -19,6 +19,7 @@ module Support
         Message::Sender,
         Message::Attachment,
         Chat,
+        Chat::Invitation,
         Chat::Message,
       ]
 

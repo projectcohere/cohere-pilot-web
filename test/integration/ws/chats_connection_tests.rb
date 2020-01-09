@@ -27,8 +27,8 @@ module Ws
     end
 
     test "connect a chat by recipient token" do
-      chat_rec = chats(:chat_1)
-      cookies.encrypted.signed[:chat_recipient_token] = chat_rec.recipient_token
+      chat_rec = chats(:session_1)
+      cookies.encrypted.signed[:chat_session_token] = chat_rec.session_token
 
       connect
       assert_not_nil(connection.chat)

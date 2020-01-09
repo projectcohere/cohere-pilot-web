@@ -1,14 +1,17 @@
-chat_1:
+invited_1:
   recipient: recipient_1
-  recipient_token: "1F9A0JP"
-  recipient_token_expires_at: <%= Time.zone.now + 1.year %>
+  invitation_token: "1F9A0JP"
+  invitation_token_expires_at: <%= Time.zone.now + 1.year %>
 
-chat_2:
+expired_1:
   recipient: recipient_2
-  recipient_token: "2RJQA04"
-  recipient_token_expires_at: <%= Time.zone.now - 5.minutes %>
+  invitation_token: "2RJQA04"
+  invitation_token_expires_at: <%= Time.zone.now - 5.minutes %>
 
-chat_3:
+session_1:
+  recipient: recipient_4
+  session_token: "5930FJP"
+
+session_2:
   recipient: recipient_3
-  recipient_token: "95BQMP3"
-  recipient_token_expires_at: <%= Time.zone.now + 1.year %>
+  session_token: "JFR9JNF"

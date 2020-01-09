@@ -4,7 +4,8 @@ class Chat < Entity
 
   # -- props --
   prop(:id, default: Id::None)
-  prop(:recipient_token, default: nil)
+  prop(:session, default: nil)
+  prop(:invitation, default: nil)
   prop(:messages, default: [])
   prop(:current_case_id, default: nil)
   props_end!
@@ -13,6 +14,11 @@ class Chat < Entity
   attr(:new_messages)
 
   # -- commands --
+  def start_session
+    @invitation = nil
+    @session = SecureRandom.base58
+  end
+
   def add_message(sender:, type:, body:)
     message = Message.new(
       sender: sender,
