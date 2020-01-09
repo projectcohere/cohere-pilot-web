@@ -93,8 +93,7 @@ module Db
       chat = Chat::Repo.map_record(chat_rec)
       chat.add_message(
         sender: Chat::Sender.recipient,
-        type: Chat::Type::Text,
-        body: "Test."
+        body: "Test.",
       )
 
       chat_repo = Chat::Repo.new(domain_events: domain_events)
@@ -110,7 +109,6 @@ module Db
       message_rec = chat_rec.messages.reload[0]
       assert_not_nil(message_rec.id)
       assert_equal(message_rec.sender, Chat::Sender.recipient)
-      assert_equal(message_rec.mtype.to_sym, Chat::Type::Text)
       assert_equal(message_rec.body, "Test.")
 
       assert_nil(chat.new_messages)

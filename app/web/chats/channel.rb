@@ -20,7 +20,6 @@ module Chats
       message_data = data["message"]
       chat.add_message(
         sender: chat_sender,
-        type: message_data["type"].to_sym,
         body: message_data["body"]
       )
 

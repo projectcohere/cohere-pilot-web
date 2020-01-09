@@ -146,17 +146,15 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
     perform(:receive, {
       "chat" => nil,
       "message" => {
-        "type" => Chat::Type::Text.to_s,
-        "body" => "Test from recipient."
-      }
+        "body" => "Test from recipient.",
+      },
     })
 
     assert_broadcast_on(chat, {
       sender: Chat::Sender.recipient,
       message: {
-        type: Chat::Type::Text,
-        body: "Test from recipient."
-      }
+        body: "Test from recipient.",
+      },
     })
   end
 end

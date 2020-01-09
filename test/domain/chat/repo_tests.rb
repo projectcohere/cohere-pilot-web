@@ -20,7 +20,6 @@ class Chat
       message = chat.messages[0]
       assert_not_nil(message)
       assert_not_nil(message.id.val)
-      assert_equal(message.type, Chat::Type::Text)
       assert_not_nil(message.sender)
       assert_not_nil(message.body)
 

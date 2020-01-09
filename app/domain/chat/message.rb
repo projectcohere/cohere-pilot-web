@@ -1,7 +1,6 @@
 class Chat
   class Message < ::Entity
     prop(:id, default: Id::None)
-    prop(:type)
     prop(:body)
     prop(:sender)
     prop(:chat_id)

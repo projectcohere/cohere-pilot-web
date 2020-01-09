@@ -97,7 +97,6 @@ class Chat
       message_attrs = chat.new_messages.map do |m|
         _attrs = {
           sender: m.sender,
-          mtype: m.type,
           body: m.body,
           chat_id: m.chat_id,
         }

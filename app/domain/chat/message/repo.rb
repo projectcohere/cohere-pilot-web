@@ -20,7 +20,6 @@ class Chat
         Chat::Message.new(
           id: Id.new(r.id),
           sender: r.sender,
-          type: r.mtype.to_sym,
           body: r.body,
           chat_id: r.chat_id
         )

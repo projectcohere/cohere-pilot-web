@@ -23,7 +23,6 @@ class ChatTests < ActiveSupport::TestCase
 
     chat.add_message(
       sender: Chat::Sender.recipient,
-      type: Chat::Type::Text,
       body: "This is a test.",
     )
 
@@ -33,7 +32,6 @@ class ChatTests < ActiveSupport::TestCase
     message = chat.new_messages[0]
     assert_equal(message.id, Id::None)
     assert_equal(message.sender, Chat::Sender.recipient)
-    assert_equal(message.type, Chat::Type::Text)
     assert_equal(message.body, "This is a test.")
     assert_equal(message.chat_id, 42)
 

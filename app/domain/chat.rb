@@ -19,10 +19,9 @@ class Chat < Entity
     @session = SecureRandom.base58
   end
 
-  def add_message(sender:, type:, body:)
+  def add_message(sender:, body:)
     message = Message.new(
       sender: sender,
-      type: type,
       body: body,
       chat_id: @id.val,
     )

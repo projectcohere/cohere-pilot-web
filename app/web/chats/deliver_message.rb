@@ -10,7 +10,6 @@ module Chats
       Chats::Channel.broadcast_to(chat_message.chat_id, {
         sender: chat_message.sender,
         message: {
-          type: chat_message.type,
           body: chat_message.body,
         },
       })

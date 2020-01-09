@@ -5,9 +5,6 @@ class Chat
 
       # -- associations --
       belongs_to(:chat, class_name: "::Chat::Record")
-
-      # -- enums --
-      enum(mtype: Type.all)
     end
   end
 end
