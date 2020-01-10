@@ -181,8 +181,6 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
     stub_connection(chat_user_id: nil, chat: chat)
     subscribe
 
-    ActiveStorage::Current.host = "https://test.com"
-
     act = -> do
       perform(:receive, {
         "chat" => nil,
@@ -205,6 +203,6 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
     outgoing = ActiveSupport::JSON.decode(broadcast)
     outgoing_attachments = outgoing["message"]["attachments"]
     assert_length(outgoing_attachments, 1)
-    assert_not_nil(outgoing_attachments[0]["preview_url"])
+    assert_not_nil(outgoing_attachments[0]["previewUrl"])
   end
 end

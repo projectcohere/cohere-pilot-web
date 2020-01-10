@@ -7,6 +7,7 @@ module Chats
 
     ## -- command --
     def call(chat_message_id)
+      Files::Host.set_current!
       chat_message = @chat_message_repo.find_with_attachments(chat_message_id)
       Chats::Channel.broadcast_to(chat_message.chat_id, serialize_message(chat_message))
     end
@@ -28,7 +29,7 @@ module Chats
 
     def serialize_attachment(a)
       serailized = {
-        preview_url: a.representable? ? a.representation(resize: "200x200>").processed.service_url : nil
+        previewUrl: a.representable? ? a.representation(resize: "200x200>").processed.service_url : nil
       }
 
       return serailized
