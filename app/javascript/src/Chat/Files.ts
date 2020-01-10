@@ -18,18 +18,18 @@ export class Files implements IComponent {
   private files: ChatFile[] = []
 
   // -- props/el
-  private $fileList: HTMLElement
-  private $fileInput: HTMLInputElement
+  private $fileList: HTMLElement | null = null
+  private $fileInput: HTMLInputElement | null = null
 
   // -- IComponent --
   start() {
     // capture elements
     this.$fileList = document.getElementById(kIdFileList)
-    this.$fileInput = document.getElementById(kIdFileInput) as HTMLInputElement
+    this.$fileInput = document.getElementById(kIdFileInput) as HTMLInputElement | null
 
     // bind to events
-    this.$fileList.addEventListener("click", this.didRemoveFile.bind(this))
-    this.$fileInput.addEventListener("change", this.didChangeFiles.bind(this))
+    this.$fileList!.addEventListener("click", this.didRemoveFile.bind(this))
+    this.$fileInput!.addEventListener("change", this.didChangeFiles.bind(this))
   }
 
   cleanup() {
@@ -58,7 +58,7 @@ export class Files implements IComponent {
     this.resetFiles()
 
     // add files from the input
-    const files = this.$fileInput.files
+    const files = this.$fileInput!.files || []
     for (let i = 0; i < files.length; i++) {
       this.files.push({
         id: i.toString(),
@@ -91,22 +91,24 @@ export class Files implements IComponent {
     $file.remove()
 
     // set visibility class
-    this.$fileList.classList.toggle(kClassEmpty, this.$fileList.childElementCount === 0)
+    this.$fileList!.classList.toggle(kClassEmpty, this.$fileList!.childElementCount === 0)
   }
 
   // -- view --
   private render() {
+    const $fileList = this.$fileList!
+
     // set visibility class
-    this.$fileList.classList.toggle(kClassEmpty, this.files.length === 0)
+    $fileList.classList.toggle(kClassEmpty, this.files.length === 0)
 
     // clear previews
-    while (this.$fileList.lastChild) {
-      this.$fileList.removeChild(this.$fileList.lastChild)
+    while ($fileList.lastChild) {
+      $fileList.removeChild($fileList.lastChild)
     }
 
     // add previews
     for (const file of this.files) {
-      this.$fileList.insertAdjacentHTML("beforeend", this.renderFile(file))
+      $fileList.insertAdjacentHTML("beforeend", this.renderFile(file))
     }
   }
 

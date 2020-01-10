@@ -49,15 +49,15 @@ export class Chat implements IComponent {
   private files = new Files()
 
   // -- props --
-  private channel: ActionCable.Channel
-  private id: string | null
-  private sender: Sender
-  private receiver: string
-  private authenticityToken: string
+  private channel: ActionCable.Channel = null!
+  private id: string = null!
+  private sender: Sender = null!
+  private receiver: string = null!
+  private authenticityToken: string = null!
 
   // -- props/el
-  private $chat: HTMLElement
-  private $chatInput: HTMLElement
+  private $chat: HTMLElement | null = null
+  private $chatInput: HTMLElement | null = null
 
   // -- IComponent --
   start() {
@@ -68,10 +68,10 @@ export class Chat implements IComponent {
     }
 
     // extract element data
-    this.id = $chat.dataset.id
+    this.id = $chat.dataset.id!
     this.sender = $chat.dataset.sender as Sender
-    this.receiver = $chat.dataset.receiver
-    this.authenticityToken = $chatForm.querySelector(kQueryAuthenticityToken).getAttribute("value")
+    this.receiver = $chat.dataset.receiver!
+    this.authenticityToken = $chatForm.querySelector(kQueryAuthenticityToken)!.getAttribute("value")!
 
     // capture elements
     this.$chat = $chat
@@ -95,19 +95,17 @@ export class Chat implements IComponent {
     this.files.cleanup()
 
     // cleanup props
-    this.id = null
-    this.sender = null
-    this.receiver = null
+    this.id = null!
+    this.sender = null!
+    this.receiver = null!
 
     // cleanup elements
     this.$chat = null
     this.$chatInput = null
 
     // unsubscribe from channel
-    if (this.channel != null) {
-      this.channel.unsubscribe()
-      this.channel = null
-    }
+    this.channel.unsubscribe()
+    this.channel = null!
   }
 
   // -- commands --
@@ -123,10 +121,10 @@ export class Chat implements IComponent {
   }
 
   private async sendMessage() {
-    const field = this.$chatInput
+    const field = this.$chatInput!
 
     // short-circuit on empty request
-    const body = field.textContent
+    const body = field.textContent || ""
     const files = this.files.all()
     if (body.length === 0 && files.length === 0) {
       return
@@ -148,7 +146,7 @@ export class Chat implements IComponent {
     this.files.clear()
 
     // send files over http, and get their ids, if they exist
-    let fileIds: number[] | null = null
+    let fileIds: number[] = []
     if (files.length !== 0) {
       fileIds = await this.sendFiles(files)
     }
@@ -203,16 +201,18 @@ export class Chat implements IComponent {
   }
 
   private appendMessage(incoming: Incoming) {
-    this.$chat.insertAdjacentHTML(
+    const $chat = this.$chat!
+
+    $chat.insertAdjacentHTML(
       "beforeend",
       this.render(incoming)
     )
 
-    this.$chat.scrollTo(0, this.$chat.scrollHeight)
+    $chat.scrollTo(0, $chat.scrollHeight)
   }
 
   private clearInput() {
-    this.$chatInput.textContent = ""
+    this.$chatInput!.textContent = ""
   }
 
   // -- queries --

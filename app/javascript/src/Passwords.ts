@@ -5,7 +5,7 @@ export class Passwords implements IComponent {
   isOnLoad = true
 
   // -- props --
-  private $password: HTMLInputElement
+  private $password: HTMLInputElement | null = null
 
   // -- IComponent --
   start() {
@@ -15,7 +15,7 @@ export class Passwords implements IComponent {
     }
 
     const $showPassword = document.getElementById("show_password")
-    $showPassword.addEventListener("change", this.didChangeShowPassword.bind(this))
+    $showPassword!.addEventListener("change", this.didChangeShowPassword.bind(this))
   }
 
   cleanup() {
@@ -38,6 +38,6 @@ export class Passwords implements IComponent {
     const $showPassword = event.target as HTMLInputElement
     const inputType = $showPassword.checked ? "text" : "password"
 
-    this.$password.setAttribute("type", inputType)
+    this.$password!.setAttribute("type", inputType)
   }
 }

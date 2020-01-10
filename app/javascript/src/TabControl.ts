@@ -11,8 +11,8 @@ export class TabControl implements IComponent {
   isOnLoad = true
 
   // -- props --
-  private $tabs: HTMLElement[]
-  private $filters: HTMLLinkElement[]
+  private $tabs: HTMLElement[] | null = null
+  private $filters: HTMLLinkElement[] | null = null
 
   // -- IComponent --
   start() {
@@ -43,7 +43,7 @@ export class TabControl implements IComponent {
     const clicked = event.target as HTMLLinkElement
 
     // select the filter
-    for (const $filter of this.$filters) {
+    for (const $filter of this.$filters!) {
       $filter.classList.toggle(kClassSelected, $filter == clicked)
     }
 
@@ -52,7 +52,7 @@ export class TabControl implements IComponent {
     const id = location.hash.slice(1)
 
     // show the matching tab
-    for (const $tab of this.$tabs) {
+    for (const $tab of this.$tabs!) {
       $tab.classList.toggle(kClassVisible, $tab.id === id)
     }
   }
