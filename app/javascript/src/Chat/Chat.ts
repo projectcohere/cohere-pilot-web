@@ -13,16 +13,32 @@ const kQueryAuthenticityToken = `input[name=${kFieldAuthenticityToken}]`
 
 // -- types --
 type Sender = string | "recipient"
-type Message = { type: "text", body: string }
+
+interface Attachment {
+  name: string,
+  previewUrl: string
+}
 
 interface Incoming {
   sender: Sender,
-  message: Message
+  message: {
+    body: string
+    attachments: Attachment[]
+  }
 }
 
 interface Outgoing {
   chat: string
-  message: Message
+  message: {
+    body: string
+    attachmentIds?: number[]
+  }
+}
+
+interface SendFilesResponse {
+  data: {
+    fileIds: number[]
+  }
 }
 
 // -- impls --
@@ -106,12 +122,53 @@ export class Chat implements IComponent {
     })
   }
 
-  private sendFiles() {
+  private async sendMessage() {
+    const field = this.$chatInput
+
+    // short-circuit on empty request
+    const body = field.textContent
     const files = this.files.all()
-    if (files.length === 0) {
+    if (body.length === 0 && files.length === 0) {
       return
     }
 
+    // display message optimistically
+    this.appendMessage({
+      sender: this.sender,
+      message: {
+        body,
+        attachments: files.map((f) => ({
+          name: f.name,
+          previewUrl: URL.createObjectURL(f)
+        }))
+      }
+    })
+
+    this.clearInput()
+    this.files.clear()
+
+    // send files over http, and get their ids, if they exist
+    let fileIds: number[] | null = null
+    if (files.length !== 0) {
+      fileIds = await this.sendFiles(files)
+    }
+
+    // send the message over the channel
+    const outgoing: Outgoing = {
+      chat: this.id,
+      message: {
+        body
+      }
+    }
+
+    if (fileIds.length !== 0) {
+      outgoing.message.attachmentIds = fileIds
+    }
+
+    this.channel.send(outgoing)
+  }
+
+  private async sendFiles(files: File[]) {
     // construct the form body
     const body = new FormData()
     body.append("authenticity_token", this.authenticityToken)
@@ -122,55 +179,44 @@ export class Chat implements IComponent {
     }
 
     // post the request
-    const url = `http://localhost:3000/chat/files`
-    window.fetch(url, {
+    const response = await window.fetch("/chat/files", {
       method: "POST",
       body
     })
 
     // update the ui
     this.files.clear()
-  }
 
-  private sendMessage() {
-    const field = this.$chatInput
-    if (field.textContent.length === 0) {
-      return
-    }
+    // extract the file ids
+    const json: SendFilesResponse = await response.json()
+    const fileIds = json.data.fileIds
 
-    const outgoing: Outgoing = {
-      chat: this.id,
-      message: {
-        type: "text",
-        body: field.textContent
-      }
-    }
-
-    this.channel.send(outgoing)
-    this.addMessage(outgoing.message, this.sender)
-
-    field.textContent = ""
+    return fileIds
   }
 
   private receiveMesasage(incoming: Incoming) {
     console.debug("Chat - received:", incoming)
 
     if (incoming.sender !== this.sender) {
-      this.addMessage(incoming.message, incoming.sender)
+      this.appendMessage(incoming)
     }
   }
 
-  private addMessage(message: Message, sender: Sender) {
+  private appendMessage(incoming: Incoming) {
     this.$chat.insertAdjacentHTML(
       "beforeend",
-      this.render(message, sender)
+      this.render(incoming)
     )
 
     this.$chat.scrollTo(0, this.$chat.scrollHeight)
   }
 
+  private clearInput() {
+    this.$chatInput.textContent = ""
+  }
+
   // -- queries --
-  isSentBy(message: Message, sender: Sender) {
+  isSent(sender: Sender): boolean {
     switch (this.sender) {
       case "recipient":
         return sender === "recipient"
@@ -186,31 +232,49 @@ export class Chat implements IComponent {
 
   private didSubmitMessage(event: Event) {
     event.preventDefault()
-
-    this.sendFiles()
     this.sendMessage()
   }
 
   // -- view --
-  private render(message: Message, sender: Sender) {
-    const classes = ["ChatMessage"]
+  private render({ sender, message: { body, attachments } }: Incoming): string {
+    const isSent = this.isSent(sender)
+    const name = isSent ? "Me" : this.receiver
 
-    const isSent = this.isSentBy(message, sender)
+    let classes = "ChatMessage"
     if (isSent) {
-      classes.push("ChatMessage--sent")
+      classes += " ChatMessage--sent"
     } else {
-      classes.push("ChatMessage--received")
+      classes += " ChatMessage--received"
     }
 
     return `
-      <li class="${classes.join(" ")}">
-        <label class="ChatMessage-sender">
-          ${isSent ? "Me" : this.receiver}
-        </label>
+      ${this.renderList(attachments, (a) => this.renderBubble(name, classes, `
+        <img
+          class="ChatMessage-attachment"
+          alt="${a.name}"
+          src=${a.previewUrl}
+        />
+      `))}
+      ${body.length === 0 ? "" : this.renderBubble(name, classes, `
         <p class="ChatMessage-body">
-          ${message.body}
+          ${body}
         </p>
+      `)}
+    `
+  }
+
+  private renderBubble(name: string, classes: string, children: string): string {
+    return `
+      <li class="${classes}">
+        <label class="ChatMessage-sender">
+          ${name}
+        </label>
+        ${children}
       </li>
     `
+  }
+
+  private renderList<T>(list: T[], renderer: (item: T) => string): string {
+    return list.map(renderer).join("\n")
   }
 }

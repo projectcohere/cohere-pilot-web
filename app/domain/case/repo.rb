@@ -48,8 +48,8 @@ class Case
       case_rec = Case::Record
         .find(case_id)
 
-      # TODO: fix n+1 on attachments and blobs
       document_recs = Document::Record
+        .with_attached_file
         .where(case_id: case_id)
 
       is_referrer = Case::Record
@@ -63,8 +63,8 @@ class Case
         .where(status: [:opened, :pending])
         .find(case_id)
 
-      # TODO: fix n+1 on attachments and blobs
       document_recs = Document::Record
+        .with_attached_file
         .where(case_id: case_id)
 
       entity_from(case_rec, document_recs)
@@ -78,8 +78,8 @@ class Case
         )
         .find(case_id)
 
-      # TODO: fix n+1 on attachments and blobs
       document_recs = Document::Record
+        .with_attached_file
         .where(case_id: case_id)
 
       entity_from(case_rec, document_recs)

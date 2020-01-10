@@ -4,6 +4,15 @@ class File
       Repo.new
     end
 
+    # -- queries --
+    # -- queries/many
+    def find_all_by_ids(ids)
+      files = ActiveStorage::Blob
+        .where(id: ids)
+
+      return files
+    end
+
     # -- commands --
     def save_uploaded_files(files)
       transaction do

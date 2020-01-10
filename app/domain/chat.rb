@@ -11,7 +11,7 @@ class Chat < Entity
   props_end!
 
   # -- props/temporary
-  attr(:new_messages)
+  attr(:new_message)
 
   # -- commands --
   def start_session
@@ -19,23 +19,21 @@ class Chat < Entity
     @session = SecureRandom.base58
   end
 
-  def add_message(sender:, body:)
+  def add_message(sender:, body:, attachments:)
     message = Message.new(
       sender: sender,
       body: body,
+      attachments: attachments,
       chat_id: @id.val,
     )
 
+    @new_message = message
     @messages << message
-
-    @new_messages ||= []
-    @new_messages << message
-
-    @events << Events::DidReceiveMessage.from_entity(self)
+    @events << Events::DidAddMessage.from_entity(self)
   end
 
   # -- callbacks --
-  def did_save_new_messages
-    @new_messages = nil
+  def did_save_new_message
+    @new_message = nil
   end
 end

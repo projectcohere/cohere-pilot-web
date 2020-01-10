@@ -10,28 +10,29 @@ module Chats
       chat = find_current_chat(data["chat"])
 
       # determine sender based on auth method
-      chat_sender = if connection.chat_user_id != nil
+      sender = if connection.chat_user_id != nil
         Chat::Sender.cohere(connection.chat_user_id)
       else
         Chat::Sender.recipient
       end
 
-      # receive message
-      message_data = data["message"]
-      chat.add_message(
-        sender: chat_sender,
-        body: message_data["body"]
+      # add incoming message to chat
+      incoming = Incoming.new(
+        body: data["message"]["body"],
+        attachment_ids: data["message"]["attachmentIds"],
       )
 
-      # save entity
-      Chat::Repo.get.save_new_messages(chat)
+      add_message = AddMessage.new
+      add_message.(chat, sender, incoming)
 
+      # handle events
       process_events
     end
 
     # -- callbacks --
     def process_events
-      Events::ProcessAll.get.()
+      @process_events ||= Events::ProcessAll.get
+      @process_events.()
     end
 
     # -- queries --

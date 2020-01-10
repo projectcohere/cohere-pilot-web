@@ -82,7 +82,7 @@ class ChatsTests < ActionDispatch::IntegrationTest
     assert_response(:success)
 
     res = JSON.parse(response.body)
-    assert_length(res["data"]["file_ids"], 1)
+    assert_length(res["data"]["fileIds"], 1)
   end
 end
 
@@ -110,51 +110,101 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
     assert_has_stream_for(chat)
   end
 
-  test "receives and delivers a text message from a cohere user" do
+  test "receive and deliver a message from a cohere user" do
     Sidekiq::Testing.inline!
 
     chat_rec = chats(:invited_1)
     chat = Chat::Repo.map_record(chat_rec)
     stub_connection(chat_user_id: "test-id", chat: nil)
-
     subscribe(chat: chat_rec.id)
-    perform(:receive, {
-      "chat" => chat_rec.id,
-      "message" => {
-        "type" => Chat::Type::Text.to_s,
-        "body" => "Test from Cohere."
-      }
-    })
+
+    act = -> do
+      perform(:receive, {
+        "chat" => chat_rec.id,
+        "message" => {
+          "body" => "Test from Cohere.",
+        },
+      })
+    end
+
+    assert_difference(
+      -> { Chat::Message::Record.count } => 1,
+      &act
+    )
 
     assert_broadcast_on(chat, {
       sender: Chat::Sender.cohere("test-id"),
       message: {
-        type: Chat::Type::Text,
-        body: "Test from Cohere."
-      }
+        body: "Test from Cohere.",
+        attachments: []
+      },
     })
   end
 
-  test "receives and delivers a text message from a recipient" do
+  test "receive and deliver a message from a recipient" do
     Sidekiq::Testing.inline!
 
     chat_rec = chats(:invited_1)
     chat = Chat::Repo.map_record(chat_rec)
     stub_connection(chat_user_id: nil, chat: chat)
-
     subscribe
-    perform(:receive, {
-      "chat" => nil,
-      "message" => {
-        "body" => "Test from recipient.",
-      },
-    })
+
+    act = -> do
+      perform(:receive, {
+        "chat" => nil,
+        "message" => {
+          "body" => "Test from recipient.",
+        },
+      })
+    end
+
+    assert_difference(
+      -> { Chat::Message::Record.count } => 1,
+      &act
+    )
 
     assert_broadcast_on(chat, {
       sender: Chat::Sender.recipient,
       message: {
         body: "Test from recipient.",
+        attachments: []
       },
     })
+  end
+
+  test "receive and deliver a message with attachments" do
+    Sidekiq::Testing.inline!
+
+    blob_rec = active_storage_blobs(:blob_1)
+    chat_rec = chats(:invited_1)
+    chat = Chat::Repo.map_record(chat_rec)
+    stub_connection(chat_user_id: nil, chat: chat)
+    subscribe
+
+    ActiveStorage::Current.host = "https://test.com"
+
+    act = -> do
+      perform(:receive, {
+        "chat" => nil,
+        "message" => {
+          "body" => "Test with attachments.",
+          "attachmentIds" => [blob_rec.id]
+        },
+      })
+    end
+
+    assert_difference(
+      -> { Chat::Message::Record.count } => 1,
+      -> { ActiveStorage::Attachment.count } => 1,
+      &act
+    )
+
+    broadcast = broadcasts(broadcasting_for(chat))[0]
+    assert_not_nil(broadcast)
+
+    outgoing = ActiveSupport::JSON.decode(broadcast)
+    outgoing_attachments = outgoing["message"]["attachments"]
+    assert_length(outgoing_attachments, 1)
+    assert_not_nil(outgoing_attachments[0]["preview_url"])
   end
 end

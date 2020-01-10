@@ -1,4 +1,6 @@
 .ChatMessage {
+  $r: ".ChatMessage";
+
   padding: 12px;
   border-radius: $radius-chat;
   width: 80%;
@@ -6,8 +8,12 @@
 
   // -- elements --
   &-sender {
-    display: block;
+    display: none;
     font-size: $font-size6;
+  }
+
+  &-attachment {
+    border-radius: $radius-field;
   }
 
   // -- variants --
@@ -18,5 +24,30 @@
 
   &--received {
     background-color: $color-field;
+  }
+
+  // shrink margin between sequential messages
+  &--sent + &--sent, &--received + &--received {
+    margin-top: $spacing6;
+  }
+
+  // style the first message in each group
+  *:not(&--sent) + &--sent, &--sent:first-child {
+    border-top-right-radius: $radius-field;
+  }
+
+  *:not(&--received) + &--received, &--received:first-child {
+    border-top-left-radius: $radius-field;
+  }
+
+  *:not(&--sent) + &--sent, &--sent:first-child,
+  *:not(&--received) + &--received, &--received:first-child {
+    #{$r}-sender {
+      display: block;
+    }
+
+    #{$r}-attachment {
+      display: margin-top;
+    }
   }
 }

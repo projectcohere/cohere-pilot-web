@@ -36,8 +36,8 @@ class ChatsController < ApplicationController
     file_ids = File::Repo.get.save_uploaded_files(files)
 
     render(json: {
-      data: {
-        file_ids: file_ids
+      "data" => {
+        "fileIds" => file_ids
       }
     })
   end

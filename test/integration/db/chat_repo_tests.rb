@@ -89,20 +89,23 @@ module Db
     test "saves new messages" do
       domain_events = ArrayQueue.new
 
-      chat_rec = chats(:expired_1)
+      blob_rec = active_storage_blobs(:blob_1)
+      chat_rec = chats(:session_1)
       chat = Chat::Repo.map_record(chat_rec)
       chat.add_message(
         sender: Chat::Sender.recipient,
         body: "Test.",
+        attachments: [blob_rec]
       )
 
       chat_repo = Chat::Repo.new(domain_events: domain_events)
       act = -> do
-        chat_repo.save_new_messages(chat)
+        chat_repo.save_new_message(chat)
       end
 
       assert_difference(
         -> { Chat::Message::Record.count } => 1,
+        -> { ActiveStorage::Attachment.count } => 1,
         &act
       )
 
@@ -111,7 +114,11 @@ module Db
       assert_equal(message_rec.sender, Chat::Sender.recipient)
       assert_equal(message_rec.body, "Test.")
 
-      assert_nil(chat.new_messages)
+      attachment_rec = message_rec.files[0]
+      assert_not_nil(attachment_rec, 1)
+      assert_equal(attachment_rec.blob, blob_rec)
+
+      assert_nil(chat.new_message)
       assert_length(chat.events, 0)
       assert_length(domain_events, 1)
     end

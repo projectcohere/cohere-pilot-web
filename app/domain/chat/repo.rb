@@ -85,32 +85,29 @@ class Chat
       chat_rec.save!
     end
 
-    def save_new_messages(chat)
+    def save_new_message(chat)
       chat_rec = chat.record
-      if chat_rec.nil?
+      if chat_rec == nil
         raise "chat must be fetched from the db!"
       end
 
-      messages = chat.new_messages
-
-      # build list of attributes
-      message_attrs = chat.new_messages.map do |m|
-        _attrs = {
-          sender: m.sender,
-          body: m.body,
-          chat_id: m.chat_id,
-        }
+      message = chat.new_message
+      if message == nil
+        raise "chat must have a new message!"
       end
 
-      # create the records
-      message_recs = Chat::Message::Record.create!(message_attrs)
+      # create the record
+      m = message
+      message_rec = Chat::Message::Record.create!({
+        sender: m.sender,
+        body: m.body,
+        chat_id: m.chat_id,
+        files: m.attachments,
+      })
 
       # send callbacks to entities
-      message_recs.each_with_index do |r, i|
-        messages[i].did_save(r)
-      end
-
-      chat.did_save_new_messages
+      message.did_save(message_rec)
+      chat.did_save_new_message
 
       # consume all entity events
       @domain_events.consume(chat.events)

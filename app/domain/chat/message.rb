@@ -1,8 +1,9 @@
 class Chat
   class Message < ::Entity
     prop(:id, default: Id::None)
-    prop(:body)
     prop(:sender)
+    prop(:body)
+    prop(:attachments, default: [])
     prop(:chat_id)
     props_end!
 
