@@ -88,6 +88,8 @@ module Db
         attachments: [blob_rec]
       )
 
+      message_id = chat.new_message.id
+
       chat_repo = Chat::Repo.new(domain_events: domain_events)
       act = -> do
         chat_repo.save_new_message(chat)
@@ -99,7 +101,8 @@ module Db
         &act
       )
 
-      message_rec = chat_rec.messages.reload[0]
+      message_rec = chat_rec.messages.reload
+        .find { |r| r.id == message_id.val }
       assert_not_nil(message_rec.id)
       assert_equal(message_rec.sender, Chat::Sender.recipient)
       assert_equal(message_rec.body, "Test.")
