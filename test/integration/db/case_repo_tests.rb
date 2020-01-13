@@ -305,13 +305,13 @@ module Db
       assert_length(domain_events, 4)
     end
 
-    test "saves the changes from a message" do
+    test "saves a new message" do
       case_rec = cases(:pending_1)
 
       kase = Case::Repo.map_record(case_rec)
-      kase.add_message(Message.stub(
+      kase.add_mms_message(Mms::Message.stub(
         attachments: [
-          Message::Attachment.new(
+          Mms::Message::Attachment.new(
             url: Faker::Internet.url
           )
         ]

@@ -121,12 +121,10 @@ class Case < ::Entity
   end
 
   # -- commands/messages
-  def add_message(message)
-    # track the message receipt
-    @received_message_at = Time.zone.now
-    @events << Events::DidReceiveMessage.from_entity(self)
+  def add_mms_message(message)
+    track_message_receipt
 
-    # upload message attachments
+    # upload mms message attachments
     message.attachments&.each do |attachment|
       new_document = Document.upload(attachment.url)
       add_document(new_document)

@@ -4,12 +4,12 @@ require "minitest/mock"
 module Cases
   class UploadMessageAttachmentsTests < ActiveSupport::TestCase
     test "uploads documents from message attachments" do
-      message = Message.new(
-        sender: Message::Sender.new(
+      message = Mms::Message.new(
+        sender: Mms::Message::Sender.new(
           phone_number: "111-222-3333"
         ),
         attachments: [
-          Message::Attachment.new(
+          Mms::Message::Attachment.new(
             url: "https://website.com/image.jpg"
           )
         ]
@@ -34,12 +34,12 @@ module Cases
     end
 
     test "raises an error if the case is missing" do
-      message = Message.new(
-        sender: Message::Sender.new(
+      message = Mms::Message.new(
+        sender: Mms::Message::Sender.new(
           phone_number: "111-222-3333"
         ),
         attachments: [
-          Message::Attachment.new(
+          Mms::Message::Attachment.new(
             url: "https://website.com/image.jpg"
           )
         ]
