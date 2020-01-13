@@ -24,25 +24,21 @@ module Events
     private def dispatch(event)
       case event
       when Case::Events::DidOpen
-        if event.case_is_referred
-          return
+        if not event.case_is_referred
+          deliver(CasesMailer.did_open(
+            event.case_id.val
+          ))
         end
-
-        deliver(CasesMailer.did_open(
-          event.case_id.val
-        ))
       when Case::Events::DidSubmit
         deliver(CasesMailer.did_submit(
           event.case_id.val
         ))
       when Case::Events::DidComplete
-        if event.case_status == Case::Status::Removed
-          return
+        if event.case_status != Case::Status::Removed
+          deliver(CasesMailer.did_complete(
+            event.case_id.val
+          ))
         end
-
-        deliver(CasesMailer.did_complete(
-          event.case_id.val
-        ))
       when Case::Events::DidUploadMessageAttachment
         Cases::AttachFrontFileWorker.perform_async(
           event.case_id.val,
@@ -62,9 +58,11 @@ module Events
           event.chat_message_id.val
         )
 
-        Cases::AttachChatMessage.perform_async(
-          event.chat_message_id.val
-        )
+        if event.has_attachments
+          Cases::AddChatMessage.perform_async(
+            event.chat_message_id.val
+          )
+        end
       end
     end
 

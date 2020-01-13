@@ -1,5 +1,5 @@
 module Cases
-  class AttachChatMessage < ApplicationWorker
+  class AddChatMessage < ApplicationWorker
     # -- lifetime --
     def initialize(
       case_repo: Case::Repo.get,
