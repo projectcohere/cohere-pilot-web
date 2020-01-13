@@ -1,5 +1,4 @@
 module Cases
-  # TODO: maybe this is more of an application service
   class UploadMessageAttachments
     # -- lifetime --
     def initialize(case_repo: Case::Repo.get)

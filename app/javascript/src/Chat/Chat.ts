@@ -104,8 +104,10 @@ export class Chat implements IComponent {
     this.$chatInput = null
 
     // unsubscribe from channel
-    this.channel.unsubscribe()
-    this.channel = null!
+    if (this.channel != null) {
+      this.channel.unsubscribe()
+      this.channel = null!
+    }
   }
 
   // -- commands --

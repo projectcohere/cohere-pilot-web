@@ -12,11 +12,10 @@ class ChatTests < ActiveSupport::TestCase
     assert_not_nil(chat.session)
   end
 
-  test "adds a message without attachments" do
+  test "adds a message" do
     chat = Chat.stub(
       id: Id.new(42),
       messages: [
-        Chat::Message.stub,
         Chat::Message.stub,
       ]
     )
@@ -27,7 +26,7 @@ class ChatTests < ActiveSupport::TestCase
       attachments: []
     )
 
-    assert_length(chat.messages, 3)
+    assert_length(chat.messages, 2)
 
     message = chat.new_message
     assert_not_nil(message)

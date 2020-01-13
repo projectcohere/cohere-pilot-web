@@ -26,13 +26,7 @@ module Chats
       add_message.(chat, sender, incoming)
 
       # handle events
-      process_events
-    end
-
-    # -- callbacks --
-    def process_events
-      @process_events ||= Events::ProcessAll.get
-      @process_events.()
+      Events::ProcessAll.get.()
     end
 
     # -- queries --
