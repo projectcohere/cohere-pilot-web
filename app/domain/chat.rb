@@ -7,11 +7,12 @@ class Chat < Entity
   prop(:session, default: nil)
   prop(:invitation, default: nil)
   prop(:messages, default: [])
-  prop(:current_case_id, default: nil)
+  prop(:recipient_id)
   props_end!
 
   # -- props/temporary
   attr(:new_message)
+  attr(:selected_message)
 
   # -- commands --
   def start_session
@@ -30,6 +31,14 @@ class Chat < Entity
     @new_message = message
     @messages << message
     @events << Events::DidAddMessage.from_entity(self)
+  end
+
+  def select_message(i)
+    if i >= @messages.count
+      raise "can't select a message that does not exist"
+    end
+
+    @selected_message = @messages[i]
   end
 
   # -- callbacks --

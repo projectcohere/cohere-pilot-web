@@ -134,11 +134,18 @@ class Case < ::Entity
     end
   end
 
-  def attach_chat_files(files)
-    files.each do |file|
-      new_document = Document.attach(file)
-      add_document(new_document)
+  def add_chat_message(message)
+    track_message_receipt
+
+    # attach chat message attachments
+    message.attachments.each do |attachment|
+      add_document(Document.attach(attachment))
     end
+  end
+
+  private def track_message_receipt
+    @events << Events::DidReceiveMessage.from_entity(self)
+    @received_message_at = Time.zone.now
   end
 
   # -- commands/documents

@@ -85,6 +85,14 @@ class Case
       entity_from(case_rec, document_recs)
     end
 
+    def find_active_by_recipient(recipient_id)
+      case_rec = Case::Record
+        .where(status: [:opened, :pending, :submitted])
+        .find_by!(recipient_id: recipient_id)
+
+      return entity_from(case_rec)
+    end
+
     # -- queries/many
     def find_all_opened
       case_recs = Case::Record
@@ -225,7 +233,7 @@ class Case
       @domain_events.consume(kase.events)
     end
 
-    def save_message_changes(kase)
+    def save_new_message(kase)
       case_rec = kase.record
       if case_rec.nil?
         raise "case must be fetched from the db!"

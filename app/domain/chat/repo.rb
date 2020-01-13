@@ -5,7 +5,11 @@ class Chat
       Repo.new
     end
 
-    def initialize(domain_events: Services.domain_events)
+    def initialize(
+      chat_message_repo: Chat::Message::Repo.get,
+      domain_events: Services.domain_events
+    )
+      @chat_message_repo = chat_message_repo
       @domain_events = domain_events
     end
 
@@ -39,34 +43,35 @@ class Chat
         .with_a_session
         .find_by(session_token: session_token)
 
-      chat_message_recs = if chat_rec != nil
-        Chat::Message::Record
-          .where(chat_id: chat_rec.id)
+      chat_messages = if chat_rec != nil
+        @chat_message_repo
+          .find_many_by_chat_with_attachments(chat_rec.id)
       end
 
-      return entity_from(chat_rec, chat_message_recs)
-    end
-
-    def find_by_session_with_current_case(session_token)
-      chat_rec = Chat::Record
-        .with_a_session
-        .find_by!(session_token: session_token)
-
-      case_rec = chat_rec.recipient.cases
-        .where.not(status: [:submitted, :approved, :denied])
-        .first!
-
-      return entity_from(chat_rec, [], case_rec)
+      return entity_from(chat_rec, chat_messages)
     end
 
     def find_by_recipient_with_messages(recipient_id)
       chat_rec = Chat::Record
         .find_by!(recipient_id: recipient_id)
 
-      chat_message_recs = Chat::Message::Record
-        .where(chat_id: chat_rec.id)
+      chat_messages = @chat_message_repo
+        .find_many_by_chat_with_attachments(chat_rec.id)
 
-      return entity_from(chat_rec, chat_message_recs)
+      return entity_from(chat_rec, chat_messages)
+    end
+
+    def find_by_selected_message(chat_message_id)
+      chat_message = @chat_message_repo
+        .find_with_attachments(chat_message_id)
+
+      chat_rec = Chat::Record
+        .find(chat_message.chat_id)
+
+      chat = entity_from(chat_rec, [chat_message])
+        .tap { |chat| chat.select_message(0) }
+
+      return chat
     end
 
     # -- commands --
@@ -114,7 +119,7 @@ class Chat
     end
 
     # -- factories --
-    def self.map_record(r, message_recs = [], current_case_rec = nil)
+    def self.map_record(r, messages = [])
       Chat.new(
         record: r,
         id: Id.new(r.id),
@@ -125,10 +130,8 @@ class Chat
             expires_at: r.invitation_token_expires_at,
           )
         },
-        messages: message_recs.map { |m|
-          Chat::Message::Repo.map_record(m)
-        },
-        current_case_id: current_case_rec&.id,
+        messages: messages,
+        recipient_id: r.recipient_id,
       )
     end
   end

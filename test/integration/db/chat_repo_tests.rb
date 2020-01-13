@@ -52,24 +52,14 @@ module Db
       assert_nil(chat)
     end
 
-    test "finds a chat by session with its current case" do
+    test "finds a chat by selected message" do
       chat_repo = Chat::Repo.new
-      chat_rec = chats(:session_1)
-      chat_session = chat_rec.session_token
+      chat_message_rec = chat_messages(:message_s1_1)
 
-      chat = chat_repo.find_by_session_with_current_case(chat_session)
+      chat = chat_repo.find_by_selected_message(chat_message_rec.id)
       assert_not_nil(chat)
-      assert_not_nil(chat.current_case_id)
-    end
-
-    test "does not find a chat with a missing current case" do
-      chat_repo = Chat::Repo.new
-      chat_rec = chats(:session_2)
-      chat_session = chat_rec.session_token
-
-      assert_raises(ActiveRecord::RecordNotFound) do
-        chat_repo.find_by_session_with_current_case(chat_session)
-      end
+      assert_not_nil(chat.selected_message)
+      assert_present(chat.selected_message.attachments)
     end
 
     # -- commands --

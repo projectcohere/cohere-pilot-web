@@ -1,9 +1,9 @@
-message_c1_1:
+message_i1_1:
   chat: invited_1
   sender: "FO19FJE"
-  body: Test 1.
+  body: Test Invited 1.
 
-message_c3_1:
+message_s1_1:
   chat: session_1
   sender: "FO19FJE"
-  body: Test 1.
+  body: Test Session 1.

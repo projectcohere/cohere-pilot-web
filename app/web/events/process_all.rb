@@ -61,6 +61,10 @@ module Events
         Chats::DeliverMessage.perform_async(
           event.chat_message_id.val
         )
+
+        Cases::AttachChatMessage.perform_async(
+          event.chat_message_id.val
+        )
       end
     end
 

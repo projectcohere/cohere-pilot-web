@@ -64,4 +64,13 @@ class ChatTests < ActiveSupport::TestCase
     assert_equal(event.chat_message_id, message.id)
     assert(event.has_attachments)
   end
+
+  test "selects a message" do
+    chat = Chat.stub(
+      messages: [:test_message]
+    )
+
+    chat.select_message(0)
+    assert_equal(chat.selected_message, :test_message)
+  end
 end

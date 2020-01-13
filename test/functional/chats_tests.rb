@@ -193,16 +193,19 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
 
     assert_difference(
       -> { Chat::Message::Record.count } => 1,
-      -> { ActiveStorage::Attachment.count } => 1,
+      -> { Document::Record.count } => 1,
+      -> { ActiveStorage::Attachment.count } => 2,
       &act
     )
 
-    broadcast = broadcasts(broadcasting_for(chat))[0]
-    assert_not_nil(broadcast)
+    assert_broadcasts_on(chat, 1) do |broadcasts|
+      attachments = broadcasts[0]["message"]["attachments"]
+      assert_length(attachments, 1)
+      assert_not_nil(attachments[0]["previewUrl"])
+    end
 
-    outgoing = ActiveSupport::JSON.decode(broadcast)
-    outgoing_attachments = outgoing["message"]["attachments"]
-    assert_length(outgoing_attachments, 1)
-    assert_not_nil(outgoing_attachments[0]["previewUrl"])
+    assert_analytics_events(1) do |events|
+      assert_match(/Did Receive Message/, events[0])
+    end
   end
 end

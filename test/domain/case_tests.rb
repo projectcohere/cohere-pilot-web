@@ -170,10 +170,26 @@ class CaseTests < ActiveSupport::TestCase
     assert_length(kase.events, 2)
     assert_instance_of(Case::Events::DidReceiveMessage, kase.events[0])
     assert_instance_of(Case::Events::DidUploadMessageAttachment, kase.events[1])
+  end
+
+  test "attaches chat message attachments" do
+    kase = Case.stub
+
+    message = Chat::Message.stub(
+      attachments: [
+        :test_attachment
+      ]
+    )
+
+    kase.add_chat_message(message)
 
     new_document = kase.new_documents[0]
+    assert_length(kase.new_documents, 1)
     assert_equal(new_document.classification, :unknown)
-    assert_equal(new_document.source_url, "https://website.com/image.jpg")
+    assert_equal(new_document.new_file, :test_attachment)
+
+    assert_length(kase.events, 1)
+    assert_instance_of(Case::Events::DidReceiveMessage, kase.events[0])
   end
 
   test "signs a contract" do

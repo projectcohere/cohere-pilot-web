@@ -104,6 +104,15 @@ module Db
       end
     end
 
+    test "finds an active case by recipient id" do
+      case_repo = Case::Repo.new
+      case_recipient_rec = recipients(:recipient_1)
+
+      kase = case_repo.find_active_by_recipient(case_recipient_rec.id)
+      assert_not_nil(kase)
+      assert_equal(kase.recipient.id, case_recipient_rec.id)
+    end
+
     test "finds all opened cases" do
       case_repo = Case::Repo.new
       cases = case_repo.find_all_opened
@@ -312,7 +321,7 @@ module Db
       case_repo = Case::Repo.new(domain_events: domain_events)
 
       act = -> do
-        case_repo.save_message_changes(kase)
+        case_repo.save_new_message(kase)
       end
 
       assert_difference(
@@ -336,7 +345,7 @@ module Db
       assert_length(domain_events, 2)
     end
 
-    test "saves an attached file" do
+    test "saves the selected attachment" do
       case_rec = cases(:submitted_1)
       kase = Case::Repo.map_record(case_rec, case_rec.documents)
 
