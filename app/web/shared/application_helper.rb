@@ -59,6 +59,26 @@ module ApplicationHelper
     end
   end
 
+  def chat_message_tag(chat_message, sender, receiver, &children)
+    # pre-render children
+    message_content = capture(&children)
+
+    # determine tag props
+    is_sent = chat_message.sent_by?(sender)
+    classes = cx("ChatMessage",
+      "ChatMessage--sent" => is_sent,
+      "ChatMessage--received" => !is_sent,
+    )
+
+    sender_name = is_sent ? "Me" : receiver
+
+    # render tag
+    tag.li(class: classes) do
+      sender_tag = tag.label(sender, class: "ChatMessage-sender")
+      sender_tag + message_content
+    end
+  end
+
   # -- queries --
   def errors?(*models)
     models.any? do |model|

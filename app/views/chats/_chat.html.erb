@@ -5,15 +5,23 @@
   <div class="Chat-window">
     <%= tag.ol(id: "chat", class: "Chat-messages", data: data) do %>
       <%- chat.messages.each do |msg| %>
-        <% is_sent = msg.sent_by?(sender) %>
-        <li class="<%= cx("ChatMessage", "ChatMessage--sent" => is_sent, "ChatMessage--received" => !is_sent) %>">
-          <label class="ChatMessage-sender">
-            <%= is_sent ? "Me" : receiver %>
-          </label>
-          <p class="ChatMessage-body">
-            <%= msg.body %>
-          </p>
-        </li>
+        <%- msg.attachments.each do |a| %>
+          <%= chat_message_tag(msg, sender, receiver) do %>
+            <img
+              class="ChatMessage-attachment"
+              alt="<%= a.filename %>"
+              src="<%= a.representable? ? a.representation(resize: "200x200>").processed.service_url : nil %>"
+            />
+          <%- end %>
+        <%- end %>
+
+        <%- if msg.body.present? %>
+          <%= chat_message_tag(msg, sender, receiver) do %>
+            <p class="ChatMessage-body">
+              <%= msg.body %>
+            </p>
+          <%- end %>
+        <%- end %>
       <%- end %>
     <%- end %>
 
