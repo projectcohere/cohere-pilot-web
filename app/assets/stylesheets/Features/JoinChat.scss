@@ -1,0 +1,19 @@
+.JoinChat {
+  &-window {
+    padding: $spacing3;
+  }
+
+  &-header {
+    > h2 {
+      margin-top: $spacing3;
+    }
+  }
+
+  &-form {
+    margin-top: $spacing2;
+  }
+
+  &-action {
+    margin-top: $spacing3;
+  }
+}

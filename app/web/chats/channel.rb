@@ -17,13 +17,10 @@ module Chats
       end
 
       # add incoming message to chat
-      incoming = Incoming.new(
+      AddMessage.(chat, sender, Incoming.new(
         body: data["message"]["body"],
         attachment_ids: data["message"]["attachmentIds"],
-      )
-
-      add_message = AddMessage.new
-      add_message.(chat, sender, incoming)
+      ))
 
       # handle events
       Events::ProcessAll.get.()

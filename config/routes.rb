@@ -41,11 +41,20 @@ Rails.application.routes.draw do
 
     # chats
     resource(:chat, only: [:show]) do
-      get("/start/:invitation_token", action: :start)
-      get("/join", action: :join)
-      post("/files", action: :files, constraints: ->(req) {
+      match("/join", via: :get, to: redirect("/chat/invites/new"))
+      match("/start/:invitation_token", via: :get, action: :start)
+      match("/files", via: :post, action: :files, constraints: ->(req) {
         req.content_type == "multipart/form-data"
       })
+
+      # sessions
+      resources(:invites, module: "chats", only: [
+        :new,
+        :create,
+      ]) do
+        match("/verify", via: :get, on: :collection, action: :edit)
+        match("/", via: :put, on: :collection, action: :update)
+      end
     end
 
     # fallback

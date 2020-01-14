@@ -1,9 +1,0 @@
-.ShowChat {
-  flex: 1;
-
-  @include desktop {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-}

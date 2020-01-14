@@ -1,6 +1,31 @@
 require "test_helper"
 
 class ChatsTests < ActionDispatch::IntegrationTest
+  # -- invites --
+  test "requests an invite" do
+    VCR.use_cassette("chats--invites") do
+      post("/chat/invites", params: {
+        invite: {
+          phone_number: "1 (334) 320-4550"
+        }
+      })
+    end
+
+    assert_redirected_to("/chat/invites/verify")
+    assert_not_nil(cookies[:chat_invite_phone_number])
+  end
+
+  test "can't send an invite if the phone number is invalid" do
+    post("/chat/invites", params: {
+      invite: {
+        phone_number: "333 (334) 320-4550"
+      }
+    })
+
+    assert_present(flash.now[:alert])
+    assert_nil(cookies[:chat_invite_phone_number])
+  end
+
   # -- start --
   test "start a session" do
     chat_rec = chats(:invited_1)

@@ -1,0 +1,27 @@
+.Phone {
+  flex: 1;
+
+  @include desktop {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &-frame {
+    @include desktop {
+      position: relative;
+      width: 320px;
+      height: 568px;
+      box-shadow: 0px 0px 10px $color-shadow;
+      border-radius: $radius-chat;
+      background-color: $white;
+      overflow: hidden;
+    }
+
+    @include mobile {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
