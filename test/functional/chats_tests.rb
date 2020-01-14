@@ -52,13 +52,13 @@ class ChatsTests < ActionDispatch::IntegrationTest
   end
 
   test "can't upload files if not connected" do
-    assert_raises(ActionController::RoutingError) do
-      post("/chat/files", params: {
-        files: {
-          "0" => fixture_file_upload("files/test.txt", "text/plain")
-        }
-      })
-    end
+    post("/chat/files", params: {
+      files: {
+        "0" => fixture_file_upload("files/test.txt", "text/plain")
+      }
+    })
+
+    assert_response(:not_found)
   end
 
   test "upload files for the current chat" do
@@ -68,6 +68,44 @@ class ChatsTests < ActionDispatch::IntegrationTest
 
     act = -> do
       post("/chat/files", params: {
+        files: {
+          "0" => fixture_file_upload("files/test.txt", "text/plain")
+        }
+      })
+    end
+
+    assert_difference(
+      -> { ActiveStorage::Blob.count } => 1,
+      &act
+    )
+
+    assert_response(:success)
+
+    res = JSON.parse(response.body)
+    assert_length(res["data"]["fileIds"], 1)
+  end
+
+  test "can't upload without permission" do
+    user_rec = users(:dhs_1)
+    chat_rec = chats(:invited_1)
+
+    act = -> do
+      post(auth("/chat/#{chat_rec.id}/files", as: user_rec), params: {
+        files: {
+          "0" => fixture_file_upload("files/test.txt", "text/plain")
+        }
+      })
+    end
+
+    assert_raises(ActionController::RoutingError, &act)
+  end
+
+  test "upload files as a cohere user" do
+    user_rec = users(:cohere_1)
+    chat_rec = chats(:invited_1)
+
+    act = -> do
+      post(auth("/chats/#{chat_rec.id}/files", as: user_rec), params: {
         files: {
           "0" => fixture_file_upload("files/test.txt", "text/plain")
         }
@@ -201,7 +239,10 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
     assert_broadcasts_on(chat, 1) do |broadcasts|
       attachments = broadcasts[0]["message"]["attachments"]
       assert_length(attachments, 1)
-      assert_not_nil(attachments[0]["previewUrl"])
+
+      attachment = attachments[0]
+      assert_not_nil(attachment["name"])
+      assert_not_nil(attachment["previewUrl"])
     end
 
     assert_analytics_events(1) do |events|

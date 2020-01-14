@@ -22,13 +22,13 @@ interface Attachment {
 interface Incoming {
   sender: Sender,
   message: {
-    body: string
+    body: string | null
     attachments: Attachment[]
   }
 }
 
 interface Outgoing {
-  chat: string
+  chat: string | null,
   message: {
     body: string
     attachmentIds?: number[]
@@ -50,7 +50,7 @@ export class Chat implements IComponent {
 
   // -- props --
   private channel: ActionCable.Channel = null!
-  private id: string = null!
+  private id: string | null = null
   private sender: Sender = null!
   private receiver: string = null!
   private authenticityToken: string = null!
@@ -68,7 +68,7 @@ export class Chat implements IComponent {
     }
 
     // extract element data
-    this.id = $chat.dataset.id!
+    this.id = $chat.dataset.id || null
     this.sender = $chat.dataset.sender as Sender
     this.receiver = $chat.dataset.receiver!
     this.authenticityToken = $chatForm.querySelector(kQueryAuthenticityToken)!.getAttribute("value")!
@@ -95,7 +95,7 @@ export class Chat implements IComponent {
     this.files.cleanup()
 
     // cleanup props
-    this.id = null!
+    this.id = null
     this.sender = null!
     this.receiver = null!
 
@@ -179,7 +179,12 @@ export class Chat implements IComponent {
     }
 
     // post the request
-    const response = await window.fetch("/chat/files", {
+    let endpoint = "/chat/files"
+    if (this.id != null) {
+      endpoint = `/chats/${this.id}/files`
+    }
+
+    const response = await window.fetch(endpoint, {
       method: "POST",
       body
     })
@@ -257,7 +262,7 @@ export class Chat implements IComponent {
           src=${a.previewUrl}
         />
       `))}
-      ${body.length === 0 ? "" : this.renderBubble(name, classes, `
+      ${body == null || body.length === 0 ? "" : this.renderBubble(name, classes, `
         <p class="ChatMessage-body">
           ${body}
         </p>

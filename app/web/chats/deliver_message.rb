@@ -28,11 +28,12 @@ module Chats
     end
 
     def serialize_attachment(a)
-      serailized = {
+      serialized = {
+        name: a.filename,
         previewUrl: a.representable? ? a.representation(resize: "200x200>").processed.service_url : nil
       }
 
-      return serailized
+      return serialized
     end
   end
 end

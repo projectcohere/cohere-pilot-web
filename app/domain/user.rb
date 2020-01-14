@@ -14,7 +14,7 @@ class User < ::Entity
   def self.invite(invitation)
     user = User.new(email: invitation.email, role: invitation.role)
     user.events << Events::DidInvite.from_user(user)
-    user
+    return user
   end
 
   # -- commands --

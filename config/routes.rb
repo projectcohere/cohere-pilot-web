@@ -121,6 +121,13 @@ Rails.application.routes.draw do
           create
         ])
       end
+
+      # chats
+      resources(:chats, only: []) do
+        post("/files", action: :files, constraints: ->(req) {
+          req.content_type == "multipart/form-data"
+        })
+      end
     end
   end
 

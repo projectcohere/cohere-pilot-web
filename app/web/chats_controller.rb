@@ -17,9 +17,9 @@ class ChatsController < ApplicationController
       return redirect_to(join_chat_path)
     end
 
+    # find chat, or redirect if it expired
     @chat = Chat::Repo.get.find_by_session_with_messages(session_token)
 
-    # if the chat expired, redirect to join page
     if @chat.nil?
       cookies.delete(:chat_session_token)
       return redirect_to(join_chat_path)
@@ -29,11 +29,17 @@ class ChatsController < ApplicationController
   def files
     session_token = cookies.encrypted.signed[:chat_session_token]
     if session_token == nil
-      raise(ActionController::RoutingError, "No chat session connected.")
+      return head(:not_found)
     end
 
-    files = params[:files].values
-    file_ids = File::Repo.get.save_uploaded_files(files)
+    chat = Chat::Repo.get.find_by_session(session_token)
+    if chat == nil
+      cookies.delete(:chat_session_token)
+      return head(:not_found)
+    end
+
+    file_ids = File::Repo.get
+      .save_uploaded_files(params[:files].values)
 
     render(json: {
       "data" => {

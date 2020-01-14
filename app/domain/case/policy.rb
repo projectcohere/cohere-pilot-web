@@ -1,17 +1,14 @@
 class Case
-  class Policy
+  class Policy < ::Policy
     # -- lifetime --
     def initialize(user, kase = nil)
-      @user = user
       @case = kase
+      super(user)
     end
 
     # -- queries --
     # checks if the given user/case is allowed to perform an action.
     def permit?(action)
-      program = @case&.program
-
-      # then check action permissions
       case action
       when :list
         true
@@ -35,14 +32,8 @@ class Case
       when :referral
         cohere?
       else
-        false
+        super
       end
-    end
-
-    # checks if the given user / scope is forbidden from performing
-    # an action
-    def forbid?(action)
-      not permit?(action)
     end
 
     # -- commands --
@@ -60,22 +51,6 @@ class Case
     end
 
     # -- queries --
-    private def supplier?
-      @user.role_name == :supplier
-    end
-
-    private def dhs?
-      @user.role_name == :dhs
-    end
-
-    private def cohere?
-      @user.role_name == :cohere
-    end
-
-    private def enroller?
-      @user.role_name == :enroller
-    end
-
     private def meap?
       @case.program == Program::Name::Meap
     end

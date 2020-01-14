@@ -30,12 +30,16 @@ module Chats
     end
 
     private def connect_by_chat_session
-      chat_token = cookies.encrypted.signed[:chat_session_token]
-      if chat_token.blank?
+      session_token = cookies.encrypted.signed[:chat_session_token]
+      if session_token.blank?
         return false
       end
 
-      @chat = Chat::Repo.get.find_by_session(chat_token)
+      @chat = Chat::Repo.get.find_by_session(session_token)
+      if @chat == nil
+        raise "Could not find chat"
+      end
+
       return true
     end
   end

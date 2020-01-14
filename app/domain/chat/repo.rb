@@ -33,7 +33,7 @@ class Chat
     def find_by_session(session_token)
       chat_rec = Chat::Record
         .with_a_session
-        .find_by!(session_token: session_token)
+        .find_by(session_token: session_token)
 
       return entity_from(chat_rec)
     end
