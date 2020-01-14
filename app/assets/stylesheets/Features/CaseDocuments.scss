@@ -3,6 +3,7 @@
     grid-column: 1 / 10;
     display: flex;
     margin: -$spacing3;
+    flex-wrap: wrap;
 
     > * {
       margin: $spacing3;
