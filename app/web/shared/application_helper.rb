@@ -74,7 +74,7 @@ module ApplicationHelper
 
     # render tag
     tag.li(class: classes) do
-      sender_tag = tag.label(sender, class: "ChatMessage-sender")
+      sender_tag = tag.label(sender_name, class: "ChatMessage-sender")
       sender_tag + message_content
     end
   end

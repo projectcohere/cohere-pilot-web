@@ -49,7 +49,13 @@ Rails.application.routes.draw do
     end
 
     # fallback
-    get("*path", to: redirect(sign_in_path))
+    get("*path", to: redirect(sign_in_path), constraints: ->(req) {
+      # unclear why we have to constrain to signed out again here, since it
+      # be enforced by the enclosing `constraints`. but if we don't all urls
+      # for signed-in users infinitely redirect to sign_in_path.
+      signed_out = Clearance::Constraints::SignedOut.new
+      signed_out.matches?(req) && req.path.exclude?("rails/active_storage")
+    })
   end
 
   # -- signed-in --
@@ -144,7 +150,7 @@ Rails.application.routes.draw do
 
     # fallback
     get("*path", to: redirect(cases_path), constraints: ->(req) {
-      req.path.exclude? "rails/active_storage"
+      req.path.exclude?("rails/active_storage")
     })
   end
 end
