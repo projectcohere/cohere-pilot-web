@@ -1,12 +1,8 @@
-invited_1:
+idle_1:
   recipient: recipient_1
-  invitation_token: "1F9A0JP"
-  invitation_token_expires_at: <%= Time.zone.now + 1.year %>
 
 expired_1:
   recipient: recipient_2
-  invitation_token: "2RJQA04"
-  invitation_token_expires_at: <%= Time.zone.now - 5.minutes %>
 
 session_1:
   recipient: recipient_4

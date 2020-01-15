@@ -1,65 +1,20 @@
 require "test_helper"
 
 class ChatsTests < ActionDispatch::IntegrationTest
-  # -- invites --
-  test "requests an invite" do
-    VCR.use_cassette("chats--invites") do
-      post("/chat/invites", params: {
-        invite: {
-          phone_number: "1 (334) 320-4550"
-        }
-      })
-    end
-
-    assert_redirected_to("/chat/invites/verify")
-    assert_not_nil(cookies[:chat_invite_phone_number])
-  end
-
-  test "can't send an invite if the phone number is invalid" do
-    post("/chat/invites", params: {
-      invite: {
-        phone_number: "333 (334) 320-4550"
-      }
-    })
-
-    assert_present(flash.now[:alert])
-    assert_nil(cookies[:chat_invite_phone_number])
-  end
-
-  # -- start --
-  test "start a session" do
-    chat_rec = chats(:invited_1)
-    chat_invite = chat_rec.invitation_token
-
-    get("/chat/start/#{chat_invite}")
-    assert_not_nil(cookies[:chat_session_token])
-    assert_redirected_to("/chat")
-  end
-
-  test "can't start a session with an unknown token" do
-    get("/chat/start/fake-token")
-
-    assert_redirected_to("/chat/join")
-    assert_blank(cookies[:chat_session_token])
-  end
-
-  test "can't start a session with an expired token" do
-    chat_rec = chats(:expired_1)
-    chat_invite = chat_rec.invitation_token
-
-    get("/chat/start/#{chat_invite}")
-    assert_redirected_to("/chat/join")
-    assert_blank(cookies[:chat_session_token])
+  # -- join -0-
+  test "views prompt to join chat" do
+    get("/chat/join")
+    assert_redirected_to("/chat/invites/new")
   end
 
   # -- show --
   test "show the chat" do
-    chat_rec = chats(:invited_1)
-    chat_invite = chat_rec.invitation_token
+    chat_rec = chats(:session_1)
+    post("/tests/chat-session", params: {
+      token: chat_rec.session_token,
+    })
 
-    get("/chat/start/#{chat_invite}")
-    follow_redirect!
-
+    get("/chat")
     assert_response(:success)
     assert_present(cookies[:chat_session_token])
   end
@@ -87,9 +42,10 @@ class ChatsTests < ActionDispatch::IntegrationTest
   end
 
   test "upload files for the current chat" do
-    chat_rec = chats(:invited_1)
-    chat_invite = chat_rec.invitation_token
-    get("/chat/start/#{chat_invite}")
+    chat_rec = chats(:session_1)
+    post("/tests/chat-session", params: {
+      token: chat_rec.session_token,
+    })
 
     act = -> do
       post("/chat/files", params: {
@@ -112,7 +68,7 @@ class ChatsTests < ActionDispatch::IntegrationTest
 
   test "can't upload without permission" do
     user_rec = users(:dhs_1)
-    chat_rec = chats(:invited_1)
+    chat_rec = chats(:idle_1)
 
     act = -> do
       post(auth("/chat/#{chat_rec.id}/files", as: user_rec), params: {
@@ -127,7 +83,7 @@ class ChatsTests < ActionDispatch::IntegrationTest
 
   test "upload files as a cohere user" do
     user_rec = users(:cohere_1)
-    chat_rec = chats(:invited_1)
+    chat_rec = chats(:idle_1)
 
     act = -> do
       post(auth("/chats/#{chat_rec.id}/files", as: user_rec), params: {
@@ -154,7 +110,7 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
 
   # -- tests --
   test "subscribe a cohere user" do
-    chat_rec = chats(:invited_1)
+    chat_rec = chats(:idle_1)
     chat = Chat::Repo.map_record(chat_rec)
     user_rec = users(:cohere_1)
     user = User::Repo.map_record(user_rec)
@@ -165,7 +121,7 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
   end
 
   test "subscribe a recipient" do
-    chat_rec = chats(:invited_1)
+    chat_rec = chats(:idle_1)
     chat = Chat::Repo.map_record(chat_rec)
     stub_connection(chat_user_id: nil, chat: chat)
 
@@ -176,7 +132,7 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
   test "receive and deliver a message from a cohere user" do
     Sidekiq::Testing.inline!
 
-    chat_rec = chats(:invited_1)
+    chat_rec = chats(:idle_1)
     chat = Chat::Repo.map_record(chat_rec)
     stub_connection(chat_user_id: "test-id", chat: nil)
     subscribe(chat: chat_rec.id)
@@ -207,7 +163,7 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
   test "receive and deliver a message from a recipient" do
     Sidekiq::Testing.inline!
 
-    chat_rec = chats(:invited_1)
+    chat_rec = chats(:idle_1)
     chat = Chat::Repo.map_record(chat_rec)
     stub_connection(chat_user_id: nil, chat: chat)
     subscribe
@@ -239,7 +195,7 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
     Sidekiq::Testing.inline!
 
     blob_rec = active_storage_blobs(:blob_1)
-    chat_rec = chats(:invited_1)
+    chat_rec = chats(:idle_1)
     chat = Chat::Repo.map_record(chat_rec)
     stub_connection(chat_user_id: nil, chat: chat)
     subscribe

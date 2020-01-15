@@ -2,21 +2,26 @@ require "net/http"
 
 module Chats
   class SendInvite < ::Command
+    # -- liftime --
+    def initialize(twilio: Twilio.get, chat_repo: Chat::Repo.get)
+      @twilio = twilio
+      @chat_repo = chat_repo
+    end
+
     # -- command --
     def call(phone_number)
-      uri = URI("https://verify.twilio.com/v2/Services/#{ENV["TWILIO_INVITE_SID"]}/Verifications")
-
-      Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
-        req = Net::HTTP::Post.new(uri)
-        req.basic_auth(ENV["TWILIO_INVITE_API_KEY"], ENV["TWILIO_INVITE_API_SECRET"])
-        req.body = URI.encode_www_form({
-          "To" => "+1#{phone_number}",
-          "Channel" => "sms",
-        })
-
-        res = http.request(req)
-        res.kind_of?(Net::HTTPSuccess)
+      chat = @chat_repo.find_by_phone_number(phone_number)
+      if chat == nil
+        # TODO: differentiate between error states (missing chat vs request failure)
+        return nil
       end
+
+      json = @twilio.post("/Verifications", {
+        "To" => "+1#{phone_number}",
+        "Channel" => "sms",
+      })
+
+      return json&.dig("sid")
     end
   end
 end

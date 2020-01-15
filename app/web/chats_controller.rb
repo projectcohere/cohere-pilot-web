@@ -1,16 +1,4 @@
 class ChatsController < ApplicationController
-  def start
-    start_session = Chats::StartSession.new
-    session_token = start_session.(params[:invitation_token])
-
-    if session_token == nil
-      return redirect_to(join_chat_path)
-    end
-
-    cookies.encrypted.signed[:chat_session_token] = session_token
-    redirect_to(chat_path)
-  end
-
   def show
     session_token = cookies.encrypted.signed[:chat_session_token]
     if session_token == nil

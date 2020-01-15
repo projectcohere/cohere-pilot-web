@@ -1,10 +1,4 @@
 Rails.application.routes.draw do
-  # development
-  if Rails.env.development?
-    require "sidekiq/web"
-    mount(Sidekiq::Web => "/sidekiq")
-  end
-
   # -- signed-out --
   constraints(Clearance::Constraints::SignedOut.new) do
     sign_in_path = "/sign-in"
@@ -161,5 +155,16 @@ Rails.application.routes.draw do
     get("*path", to: redirect(cases_path), constraints: ->(req) {
       req.path.exclude?("rails/active_storage")
     })
+  end
+
+  # -- development --
+  if Rails.env.development?
+    require "sidekiq/web"
+    mount(Sidekiq::Web => "/sidekiq")
+  end
+
+  # -- test --
+  if Rails.env.test?
+    post("/tests/chat-session", to: "tests#chat_session")
   end
 end

@@ -6,8 +6,8 @@ module Chats
     end
 
     # -- comamnd --
-    def call(invitation_token)
-      chat = @chat_repo.find_by_invitation(invitation_token)
+    def call(phone_number)
+      chat = @chat_repo.find_by_phone_number(phone_number)
       if chat == nil
         return nil
       end

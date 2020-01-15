@@ -3,12 +3,8 @@ require "test_helper"
 class ChatTests < ActiveSupport::TestCase
   # -- commands --
   test "starts a session" do
-    chat = Chat.stub(
-      invitation: Chat::Invitation.stub
-    )
-
+    chat = Chat.stub
     chat.start_session
-    assert_nil(chat.invitation)
     assert_not_nil(chat.session)
   end
 

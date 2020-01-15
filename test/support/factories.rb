@@ -16,7 +16,6 @@ module Support
         Enroller,
         Supplier,
         Chat,
-        Chat::Invitation,
         Chat::Message,
         Mms::Message,
         Mms::Message::Sender,

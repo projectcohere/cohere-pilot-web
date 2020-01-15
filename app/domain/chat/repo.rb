@@ -22,10 +22,10 @@ class Chat
       return entity_from(chat_rec)
     end
 
-    def find_by_invitation(invitation_token)
+    def find_by_phone_number(phone_number)
       chat_rec = Chat::Record
-        .where("invitation_token_expires_at >= ?", Time.zone.now)
-        .find_by(invitation_token: invitation_token)
+        .includes(:recipient).references(:recipients)
+        .find_by(recipients: { phone_number: phone_number })
 
       return entity_from(chat_rec)
     end
@@ -82,8 +82,6 @@ class Chat
       end
 
       chat_rec.assign_attributes(
-        invitation_token: nil,
-        invitation_token_expires_at: nil,
         session_token: chat.session,
       )
 
@@ -124,12 +122,6 @@ class Chat
         record: r,
         id: Id.new(r.id),
         session: r.session_token,
-        invitation: r.invitation_token&.then { |t|
-          Chat::Invitation.new(
-            token: r.invitation_token,
-            expires_at: r.invitation_token_expires_at,
-          )
-        },
         messages: messages,
         recipient_id: r.recipient_id,
       )

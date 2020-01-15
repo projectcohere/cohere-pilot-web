@@ -5,7 +5,6 @@ class Chat < Entity
   # -- props --
   prop(:id, default: Id::None)
   prop(:session, default: nil)
-  prop(:invitation, default: nil)
   prop(:messages, default: [])
   prop(:recipient_id)
   props_end!
@@ -16,7 +15,6 @@ class Chat < Entity
 
   # -- commands --
   def start_session
-    @invitation = nil
     @session = SecureRandom.base58
   end
 
