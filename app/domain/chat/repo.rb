@@ -81,6 +81,14 @@ class Chat
     end
 
     # -- commands --
+    def save_opened(chat)
+      chat_rec = Chat::Record.create(
+        recipient_id: chat.recipient_id
+      )
+
+      chat.did_save(chat_rec)
+    end
+
     def save_new_session(chat)
       chat_rec = chat.record
       if chat_rec.nil?

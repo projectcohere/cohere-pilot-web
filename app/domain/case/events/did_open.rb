@@ -3,6 +3,7 @@ class Case
     class DidOpen < ::Value
       # -- props --
       prop(:case_id)
+      prop(:case_recipient_id)
       prop(:case_program)
       prop(:case_is_referred)
       props_end!
@@ -11,6 +12,7 @@ class Case
       def self.from_entity(kase)
         DidOpen.new(
           case_id: kase.id,
+          case_recipient_id: kase.recipient.id,
           case_program: kase.program,
           case_is_referred: kase.referral?
         )

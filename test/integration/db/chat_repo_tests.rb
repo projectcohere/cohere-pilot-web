@@ -16,9 +16,9 @@ module Db
     test "finds a chat by phone number" do
       chat_repo = Chat::Repo.new
       chat_rec = chats(:idle_1)
-      chat_phone_number = chat_rec.recipient.phone_number
+      phone_number = chat_rec.recipient.phone_number
 
-      chat = chat_repo.find_or_create_by_phone_number(chat_phone_number)
+      chat = chat_repo.find_or_create_by_phone_number(phone_number)
       assert_not_nil(chat)
       assert_equal(chat.id.val, chat_rec.id)
     end
@@ -26,11 +26,10 @@ module Db
     test "creates a chat by phone number" do
       chat = nil
       chat_repo = Chat::Repo.new
-      chat_recipient_rec = recipients(:recipient_3)
-      chat_phone_number = chat_recipient_rec.phone_number
-
+      recipient_rec = recipients(:recipient_3)
+      phone_number = recipient_rec.phone_number
       act = -> do
-        chat = chat_repo.find_or_create_by_phone_number(chat_phone_number)
+        chat = chat_repo.find_or_create_by_phone_number(phone_number)
       end
 
       assert_difference(
@@ -39,7 +38,7 @@ module Db
       )
 
       assert_not_nil(chat)
-      assert_equal(chat.recipient_id, chat_recipient_rec.id)
+      assert_equal(chat.recipient_id, recipient_rec.id)
     end
 
     test "finds a chat by session with messages" do
@@ -73,6 +72,24 @@ module Db
     end
 
     # -- commands --
+    test "saves an opened chat" do
+      recipient_rec = recipients(:recipient_3)
+      chat = Chat.open(recipient_rec.id)
+      chat_repo = Chat::Repo.new
+
+      act = -> do
+        chat_repo.save_opened(chat)
+      end
+
+      assert_difference(
+        -> { Chat::Record.count } => 1,
+        &act
+      )
+
+      assert_not_nil(chat.id.val)
+      assert_not_nil(chat.record)
+    end
+
     test "saves a new session" do
       chat_rec = chats(:idle_1)
       chat = Chat::Repo.map_record(chat_rec)

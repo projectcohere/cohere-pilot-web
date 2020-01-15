@@ -82,7 +82,10 @@ class CaseTests < ActiveSupport::TestCase
         Document.stub(
           classification: :unknown
         )
-      ]
+      ],
+      recipient: Recipient.stub(
+        id: 3
+      ),
     )
 
     referral = kase.make_referral_to_program(Program::Name::Wrap)

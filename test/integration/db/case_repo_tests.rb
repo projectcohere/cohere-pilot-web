@@ -110,7 +110,7 @@ module Db
 
       kase = case_repo.find_active_by_recipient(case_recipient_rec.id)
       assert_not_nil(kase)
-      assert_equal(kase.recipient.id, case_recipient_rec.id)
+      assert_equal(kase.recipient.id.val, case_recipient_rec.id)
     end
 
     test "finds all opened cases" do
@@ -182,7 +182,7 @@ module Db
       assert_not_nil(kase.record)
       assert_not_nil(kase.id.val)
       assert_not_nil(kase.recipient.record)
-      assert_not_nil(kase.recipient.id)
+      assert_not_nil(kase.recipient.id.val)
 
       assert_length(kase.events, 0)
       assert_length(domain_events, 1)
@@ -230,7 +230,7 @@ module Db
       assert_not_nil(kase.record)
       assert_not_nil(kase.id.val)
       assert_not_nil(kase.recipient.record)
-      assert_not_nil(kase.recipient.id)
+      assert_not_nil(kase.recipient.id.val)
 
       assert_length(kase.events, 0)
       assert_length(domain_events, 1)

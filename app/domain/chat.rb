@@ -13,6 +13,13 @@ class Chat < Entity
   attr(:new_message)
   attr(:selected_message)
 
+  # -- factories --
+  def self.open(recipient_id)
+    return Chat.new(
+      recipient_id: recipient_id
+    )
+  end
+
   # -- commands --
   def start_session
     @session = SecureRandom.base58
@@ -40,6 +47,11 @@ class Chat < Entity
   end
 
   # -- callbacks --
+  def did_save(record)
+    @id.set(record.id)
+    @record = record
+  end
+
   def did_save_new_message
     @new_message = nil
   end

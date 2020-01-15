@@ -60,19 +60,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   # -- create --
-  test "can't open a case if signed-out" do
-    get("/cases/new")
-    assert_redirected_to("/sign-in")
-  end
-
-  test "can't open a case without permission" do
-    user_rec = users(:cohere_1)
-
-    get(auth("/cases/new", as: user_rec))
-    assert_redirected_to("/cases")
-  end
-
-  test "open a case as a supplier" do
+  test "views prompt to open a case as a supplier" do
     user_rec = users(:supplier_1)
 
     get(auth("/cases/new", as: user_rec))
@@ -84,27 +72,49 @@ class CasesTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "save an opened case as a supplier" do
-    user_rec = users(:supplier_1)
+  test "can't view prompt to open a case if signed-out" do
+    get("/cases/new")
+    assert_redirected_to("/sign-in")
+  end
 
-    post(auth("/cases", as: user_rec), params: {
-      case: {
-        contact: {
-          first_name: "Janice",
-          last_name: "Sample",
-          phone_number: Faker::Number.number(digits: 10),
-        },
-        address: {
-          street: "123 Test Street",
-          city: "Testopolis",
-          zip: "11111",
-        },
-        supplier_account: {
-          account_number: "22222",
-          arrears: "1000.00"
-        }
+  test "can't view prompt to open a case without permission" do
+    user_rec = users(:cohere_1)
+
+    get(auth("/cases/new", as: user_rec))
+    assert_redirected_to("/cases")
+  end
+
+  test "opens a case as a supplier" do
+    user_rec = users(:supplier_1)
+    case_params = {
+      contact: {
+        first_name: "Janice",
+        last_name: "Sample",
+        phone_number: Faker::Number.number(digits: 10),
+      },
+      address: {
+        street: "123 Test Street",
+        city: "Testopolis",
+        zip: "11111",
+      },
+      supplier_account: {
+        account_number: "22222",
+        arrears: "1000.00"
       }
-    })
+    }
+
+    act = -> do
+      post(auth("/cases", as: user_rec), params: {
+        case: case_params
+      })
+    end
+
+    assert_difference(
+      -> { Case::Record.count } => 1,
+      -> { Recipient::Record.count } => 1,
+      -> { Chat::Record.count } => 1,
+      &act
+    )
 
     assert_present(flash[:notice])
     assert_redirected_to("/cases")

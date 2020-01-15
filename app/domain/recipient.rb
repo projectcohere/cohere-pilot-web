@@ -2,7 +2,7 @@ class Recipient < ::Entity
   prop(:record, default: nil)
 
   # -- props --
-  prop(:id, default: nil)
+  prop(:id, default: Id::None)
   prop(:profile)
   prop(:dhs_account, default: nil)
   props_end!
@@ -19,7 +19,7 @@ class Recipient < ::Entity
 
   # -- events --
   def did_save(record)
+    @id.set(record.id)
     @record = record
-    @id = record.id
   end
 end

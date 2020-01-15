@@ -1,6 +1,12 @@
 require "test_helper"
 
 class ChatTests < ActiveSupport::TestCase
+  # -- factories --
+  test "opens a chat" do
+    chat = Chat.open(1)
+    assert_equal(chat.recipient_id, 1)
+  end
+
   # -- commands --
   test "starts a session" do
     chat = Chat.stub

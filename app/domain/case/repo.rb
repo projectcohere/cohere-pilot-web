@@ -314,7 +314,7 @@ class Case
       referred = referral.referred
       referred_rec.assign_attributes(
         program: referred.program,
-        recipient_id: referred.recipient.id,
+        recipient_id: referred.recipient.id.val,
         referrer_id: referrer.id.val
       )
 
@@ -472,7 +472,7 @@ class Case
     def self.map_recipient(r)
       Recipient.new(
         record: r,
-        id: r.id,
+        id: Id.new(r.id),
         profile: Recipient::Profile.new(
           phone: Recipient::Phone.new(
             number: r.phone_number

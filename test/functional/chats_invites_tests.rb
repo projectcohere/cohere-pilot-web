@@ -84,7 +84,7 @@ class ChatsInvitesTests < ActionDispatch::IntegrationTest
 
     act = -> do
       VCR.use_cassette("chats--verify-invite") do
-        put("/chat/invites", params: {
+        patch("/chat/invites", params: {
           invite: {
             code: "8842"
           }
@@ -104,7 +104,7 @@ class ChatsInvitesTests < ActionDispatch::IntegrationTest
   end
 
   test "can't start a session with an unrequested invite" do
-    put("/chat/invites", params: {
+    patch("/chat/invites", params: {
       invite: {
         code: "4039"
       }
@@ -118,7 +118,7 @@ class ChatsInvitesTests < ActionDispatch::IntegrationTest
     request_invite!(chat_rec)
 
     VCR.use_cassette("chats--verify-invite--invalid") do
-      put("/chat/invites", params: {
+      patch("/chat/invites", params: {
         invite: {
           code: "9999"
         }

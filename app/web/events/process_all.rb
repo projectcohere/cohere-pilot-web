@@ -28,6 +28,10 @@ module Events
           deliver(CasesMailer.did_open(
             event.case_id.val
           ))
+
+          Chats::OpenChat.(
+            event.case_recipient_id.val
+          )
         end
       when Case::Events::DidSubmit
         deliver(CasesMailer.did_submit(
