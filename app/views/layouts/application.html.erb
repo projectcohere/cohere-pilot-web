@@ -13,10 +13,10 @@
       <%= render(partial: "layouts/header") %>
     <% end %>
     <div class="Layout">
+      <%= yield %>
       <% if flash.present? %>
         <%= render(partial: "layouts/flash") %>
       <% end %>
-      <%= yield %>
     </div>
   </body>
 </html>

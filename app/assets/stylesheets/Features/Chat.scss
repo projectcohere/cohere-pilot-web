@@ -6,14 +6,21 @@
     height: 100%;
 
     @include desktop {
-      overflow-y: auto;
+      overflow-y: scroll;
     }
   }
+
+  // -- elements/config
+  $form-height: 84px;
+  $form-spacing: $spacing3;
+  $form-controls-height: $form-height - $form-spacing * 2;
+  $form-controls-spacing: 10px;
 
   // -- elements/messages
   &-messages[class] {
     display: flex;
     flex-direction: column;
+    min-height: calc(100% - #{$form-height});
     padding: $spacing3;
     animation: messages-appear 0.75s;
 
@@ -41,9 +48,6 @@
   }
 
   // -- elements/controls
-  $controls-height: 44px;
-  $controls-spacing: 10px;
-
   &-controls {
     display: flex;
     align-items: flex-end;
@@ -54,8 +58,8 @@
 
     width: $size;
     height: $size;
-    margin-left: $controls-spacing;
-    margin-bottom: ($controls-height - $size) / 2;
+    margin-left: $form-controls-spacing;
+    margin-bottom: ($form-controls-height - $size) / 2;
     border-radius: $size / 2;
     background-color: $brand-primary;
     cursor: pointer;
@@ -132,14 +136,14 @@
     flex: 1;
     position: relative;
     background-color: $color-field;
-    border-radius: $controls-height / 2;
+    border-radius: $form-controls-height / 2;
   }
 
   &-input {
     box-sizing: content-box;
     display: block;
     padding: $field-spacing;
-    min-height: $controls-height - $controls-spacing * 2;
+    min-height: $form-controls-height - $form-controls-spacing * 2;
     overflow-wrap: anywhere;
 
     &:focus {

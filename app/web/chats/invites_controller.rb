@@ -16,7 +16,7 @@ module Chats
 
       invite_sid = SendInvite.(@phone_number.to_s)
       if invite_sid == nil
-        flash.now[:alert] = "There was a problem sending the invite. Please try again."
+        flash.now[:alert] = "Please double check your phone number, and try again."
         return render(:new)
       end
 

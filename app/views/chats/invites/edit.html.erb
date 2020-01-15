@@ -2,16 +2,19 @@
   <article class="JoinChat-window Phone-frame">
     <header class="JoinChat-header">
       <h1>
-        Woo
+        Almost there.
       </h1>
+      <h2>
+        You should receive a text message with a 4-digit code. Please enter it here to join the chat:
+      </h2>
     </header>
 
-    <%= form_for(:invite, url: chat_invites_path, html: { class: "JoinChat-form" }) do |f| %>
-      <%= f.field(:phone_number) do %>
-        <%= f.telephone_field(:phone_number, placeholder: number_to_phone("3134445555")) %>
+    <%= form_for(:invite, url: chat_invites_path, html: { method: :patch, class: "JoinChat-form" }) do |f| %>
+      <%= f.field(:code) do %>
+        <%= f.text_field(:code, maxlength: 4, placeholder: "1234") %>
       <%- end %>
 
-      <%= f.submit("Send Code", class: "JoinChat-action Button--action") %>
+      <%= f.submit("Join Chat", class: "JoinChat-action Button--action") %>
     <%- end %>
    </article>
 </main>

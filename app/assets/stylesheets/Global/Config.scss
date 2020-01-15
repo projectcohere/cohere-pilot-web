@@ -66,4 +66,4 @@ $color-field: fade-out($brand-primary, 0.90);
 $color-shadow: fade-out($brand-black, 0.95);
 $color-error: $brand-secondary2;
 $color-notice: $color-field;
-$color-alert: fade-out($brand-secondary1, 0.50);
+$color-alert: lighten($brand-secondary1, 15%);

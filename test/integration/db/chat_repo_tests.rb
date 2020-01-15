@@ -18,9 +18,28 @@ module Db
       chat_rec = chats(:idle_1)
       chat_phone_number = chat_rec.recipient.phone_number
 
-      chat = chat_repo.find_by_phone_number(chat_phone_number)
+      chat = chat_repo.find_or_create_by_phone_number(chat_phone_number)
       assert_not_nil(chat)
       assert_equal(chat.id.val, chat_rec.id)
+    end
+
+    test "creates a chat by phone number" do
+      chat = nil
+      chat_repo = Chat::Repo.new
+      chat_recipient_rec = recipients(:recipient_3)
+      chat_phone_number = chat_recipient_rec.phone_number
+
+      act = -> do
+        chat = chat_repo.find_or_create_by_phone_number(chat_phone_number)
+      end
+
+      assert_difference(
+        -> { Chat::Record.count } => 1,
+        &act
+      )
+
+      assert_not_nil(chat)
+      assert_equal(chat.recipient_id, chat_recipient_rec.id)
     end
 
     test "finds a chat by session with messages" do

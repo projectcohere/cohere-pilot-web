@@ -47,7 +47,7 @@ Rails.application.routes.draw do
         :create,
       ]) do
         match("/verify", via: :get, on: :collection, action: :edit)
-        match("/", via: :put, on: :collection, action: :update)
+        match("/", via: :patch, on: :collection, action: :update)
       end
     end
 
