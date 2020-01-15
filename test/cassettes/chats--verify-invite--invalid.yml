@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: https://verify.twilio.com/v2/Services/<TWILIO_INVITE_SID>/VerificationCheck
+    uri: https://verify.twilio.com/v2/Services/<TWILIO_API_VERIFY_SID>/VerificationCheck
     body:
       encoding: US-ASCII
       string: VerificationSid=VE7d76d48100bfdac4045dd87079ce3020&Code=9999
@@ -16,7 +16,7 @@ http_interactions:
       Host:
       - verify.twilio.com
       Authorization:
-      - Basic <TWILIO_INVITE_API_BASIC_AUTH>
+      - Basic <TWILIO_API_BASIC_AUTH>
   response:
     status:
       code: 200
@@ -62,7 +62,7 @@ http_interactions:
       string: '{"status": "pending", "payee": null, "date_updated": "2020-01-15T18:35:24Z",
         "account_sid": "AC26ae8f8a9fc87de1272bba1f9c51ff8e", "to": "+11112223333",
         "amount": null, "valid": false, "sid": "VE7d76d48100bfdac4045dd87079ce3020",
-        "date_created": "2020-01-15T18:34:57Z", "service_sid": "<TWILIO_INVITE_SID>",
+        "date_created": "2020-01-15T18:34:57Z", "service_sid": "<TWILIO_API_VERIFY_SID>",
         "channel": "sms"}'
     http_version:
   recorded_at: Wed, 15 Jan 2020 18:35:24 GMT

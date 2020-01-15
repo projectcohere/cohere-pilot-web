@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: https://verify.twilio.com/v2/Services/<TWILIO_INVITE_SID>/Verifications
+    uri: https://verify.twilio.com/v2/Services/<TWILIO_API_VERIFY_SID>/Verifications
     body:
       encoding: US-ASCII
       string: To=%2B1112223333&Channel=sms
@@ -16,7 +16,7 @@ http_interactions:
       Host:
       - verify.twilio.com
       Authorization:
-      - Basic <TWILIO_INVITE_API_BASIC_AUTH>
+      - Basic <TWILIO_API_BASIC_AUTH>
   response:
     status:
       code: 201

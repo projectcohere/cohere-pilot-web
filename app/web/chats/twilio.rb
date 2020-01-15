@@ -7,11 +7,11 @@ module Chats
 
     # -- commands --
     def post(endpoint, params)
-      uri = URI("https://verify.twilio.com/v2/Services/#{ENV["TWILIO_INVITE_SID"]}#{endpoint}")
+      uri = URI("https://verify.twilio.com/v2/Services/#{ENV["TWILIO_API_VERIFY_SID"]}#{endpoint}")
 
       Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
         req = Net::HTTP::Post.new(uri)
-        req.basic_auth(ENV["TWILIO_INVITE_API_KEY"], ENV["TWILIO_INVITE_API_SECRET"])
+        req.basic_auth(ENV["TWILIO_API_KEY"], ENV["TWILIO_API_SECRET"])
         req.body = URI.encode_www_form(params)
 
         res = http.request(req)
