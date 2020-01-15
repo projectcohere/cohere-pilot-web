@@ -22,16 +22,10 @@ class Chat
       return entity_from(chat_rec)
     end
 
-    def find_or_create_by_phone_number(phone_number)
-      recipient_rec = Recipient::Record
-        .find_by(phone_number: phone_number)
-
-      if recipient_rec == nil
-        return nil
-      end
-
+    def find_by_phone_number(phone_number)
       chat_rec = Chat::Record
-        .find_or_create_by(recipient: recipient_rec)
+        .left_joins(:recipient)
+        .find_by(recipients: { phone_number: phone_number })
 
       return entity_from(chat_rec)
     end
