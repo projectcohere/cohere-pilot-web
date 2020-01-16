@@ -3,6 +3,30 @@ require "test_helper"
 module Db
   class ChatRepoTests < ActiveSupport::TestCase
     # -- queries --
+    test "tests if a chat exists by phone number" do
+      chat_repo = Chat::Repo.new
+      chat_rec = chats(:idle_1)
+      chat_phone_number = chat_rec.recipient.phone_number
+
+      chat_exists = chat_repo.any_by_phone_number?(chat_phone_number)
+      assert(chat_exists)
+
+      chat_exists = chat_repo.any_by_phone_number?("9999999999")
+      assert_not(chat_exists)
+    end
+
+    test "tests if a chat exists for a recipient" do
+      chat_repo = Chat::Repo.new
+
+      chat_recipient_rec = chats(:idle_1).recipient
+      chat_exists = chat_repo.any_by_recipient?(chat_recipient_rec.id)
+      assert(chat_exists)
+
+      chat_recipient_rec = recipients(:recipient_3)
+      chat_exists = chat_repo.any_by_recipient?(chat_recipient_rec.id)
+      assert_not(chat_exists)
+    end
+
     test "finds a chat by recipient with messages" do
       chat_repo = Chat::Repo.new
       chat_rec = chats(:idle_1)

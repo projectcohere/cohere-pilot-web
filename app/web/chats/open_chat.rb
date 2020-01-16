@@ -7,6 +7,10 @@ module Chats
 
     # -- commands --
     def call(recipient_id)
+      if @chat_repo.any_by_recipient?(recipient_id)
+        return
+      end
+
       chat = Chat.open(recipient_id)
       @chat_repo.save_opened(chat)
     end

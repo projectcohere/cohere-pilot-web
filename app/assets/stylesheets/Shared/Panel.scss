@@ -6,6 +6,10 @@
   > .Panel-section + .Panel-section {
     margin-top: $spacing1;
   }
+
+  > .Panel-actions {
+    margin-top: $spacing1;
+  }
 }
 
 // -- main --
@@ -65,6 +69,10 @@
   // -- variants --
   &--read, &--read &-tab {
     > .Panel-section + .Panel-section {
+      margin-top: $spacing2;
+    }
+
+    > .Panel-actions {
       margin-top: $spacing2;
     }
   }

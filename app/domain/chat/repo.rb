@@ -14,6 +14,23 @@ class Chat
     end
 
     # -- queries --
+    # -- queries/any
+    def any_by_phone_number?(phone_number)
+      chat_exists = Chat::Record
+        .with_phone_number(phone_number)
+        .exists?
+
+      return chat_exists
+    end
+
+    def any_by_recipient?(recipient_id)
+      chat_exists = Chat::Record
+        .with_recipient(recipient_id)
+        .exists?
+
+      return chat_exists
+    end
+
     # -- queries/one
     def find(id)
       chat_rec = Chat::Record
@@ -24,15 +41,15 @@ class Chat
 
     def find_by_phone_number(phone_number)
       chat_rec = Chat::Record
-        .left_joins(:recipient)
-        .find_by(recipients: { phone_number: phone_number })
+        .with_phone_number(phone_number)
+        .first
 
       return entity_from(chat_rec)
     end
 
     def find_by_session(session_token)
       chat_rec = Chat::Record
-        .with_a_session
+        .with_any_session
         .find_by(session_token: session_token)
 
       return entity_from(chat_rec)
@@ -40,7 +57,7 @@ class Chat
 
     def find_by_session_with_messages(session_token)
       chat_rec = Chat::Record
-        .with_a_session
+        .with_any_session
         .find_by(session_token: session_token)
 
       chat_messages = if chat_rec != nil
@@ -53,7 +70,8 @@ class Chat
 
     def find_by_recipient_with_messages(recipient_id)
       chat_rec = Chat::Record
-        .find_by!(recipient_id: recipient_id)
+        .with_recipient(recipient_id)
+        .first!
 
       chat_messages = @chat_message_repo
         .find_many_by_chat_with_attachments(chat_rec.id)
@@ -138,8 +156,20 @@ class Chat
 
   class Record
     # -- scopes --
-    def self.with_a_session
-      where.not(session_token: nil)
+    def self.with_any_session
+      return where.not(session_token: nil)
+    end
+
+    def self.with_recipient(recipient_id)
+      return where(recipient_id: recipient_id)
+    end
+
+    def self.with_phone_number(phone_number)
+      scope = self
+        .left_joins(:recipient)
+        .where(recipients: { phone_number: phone_number })
+
+      return scope
     end
   end
 end

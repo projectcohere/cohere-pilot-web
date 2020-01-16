@@ -10,8 +10,7 @@ module Chats
 
     # -- command --
     def call(phone_number)
-      chat = @chat_repo.find_by_phone_number(phone_number)
-      if chat == nil
+      if not @chat_repo.any_by_phone_number?(phone_number)
         # TODO: differentiate between error states (missing chat vs request failure)
         return nil
       end
