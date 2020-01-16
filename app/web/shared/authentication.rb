@@ -48,6 +48,6 @@ module Authentication
 
   # -- commands/helpers
   private def sign_in_as(user_rec)
-    User::Repo.get.current = User::Repo.map_record(user_rec)
+    User::Repo.get.current = user_rec == nil ? nil : User::Repo.map_record(user_rec)
   end
 end
