@@ -1,5 +1,5 @@
 cohere_1:
-  email: me@cohere.org
+  email: me@projectcohere.com
   encrypted_password: <%= password("password123$") %>
   organization_type: cohere
   remember_token: <%= SecureRandom.uuid %>

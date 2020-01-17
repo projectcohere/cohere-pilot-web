@@ -1,0 +1,58 @@
+- name: 1a. Consent
+  body: "Hi there, this is Gaby from Cohere. We’re here to help you apply for energy assistance. Before we can get started we need your permission to interact over text messages. Here’s the agreement:"
+  filename: 1a-release.png
+- name: 1b. Yes??
+  body: "Please type your full name to indicate that you are voluntarily signing this contract:"
+- name: 1c. Permission is Required
+  body: "Your permission is required to participate in this pilot. Would you like to participate in this pilot? Please reply YES to agree or NO to leave the pilot."
+- name: 1d. Pilot Exit
+  body: "Thank you for your time. At this time your best option for applying to energy assistance is through the Michigan Department of Health and Human Services (MDHHS) at: newmibridges.michigan.gov"
+- name: 2. Household definition
+  body: "Great, let’s complete your application. First question: Other than family, is anyone else living in your household (such as friends, roommates, or tenants)?"
+- name: 3a. Photo ID
+  body: "We’re nearly finished. Please provide a photo of your ID. Place the ID on a flat surface and hold your phone’s camera overhead - like this:"
+  filename: 3a-photo-id.png
+- name: 3b. Poor Quality Photo
+  body: "I’m not able to clearly view the ID you sent over. Please re-take the photo so that we can submit your application. Here’s a quick tip: Be sure to hold your phone’s camera directly over the document."
+- name: 3c. Invalid ID
+  body: "Please provide a photo of an unexpired, government-issued photo ID.  The name on the ID must be linked to this utility account."
+- name: 4. Sign Application (MEAP)
+  body: "That looks great, thanks. To submit your application, review and sign the following agreement by typing your full name:"
+  filename: 4-meap-contract.png
+- name: 5. Ball is in our court
+  body: "That's all for now! We'll start processing your application. If we need any more information we'll reach back out before the end of the day."
+- name: 6a. Good News! (LSP)
+  body: "We’ve got good news! You are approved for an energy assistance program called LSP. Here’s what you need to know about the program:"
+  filename: 6a-meap-approved-lsp.png
+- name: 6a. Good News! (CARE)
+  body: "We’ve got good news! You are approved for an energy assistance program called CARE. Here’s what you need to know about the program:"
+  filename: 6a-meap-approved-care.png
+- name: 6b. Ineligible
+  body: "Thank you for your patience - we’ve concluded that you are not currently eligible for this program due. Would you like to speak to one of my teammates on the phone about useful next steps forward?"
+- name: 7. WRAP Follow-up (LSP)
+  body: "Great work completing the LSP application last week. Please consider applying for either of these two additional programs to help you keep building momentum:"
+  filename: 7-referral.png
+- name: 7. WRAP Follow-up (CARE)
+  body: "Great work completing the CARE application last week. Please consider applying for either of these two additional programs to help you keep building momentum:"
+  filename: 7-referral.png
+- name: 8. Financial Coaching
+  body: "Great - a teammate of mine from Wayne Metro will reach out to you by phone shortly."
+- name: 8a. Type 1 or 2
+  body: "Type 1 to apply for Water Bill Assistance. Type 2 to speak with a Financial Coach."
+- name: 9. Water Bill
+  body: "Great, let’s complete your water assistance application. Please provide a photo of a recent water bill that includes your account number."
+- name: 9a. Primary residence
+  body: "Is this your primary residence?"
+- name: 9b. Rent or own?
+  body: "Do you rent or own this residence?"
+- name: 9c. Active account
+  body: "Is your water account currently active? Please type: Yes or No"
+- name: 9d. Sign application (WRAP, 300)
+  body: "That looks great, thanks. To submit your application, review and sign the following agreement by typing your full name:"
+  filename: 9d-wrap-contract-3h.png
+- name: 9d. Sign application (WRAP, 1000)
+  body: "That looks great, thanks. To submit your application, review and sign the following agreement by typing your full name:"
+  filename: 9d-wrap-contract-1k.png
+- name: 10. WRAP approved
+  body: "We’ve got good news! You are approved for an energy assistance program called WRAP. Here’s what you need to know about the program:"
+  filename: 10-wrap-approved.png

@@ -1,5 +1,7 @@
 import { createConsumer } from "@rails/actioncable"
-import { Files } from "./Files"
+import { Files, IPreview } from "./Files"
+import { Macros, IMacro } from "./Macros"
+import { UploadFiles } from "./UploadFiles"
 import { IComponent } from "../Component"
 
 // -- constants --
@@ -14,16 +16,11 @@ const kQueryAuthenticityToken = `input[name=${kFieldAuthenticityToken}]`
 // -- types --
 type Sender = string | "recipient"
 
-interface Attachment {
-  name: string,
-  previewUrl: string
-}
-
 interface Incoming {
   sender: Sender,
   message: {
     body: string | null
-    attachments: Attachment[]
+    attachments: IPreview[]
   }
 }
 
@@ -35,18 +32,13 @@ interface Outgoing {
   }
 }
 
-interface SendFilesResponse {
-  data: {
-    fileIds: number[]
-  }
-}
-
 // -- impls --
 export class Chat implements IComponent {
   isOnLoad = true
 
   // -- deps --
   private files = new Files()
+  private macros = new Macros(this.didPickMacro.bind(this))
 
   // -- props --
   private channel: ActionCable.Channel = null!
@@ -88,11 +80,13 @@ export class Chat implements IComponent {
 
     // start deps
     this.files.start()
+    this.macros.start()
   }
 
   cleanup() {
     // cleanup deps
     this.files.cleanup()
+    this.macros.cleanup()
 
     // cleanup props
     this.id = null
@@ -127,7 +121,7 @@ export class Chat implements IComponent {
 
     // short-circuit on empty request
     const body = field.textContent || ""
-    const files = this.files.all()
+    const files = this.files.all
     if (body.length === 0 && files.length === 0) {
       return
     }
@@ -137,66 +131,30 @@ export class Chat implements IComponent {
       sender: this.sender,
       message: {
         body,
-        attachments: files.map((f) => ({
-          name: f.name,
-          previewUrl: URL.createObjectURL(f)
-        }))
+        attachments: files.map((f) => f.preview)
       }
     })
 
     this.clearInput()
     this.files.clear()
 
-    // send files over http, and get their ids, if they exist
-    let fileIds: number[] = []
-    if (files.length !== 0) {
-      fileIds = await this.sendFiles(files)
-    }
+    // send attachments
+    const fileIds = await UploadFiles({
+      authenticityToken: this.authenticityToken,
+      chatId: this.id,
+      files: files
+    })
 
     // send the message over the channel
     const outgoing: Outgoing = {
       chat: this.id,
       message: {
-        body
+        body,
+        attachmentIds: fileIds
       }
     }
 
-    if (fileIds.length !== 0) {
-      outgoing.message.attachmentIds = fileIds
-    }
-
     this.channel.send(outgoing)
-  }
-
-  private async sendFiles(files: File[]) {
-    // construct the form body
-    const body = new FormData()
-    body.append("authenticity_token", this.authenticityToken)
-
-    let index = 0
-    for (const file of files) {
-      body.append(`files[${index++}]`, file)
-    }
-
-    // post the request
-    let endpoint = "/chat/files"
-    if (this.id != null) {
-      endpoint = `/chats/${this.id}/files`
-    }
-
-    const response = await window.fetch(endpoint, {
-      method: "POST",
-      body
-    })
-
-    // update the ui
-    this.files.clear()
-
-    // extract the file ids
-    const json: SendFilesResponse = await response.json()
-    const fileIds = json.data.fileIds
-
-    return fileIds
   }
 
   private receiveMesasage(incoming: Incoming) {
@@ -242,6 +200,16 @@ export class Chat implements IComponent {
     this.sendMessage()
   }
 
+  private didPickMacro(macro: IMacro | null) {
+    this.$chatInput!.textContent = macro == null ? "" : macro.body
+
+    if (macro == null || macro.attachment == null) {
+      this.files.clear()
+    } else {
+      this.files.set([macro.attachment])
+    }
+  }
+
   // -- view --
   private render({ sender, message: { body, attachments } }: Incoming): string {
     const isSent = this.isSent(sender)
@@ -259,7 +227,7 @@ export class Chat implements IComponent {
         <img
           class="ChatMessage-attachment"
           alt="${a.name}"
-          src=${a.previewUrl}
+          src=${a.url}
         />
       `))}
       ${body == null || body.length === 0 ? "" : this.renderBubble(name, classes, `

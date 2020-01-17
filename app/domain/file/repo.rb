@@ -13,6 +13,13 @@ class File
       return files
     end
 
+    def find_all_by_filenames(filenames)
+      files = ActiveStorage::Blob
+        .where(filename: filenames)
+
+      return files
+    end
+
     # -- commands --
     def save_uploaded_files(files)
       transaction do

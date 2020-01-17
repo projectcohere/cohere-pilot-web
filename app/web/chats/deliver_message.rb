@@ -30,7 +30,7 @@ module Chats
     def serialize_attachment(a)
       serialized = {
         name: a.filename,
-        previewUrl: a.representable? ? a.representation(resize: "200x200>").processed.service_url : nil
+        url: a.representable? ? a.representation(resize: "200x200>").processed.service_url : nil
       }
 
       return serialized
