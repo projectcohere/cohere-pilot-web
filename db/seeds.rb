@@ -1,19 +1,6 @@
-# -- organizations --
-supplier_0 = Supplier::Record.create!(
-  name: "DTE",
-  program: :meap
-)
+if Rails.env.development?
+  return
+end
 
-supplier_1 = Supplier::Record.create!(
-  name: "Consumers Energy",
-  program: :meap
-)
-
-supplier_2 = Supplier::Record.create!(
-  name: "DWSD",
-  program: :wrap
-)
-
-enroller_0 = Enroller::Record.create!(
-  name: "Wayne Metro"
-)
+require "seeds/create_organizations"
+require "seeds/create_chat_macros"

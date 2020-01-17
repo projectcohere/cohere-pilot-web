@@ -158,10 +158,15 @@ db: d
 d: d/console
 .PHONY: d
 
-## runs seeds
+## runs prod seeds
 d/seed:
 	$(tools-rails) db:seed
 .PHONY: d/seed
+
+## loads dev seeds
+d/s/dev:
+	$(tools-rails) db:seed:dev
+.PHONY: d/s/dev
 
 ## loads fixtures
 d/fixtures:
@@ -174,18 +179,18 @@ d/reset:
 .PHONY: d/reset
 
 ## resets the db and loads fixtures
-d/r/all: d/reset d/fixtures
-.PHONY: d/reset/base
+d/r/all: d/reset d/fixtures d/s/dev
+.PHONY: d/r/all
 
 ## runs any pending migrations
 d/migrate:
 	$(tools-rails) db:migrate
-.PHONY: d/reset
+.PHONY: d/migrate
 
 ## rolls back previous migration
 d/m/undo:
 	$(tools-rails) db:rollback
-.PHONY: d/reset
+.PHONY: d/m/undo
 
 ## runs and rolls back migration
 d/m/check: d/migrate d/m/undo
