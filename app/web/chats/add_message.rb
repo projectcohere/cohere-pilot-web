@@ -12,10 +12,8 @@ module Chats
     # -- command --
     def call(chat, sender, incoming)
       # find all attachments, if necessary
-      attachments = nil
-      attachment_ids = incoming.attachment_ids
-      if attachment_ids.present?
-        attachments = @file_repo.find_all_by_ids(attachment_ids)
+      attachments = if incoming.attachment_ids.present?
+        @file_repo.find_all_by_ids(incoming.attachment_ids)
       end
 
       # add the message to the chat

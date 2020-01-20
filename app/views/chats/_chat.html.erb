@@ -39,10 +39,10 @@
         </label>
         <button class="Chat-send" alt="Send Message"></button>
       </div>
-
-      <% if local_assigns[:has_macros] %>
-        <%= render(partial: "chats/macros") %>
-      <% end %>
     <% end %>
   </div>
+
+  <% if local_assigns[:has_macros] %>
+    <%= render(partial: "chats/macros") %>
+  <% end %>
 </article>

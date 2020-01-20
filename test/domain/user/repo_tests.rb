@@ -8,7 +8,7 @@ class User
 
       user = User::Repo.map_record(user_rec)
       assert_not_nil(user.id.val)
-      assert_equal(user.email, "me@cohere.org")
+      assert_equal(user.email, "me@projectcohere.com")
       assert_equal(user.role.name, :cohere)
       assert_equal(user.confirmation_token, "test-token")
     end

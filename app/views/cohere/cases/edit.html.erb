@@ -92,6 +92,7 @@
     <%- if @chat != nil %>
       <%=
         render(partial: "chats/chat", locals: {
+          class: "EditCase-phone",
           chat: @chat,
           sender: Chat::Sender.cohere(cookies.signed[:chat_user_id]),
           receiver: @view.recipient_first_name,

@@ -1,12 +1,18 @@
 .Chat {
+  display: flex;
+  flex-direction: column;
+
   // -- elements
   &-window {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-
     @include desktop {
+      width: 320px;
+      height: 568px;
       overflow-y: scroll;
+    }
+
+    @include mobile {
+      width: 100%;
+      height: 100%;
     }
   }
 
@@ -174,5 +180,11 @@
     > * + * {
       margin-top: $spacing5;
     }
+  }
+
+  // -- elements/macros
+  &-macros {
+    padding: $spacing3;
+    border-top: 1px solid $color-divider;
   }
 }

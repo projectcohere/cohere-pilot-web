@@ -223,7 +223,7 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
 
       attachment = attachments[0]
       assert_not_nil(attachment["name"])
-      assert_not_nil(attachment["previewUrl"])
+      assert_not_nil(attachment["url"])
     end
 
     assert_analytics_events(1) do |events|
