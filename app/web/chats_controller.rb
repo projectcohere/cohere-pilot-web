@@ -2,7 +2,7 @@ class ChatsController < ApplicationController
   def show
     session_token = cookies.encrypted.signed[:chat_session_token]
     if session_token == nil
-      return redirect_to(join_chat_path)
+      return redirect_to(verify_chat_invites_path)
     end
 
     # find chat, or redirect if it expired
@@ -10,7 +10,7 @@ class ChatsController < ApplicationController
 
     if @chat.nil?
       cookies.delete(:chat_session_token)
-      return redirect_to(join_chat_path)
+      return redirect_to(verify_chat_invites_path)
     end
   end
 

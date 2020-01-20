@@ -1,14 +1,14 @@
 module Chats
-  class VerifyInvite < ::Command
+  class VerifyInviteByPhone < ::Command
     # -- lifetime --
     def initialize(twilio: Twilio.get)
       @twilio = twilio
     end
 
     # -- command --
-    def call(sid, code)
+    def call(phone_number, code)
       json = @twilio.post("/VerificationCheck", {
-        "VerificationSid" => sid,
+        "To" => "+1#{phone_number}",
         "Code" => code,
       })
 

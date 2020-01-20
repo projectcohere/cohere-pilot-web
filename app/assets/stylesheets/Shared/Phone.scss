@@ -23,11 +23,11 @@
     }
   }
 
-  // -- variants --
-  &--isolated &-frame {
+  &-view {
     @include desktop {
-      width: 320px;
+      width: 340px;
       height: 568px;
+      overflow-y: scroll;
     }
   }
 }

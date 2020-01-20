@@ -35,8 +35,6 @@ Rails.application.routes.draw do
 
     # chats
     resource(:chat, only: [:show]) do
-      match("/join", via: :get, to: redirect("/chat/invites/new"))
-      match("/start/:invitation_token", via: :get, action: :start)
       match("/files", via: :post, action: :files, constraints: ->(req) {
         req.content_type == "multipart/form-data"
       })
@@ -46,7 +44,8 @@ Rails.application.routes.draw do
         :new,
         :create,
       ]) do
-        match("/verify", via: :get, on: :collection, action: :edit)
+        match("/verify", via: :get, on: :collection, action: :verify)
+        match("/verify-code", via: :get, on: :collection, action: :edit)
         match("/", via: :patch, on: :collection, action: :update)
       end
     end
@@ -54,7 +53,7 @@ Rails.application.routes.draw do
     # fallback
     get("*path", to: redirect(sign_in_path), constraints: ->(req) {
       # unclear why we have to constrain to signed out again here, since it
-      # be enforced by the enclosing `constraints`. but if we don't all urls
+      # is enforced by the enclosing `constraints`. if we don't all urls
       # for signed-in users infinitely redirect to sign_in_path.
       signed_out = Clearance::Constraints::SignedOut.new
       signed_out.matches?(req) && req.path.exclude?("rails/active_storage")

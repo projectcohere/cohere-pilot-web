@@ -1,12 +1,6 @@
 require "test_helper"
 
 class ChatsTests < ActionDispatch::IntegrationTest
-  # -- join -0-
-  test "views prompt to join chat" do
-    get("/chat/join")
-    assert_redirected_to("/chat/invites/new")
-  end
-
   # -- show --
   test "show the chat" do
     chat_rec = chats(:session_1)
@@ -21,7 +15,7 @@ class ChatsTests < ActionDispatch::IntegrationTest
 
   test "can't chat without establishing a session" do
     get("/chat")
-    assert_redirected_to("/chat/join")
+    assert_redirected_to("/chat/invites/verify")
   end
 
   # -- files --
