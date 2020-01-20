@@ -1,10 +1,10 @@
-import { IFileView, IUpload } from "./Files"
+import { IFile, IUpload } from "./Files"
 
 // -- types --
 interface UploadFilesRequest {
   authenticityToken: string
   chatId: string | null
-  files: IFileView[]
+  files: IFile[]
 }
 
 interface UploadFilesResponse {
@@ -18,23 +18,23 @@ export async function UploadFiles(req: UploadFilesRequest): Promise<number[]> {
   // find files to upload
   const uploads: IUpload[] = []
   for (const file of req.files) {
-    if ("file" in file) {
+    if ("upload" in file) {
       uploads.push(file)
     }
   }
 
   // nothing to upload, return whatever ids we have
   if (uploads.length === 0) {
-    req.files.map((a) => a.id)
+    return req.files.map((a) => a.id)
   }
 
   // otherwise, construct form body from uploads
   const body = new FormData()
-  body.set("authenticity-token", req.authenticityToken)
+  body.set("authenticity_token", req.authenticityToken)
 
   let index = 0
   for (const upload of uploads) {
-    body.append(`files[${index++}]`, upload.file)
+    body.append(`files[${index++}]`, upload.upload)
   }
 
   // post the request
@@ -57,7 +57,7 @@ export async function UploadFiles(req: UploadFilesRequest): Promise<number[]> {
 
   let i = 0
   for (const file of req.files) {
-    if ("file" in file) {
+    if ("upload" in file) {
       ids.push(fileIds[i++])
     } else {
       ids.push(file.id)

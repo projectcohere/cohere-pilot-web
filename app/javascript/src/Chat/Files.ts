@@ -7,12 +7,11 @@ const kClassEmpty = "is-empty"
 const kNameRemove = "remove-file"
 
 // -- types --
-export type IFile = File | IAttachment
-
-export type IFileView = IUpload | IAttachment
+export type IFileInput = File | IAttachment
+export type IFile = IUpload | IAttachment
 
 export interface IUpload extends IAttachment {
-  file: File
+  upload: File
 }
 
 export interface IAttachment {
@@ -28,7 +27,7 @@ export interface IPreview {
 // -- impls --
 export class Files implements IComponent {
   // -- props --
-  private views: IFileView[] = []
+  private files: IFile[] = []
 
   // -- props/el
   private $fileList: HTMLElement | null = null
@@ -57,18 +56,18 @@ export class Files implements IComponent {
     this.render()
   }
 
-  set(files: IFile[]) {
-    this.views = files.map((file, i) => {
+  set(files: IFileInput[]) {
+    this.files = files.map<IFile>((file, i) => {
       if (!(file instanceof File)) {
         return file
-      } else {
-        return {
-          id: i,
-          file: file,
-          preview: {
-            name: file.name,
-            url: file.type.startsWith("image") ? URL.createObjectURL(file) : null
-          }
+      }
+
+      return {
+        id: i,
+        upload: file,
+        preview: {
+          name: file.name,
+          url: file.type.startsWith("image") ? URL.createObjectURL(file) : null
         }
       }
     })
@@ -77,16 +76,16 @@ export class Files implements IComponent {
   }
 
   private resetFiles() {
-    this.views.splice(0, this.views.length)
+    this.files.splice(0, this.files.length)
   }
 
   // -- queries --
   get any(): boolean {
-    return this.views.length !== 0
+    return this.files.length !== 0
   }
 
-  get all(): IFileView[] {
-    return this.views
+  get all(): IFile[] {
+    return this.files.slice()
   }
 
   // -- events --
@@ -118,11 +117,11 @@ export class Files implements IComponent {
     // remove the file by id
     const idString = $file.dataset.id
     const id = idString == null ? null : Number.parseInt(idString)
-    const index = this.views.findIndex((file) => {
+    const index = this.files.findIndex((file) => {
       return file.id === id
     })
 
-    this.views.splice(index, 1)
+    this.files.splice(index, 1)
 
     // remove the dom node
     $file.remove()
@@ -136,7 +135,7 @@ export class Files implements IComponent {
     const $fileList = this.$fileList!
 
     // set visibility class
-    $fileList.classList.toggle(kClassEmpty, this.views.length === 0)
+    $fileList.classList.toggle(kClassEmpty, this.files.length === 0)
 
     // clear previews
     while ($fileList.lastChild) {
@@ -144,12 +143,12 @@ export class Files implements IComponent {
     }
 
     // add previews
-    for (const file of this.views) {
+    for (const file of this.files) {
       $fileList.insertAdjacentHTML("beforeend", this.renderFile(file))
     }
   }
 
-  private renderFile({ id, preview }: IFileView): string {
+  private renderFile({ id, preview }: IFile): string {
     return `
       <li class="ChatFile" data-id=${id}>
         <figure class="ChatFile-preview" alt="File Preview">
