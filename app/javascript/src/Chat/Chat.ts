@@ -10,6 +10,7 @@ const kIdChat = "chat"
 const kIdChatJson = "chat-json"
 const kIdChatForm = "chat-form"
 const kIdChatInput = "chat-input"
+const kSenderRecipient = "recipient"
 
 const kFieldAuthenticityToken = "authenticity_token"
 const kQueryAuthenticityToken = `input[name=${kFieldAuthenticityToken}]`
@@ -81,7 +82,7 @@ export class Chat implements IComponent {
     }
 
     // set initial view state
-    this.$chat.scrollTop = this.$chat.scrollHeight - 50;
+    $chat.scrollTop = $chat.scrollHeight
 
     // bind to events
     $chatForm.addEventListener("submit", this.didSubmitMessage.bind(this))
@@ -203,10 +204,10 @@ export class Chat implements IComponent {
   // -- queries --
   isSent(sender: Sender): boolean {
     switch (this.sender) {
-      case "recipient":
-        return sender === "recipient"
+      case kSenderRecipient:
+        return sender === kSenderRecipient
       default:
-        return sender !== "recipient"
+        return sender !== kSenderRecipient
     }
   }
 
@@ -233,6 +234,7 @@ export class Chat implements IComponent {
   // -- view --
   private render({ sender, message: { body, attachments } }: Incoming): string {
     const isSent = this.isSent(sender)
+    const isRecipient = sender == kSenderRecipient
     const name = isSent ? "Me" : this.receiver
 
     let classes = "ChatMessage"
@@ -242,26 +244,50 @@ export class Chat implements IComponent {
       classes += " ChatMessage--received"
     }
 
-    return `
-      ${this.renderList(attachments, (a) => this.renderBubble(name, classes, `
+    if (isRecipient) {
+      return `
+        ${this.renderAttachments(name, classes, attachments)}
+        ${this.renderBody(name, classes, body)}
+      `
+    } else {
+      return `
+        ${this.renderBody(name, classes, body)}
+        ${this.renderAttachments(name, classes, attachments)}
+      `
+    }
+  }
+
+  private renderAttachments(name: string, cls: string, attachments: IPreview[]): string {
+    const classes = `${cls} ChatMessage--image`
+
+    return (
+      this.renderList(attachments, (a) => this.renderBubble(name, classes, `
         <img
           class="ChatMessage-attachment"
           alt="${a.name}"
           src=${a.url}
           height=200
+          width=200
         />
-      `))}
-      ${body == null || body.length === 0 ? "" : this.renderBubble(name, classes, `
-        <p class="ChatMessage-body">
-          ${body}
-        </p>
-      `)}
-    `
+      `))
+    )
+  }
+
+  private renderBody(name: string, cls: string, body: string | null): string {
+    if (body == null || body.length === 0) {
+      return ""
+    }
+
+    return this.renderBubble(name, cls, `
+      <p class="ChatMessage-body">
+        ${body}
+      </p>
+    `)
   }
 
   private renderBubble(name: string, classes: string, children: string): string {
     return `
-      <li class="${classes}">
+      <li class= "${classes}">
         <label class="ChatMessage-sender">
           ${name}
         </label>

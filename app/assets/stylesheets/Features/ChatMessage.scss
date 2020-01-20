@@ -1,19 +1,25 @@
 .ChatMessage {
   $r: ".ChatMessage";
+  $chat-message-margin: 12px;
 
-  padding: 12px;
   border-radius: $radius-chat;
-  width: 80%;
+  max-width: 80%;
   scroll-snap-align: end;
 
   // -- elements --
   &-sender {
     display: none;
+    margin: $chat-message-margin;
+    margin-bottom: 0;
     font-size: $font-size6;
   }
 
   &-attachment {
     border-radius: $radius-field;
+  }
+
+  &-body {
+    margin: $chat-message-margin;
   }
 
   // -- variants --
@@ -48,6 +54,10 @@
 
     #{$r}-attachment {
       margin-top: $spacing5;
+    }
+
+    #{$r}-body {
+      margin-top: 0;
     }
   }
 }
