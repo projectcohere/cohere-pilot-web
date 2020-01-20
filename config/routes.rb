@@ -1,14 +1,16 @@
 Rails.application.routes.draw do
   # -- signed-out --
   constraints(Clearance::Constraints::SignedOut.new) do
-    sign_in_path = "/sign-in"
+    root_path = "/chat"
 
     # root
-    root(to: redirect(sign_in_path), as: :root_sign_in)
+    root(to: redirect(root_path), as: :root_signed_out)
 
     # users
+    get("/partner", to: redirect("/sign-in"))
+
     scope(module: "users") do
-      get(sign_in_path, to: "sessions#new")
+      get("/sign-in", to: "sessions#new")
 
       resources(:sessions, only: %i[
         create
@@ -51,7 +53,7 @@ Rails.application.routes.draw do
     end
 
     # fallback
-    get("*path", to: redirect(sign_in_path), constraints: ->(req) {
+    get("*path", to: redirect(root_path), constraints: ->(req) {
       # unclear why we have to constrain to signed out again here, since it
       # is enforced by the enclosing `constraints`. if we don't all urls
       # for signed-in users infinitely redirect to sign_in_path.

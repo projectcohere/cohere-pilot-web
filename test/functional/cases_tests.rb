@@ -4,7 +4,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   # -- list --
   test "can't list cases if signed-out" do
     get("/cases")
-    assert_redirected_to("/sign-in")
+    assert_redirected_to("/chat")
   end
 
   test "can list cases as a supplier" do
@@ -74,7 +74,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "can't view prompt to open a case if signed-out" do
     get("/cases/new")
-    assert_redirected_to("/sign-in")
+    assert_redirected_to("/chat")
   end
 
   test "can't view prompt to open a case without permission" do
@@ -148,7 +148,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     case_rec = cases(:submitted_1)
 
     get("/cases/#{case_rec.id}")
-    assert_redirected_to("/sign-in")
+    assert_redirected_to("/chat")
   end
 
   test "can't view a case without permission" do
@@ -197,7 +197,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     case_rec = cases(:submitted_1)
 
     get("/cases/#{case_rec.id}/edit")
-    assert_redirected_to("/sign-in")
+    assert_redirected_to("/chat")
   end
 
   test "can't edit a case without permission" do
@@ -446,7 +446,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   # -- referrals --
   test "can't make a referral if signed-out" do
     get("/cases/3/referrals/new")
-    assert_redirected_to("/sign-in")
+    assert_redirected_to("/chat")
   end
 
   test "can't make a referral without permission" do

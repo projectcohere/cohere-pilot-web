@@ -44,7 +44,7 @@ module Chats
       if invite_sid == nil
         verify_invite
       else
-        start_session_by_invite_id(invite_sid)
+        verify_invite_by_id(invite_sid)
       end
     end
 
@@ -75,11 +75,13 @@ module Chats
       end
 
       cookies.encrypted.signed[:chat_session_token] = session_token
+      cookies.delete(:chat_invite_sid)
+      cookies.delete(:chat_invite_phone_number)
 
       redirect_to(chat_path)
     end
 
-    private def start_session_by_invite_id(invite_sid)
+    private def verify_invite_by_id(invite_sid)
       phone_number = PhoneNumber.new(cookies.encrypted.signed[:chat_invite_phone_number])
       if not phone_number.valid?
         return redirect_to(new_chat_invite_path)
