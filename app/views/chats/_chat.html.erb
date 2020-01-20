@@ -32,11 +32,12 @@
         <div class="Chat-field">
           <span id="chat-input" contenteditable="true" class="Chat-input"></span>
           <span class="Chat-placeholder">Enter your message...</span>
+
+          <label class="Chat-addFile">
+            <input id="chat-file-input" type="file" multiple="true" />
+          </label>
         </div>
 
-        <label class="Chat-addFile">
-          <input id="chat-file-input" type="file" multiple="true" />
-        </label>
         <button class="Chat-send" alt="Send Message"></button>
       </div>
     <% end %>

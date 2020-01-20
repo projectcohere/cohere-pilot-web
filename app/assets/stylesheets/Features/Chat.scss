@@ -59,61 +59,23 @@
     align-items: flex-end;
   }
 
-  %primary-action {
-    $size: 34px;
-
+  @mixin control-action($size: 34px) {
     width: $size;
     height: $size;
-    margin-left: $form-controls-spacing;
     margin-bottom: ($form-controls-height - $size) / 2;
     border-radius: $size / 2;
-    background-color: $brand-primary;
     cursor: pointer;
   }
 
-  &-addFile {
-    @extend %primary-action;
-
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    // Chat-addFile > input
-    > input {
-      position: absolute;
-      width: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
-
-    // Chat-addFile > icon
-    &::before, &::after {
-      content: "";
-      pointer-events: none;
-      position: absolute;
-      width: 14px;
-      height: 2px;
-      translate: 1px 2px;
-      background-color: $white;
-    }
-
-    &:before {
-      transform: translate(-1px, -2px) rotate(90deg);
-    }
-
-    &:after {
-      transform: translate(-1px, -2px);
-    }
-  }
-
   &-send {
-    @extend %primary-action;
+    @include control-action;
 
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-left: $form-controls-spacing;
+    background-color: $brand-primary;
 
     // Chat-send > icon
     &::before, &::after {
@@ -141,11 +103,14 @@
   &-field {
     flex: 1;
     position: relative;
+    display: flex;
+    align-items: flex-end;
     background-color: $color-field;
     border-radius: $form-controls-height / 2;
   }
 
   &-input {
+    flex: 1;
     box-sizing: content-box;
     display: block;
     padding: $field-spacing;
@@ -167,6 +132,44 @@
 
   &-input:not(:empty) + &-placeholder {
     display: none;
+  }
+
+  &-addFile {
+    @include control-action($size: 20px);
+
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: $spacing5;
+    border: 2px solid $brand-primary;
+
+    // Chat-addFile > input
+    > input {
+      position: absolute;
+      width: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    // Chat-addFile > icon
+    &::before, &::after {
+      content: "";
+      pointer-events: none;
+      position: absolute;
+      width: 8px;
+      height: 2px;
+      translate: 1px 2px;
+      background-color: $brand-primary
+    }
+
+    &:before {
+      transform: translate(-1px, -2px) rotate(90deg);
+    }
+
+    &:after {
+      transform: translate(-1px, -2px);
+    }
   }
 
   // -- elements/files
