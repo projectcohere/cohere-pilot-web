@@ -16,11 +16,11 @@
 <%-   } %>
 <%- end %>
 
-<script id="chat-macros" type="application/json">
+<script id="chat-macros-json" type="application/json">
   <%= raw(macros_json.to_json) %>
 </script>
 
-<%# -- select -- %>
+<%# -- view -- %>
 <%- macro_options = macros.map.with_index do |macro, i| %>
 <%-   [macro.name, i] %>
 <%- end %>

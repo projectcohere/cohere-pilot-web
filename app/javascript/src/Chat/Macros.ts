@@ -2,7 +2,7 @@ import { IComponent } from "../Component"
 import { IAttachment } from "./Files"
 
 // -- constants --
-const kIdMacros = "chat-macros"
+const kIdMacrosJson = "chat-macros-json"
 const kIdMacroInput = "chat-macro-input"
 
 // -- types --
@@ -28,10 +28,10 @@ export class Macros implements IComponent {
   // -- IComponent --
   start() {
     // capture data once
-    const $macros = document.getElementById(kIdMacros)
+    const $macros = document.getElementById(kIdMacrosJson)
     if ($macros != null) {
       this.macros = JSON.parse($macros.textContent || "")
-      $macros!.remove()
+      $macros.remove()
     }
 
     // check that we have data

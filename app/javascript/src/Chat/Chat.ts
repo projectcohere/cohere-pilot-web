@@ -7,6 +7,7 @@ import { IComponent } from "../Component"
 // -- constants --
 const kConsumer = createConsumer()
 const kIdChat = "chat"
+const kIdChatJson = "chat-json"
 const kIdChatForm = "chat-form"
 const kIdChatInput = "chat-input"
 
@@ -54,10 +55,12 @@ export class Chat implements IComponent {
   // -- IComponent --
   start() {
     const $chat = document.getElementById(kIdChat)
-    const $chatForm = document.getElementById(kIdChatForm)
-    if ($chat == null || $chatForm == null) {
+    if ($chat == null) {
       return
     }
+
+    // find temporary elements
+    const $chatForm = document.getElementById(kIdChatForm)!
 
     // extract element data
     this.id = $chat.dataset.id || null
@@ -68,6 +71,14 @@ export class Chat implements IComponent {
     // capture elements
     this.$chat = $chat
     this.$chatInput = document.getElementById(kIdChatInput)
+
+    // render initial messages
+    const $chatJson = document.getElementById(kIdChatJson)
+    if ($chatJson != null) {
+      const initial: Incoming[] = JSON.parse($chatJson.textContent || "")
+      this.appendMessages(initial)
+      $chatJson.remove()
+    }
 
     // set initial view state
     this.$chat.scrollTop = this.$chat.scrollHeight - 50;
@@ -165,9 +176,18 @@ export class Chat implements IComponent {
     }
   }
 
+  private appendMessages(incoming: Incoming[]) {
+    const $chat = this.$chat!
+    $chat.insertAdjacentHTML(
+      "beforeend",
+      this.renderList(incoming, this.render.bind(this))
+    )
+
+    $chat.scrollTo(0, $chat.scrollHeight)
+  }
+
   private appendMessage(incoming: Incoming) {
     const $chat = this.$chat!
-
     $chat.insertAdjacentHTML(
       "beforeend",
       this.render(incoming)
@@ -228,6 +248,7 @@ export class Chat implements IComponent {
           class="ChatMessage-attachment"
           alt="${a.name}"
           src=${a.url}
+          height=200
         />
       `))}
       ${body == null || body.length === 0 ? "" : this.renderBubble(name, classes, `

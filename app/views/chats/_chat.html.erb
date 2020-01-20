@@ -1,29 +1,16 @@
+<%# -- json -- %>
+<%- chat_json = Chats::EncodeMessage.(chat.messages) %>
+<script id="chat-json" type="application/json">
+  <%= raw(chat_json.to_json) %>
+</script>
+
+<%# -- view -- %>
 <article class="<%= cx(local_assigns[:class], "Chat Phone-frame") %>">
   <%- data = { sender: sender, receiver: receiver } %>
   <%- data.merge!(local_assigns[:data] || {}) %>
 
   <div class="Chat-window">
-    <%= tag.ol(id: "chat", class: "Chat-messages", data: data) do %>
-      <%- chat.messages.each do |msg| %>
-        <%- msg.attachments.each do |a| %>
-          <%= chat_message_tag(msg, sender, receiver) do %>
-            <img
-              class="ChatMessage-attachment"
-              alt="<%= a.filename %>"
-              src="<%= a.representable? ? a.representation(resize: "200x200>").processed.service_url : nil %>"
-            />
-          <%- end %>
-        <%- end %>
-
-        <%- if msg.body.present? %>
-          <%= chat_message_tag(msg, sender, receiver) do %>
-            <p class="ChatMessage-body">
-              <%= msg.body %>
-            </p>
-          <%- end %>
-        <%- end %>
-      <%- end %>
-    <%- end %>
+    <%= tag.ol(id: "chat", class: "Chat-messages", data: data) %>
 
     <%= form_for(:chat, html: { id: "chat-form", class: "Chat-form" }) do |f| %>
       <ol id="chat-files" class="Chat-files is-empty"></ol>
