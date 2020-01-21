@@ -8,8 +8,9 @@
 <%-       next { %>
 <%-         id: a.id, %>
 <%-         preview: { %>
-<%-           url: url_for(a.representation(resize: "200x200>")), %>
 <%-           name: a.filename.to_s, %>
+<%-           url: url_for(a.representation(resize: "400x400>")), %>
+<%-           previewUrl: url_for(a.representation(resize: "400x400>")), %>
 <%-         }, %>
 <%-       } %>
 <%-     }, %>
