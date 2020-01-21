@@ -90,18 +90,19 @@
     <% end %>
 
     <%- if @chat != nil %>
-      <%=
-        render(partial: "chats/chat", locals: {
-          class: "EditCase-phone",
-          chat: @chat,
-          sender: Chat::Sender.cohere(cookies.signed[:chat_user_id]),
-          receiver: @view.recipient_first_name,
-          has_macros: true,
-          data: {
-            id: @chat.id.val,
-          },
-        })
-      %>
+      <div class="EditCase-phone Phone-frame">
+        <%=
+          render(partial: "chats/chat", locals: {
+            chat: @chat,
+            sender: Chat::Sender.cohere(cookies.signed[:chat_user_id]),
+            receiver: @view.recipient_first_name,
+            data: {
+              id: @chat.id.val,
+            },
+          })
+        %>
+        <%= render(partial: "chats/macros") %>
+      </div>
     <% end %>
   </div>
 </main>

@@ -6,12 +6,15 @@ import { IComponent } from "../Component"
 
 // -- constants --
 const kConsumer = createConsumer()
+
 const kIdChat = "chat"
 const kIdChatJson = "chat-json"
+const kIdChatMessages = "chat-messages"
 const kIdChatForm = "chat-form"
 const kIdChatInput = "chat-input"
-const kSenderRecipient = "recipient"
+const kClassIsLoaded = "is-loaded"
 
+const kSenderRecipient = "recipient"
 const kFieldAuthenticityToken = "authenticity_token"
 const kQueryAuthenticityToken = `input[name=${kFieldAuthenticityToken}]`
 
@@ -44,6 +47,8 @@ export class Chat implements IComponent {
 
   // -- props --
   private channel: ActionCable.Channel = null!
+  private dispose: (() => void) | null = null
+
   private id: string | null = null
   private sender: Sender = null!
   private receiver: string = null!
@@ -51,6 +56,7 @@ export class Chat implements IComponent {
 
   // -- props/el
   private $chat: HTMLElement | null = null
+  private $chatMessages: HTMLElement | null = null
   private $chatInput: HTMLElement | null = null
 
   // -- IComponent --
@@ -71,6 +77,7 @@ export class Chat implements IComponent {
 
     // capture elements
     this.$chat = $chat
+    this.$chatMessages = document.getElementById(kIdChatMessages)
     this.$chatInput = document.getElementById(kIdChatInput)
 
     // render initial messages
@@ -81,8 +88,16 @@ export class Chat implements IComponent {
       $chatJson.remove()
     }
 
-    // set initial view state
-    $chat.scrollTop = $chat.scrollHeight
+    // show chat on load
+    if (document.readyState === "complete") {
+      this.didChangeReadyState()
+    } else {
+      const listener = this.didChangeReadyState.bind(this)
+      document.addEventListener("readystatechange", listener)
+      this.dispose = () => {
+        document.removeEventListener("readystatechange", listener)
+      }
+    }
 
     // bind to events
     $chatForm.addEventListener("submit", this.didSubmitMessage.bind(this))
@@ -107,7 +122,14 @@ export class Chat implements IComponent {
 
     // cleanup elements
     this.$chat = null
+    this.$chatMessages = null
     this.$chatInput = null
+
+    // run any bound disposal
+    if (this.dispose != null) {
+      this.dispose()
+      this.dispose = null
+    }
 
     // unsubscribe from channel
     if (this.channel != null) {
@@ -178,28 +200,28 @@ export class Chat implements IComponent {
   }
 
   private appendMessages(incoming: Incoming[]) {
-    const $chat = this.$chat!
-    $chat.insertAdjacentHTML(
-      "beforeend",
-      this.renderList(incoming, this.render.bind(this))
-    )
-
-    $chat.scrollTo(0, $chat.scrollHeight)
+    this.insertMessages(this.renderList(incoming, this.render.bind(this)))
+    this.scrollToLastMessage()
   }
 
   private appendMessage(incoming: Incoming) {
-    const $chat = this.$chat!
-    $chat.insertAdjacentHTML(
-      "beforeend",
-      this.render(incoming)
-    )
+    this.insertMessages(this.render(incoming))
+    this.scrollToLastMessage()
+  }
 
+  private insertMessages(messages: string) {
+    this.$chatMessages!.insertAdjacentHTML("beforeend", messages)
+  }
+
+  private scrollToLastMessage() {
+    const $chat = this.$chat!
     $chat.scrollTo(0, $chat.scrollHeight)
   }
 
   private clearInput() {
     this.$chatInput!.textContent = ""
   }
+
 
   // -- queries --
   isSent(sender: Sender): boolean {
@@ -212,6 +234,18 @@ export class Chat implements IComponent {
   }
 
   // -- events --
+  private didChangeReadyState() {
+    const $chat = this.$chat
+    if ($chat == null) {
+      return
+    }
+
+    $chat.scrollTop = $chat.scrollHeight
+    if (document.readyState === "complete") {
+      $chat.classList.toggle(kClassIsLoaded, true)
+    }
+  }
+
   private didReceiveData(data: any) {
     this.receiveMesasage(data)
   }
