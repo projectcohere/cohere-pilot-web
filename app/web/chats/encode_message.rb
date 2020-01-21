@@ -13,7 +13,8 @@ module Chats
 
     Attachment = Struct.new(
       :name,
-      :url
+      :url,
+      :previewUrl
     )
 
     # -- lifetime --
@@ -41,6 +42,7 @@ module Chats
           m.attachments.map { |a|
             Attachment.new(
               a.filename,
+              a.service_url,
               a.representable? ? a.representation(resize: "200x200>").processed.service_url : nil
             )
           }

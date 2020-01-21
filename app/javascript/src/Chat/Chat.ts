@@ -262,13 +262,13 @@ export class Chat implements IComponent {
 
     return (
       this.renderList(attachments, (a) => this.renderBubble(name, classes, `
-        <img
-          class="ChatMessage-attachment"
-          alt="${a.name}"
-          src=${a.url}
-          height=200
-          width=200
-        />
+        <a href=${a.url} target="_blank" rel="noopener">
+          <img
+            class="ChatMessage-attachment"
+            alt="${a.name}"
+            src=${a.previewUrl}
+          />
+        </a>
       `))
     )
   }

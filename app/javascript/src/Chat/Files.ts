@@ -21,7 +21,8 @@ export interface IAttachment {
 
 export interface IPreview {
   name: string
-  url: string | null
+  url: string,
+  previewUrl: string | null
 }
 
 // -- impls --
@@ -62,12 +63,15 @@ export class Files implements IComponent {
         return file
       }
 
+      const url = URL.createObjectURL(file)
+
       return {
         id: i,
         upload: file,
         preview: {
           name: file.name,
-          url: file.type.startsWith("image") ? URL.createObjectURL(file) : null
+          url,
+          previewUrl: file.type.startsWith("image") ? url : null
         }
       }
     })
