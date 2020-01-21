@@ -65,16 +65,15 @@
       position: absolute;
       width: 10px;
       height: 2px;
-      translate: 1px 2px;
       background-color: $white;
     }
 
     &:before {
-      transform: translateY(-6px) rotate(45deg);
+      transform: translate(1px, -3px) rotate(45deg);
     }
 
     &:after {
-      transform: translateY(0) rotate(-45deg);
+      transform: translate(1px, 3px) rotate(-45deg);
     }
   }
 
@@ -140,16 +139,11 @@
       position: absolute;
       width: 8px;
       height: 2px;
-      translate: 1px 2px;
       background-color: $brand-primary
     }
 
-    &:before {
-      transform: translate(-1px, -2px) rotate(90deg);
-    }
-
-    &:after {
-      transform: translate(-1px, -2px);
+    &::before {
+      transform: rotate(90deg);
     }
   }
 
@@ -190,6 +184,10 @@
 
   &.is-loaded &-spinner {
     opacity: 0;
+
+    &::after {
+      animation-play-state: paused;
+    }
   }
 
   // -- elements/files

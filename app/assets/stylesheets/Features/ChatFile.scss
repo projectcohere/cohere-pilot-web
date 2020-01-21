@@ -45,16 +45,15 @@
       position: absolute;
       width: 14px;
       height: 2px;
-      translate: 1px 2px;
       background-color: var(--icon-color);
     }
 
     &::before {
-      transform: translate(-1px, -2px) rotate(-45deg);
+      transform: rotate(-45deg);
     }
 
     &::after {
-      transform: translate(-1px, -2px) rotate(45deg);
+      transform: rotate(45deg);
     }
   }
 }

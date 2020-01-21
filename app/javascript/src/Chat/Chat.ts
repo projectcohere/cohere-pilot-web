@@ -88,16 +88,12 @@ export class Chat implements IComponent {
       $chatJson.remove()
     }
 
-    // show chat on load
-    if (document.readyState === "complete") {
-      this.didChangeReadyState()
-    } else {
-      const listener = this.didChangeReadyState.bind(this)
-      document.addEventListener("readystatechange", listener)
-      this.dispose = () => {
-        document.removeEventListener("readystatechange", listener)
-      }
-    }
+    // show chat after initial images load
+    const query = document.querySelectorAll<HTMLImageElement>(`#${kIdChatMessages} img`)
+    this.onImagesLoaded(query, () => {
+      $chat.scrollTop = $chat.scrollHeight
+      $chat.classList.toggle(kClassIsLoaded, true)
+    })
 
     // bind to events
     $chatForm.addEventListener("submit", this.didSubmitMessage.bind(this))
@@ -234,18 +230,6 @@ export class Chat implements IComponent {
   }
 
   // -- events --
-  private didChangeReadyState() {
-    const $chat = this.$chat
-    if ($chat == null) {
-      return
-    }
-
-    $chat.scrollTop = $chat.scrollHeight
-    if (document.readyState === "complete") {
-      $chat.classList.toggle(kClassIsLoaded, true)
-    }
-  }
-
   private didReceiveData(data: any) {
     this.receiveMesasage(data)
   }
@@ -332,5 +316,32 @@ export class Chat implements IComponent {
 
   private renderList<T>(list: T[], renderer: (item: T) => string): string {
     return list.map(renderer).join("\n")
+  }
+
+  // -- utilities --
+  private onImagesLoaded(query: NodeListOf<HTMLImageElement>, callback: () => void) {
+    const length = query.length
+    if (length === 0) {
+      callback()
+      return
+    }
+
+    // fire the callback when all images are loaded
+    let loaded = 0
+    function didLoadImage() {
+      if (++loaded === length) {
+        callback()
+      }
+    }
+
+    // count each image as it loads
+    for (let i = 0; i < length; i++) {
+      const image = query[i]
+      if (image.complete) {
+        didLoadImage()
+      } else {
+        image.addEventListener("load", didLoadImage, { once: true })
+      }
+    }
   }
 }
