@@ -34,7 +34,8 @@ module Db
       chat = chat_repo.find_by_recipient_with_messages(chat_rec.recipient_id)
       assert_not_nil(chat)
       assert_equal(chat.id.val, chat_rec.id)
-      assert_length(chat.messages, 1)
+      assert_length(chat.messages, 2)
+      assert_match(/First/, chat.messages[0].body)
     end
 
     test "finds a chat by phone number" do
@@ -133,6 +134,7 @@ module Db
 
       message_rec = chat_rec.messages.reload
         .find { |r| r.id == message_id.val }
+
       assert_not_nil(message_rec.id)
       assert_equal(message_rec.sender, Chat::Sender.recipient)
       assert_equal(message_rec.body, "Test.")

@@ -27,6 +27,7 @@ class Chat
       def find_many_by_chat_with_attachments(chat_id)
         message_recs = Chat::Message::Record
           .with_attached_files
+          .order(created_at: :asc)
           .where(chat_id: chat_id)
 
         entities_from(message_recs) do |message_rec|
