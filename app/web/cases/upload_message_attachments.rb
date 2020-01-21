@@ -1,5 +1,4 @@
 module Cases
-  # TODO: maybe this is more of an application service
   class UploadMessageAttachments
     # -- lifetime --
     def initialize(case_repo: Case::Repo.get)
@@ -15,8 +14,8 @@ module Cases
         raise "No case found for phone number #{message_phone_number}"
       end
 
-      kase.add_message(message)
-      @case_repo.save_message_changes(kase)
+      kase.add_mms_message(message)
+      @case_repo.save_new_message(kase)
     end
   end
 end

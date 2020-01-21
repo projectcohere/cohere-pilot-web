@@ -34,3 +34,16 @@ recipient_3:
   dhs_number: 99999
   household_size: 2
   household_income_cents: 400_00
+
+recipient_4:
+  first_name: Chat
+  last_name: Sample
+  phone_number: 4445556666
+  street: 8 Sample St.
+  street2: Apt. 8
+  city: New Sampleton
+  state: MI
+  zip: 22222
+  dhs_number: 00000
+  household_size: 2
+  household_income_cents: 400_00

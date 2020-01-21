@@ -1,4 +1,6 @@
 export { start } from "./Component"
+export { Viewport } from "./Viewport"
+export { Chat } from "./Chat"
 export { Flash } from "./Flash"
 export { Passwords } from "./Passwords"
 export { TabControl } from "./TabControl"

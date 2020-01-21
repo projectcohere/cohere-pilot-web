@@ -43,7 +43,7 @@ Rails.application.configure do
     address: ENV["SMTP_ADDRESS"],
     domain: ENV["SMTP_DOMAIN"],
     port: ENV["SMTP_PORT"],
-    authentication: ENV["SMTP_AUTHENTICATION"].to_sym,
+    authentication: ENV["SMTP_AUTHENTICATION"]&.to_sym,
     enable_starttls_auto: ENV["SMTP_STARTTLS"].present?
   }
 

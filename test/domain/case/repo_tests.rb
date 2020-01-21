@@ -21,7 +21,7 @@ class Case
 
       recipient = kase.recipient
       assert_not_nil(recipient.record)
-      assert_not_nil(recipient.id)
+      assert_not_nil(recipient.id.val)
       assert_not_nil(recipient.profile)
       assert_not_nil(recipient.dhs_account)
 

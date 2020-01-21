@@ -1,0 +1,16 @@
+message_i1_1:
+  chat: idle_1
+  sender: "FO19FJE"
+  body: Test Invited Second.
+  created_at: <%= Time.zone.now %>
+
+message_i1_2:
+  chat: idle_1
+  sender: "FO19FJE"
+  body: Test Invited First.
+  created_at: <%= Time.zone.now - 1.days %>
+
+message_s1_1:
+  chat: session_1
+  sender: "FO19FJE"
+  body: Test Session 1.

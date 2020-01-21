@@ -6,8 +6,7 @@ class MessagesController < ApplicationController
   # -- actions --
   def front
     if not is_signed?
-      render(json: "", status: :unauthorized)
-      return
+      return render(json: "", status: :unauthorized)
     end
 
     message = Front::DecodeMessage.new.(request.raw_post)

@@ -1,9 +1,13 @@
 .CaseList {
-  display: grid;
-  gap: $spacing3;
+  display: flex;
+  flex-direction: column;
   max-width: $width1;
 
   &-fallback {
     padding: 0 $spacing6;
+  }
+
+  > * + * {
+    margin-top: $spacing3;
   }
 }

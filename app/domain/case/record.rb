@@ -13,13 +13,6 @@ class Case
     enum(program: Program::Name.all)
 
     # -- status --
-    enum(status: %i[
-      opened
-      pending
-      submitted
-      approved
-      denied
-      removed
-    ])
+    enum(status: Status.all)
   end
 end

@@ -6,8 +6,14 @@ class ApplicationController < ActionController::Base
   # -- config --
   default_form_builder(ApplicationFormBuilder)
 
-  # -- filters --
+  # -- callbacks --
+  before_action(:set_file_host)
   after_action(:process_events)
+
+  # -- config --
+  private def set_file_host
+    Files::Host.set_current!
+  end
 
   # -- events --
   protected def events

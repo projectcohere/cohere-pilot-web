@@ -3,15 +3,19 @@ require "test_helper"
 class CaseTests < ActiveSupport::TestCase
   # -- creation --
   test "opens the case" do
+    profile = Recipient::Profile.stub(
+      phone: Recipient::Phone.stub(number: "1")
+    )
+
     kase = Case.open(
       program: Program::Name::Meap,
-      profile: :test_profile,
+      profile: profile,
       enroller: Enroller.stub(id: 1),
       supplier: Supplier.stub(id: 2),
       supplier_account: :test_account
     )
 
-    assert_equal(kase.recipient.profile, :test_profile)
+    assert_equal(kase.recipient.profile, profile)
     assert_equal(kase.supplier_account, :test_account)
     assert_equal(kase.enroller_id, 1)
     assert_equal(kase.supplier_id, 2)
@@ -82,7 +86,13 @@ class CaseTests < ActiveSupport::TestCase
         Document.stub(
           classification: :unknown
         )
-      ]
+      ],
+      recipient: Recipient.stub(
+        id: 3,
+        profile: Recipient::Profile.stub(
+          phone: Recipient::Phone.stub(number: "1")
+        )
+      ),
     )
 
     referral = kase.make_referral_to_program(Program::Name::Wrap)
@@ -144,36 +154,57 @@ class CaseTests < ActiveSupport::TestCase
   test "adds the first message" do
     kase = Case.stub
 
-    kase.add_message(Message.stub)
+    kase.add_mms_message(Mms::Message.stub)
     assert_not_nil(kase.received_message_at)
 
+    event = kase.events[0]
     assert_length(kase.events, 1)
-    assert_instance_of(Case::Events::DidReceiveMessage, kase.events[0])
+    assert_instance_of(Case::Events::DidReceiveMessage, event)
+    assert(event.is_first)
   end
 
-  test "uploads message attachments" do
-    kase = Case.stub(
-      received_message_at: Time.zone.now
-    )
+  test "uploads mms message attachments" do
+    kase = Case.stub
 
-    message = Message.new(
-      sender: Message::Sender.stub,
+    message = Mms::Message.new(
+      sender: Mms::Message::Sender.stub,
       attachments: [
-        Message::Attachment.new(
+        Mms::Message::Attachment.new(
           url: "https://website.com/image.jpg"
         )
       ]
     )
 
-    kase.add_message(message)
+    kase.add_mms_message(message)
+
+    new_document = kase.new_documents[0]
     assert_length(kase.new_documents, 1)
+    assert_equal(new_document.classification, :unknown)
+    assert_equal(new_document.source_url, "https://website.com/image.jpg")
+
     assert_length(kase.events, 2)
     assert_instance_of(Case::Events::DidReceiveMessage, kase.events[0])
     assert_instance_of(Case::Events::DidUploadMessageAttachment, kase.events[1])
+  end
+
+  test "attaches chat message attachments" do
+    kase = Case.stub
+
+    message = Chat::Message.stub(
+      attachments: [
+        :test_attachment
+      ]
+    )
+
+    kase.add_chat_message(message)
 
     new_document = kase.new_documents[0]
+    assert_length(kase.new_documents, 1)
     assert_equal(new_document.classification, :unknown)
-    assert_equal(new_document.source_url, "https://website.com/image.jpg")
+    assert_equal(new_document.new_file, :test_attachment)
+
+    assert_length(kase.events, 1)
+    assert_instance_of(Case::Events::DidReceiveMessage, kase.events[0])
   end
 
   test "signs a contract" do

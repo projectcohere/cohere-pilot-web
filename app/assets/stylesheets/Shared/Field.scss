@@ -1,22 +1,18 @@
 .Field {
-  &.is-disabled {
-    opacity: $opacityDisabled;
-    pointer-events: none;
-  }
-
+  // -- elements --
   &-hint {
     @extend .u-hint;
 
     display: block;
     margin-bottom: $spacing6;
 
-    color: $colorError;
+    color: $color-error;
     overflow-x: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 
     > span:first-child {
-      color: $brandBlack;
+      color: $brand-black;
     }
   }
 
@@ -32,6 +28,12 @@
   &-prefix {
     margin-right: $spacing6;
     color: $gray1;
+  }
+
+  // -- states ---
+  &.is-disabled {
+    opacity: $opacity-disabled;
+    pointer-events: none;
   }
 
   // -- variants --
@@ -50,24 +52,24 @@
 
   &--input &-value {
     padding: $spacing5;
-    border-bottom: 2px solid $brandBlack;
-    border-top-left-radius: $radiusField;
-    border-top-right-radius: $radiusField;
-    background-color: $colorField;
+    border-bottom: 2px solid $brand-black;
+    border-top-left-radius: $radius-field;
+    border-top-right-radius: $radius-field;
+    background-color: $color-field;
 
     &:hover {
-      background-color: fade-out($brandPrimary, 0.85);
+      background-color: fade-out($brand-primary, 0.85);
     }
 
     &:focus-within {
-      border-bottom-color: $brandPrimary;
+      border-bottom-color: $brand-primary;
     }
   }
 
   // .Field-input/errors
   &--input &-errors {
-    color: $colorError;
-    font-weight: $fontWeightRegular;
+    color: $color-error;
+    font-weight: $font-weight-regular;
     background-color: $white;
   }
 
@@ -81,6 +83,10 @@
     flex: 1;
     width: 0;
     min-width: 0;
+
+    &:focus {
+      outline: none;
+    }
 
     &::placeholder {
       color: $gray1;
@@ -116,6 +122,7 @@
 
     appearance: none;
     -moz-appearance: none;
+    -webkit-appearance: none;
 
     &:checked {
       @include u-checkmark;
@@ -123,7 +130,7 @@
   }
 
   &--checkbox:hover input[type="checkbox"] {
-    background-color: fade-out($brandPrimary, 0.85);
+    background-color: fade-out($brand-primary, 0.85);
   }
 
   // .Field--bare
@@ -147,7 +154,7 @@
       right: 0;
       width: 10px;
       height: 2px;
-      background-color: $brandBlack;
+      background-color: $brand-black;
     }
 
     &:before {
@@ -160,7 +167,7 @@
 
     &:focus-within {
       &::before, &::after {
-        background-color: $brandPrimary;
+        background-color: $brand-primary;
       }
     }
   }
@@ -172,6 +179,7 @@
     background: none;
     appearance: none;
     -moz-appearance: none;
+    -webkit-appearance: none;
     cursor: pointer;
   }
 }

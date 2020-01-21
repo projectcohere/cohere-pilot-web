@@ -11,7 +11,7 @@ class UsersTests < ActionDispatch::IntegrationTest
   test "signs in as an cohere user" do
     session_params = {
       session: {
-        email: "me@cohere.org",
+        email: "me@projectcohere.com",
         password: "password123$"
       }
     }

@@ -1,5 +1,5 @@
 module Support
-  module Tracking
+  module Analytics
     # -- constants --
     Queue = ArrayQueue.new
 
@@ -35,4 +35,4 @@ module Support
   end
 end
 
-ActiveSupport::TestCase.include(Support::Tracking)
+ActiveSupport::TestCase.include(Support::Analytics)

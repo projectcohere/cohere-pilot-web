@@ -31,60 +31,78 @@
     </div>
   </header>
 
-  <%= form_for(@form, url: case_path(@case.id), html: { class: "CaseForm Panel" }) do |f| %>
-    <% form_locals = { f: f, form: @form, view: @view, policy: policy } %>
-    <section id="profile" class="Panel-tab is-visible">
-      <%= render(partial: "cases/forms/details", locals: form_locals) %>
-      <%= render(partial: "cases/forms/contact", locals: form_locals) %>
-    </section>
+  <div class="EditCase-body">
+    <%= form_for(@form, url: case_path(@case.id), html: { class: "CaseForm Panel" }) do |f| %>
+      <% form_locals = { f: f, form: @form, view: @view, policy: policy } %>
+      <section id="profile" class="Panel-tab is-visible">
+        <%= render(partial: "cases/forms/details", locals: form_locals) %>
+        <%= render(partial: "cases/forms/contact", locals: form_locals) %>
+      </section>
 
-    <section id="household" class="Panel-tab">
-      <%= render(partial: "cases/forms/address", locals: form_locals) %>
-      <%= render(partial: "cases/forms/household", locals: form_locals) %>
-    </section>
+      <section id="household" class="Panel-tab">
+        <%= render(partial: "cases/forms/address", locals: form_locals) %>
+        <%= render(partial: "cases/forms/household", locals: form_locals) %>
+      </section>
 
-    <section id="accounts" class="Panel-tab">
-      <%= render(partial: "cases/forms/mdhhs", locals: form_locals) %>
-      <%= render(partial: "cases/forms/supplier_account", locals: form_locals) %>
-    </section>
+      <section id="accounts" class="Panel-tab">
+        <%= render(partial: "cases/forms/mdhhs", locals: form_locals) %>
+        <%= render(partial: "cases/forms/supplier_account", locals: form_locals) %>
+      </section>
 
-    <section id="documents" class="Panel-tab">
-      <%= render(partial: "cases/documents", locals: { documents: @view.documents }) %>
-    </section>
+      <section id="documents" class="Panel-tab">
+        <%= render(partial: "cases/documents", locals: { documents: @view.documents }) %>
+      </section>
 
-    <div class="Panel-actions">
-      <%= f.submit("Save", class: "Button--action") %>
+      <div class="Panel-actions">
+        <%= f.submit("Save", class: "Button--action") %>
 
-      <%- if @case.can_submit? %>
+        <%- if @case.can_submit? %>
+          <%=
+            f.submit("Save & Submit to Enroller",
+              name: :submit,
+              class: "Button--secondary",
+              data: {
+                confirm: "Are you sure you want to submit this case?"
+              },
+            )
+          %>
+        <% elsif @case.can_complete? %>
+          <%=
+            f.submit("Save & Approve",
+              name: :approve,
+              class: "Button--secondary",
+              data: {
+                confirm: "Are you sure you want to approve this case?"
+              }
+            )
+          %>
+          <%=
+            f.submit("Save & Deny",
+              name: :deny,
+              class: "Button--destructive",
+              data: {
+                confirm: "Are you sure you want to deny this case?"
+              },
+            )
+          %>
+        <%- end %>
+      </div>
+    <% end %>
+
+    <%- if @chat != nil %>
+      <div class="EditCase-phone Phone-frame">
         <%=
-          f.submit("Save & Submit to Enroller",
-            name: :submit,
-            class: "Button--secondary",
+          render(partial: "chats/chat", locals: {
+            chat: @chat,
+            sender: Chat::Sender.cohere(cookies.signed[:chat_user_id]),
+            receiver: @view.recipient_first_name,
             data: {
-              confirm: "Are you sure you want to submit this case?"
+              id: @chat.id.val,
             },
-          )
+          })
         %>
-      <% elsif @case.can_complete? %>
-        <%=
-          f.submit("Save & Approve",
-            name: :approve,
-            class: "Button--secondary",
-            data: {
-              confirm: "Are you sure you want to approve this case?"
-            }
-          )
-        %>
-        <%=
-          f.submit("Save & Deny",
-            name: :deny,
-            class: "Button--destructive",
-            data: {
-              confirm: "Are you sure you want to deny this case?"
-            },
-          )
-        %>
-      <%- end %>
-    </div>
-  <% end %>
+        <%= render(partial: "chats/macros") %>
+      </div>
+    <% end %>
+  </div>
 </main>

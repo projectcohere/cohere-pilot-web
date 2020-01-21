@@ -1,20 +1,16 @@
 Rails.application.routes.draw do
-  # development
-  if Rails.env.development?
-    require "sidekiq/web"
-    mount(Sidekiq::Web => "/sidekiq")
-  end
-
   # -- signed-out --
   constraints(Clearance::Constraints::SignedOut.new) do
-    sign_in_path = "/sign-in"
+    root_path = "/chat"
 
     # root
-    root(to: redirect(sign_in_path), as: :root_sign_in)
+    root(to: redirect(root_path), as: :root_signed_out)
 
     # users
+    get("/partner", to: redirect("/sign-in"))
+
     scope(module: "users") do
-      get(sign_in_path, to: "sessions#new")
+      get("/sign-in", to: "sessions#new")
 
       resources(:sessions, only: %i[
         create
@@ -39,8 +35,31 @@ Rails.application.routes.draw do
       post(:front, constraints: { format: :json })
     end
 
+    # chats
+    resource(:chat, only: [:show]) do
+      match("/files", via: :post, action: :files, constraints: ->(req) {
+        req.content_type == "multipart/form-data"
+      })
+
+      # sessions
+      resources(:invites, module: "chats", only: [
+        :new,
+        :create,
+      ]) do
+        match("/verify", via: :get, on: :collection, action: :verify)
+        match("/verify-code", via: :get, on: :collection, action: :edit)
+        match("/", via: :patch, on: :collection, action: :update)
+      end
+    end
+
     # fallback
-    get("*path", to: redirect(sign_in_path))
+    get("*path", to: redirect(root_path), constraints: ->(req) {
+      # unclear why we have to constrain to signed out again here, since it
+      # is enforced by the enclosing `constraints`. if we don't all urls
+      # for signed-in users infinitely redirect to sign_in_path.
+      signed_out = Clearance::Constraints::SignedOut.new
+      signed_out.matches?(req) && req.path.exclude?("rails/active_storage")
+    })
   end
 
   # -- signed-in --
@@ -112,6 +131,13 @@ Rails.application.routes.draw do
           create
         ])
       end
+
+      # chats
+      resources(:chats, only: []) do
+        post("/files", action: :files, constraints: ->(req) {
+          req.content_type == "multipart/form-data"
+        })
+      end
     end
   end
 
@@ -128,7 +154,18 @@ Rails.application.routes.draw do
 
     # fallback
     get("*path", to: redirect(cases_path), constraints: ->(req) {
-      req.path.exclude? "rails/active_storage"
+      req.path.exclude?("rails/active_storage")
     })
+  end
+
+  # -- development --
+  if Rails.env.development?
+    require "sidekiq/web"
+    mount(Sidekiq::Web => "/sidekiq")
+  end
+
+  # -- test --
+  if Rails.env.test?
+    post("/tests/chat-session", to: "tests#chat_session")
   end
 end

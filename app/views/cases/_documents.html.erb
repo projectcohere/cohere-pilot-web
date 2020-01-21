@@ -11,7 +11,7 @@
             <p class="CaseDocument-placeholder">This file is being processed.</p>
           <% else %>
             <%- image_url = file_url %>
-            <%- image_url = d.file.attachment.preview(resize: "200x200>") if d.file.attachment.previewable? %>
+            <%- image_url = d.file.attachment.representation(resize: "200x200>") if d.file.attachment.representable? %>
             <%= image_tag(image_url, height: 140, class: "CaseDocument-image") %>
           <% end %>
 

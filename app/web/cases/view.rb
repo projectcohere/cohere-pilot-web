@@ -36,6 +36,10 @@ module Cases
       profile.name
     end
 
+    def recipient_first_name
+      profile.name.first
+    end
+
     def address
       profile.address.to_lines
     end

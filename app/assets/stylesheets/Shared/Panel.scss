@@ -1,13 +1,20 @@
 // -- utilities --
-%u-flow {
+%u-panel-flow {
   display: flex;
   flex-direction: column;
-  gap: $spacing1;
+
+  > .Panel-section + .Panel-section {
+    margin-top: $spacing1;
+  }
+
+  > .Panel-actions {
+    margin-top: $spacing1;
+  }
 }
 
 // -- main --
 .Panel {
-  @extend %u-flow;
+  @extend %u-panel-flow;
   padding: $spacing1;
 
   // -- elements --
@@ -15,7 +22,7 @@
     display: none;
 
     &.is-visible {
-      @extend %u-flow;
+      @extend %u-panel-flow;
     }
   }
 
@@ -44,7 +51,7 @@
         bottom: 0;
         width: 100%;
         height: 3px;
-        background-color: fade-out($brandPrimary, 0.7);
+        background-color: $color-divider;
       }
     }
   }
@@ -53,12 +60,21 @@
     flex: 1;
     display: flex;
     align-items: flex-end;
-    gap: $spacing5;
+
+    > * + * {
+      margin-left: $spacing5;
+    }
   }
 
   // -- variants --
   &--read, &--read &-tab {
-    gap: $spacing2;
+    > .Panel-section + .Panel-section {
+      margin-top: $spacing2;
+    }
+
+    > .Panel-actions {
+      margin-top: $spacing2;
+    }
   }
 
   &--read &-section {

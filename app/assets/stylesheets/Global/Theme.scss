@@ -1,11 +1,21 @@
 /* root */
 body {
   @extend .u-body;
-  font-family: $fontFamily, system-ui, sans-serif;
-  background-color: $colorBackground;
-  display: flex;
-  flex-direction: column;
-  overflow-y: scroll;
+
+  font-family: $font-family, system-ui, sans-serif;
+  background-color: $color-background;
+
+  @include desktop {
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    min-height: 100vh;
+  }
+
+  @include mobile {
+    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
+  }
 }
 
 /* typography */

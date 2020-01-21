@@ -1,0 +1,211 @@
+.Chat {
+  // -- elements/config
+  $form-height: 84px;
+  $form-spacing: $spacing3;
+  $form-controls-height: $form-height - $form-spacing * 2;
+  $form-controls-spacing: 10px;
+
+  // -- elements/messages
+  &-messages[class] {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100% - #{$form-height});
+    padding: $spacing3;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: transform 0.5s, opacity 0.5s;
+
+    > * + * {
+      margin-top: $spacing4;
+    }
+  }
+
+  &.is-loaded &-messages {
+    opacity: 1;
+    transform: none;
+  }
+
+  // -- elements/form
+  &-form {
+    position: sticky;
+    width: 100%;
+    bottom: 0;
+    padding: $spacing3;
+    background-color: fade-out($white, 0.05);
+  }
+
+  // -- elements/controls
+  &-controls {
+    display: flex;
+    align-items: flex-end;
+  }
+
+  @mixin control-action($size: 34px) {
+    width: $size;
+    height: $size;
+    margin-bottom: ($form-controls-height - $size) / 2;
+    border-radius: $size / 2;
+    cursor: pointer;
+  }
+
+  &-send {
+    @include control-action;
+
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: $form-controls-spacing;
+    background-color: $brand-primary;
+
+    // Chat-send > icon
+    &::before, &::after {
+      content: "";
+      pointer-events: none;
+      position: absolute;
+      width: 10px;
+      height: 2px;
+      background-color: $white;
+    }
+
+    &:before {
+      transform: translate(1px, -3px) rotate(45deg);
+    }
+
+    &:after {
+      transform: translate(1px, 3px) rotate(-45deg);
+    }
+  }
+
+  // -- elements/field
+  $field-spacing: $spacing5;
+
+  &-field {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    background-color: $color-field;
+    border-radius: $form-controls-height / 2;
+  }
+
+  &-input {
+    flex: 1;
+    box-sizing: content-box;
+    display: block;
+    padding: $field-spacing;
+    min-height: $form-controls-height - $form-controls-spacing * 2;
+    overflow-wrap: anywhere;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &-placeholder {
+    position: absolute;
+    top: $field-spacing;
+    left: $field-spacing;
+    color: $gray1;
+    pointer-events: none;
+  }
+
+  &-input:not(:empty) + &-placeholder {
+    display: none;
+  }
+
+  &-addFile {
+    @include control-action($size: 20px);
+
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: $spacing5;
+    border: 2px solid $brand-primary;
+
+    // Chat-addFile > input
+    > input {
+      position: absolute;
+      width: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    // Chat-addFile > icon
+    &::before, &::after {
+      content: "";
+      pointer-events: none;
+      position: absolute;
+      width: 8px;
+      height: 2px;
+      background-color: $brand-primary
+    }
+
+    &::before {
+      transform: rotate(90deg);
+    }
+  }
+
+  // -- elements/spinner
+  &-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    opacity: 1;
+    transition: opacity 0.5s;
+    pointer-events: none;
+
+    &::after {
+      content: "";
+      display: block;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 5px solid $brand-primary;
+      border-color: $brand-primary transparent $brand-primary transparent;
+      animation: spin 1.2s linear infinite;
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    }
+  }
+
+  &.is-loaded &-spinner {
+    opacity: 0;
+
+    &::after {
+      animation-play-state: paused;
+    }
+  }
+
+  // -- elements/files
+  &-files[class] {
+    margin-bottom: $spacing3;
+
+    &.is-empty {
+      display: none;
+    }
+
+    > * + * {
+      margin-top: $spacing5;
+    }
+  }
+
+  // -- elements/macros
+  &-macros {
+    padding: $spacing3;
+    border-top: 1px solid $color-divider;
+  }
+}

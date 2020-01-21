@@ -3,7 +3,15 @@ require "test_helper"
 module Db
   class UserRepoTests < ActiveSupport::TestCase
     # -- queries --
-    test "finds cohere and dhs users for a new case" do
+    test "find a user by remember token" do
+      user_repo = User::Repo.new
+      user_rec = users(:cohere_1)
+
+      user = user_repo.find_by_remember_token(user_rec.remember_token)
+      assert_equal(user.id.val, user_rec.id)
+    end
+
+    test "find cohere and dhs users for an opened case" do
       user_repo = User::Repo.new
 
       users = user_repo.find_all_for_opened_case
@@ -11,7 +19,7 @@ module Db
       assert_same_elements(users.map(&:role_name), [:cohere, :dhs])
     end
 
-    test "finds matching enrollers for a submitted case" do
+    test "find authorized enrollers for a submitted case" do
       enroller_rec = enrollers(:enroller_1)
       kase = Case.stub(enroller_id: enroller_rec.id)
       user_repo = User::Repo.new
@@ -21,7 +29,7 @@ module Db
       assert_equal(users[0].role.organization_id, kase.enroller_id)
     end
 
-    test "finds cohere users for a completed case" do
+    test "find cohere users for a completed case" do
       user_repo = User::Repo.new
 
       users = user_repo.find_all_for_completed_case
@@ -30,7 +38,15 @@ module Db
     end
 
     # -- commands --
-    test "saves an invited user" do
+    test "set the current user" do
+      user_repo = User::Repo.new
+      user = User.stub(id: Id.new(42))
+
+      user_repo.current = user
+      assert_equal(user_repo.find_current, user)
+    end
+
+    test "save an invited user" do
       domain_events = ArrayQueue.new
 
       user_repo = User::Repo.new(
@@ -59,7 +75,7 @@ module Db
       assert_length(domain_events, 1)
     end
 
-    test "saves an invited org user" do
+    test "save an invited org user" do
       enroller_rec = enrollers(:enroller_1)
       enroller_id = enroller_rec.id
 

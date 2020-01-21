@@ -1,0 +1,26 @@
+<main class="JoinChat Phone">
+  <div class="JoinChat-frame Phone-frame">
+    <div class="Phone-view">
+      <article class="JoinChat-window">
+        <header class="JoinChat-header">
+          <h1>
+            Welcome to Cohere.
+          </h2>
+          <h2>
+            Please enter your phone number and we'll text you a code to join the chat.
+          </h2>
+        </header>
+
+        <%= form_for(:invite, url: chat_invites_path, html: { class: "JoinChat-form" }) do |f| %>
+          <%= f.field(:phone_number) do %>
+            <%= f.telephone_field(:phone_number, placeholder: number_to_phone("3134445555")) %>
+          <%- end %>
+
+          <%= link_to("Already have a code?", verify_chat_invites_path, class: "JoinChat-codeLink") %>
+
+          <%= f.submit("Send Code", class: "JoinChat-action Button--action") %>
+        <%- end %>
+      </article>
+    </div>
+  </div>
+</main>

@@ -1,0 +1,16 @@
+.EditCase {
+  &-body {
+    flex: 1;
+    display: flex;
+
+    > * + * {
+      margin-left: $spacing3;
+    }
+  }
+
+  &-phone {
+    align-self: flex-start;
+    display: flex;
+    flex-direction: column;
+  }
+}

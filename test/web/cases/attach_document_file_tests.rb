@@ -17,7 +17,7 @@ module Cases
           ["case-id", "document-id"]
         )
         .expect(
-          :save_attached_file,
+          :save_selected_attachment,
           nil,
           [kase]
         )

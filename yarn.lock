@@ -679,6 +679,11 @@
   resolved "https://registry.yarnpkg.com/@csstools/convert-colors/-/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
   integrity sha512-5a6wqoJV/xEdbRNKVo6I4hO3VjyDq//8q2f9I6PBAvMesJHFauXDorcNCsr9RzvsZnaWi5NYCcfyqP1QeFHFbw==
 
+"@rails/actioncable@^6.0.2-1":
+  version "6.0.2-1"
+  resolved "https://registry.yarnpkg.com/@rails/actioncable/-/actioncable-6.0.2-1.tgz#8b16bff4d4c91b71069fe54bab9e23f709ccf89b"
+  integrity sha512-65RcsdKcvvc6V4TvsesPmFlHO8gO3ZWnLWTNq4DhP6zW50XlyiR3DazX88EjskCXGqS/uRQ5ppsIMDc05aiTgA==
+
 "@rails/activestorage@^6.0.0-alpha":
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/@rails/activestorage/-/activestorage-6.0.0.tgz#6d9cc98f3dcf195c38ca65e80acd2e759336dd7a"
@@ -735,6 +740,11 @@
     webpack-cli "^3.3.2"
     webpack-sources "^1.3.0"
 
+"@types/actioncable@^5.2.3":
+  version "5.2.3"
+  resolved "https://registry.yarnpkg.com/@types/actioncable/-/actioncable-5.2.3.tgz#215689835399a1be6e7271a2a9d8c8d476c0fd6a"
+  integrity sha512-RxPohXyK0PmC+xAnIrdrd/+0Rp5Pc3e0gMIw+Rc4EorbXApS+i8D00dDC6RxDCXNrmQaIBwiu5iCE7JurC38kA==
+
 "@types/events@*":
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@types/events/-/events-3.0.0.tgz#2862f3f58a9a7f7c3e78d79f130dd4d71c25c2a7"
@@ -768,11 +778,6 @@
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/@types/q/-/q-1.5.2.tgz#690a1475b84f2a884fd07cd797c00f5f31356ea8"
   integrity sha512-ce5d3q03Ex0sy4R14722Rmt6MT07Ua+k4FwDfdcToYJcMKNtRVQvJ6JCAPdAmAnbRb6CsX6aYb9m96NGod9uTw==
-
-"@types/turbolinks@^5.2.0":
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/@types/turbolinks/-/turbolinks-5.2.0.tgz#cdfd3691143ea2f452113c2a06bd12d9a88b25d6"
-  integrity sha512-xEgHb25lj23EaUlsU3Y4KlFH7elhlYINGSnqyn/8zmcMnenY4Idyjk/x9kw1kOoOToY3de9fD8NSwRzNc6f5nw==
 
 "@webassemblyjs/ast@1.8.5":
   version "1.8.5"

@@ -7,8 +7,7 @@ module Cohere
     def new
       @case = Case::Repo.get.find_with_documents_and_referral(params[:case_id])
       if policy.forbid?(:referral)
-        deny_access
-        return
+        return deny_access
       end
 
       referral = @case.make_referral_to_program(
@@ -23,8 +22,7 @@ module Cohere
     def create
       @case = Case::Repo.get.find_with_documents_and_referral(params[:case_id])
       if policy.forbid?(:referral)
-        deny_access
-        return
+        return deny_access
       end
 
       case_params = params
@@ -47,8 +45,7 @@ module Cohere
       save_form = SaveReferralForm.new(referral, @form, save_action)
       if not save_form.()
         flash.now[:alert] = "Please check the case for errors."
-        render(:new)
-        return
+        return render(:new)
       end
 
       redirect_to(edit_case_path(@case.id), notice: "Created referral!")

@@ -10,7 +10,6 @@
     display: flex;
     align-items: flex-end;
     flex-wrap: wrap;
-    gap: $spacing3;
     margin-bottom: $spacing3;
   }
 
@@ -21,17 +20,21 @@
   }
 
   &-title {
-    color: $brandBlack;
-    font-size: $fontSize0;
+    color: $brand-black;
+    font-size: $font-size0;
   }
 
   &-filters {
     width: 100%;
+    margin-top: $spacing3;
     padding: 0 $spacing6;
   }
 
   &-actions {
     display: flex;
-    gap: $spacing5;
+
+    > * {
+      margin-left: $spacing3;
+    }
   }
 }

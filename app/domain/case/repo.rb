@@ -48,8 +48,8 @@ class Case
       case_rec = Case::Record
         .find(case_id)
 
-      # TODO: fix n+1 on attachments and blobs
       document_recs = Document::Record
+        .with_attached_file
         .where(case_id: case_id)
 
       is_referrer = Case::Record
@@ -63,8 +63,8 @@ class Case
         .where(status: [:opened, :pending])
         .find(case_id)
 
-      # TODO: fix n+1 on attachments and blobs
       document_recs = Document::Record
+        .with_attached_file
         .where(case_id: case_id)
 
       entity_from(case_rec, document_recs)
@@ -78,11 +78,19 @@ class Case
         )
         .find(case_id)
 
-      # TODO: fix n+1 on attachments and blobs
       document_recs = Document::Record
+        .with_attached_file
         .where(case_id: case_id)
 
       entity_from(case_rec, document_recs)
+    end
+
+    def find_active_by_recipient(recipient_id)
+      case_rec = Case::Record
+        .where(status: [:opened, :pending, :submitted])
+        .find_by!(recipient_id: recipient_id)
+
+      return entity_from(case_rec)
     end
 
     # -- queries/many
@@ -225,7 +233,7 @@ class Case
       @domain_events.consume(kase.events)
     end
 
-    def save_message_changes(kase)
+    def save_new_message(kase)
       case_rec = kase.record
       if case_rec.nil?
         raise "case must be fetched from the db!"
@@ -245,7 +253,7 @@ class Case
       @domain_events.consume(kase.events)
     end
 
-    def save_attached_file(kase)
+    def save_selected_attachment(kase)
       document = kase.selected_document
       if document.nil?
         raise "no document was selected"
@@ -267,6 +275,13 @@ class Case
         filename: f.name,
         content_type: f.mime_type
       )
+
+      # consume all entity events
+      @domain_events.consume(kase.events)
+    end
+
+    def save_new_attachments(kase)
+      create_documents!(kase.id.val, kase.new_documents)
 
       # consume all entity events
       @domain_events.consume(kase.events)
@@ -299,7 +314,7 @@ class Case
       referred = referral.referred
       referred_rec.assign_attributes(
         program: referred.program,
-        recipient_id: referred.recipient.id,
+        recipient_id: referred.recipient.id.val,
         referrer_id: referrer.id.val
       )
 
@@ -398,10 +413,10 @@ class Case
 
       document_attrs = documents.map do |d|
         _attrs = {
-          case_id: case_id,
           classification: d.classification,
           source_url: d.source_url,
-          file: d.file&.attachment&.blob
+          file: d.new_file || d.file&.attachment&.blob,
+          case_id: case_id,
         }
       end
 
@@ -457,7 +472,7 @@ class Case
     def self.map_recipient(r)
       Recipient.new(
         record: r,
-        id: r.id,
+        id: Id.new(r.id),
         profile: Recipient::Profile.new(
           phone: Recipient::Phone.new(
             number: r.phone_number

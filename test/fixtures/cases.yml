@@ -36,7 +36,7 @@ pending_1:
 
 pending_2:
   status: pending
-  recipient: recipient_3
+  recipient: recipient_1
   enroller: enroller_2
   supplier: supplier_1
   supplier_account_number: A1
@@ -107,3 +107,15 @@ referral_1:
   received_message_at: nil
   completed_at: nil
   referrer: approved_2
+
+chattable_1:
+  status: :opened
+  recipient: recipient_4
+  enroller: enroller_2
+  supplier: supplier_2
+  supplier_account_number: A1
+  supplier_account_arrears_cents: 1000_00
+  created_at: <%= Time.zone.now - 1.days %>
+  updated_at: <%= Time.zone.now %>
+  received_message_at: null
+  completed_at: null

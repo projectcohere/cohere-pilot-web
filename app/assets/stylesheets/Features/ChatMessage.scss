@@ -1,0 +1,64 @@
+.ChatMessage {
+  $r: ".ChatMessage";
+  $chat-message-margin: 12px;
+
+  border-radius: $radius-chat;
+  max-width: 80%;
+  scroll-snap-align: end;
+
+  // -- elements --
+  &-sender {
+    display: none;
+    margin: $chat-message-margin;
+    margin-bottom: 0;
+    font-size: $font-size6;
+  }
+
+  &-attachment {
+    border-radius: $radius-field;
+  }
+
+  &-body {
+    margin: $chat-message-margin;
+  }
+
+  // -- variants --
+  &--sent {
+    align-self: flex-end;
+    background-color: $color-alert;
+  }
+
+  &--received {
+    align-self: flex-start;
+    background-color: $color-field;
+  }
+
+  // shrink margin between sequential messages
+  &--sent + &--sent, &--received + &--received {
+    margin-top: $spacing6;
+  }
+
+  // style the first message in each group
+  *:not(&--sent) + &--sent, &--sent:first-child {
+    border-top-right-radius: $radius-field;
+  }
+
+  *:not(&--received) + &--received, &--received:first-child {
+    border-top-left-radius: $radius-field;
+  }
+
+  *:not(&--sent) + &--sent, &--sent:first-child,
+  *:not(&--received) + &--received, &--received:first-child {
+    #{$r}-sender {
+      display: block;
+    }
+
+    #{$r}-attachment {
+      margin-top: $spacing5;
+    }
+
+    #{$r}-body {
+      margin-top: 0;
+    }
+  }
+}

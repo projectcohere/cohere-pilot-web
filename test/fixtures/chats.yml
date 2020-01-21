@@ -1,0 +1,9 @@
+idle_1:
+  recipient: recipient_1
+
+idle_2:
+  recipient: recipient_2
+
+session_1:
+  recipient: recipient_4
+  session_token: "5930FJP"

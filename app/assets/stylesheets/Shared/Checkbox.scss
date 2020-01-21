@@ -5,10 +5,10 @@
   max-width: $height3;
   height: $height3;
   margin-right: $spacing5;
-  border-bottom: 2px solid $brandBlack;
-  border-top-left-radius: $radiusCheckbox;
-  border-top-right-radius: $radiusCheckbox;
-  background-color: $colorField;
+  border-bottom: 2px solid $brand-black;
+  border-top-left-radius: $radius-checkbox;
+  border-top-right-radius: $radius-checkbox;
+  background-color: $color-field;
 
   &.is-checked {
     @include u-checkmark;

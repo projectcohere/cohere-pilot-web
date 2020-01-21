@@ -17,7 +17,7 @@ module Cases
       file = @generate_file.(@case)
       @case.attach_file_to_selected_document(file)
 
-      @case_repo.save_attached_file(@case)
+      @case_repo.save_selected_attachment(@case)
     end
   end
 end

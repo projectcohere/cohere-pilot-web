@@ -1,14 +1,24 @@
 .Flash {
-  position: absolute;
-  top: $spacing3;
-  right: $spacing3;
   padding: $spacing5;
-  background-color: $colorNotice;
+  background-color: $color-notice;
   border-radius: $radius;
   transition: opacity 0.3s;
 
+  @include desktop {
+    position: absolute;
+    top: $spacing3;
+    right: $spacing3;
+  }
+
+  @include mobile {
+    position: fixed;
+    left: $spacing3;
+    right: $spacing3;
+    bottom: $spacing3;
+  }
+
   &.is-alert {
-    background-color: $colorAlert;
+    background-color: $color-alert;
   }
 
   &.is-hidden {

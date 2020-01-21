@@ -6,7 +6,7 @@ class Supplier
     # -- actions --
     def index
       if policy.forbid?(:list)
-        deny_access
+        return deny_access
       end
 
       @cases = Case::Repo.get.find_all_for_supplier(
@@ -16,7 +16,7 @@ class Supplier
 
     def new
       if policy.forbid?(:create)
-        deny_access
+        return deny_access
       end
 
       @form = CaseForm::new
@@ -25,7 +25,7 @@ class Supplier
 
     def create
       if policy.forbid?(:create)
-        deny_access
+        return deny_access
       end
 
       @form = CaseForm.new(nil,
@@ -37,8 +37,7 @@ class Supplier
       save_form = SaveCaseForm.new(@form)
       if not save_form.()
         flash.now[:alert] = "Please check the case for errors."
-        render(:new)
-        return
+        return render(:new)
       end
 
       redirect_to(cases_path, notice: "Created case!")

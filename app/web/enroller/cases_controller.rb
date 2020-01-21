@@ -6,8 +6,7 @@ class Enroller
     # -- actions --
     def index
       if policy.forbid?(:list)
-        deny_access
-        return
+        return deny_access
       end
 
       @cases = Case::Repo.get.find_all_for_enroller(
@@ -22,8 +21,7 @@ class Enroller
       )
 
       if policy.forbid?(:edit_status)
-        deny_access
-        return
+        return deny_access
       end
 
       save_case = SaveCompletedCase.new(@case, params[:complete_action].to_sym)
@@ -41,8 +39,7 @@ class Enroller
       )
 
       if policy.forbid?(:view)
-        deny_access
-        return
+        return deny_access
       end
 
       events << Cases::Events::DidViewEnrollerCase.from_entity(@case)

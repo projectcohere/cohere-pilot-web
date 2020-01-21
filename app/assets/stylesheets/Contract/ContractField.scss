@@ -5,15 +5,15 @@
   &-hint {
     @extend .u-hint;
     margin-bottom: $spacing6;
-    color: $brandBlack;
+    color: $brand-black;
     // https://github.com/wkhtmltopdf/wkhtmltopdf/issues/3256
     letter-spacing: 0;
   }
 
   &-input {
-    border-top-left-radius: $radiusField;
-    border-top-right-radius: $radiusField;
-    background-color: $colorField;
+    border-top-left-radius: $radius-field;
+    border-top-right-radius: $radius-field;
+    background-color: $color-field;
   }
 
   &-input + &-input {
@@ -29,7 +29,7 @@
 
   &-border {
     height: 1px;
-    background-color: $brandBlack;
+    background-color: $brand-black;
   }
 
   /* ContractField--tall/signature */
@@ -43,6 +43,6 @@
 
   &--signature &-value {
     font-family: Cedarville Cursive, serif;
-    font-size: $fontSize1;
+    font-size: $font-size1;
   }
 }

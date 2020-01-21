@@ -6,7 +6,7 @@ module Dhs
     # -- actions --
     def index
       if policy.forbid?(:list)
-        deny_access
+        return deny_access
       end
 
       @cases = Case::Repo.get.find_all_for_dhs
@@ -15,7 +15,7 @@ module Dhs
     def edit
       @case = Case::Repo.get.find_opened_with_documents(params[:id])
       if policy.forbid?(:edit)
-        deny_access
+        return deny_access
       end
 
       @view = Cases::View.new(@case)
@@ -27,7 +27,7 @@ module Dhs
     def update
       @case = Case::Repo.get.find_opened_with_documents(params[:id])
       if policy.forbid?(:edit)
-        deny_access
+        return deny_access
       end
 
       @view = Cases::View.new(@case)
@@ -40,8 +40,7 @@ module Dhs
       save_form = SaveCaseForm.new(@case, @form)
       if not save_form.()
         flash.now[:alert] = "Please check the case for errors."
-        render(:edit)
-        return
+        return render(:edit)
       end
 
       redirect_to(cases_path, notice: "Case updated!")

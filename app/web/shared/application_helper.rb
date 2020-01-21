@@ -16,7 +16,7 @@ module ApplicationHelper
     # render section tag
     section_class = cx(a_class, "Panel-section")
 
-    tag.section(*args, class: section_class, **kwargs) do
+    tag.fieldset(*args, class: section_class, **kwargs) do
       section_title = "".html_safe
 
       if title.present?
@@ -56,6 +56,26 @@ module ApplicationHelper
       value
     elsif not fallback.nil?
       tag.span(fallback, class: "Field-fallback")
+    end
+  end
+
+  def chat_message_tag(chat_message, sender, receiver, &children)
+    # pre-render children
+    message_content = capture(&children)
+
+    # determine tag props
+    is_sent = chat_message.sent_by?(sender)
+    classes = cx("ChatMessage",
+      "ChatMessage--sent" => is_sent,
+      "ChatMessage--received" => !is_sent,
+    )
+
+    sender_name = is_sent ? "Me" : receiver
+
+    # render tag
+    tag.li(class: classes) do
+      sender_tag = tag.label(sender_name, class: "ChatMessage-sender")
+      sender_tag + message_content
     end
   end
 

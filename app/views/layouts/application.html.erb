@@ -4,18 +4,19 @@
     <title>Cohere Pilot</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <%= stylesheet_link_tag("application", media: "all", "data-turbolinks-track": "reload") %>
-    <%= javascript_pack_tag("application", "data-turbolinks-track": "reload") %>
+    <%= javascript_pack_tag("application", defer: "defer", "data-turbolinks-track": "reload") %>
   </head>
   <body>
     <% if signed_in? %>
       <%= render(partial: "layouts/header") %>
     <% end %>
     <div class="Layout">
+      <%= yield %>
       <% if flash.present? %>
         <%= render(partial: "layouts/flash") %>
       <% end %>
-      <%= yield %>
     </div>
   </body>
 </html>

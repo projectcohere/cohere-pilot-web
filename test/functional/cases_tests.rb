@@ -4,7 +4,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   # -- list --
   test "can't list cases if signed-out" do
     get("/cases")
-    assert_redirected_to("/sign-in")
+    assert_redirected_to("/chat")
   end
 
   test "can list cases as a supplier" do
@@ -22,7 +22,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /Open Cases/)
-    assert_select(".CaseCell", 4)
+    assert_select(".CaseCell", 5)
   end
 
   test "can list cases as a cohere user" do
@@ -38,7 +38,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases/open", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /Open Cases/)
-    assert_select(".CaseCell", 7)
+    assert_select(".CaseCell", 8)
   end
 
   test "can list completed cases as a cohere user" do
@@ -60,19 +60,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   # -- create --
-  test "can't open a case if signed-out" do
-    get("/cases/new")
-    assert_redirected_to("/sign-in")
-  end
-
-  test "can't open a case without permission" do
-    user_rec = users(:cohere_1)
-
-    get(auth("/cases/new", as: user_rec))
-    assert_redirected_to("/cases")
-  end
-
-  test "open a case as a supplier" do
+  test "views prompt to open a case as a supplier" do
     user_rec = users(:supplier_1)
 
     get(auth("/cases/new", as: user_rec))
@@ -84,27 +72,52 @@ class CasesTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "save an opened case as a supplier" do
-    user_rec = users(:supplier_1)
+  test "can't view prompt to open a case if signed-out" do
+    get("/cases/new")
+    assert_redirected_to("/chat")
+  end
 
-    post(auth("/cases", as: user_rec), params: {
-      case: {
-        contact: {
-          first_name: "Janice",
-          last_name: "Sample",
-          phone_number: Faker::Number.number(digits: 10),
-        },
-        address: {
-          street: "123 Test Street",
-          city: "Testopolis",
-          zip: "11111",
-        },
-        supplier_account: {
-          account_number: "22222",
-          arrears: "1000.00"
-        }
+  test "can't view prompt to open a case without permission" do
+    user_rec = users(:cohere_1)
+
+    get(auth("/cases/new", as: user_rec))
+    assert_redirected_to("/cases")
+  end
+
+  test "opens a case as a supplier" do
+    user_rec = users(:supplier_1)
+    case_params = {
+      contact: {
+        first_name: "Janice",
+        last_name: "Sample",
+        phone_number: Faker::Number.number(digits: 10),
+      },
+      address: {
+        street: "123 Test Street",
+        city: "Testopolis",
+        zip: "11111",
+      },
+      supplier_account: {
+        account_number: "22222",
+        arrears: "1000.00"
       }
-    })
+    }
+
+    act = -> do
+      VCR.use_cassette("chats--request-invite") do
+        post(auth("/cases", as: user_rec), params: {
+          case: case_params
+        })
+      end
+    end
+
+    assert_difference(
+      -> { Case::Record.count } => 1,
+      -> { Recipient::Record.count } => 1,
+      -> { Chat::Record.count } => 1,
+      -> { Chat::Message::Record.count } => 1,
+      &act
+    )
 
     assert_present(flash[:notice])
     assert_redirected_to("/cases")
@@ -138,7 +151,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     case_rec = cases(:submitted_1)
 
     get("/cases/#{case_rec.id}")
-    assert_redirected_to("/sign-in")
+    assert_redirected_to("/chat")
   end
 
   test "can't view a case without permission" do
@@ -187,7 +200,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     case_rec = cases(:submitted_1)
 
     get("/cases/#{case_rec.id}/edit")
-    assert_redirected_to("/sign-in")
+    assert_redirected_to("/chat")
   end
 
   test "can't edit a case without permission" do
@@ -281,7 +294,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     pdf_text = text_from_pdf_file(case_rec.documents[0].file)
     assert_match(/MEAP\s*Agreement/, pdf_text)
-    assert_match(/Danice\s*Sample/, pdf_text)
+    assert_match(/Janice\s*Sample/, pdf_text)
   end
 
   test "show errors when saving an invalid case as a cohere user" do
@@ -436,7 +449,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   # -- referrals --
   test "can't make a referral if signed-out" do
     get("/cases/3/referrals/new")
-    assert_redirected_to("/sign-in")
+    assert_redirected_to("/chat")
   end
 
   test "can't make a referral without permission" do

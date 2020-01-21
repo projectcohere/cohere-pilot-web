@@ -15,9 +15,11 @@ module Support
         Document,
         Enroller,
         Supplier,
-        Message,
-        Message::Sender,
-        Message::Attachment
+        Chat,
+        Chat::Message,
+        Mms::Message,
+        Mms::Message::Sender,
+        Mms::Message::Attachment,
       ]
 
       types_to_stub.each do |type_to_stub|

@@ -11,7 +11,9 @@ module Environment
       enrollers: "Enroller::Record",
       cases: "Case::Record",
       recipients: "Recipient::Record",
-      documents: "Document::Record"
+      documents: "Document::Record",
+      chats: "Chat::Record",
+      chat_messages: "Chat::Message::Record",
     }
 
     # we have to monkey patch the fixture class cache to namespace our fixture
