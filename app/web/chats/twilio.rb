@@ -1,3 +1,5 @@
+require "net/http"
+
 module Chats
   class Twilio
     # -- liftime --

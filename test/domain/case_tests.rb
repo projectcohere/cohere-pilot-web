@@ -3,15 +3,19 @@ require "test_helper"
 class CaseTests < ActiveSupport::TestCase
   # -- creation --
   test "opens the case" do
+    profile = Recipient::Profile.stub(
+      phone: Recipient::Phone.stub(number: "1")
+    )
+
     kase = Case.open(
       program: Program::Name::Meap,
-      profile: :test_profile,
+      profile: profile,
       enroller: Enroller.stub(id: 1),
       supplier: Supplier.stub(id: 2),
       supplier_account: :test_account
     )
 
-    assert_equal(kase.recipient.profile, :test_profile)
+    assert_equal(kase.recipient.profile, profile)
     assert_equal(kase.supplier_account, :test_account)
     assert_equal(kase.enroller_id, 1)
     assert_equal(kase.supplier_id, 2)
@@ -84,7 +88,10 @@ class CaseTests < ActiveSupport::TestCase
         )
       ],
       recipient: Recipient.stub(
-        id: 3
+        id: 3,
+        profile: Recipient::Profile.stub(
+          phone: Recipient::Phone.stub(number: "1")
+        )
       ),
     )
 

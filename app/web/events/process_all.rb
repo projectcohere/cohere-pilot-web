@@ -32,6 +32,10 @@ module Events
           Chats::OpenChat.(
             event.case_recipient_id.val
           )
+
+          Chats::SendInvite.(
+            event.case_recipient_phone_number
+          )
         end
       when Case::Events::DidSubmit
         deliver(CasesMailer.did_submit(

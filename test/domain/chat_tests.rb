@@ -2,9 +2,17 @@ require "test_helper"
 
 class ChatTests < ActiveSupport::TestCase
   # -- factories --
-  test "opens a chat" do
+  test "opens a chat with an initial message" do
     chat = Chat.open(1)
     assert_equal(chat.recipient_id, 1)
+
+    message = chat.messages[0]
+    assert_length(chat.messages, 1)
+    assert_match(/Hi there/, message.body)
+
+    # TODO: how can we stub out repos so that we can return mock
+    # attachments in unit tests?
+    # assert_length(message.attachments, 1)
   end
 
   # -- commands --

@@ -104,15 +104,18 @@ class CasesTests < ActionDispatch::IntegrationTest
     }
 
     act = -> do
-      post(auth("/cases", as: user_rec), params: {
-        case: case_params
-      })
+      VCR.use_cassette("chats--request-invite") do
+        post(auth("/cases", as: user_rec), params: {
+          case: case_params
+        })
+      end
     end
 
     assert_difference(
       -> { Case::Record.count } => 1,
       -> { Recipient::Record.count } => 1,
       -> { Chat::Record.count } => 1,
+      -> { Chat::Message::Record.count } => 1,
       &act
     )
 

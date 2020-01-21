@@ -94,11 +94,35 @@ class Chat
 
     # -- commands --
     def save_opened(chat)
-      chat_rec = Chat::Record.create(
+      message = chat.new_message
+
+      # start the new records
+      c = chat
+      chat_rec = Chat::Record.new(
         recipient_id: chat.recipient_id
       )
 
+      m = message
+      message_rec = Chat::Message::Record.new(
+        sender: m.sender,
+        body: m.body,
+        files: m.attachments
+      )
+
+      # save the records
+      transaction do
+        chat_rec.save!
+        message_rec.chat_id = chat_rec.id
+        message_rec.save!
+      end
+
+      # send callbacks to entities
+      message.did_save(message_rec)
+      chat.did_save_new_message
       chat.did_save(chat_rec)
+
+      # consume all entity events
+      @domain_events.consume(chat.events)
     end
 
     def save_new_session(chat)
@@ -140,6 +164,13 @@ class Chat
 
       # consume all entity events
       @domain_events.consume(chat.events)
+    end
+
+    # -- helpers --
+    def transaction
+      Chat::Record.transaction do
+        yield
+      end
     end
 
     # -- factories --

@@ -2,6 +2,7 @@ class Chat
   module Sender
     # -- constants --
     Recipient = "recipient".freeze
+    Automated = "automated".freeze
 
     # -- options --
     def self.cohere(chat_token)

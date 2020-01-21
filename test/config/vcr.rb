@@ -3,6 +3,9 @@ require "vcr"
 VCR.configure do |c|
   c.cassette_library_dir = "test/cassettes"
   c.hook_into(:webmock)
+  c.default_cassette_options = {
+    allow_unused_http_interactions: false
+  }
 
   c.filter_sensitive_data("<FRONT_API_JWT>") { ENV["FRONT_API_JWT"] }
   c.filter_sensitive_data("<TWILIO_API_VERIFY_SID>") { ENV["TWILIO_API_VERIFY_SID"] }

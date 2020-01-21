@@ -1,5 +1,3 @@
-require "net/http"
-
 module Chats
   class SendInvite < ::Command
     # -- liftime --

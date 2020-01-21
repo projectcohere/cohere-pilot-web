@@ -14,10 +14,20 @@ class Chat < Entity
   attr(:selected_message)
 
   # -- factories --
-  def self.open(recipient_id)
-    return Chat.new(
-      recipient_id: recipient_id
+  def self.open(recipient_id, macro_repo: Macro::Repo.get)
+    chat = Chat.new(
+      recipient_id: recipient_id,
     )
+
+    # add the intro / consent message
+    macro = macro_repo.find_initial
+    chat.add_message(
+      sender: Sender::Automated,
+      body: macro.body,
+      attachments: macro.attachment == nil ? [] : [macro.attachment]
+    )
+
+    return chat
   end
 
   # -- commands --
