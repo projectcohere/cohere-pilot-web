@@ -21,6 +21,10 @@ class Case
         cohere?
       when :edit_status
         cohere? || enroller?
+      when :edit_ownership
+        cohere? && wrap?
+      when :edit_is_primary_residence
+        cohere? && wrap?
       when :edit_has_active_service
         cohere? && wrap?
       # view
@@ -28,6 +32,12 @@ class Case
         cohere? || enroller?
       when :view_fpl
         cohere? || enroller?
+      when :view_ownership
+        cohere? && wrap?
+      when :view_is_primary_residence
+        cohere? && wrap?
+      when :view_has_active_service
+        cohere? && wrap?
       # actions
       when :referral
         cohere?
