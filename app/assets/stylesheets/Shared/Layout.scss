@@ -1,5 +1,7 @@
 .Layout {
-  flex: 1;
-  display: flex;
-  position: relative;
+  @include desktop {
+    flex: 1;
+    display: flex;
+    position: relative;
+  }
 }
