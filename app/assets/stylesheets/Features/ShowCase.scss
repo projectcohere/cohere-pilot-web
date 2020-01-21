@@ -1,12 +1,26 @@
 .ShowCase {
   display: flex;
 
+  &-body {
+    flex: 1;
+    display: flex;
+
+    > * + * {
+      margin-left: $spacing3;
+    }
+  }
+
   &-case {
     @extend .u-panel-cozy;
     max-width: $width1;
   }
 
-  /* ShowCase-details */
+  &-phone {
+    align-self: flex-start;
+    display: flex;
+    flex-direction: column;
+  }
+
   &-status {
     grid-column: 1 / 9;
   }
