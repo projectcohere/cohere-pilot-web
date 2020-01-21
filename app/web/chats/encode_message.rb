@@ -43,7 +43,7 @@ module Chats
             Attachment.new(
               a.filename,
               a.service_url,
-              a.representable? ? a.representation(resize: "200x200>").processed.service_url : nil
+              a.representable? ? a.representation(resize: "400x400>").processed.service_url : nil
             )
           }
         )
