@@ -31,9 +31,9 @@ class ChatTests < ActiveSupport::TestCase
     )
 
     chat.add_message(
-      sender: Chat::Sender.recipient,
+      sender: Chat::Sender.cohere(:test_sender),
       body: "This is a test.",
-      attachments: []
+      attachments: [:test_attachment]
     )
 
     assert_length(chat.messages, 2)
@@ -41,10 +41,10 @@ class ChatTests < ActiveSupport::TestCase
     message = chat.new_message
     assert_not_nil(message)
     assert_equal(message.id, Id::None)
-    assert_equal(message.sender, Chat::Sender.recipient)
+    assert_equal(message.sender, :test_sender)
     assert_equal(message.body, "This is a test.")
     assert_equal(message.chat_id, 42)
-    assert_length(message.attachments, 0)
+    assert_length(message.attachments, 1)
 
     event = chat.events[0]
     assert_length(chat.events, 1)
@@ -53,7 +53,7 @@ class ChatTests < ActiveSupport::TestCase
     assert_not(event.has_attachments)
   end
 
-  test "adds a message with attachments" do
+  test "adds a message with recipient attachments" do
     chat = Chat.stub(
       id: Id.new(42)
     )

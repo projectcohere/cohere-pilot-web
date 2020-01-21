@@ -67,6 +67,7 @@ module Cohere
 
     def show
       @case = Case::Repo.get.find_with_documents_and_referral(params[:id])
+      @chat = Chat::Repo.get.find_by_recipient_with_messages(@case.recipient.id.val)
 
       if policy.forbid?(:view)
         return deny_access

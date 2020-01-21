@@ -11,7 +11,7 @@ class Chat
         message = chat.new_message
         DidAddMessage.new(
           chat_message_id: message.id,
-          has_attachments: message.attachments.present?,
+          has_attachments: message.sent_by?(Chat::Sender::Recipient) && message.attachments.present?,
         )
       end
     end
