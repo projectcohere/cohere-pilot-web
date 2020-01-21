@@ -6,6 +6,10 @@
     align-items: center;
   }
 
+  @include mobile {
+    height: 100%;
+  }
+
   &-frame {
     @include desktop {
       position: relative;
@@ -13,6 +17,10 @@
       border-radius: $radius-chat;
       background-color: $white;
       overflow-x: hidden;
+    }
+
+    @include mobile {
+      height: 100%;
     }
   }
 
