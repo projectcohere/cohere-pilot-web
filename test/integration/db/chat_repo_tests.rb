@@ -107,14 +107,14 @@ module Db
       assert_not_nil(chat_rec.session_token)
     end
 
-    test "saves new messages" do
+    test "saves a new message" do
       domain_events = ArrayQueue.new
 
       blob_rec = active_storage_blobs(:blob_1)
       chat_rec = chats(:session_1)
       chat = Chat::Repo.map_record(chat_rec)
       chat.add_message(
-        sender: Chat::Sender.recipient,
+        sender: Chat::Sender.automated,
         body: "Test.",
         attachments: [blob_rec]
       )
@@ -132,11 +132,15 @@ module Db
         &act
       )
 
-      message_rec = chat_rec.messages.reload
+      chat_rec = chat_rec
+      assert(chat_rec.saved_change_to_attribute?(:updated_at))
+      assert_equal(chat_rec.sms_conversation_notification, "reminder_1")
+
+      message_rec = chat_rec.messages
         .find { |r| r.id == message_id.val }
 
       assert_not_nil(message_rec.id)
-      assert_equal(message_rec.sender, Chat::Sender.recipient)
+      assert_equal(message_rec.sender, Chat::Sender.automated)
       assert_equal(message_rec.body, "Test.")
 
       attachment_rec = message_rec.files[0]

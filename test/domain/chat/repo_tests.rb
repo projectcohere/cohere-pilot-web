@@ -17,6 +17,11 @@ class Chat
       assert_not_nil(message.id.val)
       assert_not_nil(message.sender)
       assert_not_nil(message.body)
+
+      conversation = chat.sms_conversation
+      assert_not_nil(conversation)
+      assert_not_nil(conversation.id)
+      assert_equal(conversation.notification, Chat::Notification::Clear)
     end
   end
 end

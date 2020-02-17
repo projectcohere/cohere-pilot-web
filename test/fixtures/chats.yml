@@ -7,3 +7,5 @@ idle_2:
 session_1:
   recipient: recipient_4
   session_token: "5930FJP"
+  sms_conversation_id: 1A20FA
+  sms_conversation_notification: clear

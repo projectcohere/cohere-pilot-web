@@ -149,14 +149,25 @@ class Chat
         raise "chat must have a new message!"
       end
 
-      # create the record
+      # build/update the records
+      c = chat
+      chat_rec.assign_attributes({
+        sms_conversation_notification: c.sms_conversation.notification,
+      })
+
       m = message
-      message_rec = Chat::Message::Record.create!({
+      message_rec = Chat::Message::Record.new({
         sender: m.sender,
         body: m.body,
         chat_id: m.chat_id,
         files: m.attachments,
       })
+
+      # save the records
+      transaction do
+        chat_rec.save!
+        message_rec.save!
+      end
 
       # send callbacks to entities
       message.did_save(message_rec)
@@ -175,12 +186,20 @@ class Chat
 
     # -- factories --
     def self.map_record(r, messages = [])
-      Chat.new(
+      return Chat.new(
         record: r,
         id: Id.new(r.id),
         session: r.session_token,
         messages: messages,
+        sms_conversation: map_sms_conversation(r),
         recipient_id: r.recipient_id,
+      )
+    end
+
+    def self.map_sms_conversation(r)
+      return SmsConversation.new(
+        id: r.sms_conversation_id,
+        notification: r.sms_conversation_notification.to_sym,
       )
     end
   end

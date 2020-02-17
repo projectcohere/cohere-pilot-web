@@ -5,6 +5,7 @@ class ChatTests < ActiveSupport::TestCase
   test "opens a chat with an initial message" do
     chat = Chat.open(1)
     assert_equal(chat.recipient_id, 1)
+    assert_not_nil(chat.sms_conversation)
 
     message = chat.messages[0]
     assert_length(chat.messages, 1)
@@ -55,13 +56,13 @@ class ChatTests < ActiveSupport::TestCase
 
   test "adds a message with recipient attachments" do
     chat = Chat.stub(
-      id: Id.new(42)
+      id: Id.new(42),
     )
 
     chat.add_message(
       sender: Chat::Sender.recipient,
       body: "This is a test.",
-      attachments: ["test-file"]
+      attachments: ["test-file"],
     )
 
     message = chat.new_message
@@ -72,6 +73,37 @@ class ChatTests < ActiveSupport::TestCase
     assert_instance_of(Chat::Events::DidAddMessage, event)
     assert_equal(event.chat_message_id, message.id)
     assert(event.has_attachments)
+  end
+
+  test "reminds the recipient when a cohere user adds a message" do
+    chat = Chat.stub(
+      id: Id.new(42),
+    )
+
+    chat.add_message(
+      sender: Chat::Sender.cohere(:test_sender),
+      body: "This is a test.",
+      attachments: [],
+    )
+
+    assert_equal(chat.sms_conversation.notification, Chat::Notification::Reminder1)
+  end
+
+  test "clears any reminder when the recipient adds a message" do
+    chat = Chat.stub(
+      id: Id.new(42),
+      sms_conversation: Chat::SmsConversation.stub(
+        notification: Chat::Notification::Reminder1,
+      ),
+    )
+
+    chat.add_message(
+      sender: Chat::Sender.recipient,
+      body: "This is a test.",
+      attachments: [],
+    )
+
+    assert_equal(chat.sms_conversation.notification, Chat::Notification::Clear)
   end
 
   test "selects a message" do

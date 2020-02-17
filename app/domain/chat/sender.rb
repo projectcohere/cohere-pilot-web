@@ -10,7 +10,11 @@ class Chat
     end
 
     def self.recipient
-      Recipient.to_s
+      Recipient
+    end
+
+    def self.automated
+      Automated
     end
   end
 end

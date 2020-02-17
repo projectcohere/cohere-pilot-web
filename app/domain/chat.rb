@@ -7,6 +7,7 @@ class Chat < Entity
   prop(:session, default: nil)
   prop(:messages, default: [])
   prop(:recipient_id)
+  prop(:sms_conversation, default: SmsConversation.new)
   props_end!
 
   # -- props/temporary
@@ -22,7 +23,7 @@ class Chat < Entity
     # add the intro / consent message
     macro = macro_repo.find_initial
     chat.add_message(
-      sender: Sender::Automated,
+      sender: Sender.automated,
       body: macro.body,
       attachments: macro.attachment == nil ? [] : [macro.attachment]
     )
@@ -36,6 +37,7 @@ class Chat < Entity
   end
 
   def add_message(sender:, body:, attachments:)
+    # add message to list
     message = Message.new(
       sender: sender,
       body: body,
@@ -46,6 +48,13 @@ class Chat < Entity
     @new_message = message
     @messages << message
     @events << Events::DidAddMessage.from_entity(self)
+
+    # set notification based on sender
+    if sender == Sender::Recipient
+      @sms_conversation.clear_reminder
+    else
+      @sms_conversation.remind_recipient
+    end
   end
 
   def select_message(i)
