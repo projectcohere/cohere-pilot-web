@@ -4,6 +4,11 @@ class Chat
     prop(:notification, default: Notification::Clear)
     props_end!
 
+    # -- queries --
+    def reminder?
+      @notification == Notification::Reminder1
+    end
+
     # -- commands --
     def clear_reminder
       @notification = Notification::Clear

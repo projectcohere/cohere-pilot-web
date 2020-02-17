@@ -92,6 +92,16 @@ class Chat
       return chat
     end
 
+    # -- queries/many
+    def find_all_ids_for_reminder1
+      chat_recs = Chat::Record
+        .reminder_1
+        .where("updated_at <= ?", 15.minutes.ago)
+        .select(:id)
+
+      return chat_recs.pluck(:id)
+    end
+
     # -- commands --
     def save_opened(chat)
       message = chat.new_message

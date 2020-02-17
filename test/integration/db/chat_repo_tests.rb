@@ -78,6 +78,14 @@ module Db
       assert_present(chat.selected_message.attachments)
     end
 
+    test "finds ids of chats needing a reminder" do
+      chat_repo = Chat::Repo.new
+
+      chat_ids = chat_repo.find_all_ids_for_reminder1
+      assert_length(chat_ids, 1)
+      assert_equal(chat_ids, [chats(:idle_2).id])
+    end
+
     # -- commands --
     test "saves an opened chat" do
       recipient_rec = recipients(:recipient_3)
