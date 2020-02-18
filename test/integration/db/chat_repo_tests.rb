@@ -159,5 +159,18 @@ module Db
       assert_length(chat.events, 0)
       assert_length(domain_events, 1)
     end
+
+    test "save notifications" do
+      domain_events = ArrayQueue.new
+
+      chat_rec = chats(:idle_1)
+      chat = Chat::Repo.map_record(chat_rec)
+      chat.send_sms_notification { "test_sms_conversation_id" }
+
+      chat_repo = Chat::Repo.new(domain_events: domain_events)
+      chat_repo.save_notification(chat)
+      assert_equal(chat_rec.sms_conversation_id, "test_sms_conversation_id")
+      assert_equal(chat_rec.sms_conversation_notification, "clear")
+    end
   end
 end

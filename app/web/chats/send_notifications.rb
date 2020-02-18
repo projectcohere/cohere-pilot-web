@@ -1,5 +1,5 @@
 module Chats
-  class DeliverReminders < ApplicationWorker
+  class SendNotifications < ApplicationWorker
     schedule(
       name: "Every 5 minutes",
       cron: "*/5 * * * *"
@@ -14,7 +14,7 @@ module Chats
     def call
       chat_ids = @chat_repo.find_all_ids_for_reminder1
       chat_ids.each do |chat_id|
-        DeliverReminder.perform_async(chat_id)
+        SendNotification.perform_async(chat_id)
       end
     end
 

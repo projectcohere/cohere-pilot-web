@@ -440,7 +440,7 @@ class Case
         id: Id.new(r.id),
         program: r.program.to_sym,
         status: r.status.to_sym,
-        recipient: map_recipient(r.recipient),
+        recipient: Recipient::Repo.map_record(r.recipient),
         enroller_id: r.enroller_id,
         supplier_id: r.supplier_id,
         supplier_account: Case::Account.new(
@@ -466,40 +466,6 @@ class Case
         classification: r.classification.to_sym,
         file: r.file,
         source_url: r.source_url
-      )
-    end
-
-    def self.map_recipient(r)
-      Recipient.new(
-        record: r,
-        id: Id.new(r.id),
-        profile: Recipient::Profile.new(
-          phone: Recipient::Phone.new(
-            number: r.phone_number
-          ),
-          name: Recipient::Name.new(
-            first: r.first_name,
-            last: r.last_name
-          ),
-          address: Recipient::Address.new(
-            street: r.street,
-            street2: r.street2,
-            city: r.city,
-            state: r.state,
-            zip: r.zip
-          ),
-        ),
-        dhs_account: r.dhs_number&.then { |number|
-          Recipient::DhsAccount.new(
-            number: number,
-            household: Recipient::Household.new(
-              size: r.household_size,
-              income_cents: r.household_income_cents,
-              ownership: r.household_ownership.to_sym,
-              is_primary_residence: r.household_primary_residence
-            )
-          )
-        }
       )
     end
   end

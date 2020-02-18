@@ -5,7 +5,6 @@ class ChatTests < ActiveSupport::TestCase
   test "opens a chat with an initial message" do
     chat = Chat.open(1)
     assert_equal(chat.recipient_id, 1)
-    assert_not_nil(chat.sms_conversation)
 
     message = chat.messages[0]
     assert_length(chat.messages, 1)
@@ -23,6 +22,7 @@ class ChatTests < ActiveSupport::TestCase
     assert_not_nil(chat.session)
   end
 
+  # -- commands/messages
   test "adds a message" do
     chat = Chat.stub(
       id: Id.new(42),
@@ -75,7 +75,7 @@ class ChatTests < ActiveSupport::TestCase
     assert(event.has_attachments)
   end
 
-  test "reminds the recipient when a cohere user adds a message" do
+  test "notifies the recipient when a cohere user adds a message" do
     chat = Chat.stub(
       id: Id.new(42),
     )
@@ -86,15 +86,13 @@ class ChatTests < ActiveSupport::TestCase
       attachments: [],
     )
 
-    assert_equal(chat.sms_conversation.notification, Chat::Notification::Reminder1)
+    assert_not_nil(chat.notification)
   end
 
-  test "clears any reminder when the recipient adds a message" do
+  test "clears the notification when the recipient adds a message" do
     chat = Chat.stub(
       id: Id.new(42),
-      sms_conversation: Chat::SmsConversation.stub(
-        notification: Chat::Notification::Reminder1,
-      ),
+      notification: Chat::Notification.stub,
     )
 
     chat.add_message(
@@ -103,7 +101,7 @@ class ChatTests < ActiveSupport::TestCase
       attachments: [],
     )
 
-    assert_equal(chat.sms_conversation.notification, Chat::Notification::Clear)
+    assert_nil(chat.notification)
   end
 
   test "selects a message" do
@@ -113,5 +111,27 @@ class ChatTests < ActiveSupport::TestCase
 
     chat.select_message(0)
     assert_equal(chat.selected_message, :test_message)
+  end
+
+  # -- commands/notifications
+  test "sends an sms notification" do
+    chat = Chat.stub(
+      notification: Chat::Notification.stub,
+      sms_conversation_id: :test_id,
+    )
+
+    chat.send_sms_notification() { nil }
+    assert_nil(chat.notification)
+    assert_equal(chat.sms_conversation_id, :test_id)
+  end
+
+  test "sends an sms notification and starts a new conversation" do
+    chat = Chat.stub(
+      notification: Chat::Notification.stub,
+    )
+
+    chat.send_sms_notification() { :test_id }
+    assert_nil(chat.notification)
+    assert_equal(chat.sms_conversation_id, :test_id)
   end
 end

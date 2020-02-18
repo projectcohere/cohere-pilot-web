@@ -1,15 +1,8 @@
 class Chat
-  module Notification
-    # -- options --
-    Clear = :clear
-    Reminder1 = :reminder_1
-
+  class Notification < ::Value
     # -- queries --
-    def self.all
-      @all ||= [
-        Clear,
-        Reminder1,
-      ]
+    def body
+      return nil
     end
   end
 end

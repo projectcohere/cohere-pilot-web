@@ -17,7 +17,7 @@ module Support
         Supplier,
         Chat,
         Chat::Message,
-        Chat::SmsConversation,
+        Chat::Notification,
         Mms::Message,
         Mms::Message::Sender,
         Mms::Message::Attachment,
@@ -38,7 +38,12 @@ module Support
 
       type_to_stub.define_singleton_method(:stub) do |**kwargs|
         kwargs.with_defaults!(props_required)
-        type_to_stub.new(**kwargs)
+
+        if props_required.empty? && kwargs.empty?
+          type_to_stub.new
+        else
+          type_to_stub.new(**kwargs)
+        end
       end
     end
   end

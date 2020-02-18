@@ -6,8 +6,9 @@ class Chat < Entity
   prop(:id, default: Id::None)
   prop(:session, default: nil)
   prop(:messages, default: [])
+  prop(:notification, default: nil)
   prop(:recipient_id)
-  prop(:sms_conversation, default: SmsConversation.new)
+  prop(:sms_conversation_id, default: nil)
   props_end!
 
   # -- props/temporary
@@ -36,6 +37,7 @@ class Chat < Entity
     @session = SecureRandom.base58
   end
 
+  # -- commands/messages
   def add_message(sender:, body:, attachments:)
     # add message to list
     message = Message.new(
@@ -50,10 +52,10 @@ class Chat < Entity
     @events << Events::DidAddMessage.from_entity(self)
 
     # set notification based on sender
-    if sender == Sender::Recipient
-      @sms_conversation.clear_reminder
+    if sender != Sender::Recipient
+      @notification = Notification.new
     else
-      @sms_conversation.remind_recipient
+      @notification = nil
     end
   end
 
@@ -63,6 +65,22 @@ class Chat < Entity
     end
 
     @selected_message = @messages[i]
+  end
+
+  # -- commands/notifcations
+  def send_sms_notification
+    if not block_given?
+      raise "can't send notification without a service to invoke"
+    elsif @notification == nil
+      raise "can't send notification if there is not one to send"
+    end
+
+    sms_conversation_id = yield
+    if sms_conversation_id != nil
+      @sms_conversation_id = sms_conversation_id
+    end
+
+    @notification = nil
   end
 
   # -- callbacks --

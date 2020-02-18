@@ -17,7 +17,7 @@ class Chat
     # -- queries/any
     def any_by_phone_number?(phone_number)
       chat_exists = Chat::Record
-        .with_phone_number(phone_number)
+        .by_phone_number(phone_number)
         .exists?
 
       return chat_exists
@@ -25,7 +25,7 @@ class Chat
 
     def any_by_recipient?(recipient_id)
       chat_exists = Chat::Record
-        .with_recipient(recipient_id)
+        .by_recipient(recipient_id)
         .exists?
 
       return chat_exists
@@ -41,7 +41,7 @@ class Chat
 
     def find_by_phone_number(phone_number)
       chat_rec = Chat::Record
-        .with_phone_number(phone_number)
+        .by_phone_number(phone_number)
         .first
 
       return entity_from(chat_rec)
@@ -70,7 +70,7 @@ class Chat
 
     def find_by_recipient_with_messages(recipient_id)
       chat_rec = Chat::Record
-        .with_recipient(recipient_id)
+        .by_recipient(recipient_id)
         .first!
 
       chat_messages = @chat_message_repo
@@ -162,7 +162,7 @@ class Chat
       # build/update the records
       c = chat
       chat_rec.assign_attributes({
-        sms_conversation_notification: c.sms_conversation.notification,
+        sms_conversation_notification: c.notification != nil ? "reminder_1" : "clear",
       })
 
       m = message
@@ -187,6 +187,26 @@ class Chat
       @domain_events.consume(chat.events)
     end
 
+    def save_notification(chat)
+      chat_rec = chat.record
+      if chat_rec == nil
+        raise "chat must be fetched from the db!"
+      end
+
+      # update the records
+      c = chat
+      chat_rec.assign_attributes({
+        sms_conversation_id: c.sms_conversation_id,
+        sms_conversation_notification: c.notification != nil ? "reminder_1" : "clear",
+      })
+
+      # save the records
+      chat_rec.save!
+
+      # consume all entity events
+      @domain_events.consume(chat.events)
+    end
+
     # -- helpers --
     def transaction
       Chat::Record.transaction do
@@ -201,15 +221,9 @@ class Chat
         id: Id.new(r.id),
         session: r.session_token,
         messages: messages,
-        sms_conversation: map_sms_conversation(r),
+        notification: r.sms_conversation_notification == "clear" ? nil : Notification.new,
         recipient_id: r.recipient_id,
-      )
-    end
-
-    def self.map_sms_conversation(r)
-      return SmsConversation.new(
-        id: r.sms_conversation_id,
-        notification: r.sms_conversation_notification.to_sym,
+        sms_conversation_id: r.sms_conversation_id,
       )
     end
   end
@@ -220,11 +234,11 @@ class Chat
       return where.not(session_token: nil)
     end
 
-    def self.with_recipient(recipient_id)
+    def self.by_recipient(recipient_id)
       return where(recipient_id: recipient_id)
     end
 
-    def self.with_phone_number(phone_number)
+    def self.by_phone_number(phone_number)
       scope = self
         .left_joins(:recipient)
         .where(recipients: { phone_number: phone_number })

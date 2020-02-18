@@ -7,6 +7,9 @@ class Chat
     belongs_to(:recipient, class_name: "::Recipient::Record")
 
     # -- notification --
-    enum(sms_conversation_notification: Chat::Notification.all)
+    enum(sms_conversation_notification: %i[
+      clear
+      reminder_1
+    ])
   end
 end
