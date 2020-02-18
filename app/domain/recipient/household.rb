@@ -1,4 +1,4 @@
-class Recipient
+module Recipient
   class Household < ::Value
     prop(:size)
     prop(:income_cents)

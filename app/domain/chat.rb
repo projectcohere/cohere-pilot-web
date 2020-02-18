@@ -4,10 +4,10 @@ class Chat < Entity
 
   # -- props --
   prop(:id, default: Id::None)
+  prop(:recipient)
   prop(:session, default: nil)
   prop(:messages, default: [])
   prop(:notification, default: nil)
-  prop(:recipient_id)
   prop(:sms_conversation_id, default: nil)
   props_end!
 
@@ -18,7 +18,10 @@ class Chat < Entity
   # -- factories --
   def self.open(recipient_id, macro_repo: Macro::Repo.get)
     chat = Chat.new(
-      recipient_id: recipient_id,
+      recipient: Recipient.new(
+        id: recipient_id,
+        profile: nil, # TODO: what about our domain results in incomplete data here?
+      ),
     )
 
     # add the intro / consent message

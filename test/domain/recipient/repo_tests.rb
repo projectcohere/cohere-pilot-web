@@ -1,15 +1,11 @@
 require "test_helper"
 
-class Recipient
+module Recipient
   class RepoTests < ActiveSupport::TestCase
     test "maps a record" do
       recipient_rec = recipients(:recipient_2)
 
-      recipient = Recipient::Repo.map_record(recipient_rec)
-      assert_not_nil(recipient.record)
-      assert_not_nil(recipient.id.val)
-
-      profile = recipient.profile
+      profile = ::Recipient::Repo.map_profile(recipient_rec)
       assert_not_nil(profile)
 
       phone = profile.phone
@@ -26,7 +22,7 @@ class Recipient
       assert_not_nil(address.state)
       assert_not_nil(address.zip)
 
-      dhs_account = recipient.dhs_account
+      dhs_account = ::Recipient::Repo.map_dhs_account(recipient_rec)
       assert_not_nil(dhs_account.number)
 
       household = dhs_account.household

@@ -1,4 +1,4 @@
-class Recipient
+module Recipient
   class Address < ::Value
     # -- props --
     prop(:street)

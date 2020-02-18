@@ -5,7 +5,7 @@ module Support
         User,
         Case,
         Case::Account,
-        Recipient,
+        Case::Recipient,
         Recipient::Profile,
         Recipient::Name,
         Recipient::Address,

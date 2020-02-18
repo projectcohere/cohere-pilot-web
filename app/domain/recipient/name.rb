@@ -1,4 +1,4 @@
-class Recipient
+module Recipient
   class Name < ::Value
     # -- props --
     prop(:first)

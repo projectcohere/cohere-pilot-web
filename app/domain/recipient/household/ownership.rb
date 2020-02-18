@@ -1,4 +1,4 @@
-class Recipient
+module Recipient
   class Household
     module Ownership
       # -- options --

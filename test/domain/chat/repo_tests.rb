@@ -9,7 +9,7 @@ class Chat
       chat = Chat::Repo.map_record(chat_rec, [Chat::Message::Repo.map_record(chat_message_rec)])
       assert_not_nil(chat.record)
       assert_not_nil(chat.id&.val)
-      assert_not_nil(chat.recipient_id)
+      assert_not_nil(chat.recipient.id)
       assert_not_nil(chat.session)
       assert_not_nil(chat.sms_conversation_id)
       assert_nil(chat.notification)

@@ -7,12 +7,10 @@ module Chats
     # -- lifetime --
     def initialize(
       chat_repo: Chat::Repo.get,
-      recipient_repo: Recipient::Repo.get,
       send_sms: Front::SendSms.get,
       send_initial_sms: Front::SendInitialSms.get
     )
       @chat_repo = chat_repo
-      @recipient_repo = recipient_repo
       @send_sms = send_sms
       @send_initial_sms = send_initial_sms
     end
@@ -26,15 +24,12 @@ module Chats
         return
       end
 
-      # fetch the recipient
-      recipient = @recipient_repo.find(chat.recipient_id)
-
       # send the sms, creating a conversation if necessary
       chat.send_sms_notification do
         if chat.sms_conversation_id != nil
           @send_sms.(chat.sms_conversation_id, "Test reply notification.")
         else
-          @send_initial_sms.(recipient.profile.phone.number, "Test new conversation notification.")
+          @send_initial_sms.(chat.recipient.profile.phone.number, "Test new conversation notification.")
         end
       end
 

@@ -168,7 +168,7 @@ class Case
 
       # find or update a recipient record with a matching phone number
       p = kase.recipient.profile.phone
-      recipient_rec = Recipient::Record.find_or_initialize_by(
+      recipient_rec = ::Recipient::Record.find_or_initialize_by(
         phone_number: p.number
       )
 
@@ -440,7 +440,7 @@ class Case
         id: Id.new(r.id),
         program: r.program.to_sym,
         status: r.status.to_sym,
-        recipient: Recipient::Repo.map_record(r.recipient),
+        recipient: map_recipient(r.recipient),
         enroller_id: r.enroller_id,
         supplier_id: r.supplier_id,
         supplier_account: Case::Account.new(
@@ -456,6 +456,15 @@ class Case
         received_message_at: r.received_message_at,
         updated_at: r.updated_at,
         completed_at: r.completed_at
+      )
+    end
+
+    def self.map_recipient(r)
+      Recipient.new(
+        record: r,
+        id: Id.new(r.id),
+        profile: ::Recipient::Repo.map_profile(r),
+        dhs_account: ::Recipient::Repo.map_dhs_account(r),
       )
     end
 

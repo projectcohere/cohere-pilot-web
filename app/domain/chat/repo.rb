@@ -109,7 +109,7 @@ class Chat
       # start the new records
       c = chat
       chat_rec = Chat::Record.new(
-        recipient_id: chat.recipient_id
+        recipient_id: chat.recipient.id
       )
 
       m = message
@@ -219,11 +219,18 @@ class Chat
       return Chat.new(
         record: r,
         id: Id.new(r.id),
+        recipient: map_recipient(r.recipient),
         session: r.session_token,
         messages: messages,
         notification: r.sms_conversation_notification == "clear" ? nil : Notification.new,
-        recipient_id: r.recipient_id,
         sms_conversation_id: r.sms_conversation_id,
+      )
+    end
+
+    def self.map_recipient(r)
+      return Recipient.new(
+        id: r.id,
+        profile: ::Recipient::Repo.map_profile(r),
       )
     end
   end

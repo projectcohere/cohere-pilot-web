@@ -1,6 +1,6 @@
 require "test_helper"
 
-class Recipient
+module Recipient
   class AddressTests < ActiveSupport::TestCase
     test "formats address as lines" do
       address = Address.new(

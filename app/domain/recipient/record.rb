@@ -1,4 +1,4 @@
-class Recipient
+module Recipient
   class Record < ::ApplicationRecord
     set_table_name!
 

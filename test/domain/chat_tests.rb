@@ -4,7 +4,7 @@ class ChatTests < ActiveSupport::TestCase
   # -- factories --
   test "opens a chat with an initial message" do
     chat = Chat.open(1)
-    assert_equal(chat.recipient_id, 1)
+    assert_equal(chat.recipient.id, 1)
 
     message = chat.messages[0]
     assert_length(chat.messages, 1)
@@ -120,7 +120,7 @@ class ChatTests < ActiveSupport::TestCase
       sms_conversation_id: :test_id,
     )
 
-    chat.send_sms_notification() { nil }
+    chat.send_sms_notification { nil }
     assert_nil(chat.notification)
     assert_equal(chat.sms_conversation_id, :test_id)
   end
@@ -130,7 +130,7 @@ class ChatTests < ActiveSupport::TestCase
       notification: Chat::Notification.stub,
     )
 
-    chat.send_sms_notification() { :test_id }
+    chat.send_sms_notification { :test_id }
     assert_nil(chat.notification)
     assert_equal(chat.sms_conversation_id, :test_id)
   end
