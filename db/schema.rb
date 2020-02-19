@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_17_170921) do
+ActiveRecord::Schema.define(version: 2020_02_18_232336) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -72,10 +72,10 @@ ActiveRecord::Schema.define(version: 2020_02_17_170921) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "session_token"
     t.string "sms_conversation_id"
-    t.integer "sms_conversation_notification", default: 0, null: false
+    t.integer "notification", default: 0, null: false
+    t.index ["notification"], name: "index_chats_on_notification"
     t.index ["recipient_id"], name: "index_chats_on_recipient_id", unique: true
     t.index ["session_token"], name: "index_chats_on_session_token", unique: true
-    t.index ["sms_conversation_notification"], name: "index_chats_on_sms_conversation_notification"
     t.index ["updated_at"], name: "index_chats_on_updated_at"
   end
 

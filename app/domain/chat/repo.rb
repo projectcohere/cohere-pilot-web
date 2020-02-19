@@ -39,6 +39,13 @@ class Chat
       return entity_from(chat_rec)
     end
 
+    def find_recipient(recipient_id)
+      recipient_rec = ::Recipient::Record
+        .find(recipient_id)
+
+      return self.class.map_recipient(recipient_rec)
+    end
+
     def find_by_phone_number(phone_number)
       chat_rec = Chat::Record
         .by_phone_number(phone_number)
@@ -162,7 +169,7 @@ class Chat
       # build/update the records
       c = chat
       chat_rec.assign_attributes({
-        sms_conversation_notification: c.notification != nil ? "reminder_1" : "clear",
+        notification: c.notification != nil ? "reminder_1" : "clear",
       })
 
       m = message
@@ -197,7 +204,7 @@ class Chat
       c = chat
       chat_rec.assign_attributes({
         sms_conversation_id: c.sms_conversation_id,
-        sms_conversation_notification: c.notification != nil ? "reminder_1" : "clear",
+        notification: c.notification != nil ? "reminder_1" : "clear",
       })
 
       # save the records
@@ -216,13 +223,15 @@ class Chat
 
     # -- factories --
     def self.map_record(r, messages = [])
+      recipient = map_recipient(r.recipient)
+
       return Chat.new(
         record: r,
         id: Id.new(r.id),
-        recipient: map_recipient(r.recipient),
+        recipient: recipient,
         session: r.session_token,
         messages: messages,
-        notification: r.sms_conversation_notification == "clear" ? nil : Notification.new,
+        notification: map_notification(r, recipient),
         sms_conversation_id: r.sms_conversation_id,
       )
     end
@@ -231,6 +240,16 @@ class Chat
       return Recipient.new(
         id: r.id,
         profile: ::Recipient::Repo.map_profile(r),
+      )
+    end
+
+    def self.map_notification(r, recipient)
+      if r.notification == "clear"
+        return nil
+      end
+
+      return Notification.new(
+        recipient_name: recipient.profile.name
       )
     end
   end

@@ -37,7 +37,7 @@ module Cron
       end
 
       assert_changes(
-        -> { chat_rec.sms_conversation_notification },
+        -> { chat_rec.notification },
         &act
       )
     end

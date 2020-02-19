@@ -16,12 +16,9 @@ class Chat < Entity
   attr(:selected_message)
 
   # -- factories --
-  def self.open(recipient_id, macro_repo: Macro::Repo.get)
+  def self.open(recipient, macro_repo: Macro::Repo.get)
     chat = Chat.new(
-      recipient: Recipient.new(
-        id: recipient_id,
-        profile: nil, # TODO: what about our domain results in incomplete data here?
-      ),
+      recipient: recipient,
     )
 
     # add the intro / consent message
@@ -55,10 +52,10 @@ class Chat < Entity
     @events << Events::DidAddMessage.from_entity(self)
 
     # set notification based on sender
-    if sender != Sender::Recipient
-      @notification = Notification.new
-    else
-      @notification = nil
+    @notification = if sender != Sender::Recipient
+      Notification.new(
+        recipient_name: recipient.profile.name
+      )
     end
   end
 

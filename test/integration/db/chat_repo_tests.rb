@@ -89,7 +89,8 @@ module Db
     # -- commands --
     test "saves an opened chat" do
       recipient_rec = recipients(:recipient_3)
-      chat = Chat.open(recipient_rec.id)
+      chat_recipient = Chat::Repo.map_recipient(recipient_rec)
+      chat = Chat.open(chat_recipient)
       chat_repo = Chat::Repo.new
 
       act = -> do
@@ -142,7 +143,7 @@ module Db
 
       chat_rec = chat_rec
       assert(chat_rec.saved_change_to_attribute?(:updated_at))
-      assert_equal(chat_rec.sms_conversation_notification, "reminder_1")
+      assert_equal(chat_rec.notification, "reminder_1")
 
       message_rec = chat_rec.messages
         .find { |r| r.id == message_id.val }
@@ -170,7 +171,7 @@ module Db
       chat_repo = Chat::Repo.new(domain_events: domain_events)
       chat_repo.save_notification(chat)
       assert_equal(chat_rec.sms_conversation_id, "test_sms_conversation_id")
-      assert_equal(chat_rec.sms_conversation_notification, "clear")
+      assert_equal(chat_rec.notification, "clear")
     end
   end
 end

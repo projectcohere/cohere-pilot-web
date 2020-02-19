@@ -17,6 +17,7 @@ module Support
         Supplier,
         Chat,
         Chat::Message,
+        Chat::Recipient,
         Chat::Notification,
         Mms::Message,
         Mms::Message::Sender,

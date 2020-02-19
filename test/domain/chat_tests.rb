@@ -1,10 +1,18 @@
 require "test_helper"
 
 class ChatTests < ActiveSupport::TestCase
+  def stub_recipient
+    return Chat::Recipient.stub(
+      profile: Recipient::Profile.stub(
+        name: Recipient::Name.stub,
+      ),
+    )
+  end
+
   # -- factories --
   test "opens a chat with an initial message" do
-    chat = Chat.open(1)
-    assert_equal(chat.recipient.id, 1)
+    chat = Chat.open(stub_recipient)
+    assert_not_nil(chat.recipient)
 
     message = chat.messages[0]
     assert_length(chat.messages, 1)
@@ -26,6 +34,7 @@ class ChatTests < ActiveSupport::TestCase
   test "adds a message" do
     chat = Chat.stub(
       id: Id.new(42),
+      recipient: stub_recipient,
       messages: [
         Chat::Message.stub,
       ]
@@ -57,6 +66,7 @@ class ChatTests < ActiveSupport::TestCase
   test "adds a message with recipient attachments" do
     chat = Chat.stub(
       id: Id.new(42),
+      recipient: stub_recipient,
     )
 
     chat.add_message(
@@ -78,6 +88,7 @@ class ChatTests < ActiveSupport::TestCase
   test "notifies the recipient when a cohere user adds a message" do
     chat = Chat.stub(
       id: Id.new(42),
+      recipient: stub_recipient,
     )
 
     chat.add_message(
