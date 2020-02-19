@@ -4,9 +4,11 @@ class Chat < Entity
 
   # -- props --
   prop(:id, default: Id::None)
+  prop(:recipient)
   prop(:session, default: nil)
   prop(:messages, default: [])
-  prop(:recipient_id)
+  prop(:notification, default: nil)
+  prop(:sms_conversation_id, default: nil)
   props_end!
 
   # -- props/temporary
@@ -14,15 +16,15 @@ class Chat < Entity
   attr(:selected_message)
 
   # -- factories --
-  def self.open(recipient_id, macro_repo: Macro::Repo.get)
+  def self.open(recipient, macro_repo: Macro::Repo.get)
     chat = Chat.new(
-      recipient_id: recipient_id,
+      recipient: recipient,
     )
 
     # add the intro / consent message
     macro = macro_repo.find_initial
     chat.add_message(
-      sender: Sender::Automated,
+      sender: Sender.automated,
       body: macro.body,
       attachments: macro.attachment == nil ? [] : [macro.attachment]
     )
@@ -30,12 +32,19 @@ class Chat < Entity
     return chat
   end
 
+  # -- queries --
+  def sms_phone_number
+    @recipient.profile.phone.number
+  end
+
   # -- commands --
   def start_session
     @session = SecureRandom.base58
   end
 
+  # -- commands/messages
   def add_message(sender:, body:, attachments:)
+    # add message to list
     message = Message.new(
       sender: sender,
       body: body,
@@ -46,6 +55,14 @@ class Chat < Entity
     @new_message = message
     @messages << message
     @events << Events::DidAddMessage.from_entity(self)
+
+    # set notification based on sender
+    @notification = if sender != Sender::Recipient
+      Notification.new(
+        recipient_name: recipient.profile.name,
+        is_new_conversation: sms_conversation_id == nil,
+      )
+    end
   end
 
   def select_message(i)
@@ -54,6 +71,22 @@ class Chat < Entity
     end
 
     @selected_message = @messages[i]
+  end
+
+  # -- commands/notifcations
+  def send_notification
+    if not block_given?
+      raise "can't send notification without a service to invoke"
+    elsif @notification == nil
+      raise "can't send notification if there is not one to send"
+    end
+
+    sms_conversation_id = yield
+    if sms_conversation_id != nil
+      @sms_conversation_id = sms_conversation_id
+    end
+
+    @notification = nil
   end
 
   # -- callbacks --

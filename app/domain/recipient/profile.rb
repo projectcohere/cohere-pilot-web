@@ -1,4 +1,4 @@
-class Recipient
+module Recipient
   class Profile < ::Value
     # -- props --
     prop(:name)

@@ -144,10 +144,11 @@ class UsersTests < ActionDispatch::IntegrationTest
   end
 
   # -- invitation --
-  test "invites the user" do
-    domain_events = ArrayQueue.new
+  test "invites users" do
+    Rake::Task.define_task(:environment)
+    Rake.application.rake_require("tasks/users")
 
-    invitation_csv = <<-CSV.strip_heredoc
+    input = <<-CSV.strip_heredoc
       email,role_name,role_organization_id
       test@cohere.org,cohere,
       test@michigan.gov,dhs,
@@ -155,16 +156,16 @@ class UsersTests < ActionDispatch::IntegrationTest
       test@testmetro.org,enroller,#{enrollers(:enroller_1).id}
     CSV
 
-    invite_users = Users::SendInvitations.new(
-      user_repo: User::Repo.new(
-        domain_events: domain_events
-      ),
-      process_events: Events::ProcessAll.new(
-        domain_events: domain_events
-      )
-    )
+    act = -> do
+      with_stdin(StringIO.new(input)) do
+        Rake.application.invoke_task("users:invite")
+      end
+    end
 
-    invite_users.(invitation_csv)
+    assert_difference(
+      -> { User::Record.count } => 4,
+      &act
+    )
 
     assert_send_emails(4) do
       assert_select("a", text: /create a password/) do |el|

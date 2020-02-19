@@ -78,10 +78,19 @@ module Db
       assert_present(chat.selected_message.attachments)
     end
 
+    test "finds ids of chats needing a reminder" do
+      chat_repo = Chat::Repo.new
+
+      chat_ids = chat_repo.find_all_ids_for_reminder1
+      assert_length(chat_ids, 1)
+      assert_equal(chat_ids, [chats(:idle_2).id])
+    end
+
     # -- commands --
     test "saves an opened chat" do
       recipient_rec = recipients(:recipient_3)
-      chat = Chat.open(recipient_rec.id)
+      chat_recipient = Chat::Repo.map_recipient(recipient_rec)
+      chat = Chat.open(chat_recipient)
       chat_repo = Chat::Repo.new
 
       act = -> do
@@ -107,14 +116,14 @@ module Db
       assert_not_nil(chat_rec.session_token)
     end
 
-    test "saves new messages" do
+    test "saves a new message" do
       domain_events = ArrayQueue.new
 
       blob_rec = active_storage_blobs(:blob_1)
       chat_rec = chats(:session_1)
       chat = Chat::Repo.map_record(chat_rec)
       chat.add_message(
-        sender: Chat::Sender.recipient,
+        sender: Chat::Sender.automated,
         body: "Test.",
         attachments: [blob_rec]
       )
@@ -132,11 +141,15 @@ module Db
         &act
       )
 
-      message_rec = chat_rec.messages.reload
+      chat_rec = chat_rec
+      assert(chat_rec.saved_change_to_attribute?(:updated_at))
+      assert_equal(chat_rec.notification, "reminder_1")
+
+      message_rec = chat_rec.messages
         .find { |r| r.id == message_id.val }
 
       assert_not_nil(message_rec.id)
-      assert_equal(message_rec.sender, Chat::Sender.recipient)
+      assert_equal(message_rec.sender, Chat::Sender.automated)
       assert_equal(message_rec.body, "Test.")
 
       attachment_rec = message_rec.files[0]
@@ -146,6 +159,19 @@ module Db
       assert_nil(chat.new_message)
       assert_length(chat.events, 0)
       assert_length(domain_events, 1)
+    end
+
+    test "save notifications" do
+      domain_events = ArrayQueue.new
+
+      chat_rec = chats(:idle_1)
+      chat = Chat::Repo.map_record(chat_rec)
+      chat.send_notification { "test_sms_conversation_id" }
+
+      chat_repo = Chat::Repo.new(domain_events: domain_events)
+      chat_repo.save_notification(chat)
+      assert_equal(chat_rec.sms_conversation_id, "test_sms_conversation_id")
+      assert_equal(chat_rec.notification, "clear")
     end
   end
 end

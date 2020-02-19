@@ -6,7 +6,7 @@ module Events
     )
 
     # -- command --
-    def perform
+    def call
       event_consumer = Mixpanel::Consumer.new
 
       events = Services.analytics_events
@@ -14,5 +14,7 @@ module Events
         event_consumer.send!(*JSON.load(event))
       end
     end
+
+    alias :perform :call
   end
 end

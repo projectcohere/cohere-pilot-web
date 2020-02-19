@@ -168,7 +168,7 @@ class Case
 
       # find or update a recipient record with a matching phone number
       p = kase.recipient.profile.phone
-      recipient_rec = Recipient::Record.find_or_initialize_by(
+      recipient_rec = ::Recipient::Record.find_or_initialize_by(
         phone_number: p.number
       )
 
@@ -459,6 +459,15 @@ class Case
       )
     end
 
+    def self.map_recipient(r)
+      Recipient.new(
+        record: r,
+        id: Id.new(r.id),
+        profile: ::Recipient::Repo.map_profile(r),
+        dhs_account: ::Recipient::Repo.map_dhs_account(r),
+      )
+    end
+
     def self.map_document(r)
       Document.new(
         record: r,
@@ -466,40 +475,6 @@ class Case
         classification: r.classification.to_sym,
         file: r.file,
         source_url: r.source_url
-      )
-    end
-
-    def self.map_recipient(r)
-      Recipient.new(
-        record: r,
-        id: Id.new(r.id),
-        profile: Recipient::Profile.new(
-          phone: Recipient::Phone.new(
-            number: r.phone_number
-          ),
-          name: Recipient::Name.new(
-            first: r.first_name,
-            last: r.last_name
-          ),
-          address: Recipient::Address.new(
-            street: r.street,
-            street2: r.street2,
-            city: r.city,
-            state: r.state,
-            zip: r.zip
-          ),
-        ),
-        dhs_account: r.dhs_number&.then { |number|
-          Recipient::DhsAccount.new(
-            number: number,
-            household: Recipient::Household.new(
-              size: r.household_size,
-              income_cents: r.household_income_cents,
-              ownership: r.household_ownership.to_sym,
-              is_primary_residence: r.household_primary_residence
-            )
-          )
-        }
       )
     end
   end

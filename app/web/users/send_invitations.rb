@@ -3,10 +3,6 @@ require "csv"
 module Users
   class SendInvitations
     # -- lifetime --
-    def get
-      InviteUser.new
-    end
-
     def initialize(
       user_repo: User::Repo.get,
       process_events: Events::ProcessAll.get

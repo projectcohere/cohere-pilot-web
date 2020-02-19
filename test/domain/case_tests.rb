@@ -28,7 +28,7 @@ class CaseTests < ActiveSupport::TestCase
   test "is pending after adding dhs data" do
     kase = Case.stub(
       status: Case::Status::Opened,
-      recipient: Recipient.stub,
+      recipient: Case::Recipient.stub,
     )
 
     kase.add_dhs_data(:test_account)
@@ -42,7 +42,7 @@ class CaseTests < ActiveSupport::TestCase
   test "submits a pending case to an enroller" do
     kase = Case.stub(
       status: Case::Status::Pending,
-      recipient: Recipient.stub
+      recipient: Case::Recipient.stub
     )
 
     kase.submit_to_enroller
@@ -87,7 +87,7 @@ class CaseTests < ActiveSupport::TestCase
           classification: :unknown
         )
       ],
-      recipient: Recipient.stub(
+      recipient: Case::Recipient.stub(
         id: 3,
         profile: Recipient::Profile.stub(
           phone: Recipient::Phone.stub(number: "1")
@@ -293,7 +293,7 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     kase = Case.stub(
-      recipient: Recipient.stub(
+      recipient: Case::Recipient.stub(
         dhs_account: Recipient::DhsAccount.stub(
           household: household
         )
@@ -315,7 +315,7 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     kase = Case.stub(
-      recipient: Recipient.stub(
+      recipient: Case::Recipient.stub(
         dhs_account: Recipient::DhsAccount.stub(
           household: household
         )

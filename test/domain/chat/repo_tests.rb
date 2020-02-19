@@ -4,13 +4,15 @@ class Chat
   class RepoTests < ActiveSupport::TestCase
     test "maps a record" do
       chat_rec = chats(:session_1)
+      chat_message_rec = chat_rec.messages[0]
 
-      chat_message = Chat::Message::Repo.map_record(chat_rec.messages[0])
-      chat = Chat::Repo.map_record(chat_rec, [chat_message])
+      chat = Chat::Repo.map_record(chat_rec, [Chat::Message::Repo.map_record(chat_message_rec)])
       assert_not_nil(chat.record)
       assert_not_nil(chat.id&.val)
-      assert_not_nil(chat.recipient_id)
+      assert_not_nil(chat.recipient.id)
       assert_not_nil(chat.session)
+      assert_not_nil(chat.sms_conversation_id)
+      assert_nil(chat.notification)
 
       message = chat.messages[0]
       assert_not_nil(message)

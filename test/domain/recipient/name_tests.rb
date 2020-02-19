@@ -1,6 +1,6 @@
 require "test_helper"
 
-class Recipient
+module Recipient
   class NameTests < ActiveSupport::TestCase
     test "formats the full name" do
       address = Name.new(first: "Janice", last: "Sample")
