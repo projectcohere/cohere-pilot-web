@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: https://api2.frontapp.com/channels/cha_lvu7/messages
+    uri: https://api2.frontapp.com/channels/dev-front-api-channel/messages
     body:
       encoding: UTF-8
       string: '{"to":["+12223334444"],"body":"Test new conversation notification."}'
