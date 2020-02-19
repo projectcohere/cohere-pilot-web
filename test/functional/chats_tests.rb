@@ -124,8 +124,6 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
   end
 
   test "receive and deliver a message from a cohere user" do
-    Sidekiq::Testing.inline!
-
     chat_message_timestamp = 7
     chat_rec = chats(:idle_1)
     chat = Chat::Repo.map_record(chat_rec)
@@ -159,8 +157,6 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
   end
 
   test "receive and deliver a message from a recipient" do
-    Sidekiq::Testing.inline!
-
     chat_message_timestamp = 5
     chat_rec = chats(:idle_1)
     chat = Chat::Repo.map_record(chat_rec)
@@ -194,8 +190,6 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
   end
 
   test "receive and deliver a message with attachments" do
-    Sidekiq::Testing.inline!
-
     blob_rec = active_storage_blobs(:blob_1)
     chat_rec = chats(:idle_1)
     chat = Chat::Repo.map_record(chat_rec)

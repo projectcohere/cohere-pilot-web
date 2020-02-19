@@ -35,30 +35,28 @@ class MessagesTests < ActionDispatch::IntegrationTest
   end
 
   test "processes message attachments" do
-    VCR.use_cassette("front--attachment") do
-      Sidekiq::Testing.inline!
-
-      act = -> do
+    act = -> do
+      VCR.use_cassette("front--attachment") do
         post("/messages/front", params: @json,
           headers: {
             "X-Front-Signature" => @signature
           }
         )
       end
+    end
 
-      assert_difference(
-        -> { Document::Record.count } => 1,
-        -> { ActiveStorage::Attachment.count } => 1,
-        -> { ActiveStorage::Blob.count } => 1,
-        &act
-      )
+    assert_difference(
+      -> { Document::Record.count } => 1,
+      -> { ActiveStorage::Attachment.count } => 1,
+      -> { ActiveStorage::Blob.count } => 1,
+      &act
+    )
 
-      assert_enqueued_jobs(1)
-      assert_response(:no_content)
+    assert_enqueued_jobs(1)
+    assert_response(:no_content)
 
-      assert_analytics_events(1) do |events|
-        assert_match(/Did Receive Message/, events[0])
-      end
+    assert_analytics_events(1) do |events|
+      assert_match(/Did Receive Message/, events[0])
     end
   end
 end
