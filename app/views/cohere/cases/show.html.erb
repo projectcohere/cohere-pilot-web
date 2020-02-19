@@ -1,4 +1,4 @@
-<main class="Main">
+<main class="ShowCase Main">
   <%- view = Cases::View.new(@case) %>
 
   <header class="Main-header">
@@ -28,8 +28,8 @@
     </div>
   </header>
 
-  <div class="ShowCase-body">
-    <article class="ShowCase-case Panel--read Panel">
+  <div class="CaseDetail">
+    <article class="CaseDetail-case Panel--read Panel">
       <section id="application" class="Panel-tab is-visible">
         <%= section_tag("Details", class: "ShowCase-details") do %>
           <%= field_tag("Status", class: "ShowCase-status") do %>
@@ -109,20 +109,11 @@
       </section>
     </article>
 
-    <%- if @chat != nil %>
-      <div class="ShowCase-phone Phone-frame">
-        <%=
-          render(partial: "chats/chat", locals: {
-            chat: @chat,
-            sender: Chat::Sender.cohere(cookies.signed[:chat_user_id]),
-            receiver: view.recipient_first_name,
-            data: {
-              id: @chat.id.val,
-            },
-          })
-        %>
-        <%= render(partial: "chats/macros") %>
-      </div>
-    <% end %>
+    <%=
+      render(partial: "cohere/cases/chat", locals: {
+        chat: @chat,
+        recevier: view.recipient_first_name
+      })
+    %>
   </div>
 </main>

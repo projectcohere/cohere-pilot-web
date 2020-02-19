@@ -15,6 +15,13 @@ class Chat < Entity
   attr(:new_message)
   attr(:selected_message)
 
+  # -- queries --
+  def sms_conversation_url
+    if @sms_conversation_id != nil
+      return "https://app.frontapp.com/open/#{@sms_conversation_id}"
+    end
+  end
+
   # -- factories --
   def self.open(recipient, macro_repo: Macro::Repo.get)
     chat = Chat.new(

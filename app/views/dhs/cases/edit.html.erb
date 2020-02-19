@@ -14,20 +14,23 @@
     </div>
   </header>
 
-  <%= form_for(@form, url: case_path(@case.id), html: { class: "CaseForm Panel" }) do |f| %>
-    <% form_locals = { f: f, form: @form, view: @view, policy: policy } %>
+  <div class="CaseDetail">
+    <%- form_class = "CaseFrom CaseDetail-case Panel" %>
+    <%= form_for(@form, url: case_path(@case.id), html: { class: form_class }) do |f| %>
+      <% form_locals = { f: f, form: @form, view: @view, policy: policy } %>
 
-    <div id="application" class="Panel-tab is-visible">
-      <%= render(partial: "cases/forms/mdhhs", locals: form_locals) %>
-      <%= render(partial: "cases/forms/household", locals: form_locals) %>
-    </div>
+      <div id="application" class="Panel-tab is-visible">
+        <%= render(partial: "cases/forms/mdhhs", locals: form_locals) %>
+        <%= render(partial: "cases/forms/household", locals: form_locals) %>
+      </div>
 
-    <div id="documents" class="Panel-tab">
-      <%= render(partial: "cases/documents", locals: { documents: @view.documents }) %>
-    </div>
+      <div id="documents" class="Panel-tab">
+        <%= render(partial: "cases/documents", locals: { documents: @view.documents }) %>
+      </div>
 
-    <div class="Panel-actions">
-      <%= f.submit("Save", class: "Button--action") %>
-    </div>
-  <%- end %>
+      <div class="Panel-actions">
+        <%= f.submit("Save", class: "Button--action") %>
+      </div>
+    <%- end %>
+  </div>
 </main>
