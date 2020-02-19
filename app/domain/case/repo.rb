@@ -428,7 +428,6 @@ class Case
       end
     end
 
-    # -- commands/helpers
     private def transaction(&block)
       Case::Record.transaction(&block)
     end
