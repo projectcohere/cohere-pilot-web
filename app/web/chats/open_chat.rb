@@ -11,7 +11,7 @@ module Chats
         return
       end
 
-      chat_recipient = @chat_repo.find_recipient(recipient_id)
+      chat_recipient = @chat_repo.find_chat_recipient(recipient_id)
       chat = Chat.open(chat_recipient)
 
       @chat_repo.save_opened(chat)

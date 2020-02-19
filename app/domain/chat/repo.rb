@@ -39,11 +39,11 @@ class Chat
       return entity_from(chat_rec)
     end
 
-    def find_recipient(recipient_id)
-      recipient_rec = ::Recipient::Record
+    def find_chat_recipient(recipient_id)
+      chat_recipient_rec = ::Recipient::Record
         .find(recipient_id)
 
-      return self.class.map_recipient(recipient_rec)
+      return self.class.map_recipient(chat_recipient_rec)
     end
 
     def find_by_phone_number(phone_number)
@@ -111,31 +111,30 @@ class Chat
 
     # -- commands --
     def save_opened(chat)
-      message = chat.new_message
+      chat_message = chat.new_message
 
       # start the new records
-      c = chat
-      chat_rec = Chat::Record.new(
+      chat_rec = Chat::Record.new({
         recipient_id: chat.recipient.id,
-        notification: c.notification != nil ? "reminder_1" : "clear",
-      )
+      })
 
-      m = message
-      message_rec = Chat::Message::Record.new(
-        sender: m.sender,
-        body: m.body,
-        files: m.attachments
-      )
+      assign_notification(chat, chat_rec)
+
+      chat_message_rec = Chat::Message::Record.new({
+        chat_id: nil,
+      })
+
+      assign_message(chat_message, chat_message_rec)
 
       # save the records
       transaction do
         chat_rec.save!
-        message_rec.chat_id = chat_rec.id
-        message_rec.save!
+        chat_message_rec.chat_id = chat_rec.id
+        chat_message_rec.save!
       end
 
       # send callbacks to entities
-      message.did_save(message_rec)
+      chat_message.did_save(chat_message_rec)
       chat.did_save_new_message
       chat.did_save(chat_rec)
 
@@ -162,33 +161,27 @@ class Chat
         raise "chat must be fetched from the db!"
       end
 
-      message = chat.new_message
-      if message == nil
-        raise "chat must have a new message!"
+      chat_message = chat.new_message
+      if chat_message == nil
+        raise "chat must have a new chat_message!"
       end
 
       # build/update the records
-      c = chat
-      chat_rec.assign_attributes({
-        notification: c.notification != nil ? "reminder_1" : "clear",
+      chat_message_rec = Chat::Message::Record.new({
+        chat_id: chat_message.chat_id,
       })
 
-      m = message
-      message_rec = Chat::Message::Record.new({
-        sender: m.sender,
-        body: m.body,
-        chat_id: m.chat_id,
-        files: m.attachments,
-      })
+      assign_notification(chat, chat_rec)
+      assign_message(chat_message, chat_message_rec)
 
       # save the records
       transaction do
         chat_rec.save!
-        message_rec.save!
+        chat_message_rec.save!
       end
 
       # send callbacks to entities
-      message.did_save(message_rec)
+      chat_message.did_save(chat_message_rec)
       chat.did_save_new_message
 
       # consume all entity events
@@ -202,11 +195,11 @@ class Chat
       end
 
       # update the records
-      c = chat
       chat_rec.assign_attributes({
-        sms_conversation_id: c.sms_conversation_id,
-        notification: c.notification != nil ? "reminder_1" : "clear",
+        sms_conversation_id: chat.sms_conversation_id
       })
+
+      assign_notification(chat, chat_rec)
 
       # save the records
       chat_rec.save!
@@ -215,7 +208,23 @@ class Chat
       @domain_events.consume(chat.events)
     end
 
-    # -- helpers --
+    # -- commands/helpers --
+    def assign_notification(chat, chat_rec)
+      c = chat
+      chat_rec.assign_attributes({
+        notification: c.notification != nil ? "reminder_1" : "clear",
+      })
+    end
+
+    def assign_message(chat_message, chat_message_rec)
+      m = chat_message
+      chat_message_rec.assign_attributes({
+        sender: m.sender,
+        body: m.body,
+        files: m.attachments,
+      })
+    end
+
     def transaction
       Chat::Record.transaction do
         yield

@@ -14,6 +14,8 @@ module Front
       @front.post("/conversations/#{conversation_id}/messages", {
         "body" => body,
       })
+
+      return nil
     end
   end
 end
