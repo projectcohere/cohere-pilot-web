@@ -32,6 +32,11 @@ class Chat < Entity
     return chat
   end
 
+  # -- queries --
+  def sms_phone_number
+    @recipient.profile.phone.number
+  end
+
   # -- commands --
   def start_session
     @session = SecureRandom.base58
@@ -54,7 +59,8 @@ class Chat < Entity
     # set notification based on sender
     @notification = if sender != Sender::Recipient
       Notification.new(
-        recipient_name: recipient.profile.name
+        recipient_name: recipient.profile.name,
+        is_new_conversation: sms_conversation_id == nil,
       )
     end
   end
@@ -68,7 +74,7 @@ class Chat < Entity
   end
 
   # -- commands/notifcations
-  def send_sms_notification
+  def send_notification
     if not block_given?
       raise "can't send notification without a service to invoke"
     elsif @notification == nil

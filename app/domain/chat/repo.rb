@@ -249,7 +249,8 @@ class Chat
       end
 
       return Notification.new(
-        recipient_name: recipient.profile.name
+        recipient_name: recipient.profile.name,
+        is_new_conversation: r.sms_conversation_id == nil,
       )
     end
   end

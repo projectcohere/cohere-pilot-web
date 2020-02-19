@@ -125,23 +125,23 @@ class ChatTests < ActiveSupport::TestCase
   end
 
   # -- commands/notifications
-  test "sends an sms notification" do
+  test "sends a notification" do
     chat = Chat.stub(
       notification: Chat::Notification.stub,
       sms_conversation_id: :test_id,
     )
 
-    chat.send_sms_notification { nil }
+    chat.send_notification { nil }
     assert_nil(chat.notification)
     assert_equal(chat.sms_conversation_id, :test_id)
   end
 
-  test "sends an sms notification and starts a new conversation" do
+  test "sends a notification and starts a new conversation" do
     chat = Chat.stub(
       notification: Chat::Notification.stub,
     )
 
-    chat.send_sms_notification { :test_id }
+    chat.send_notification { :test_id }
     assert_nil(chat.notification)
     assert_equal(chat.sms_conversation_id, :test_id)
   end

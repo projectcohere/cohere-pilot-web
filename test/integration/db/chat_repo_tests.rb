@@ -166,7 +166,7 @@ module Db
 
       chat_rec = chats(:idle_1)
       chat = Chat::Repo.map_record(chat_rec)
-      chat.send_sms_notification { "test_sms_conversation_id" }
+      chat.send_notification { "test_sms_conversation_id" }
 
       chat_repo = Chat::Repo.new(domain_events: domain_events)
       chat_repo.save_notification(chat)

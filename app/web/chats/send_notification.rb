@@ -25,11 +25,13 @@ module Chats
       end
 
       # send the sms, creating a conversation if necessary
-      chat.send_sms_notification do
+      chat.send_notification do
+        sms_body = chat.notification.text
+
         if chat.sms_conversation_id != nil
-          @send_sms.(chat.sms_conversation_id, "Test reply notification.")
+          @send_sms.(chat.sms_conversation_id, sms_body)
         else
-          @send_initial_sms.(chat.recipient.profile.phone.number, "Test new conversation notification.")
+          @send_initial_sms.(chat.sms_phone_number, sms_body)
         end
       end
 
