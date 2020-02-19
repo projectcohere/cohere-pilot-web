@@ -14,6 +14,9 @@ module Front
       json = @front.post("/channels/#{ENV["FRONT_API_CHANNEL_ID"]}/messages", {
         "to" => ["+1#{phone_number}"],
         "body" => body,
+        "options" => {
+          "archive" => false
+        }
       })
 
       # parse json

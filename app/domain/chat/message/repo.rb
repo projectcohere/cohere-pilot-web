@@ -41,8 +41,9 @@ class Chat
           id: Id.new(r.id),
           sender: r.sender,
           body: r.body,
+          timestamp: r.created_at.to_i,
+          attachments: attachment_recs.to_a,
           chat_id: r.chat_id,
-          attachments: attachment_recs.to_a
         )
       end
     end

@@ -1,0 +1,20 @@
+.CaseDetail {
+  flex: 1;
+  display: flex;
+
+  > * + * {
+    margin-left: $spacing3;
+  }
+
+  &-case {
+    @extend .u-panel-cozy;
+    flex: 1;
+    max-width: $width1;
+  }
+
+  &-phone {
+    align-self: flex-start;
+    display: flex;
+    flex-direction: column;
+  }
+}

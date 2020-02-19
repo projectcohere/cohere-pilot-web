@@ -3,8 +3,6 @@ require "test_helper"
 module Cron
   class SendNotificationsTests < ActiveSupport::TestCase
     test "it sends the notifcation as a new sms conversation" do
-      Sidekiq::Testing.inline!
-
       send_notifications = Chats::SendNotifications.new
       chat_rec = chats(:idle_2)
 
@@ -22,8 +20,6 @@ module Cron
     end
 
     test "it sends the notification as a reply to an existing sms conversation" do
-      Sidekiq::Testing.inline!
-
       send_notifications = Chats::SendNotifications.new
       chat_rec = chats(:idle_2)
       chat_rec.sms_conversation_id = "cnv_609wyrr"

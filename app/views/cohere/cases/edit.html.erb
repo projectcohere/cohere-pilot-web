@@ -31,8 +31,9 @@
     </div>
   </header>
 
-  <div class="EditCase-body">
-    <%= form_for(@form, url: case_path(@case.id), html: { class: "CaseForm Panel" }) do |f| %>
+  <div class="CaseDetail">
+    <%- form_class = "CaseForm CaseDetail-case Panel" %>
+    <%= form_for(@form, url: case_path(@case.id), html: { class: form_class }) do |f| %>
       <% form_locals = { f: f, form: @form, view: @view, policy: policy } %>
       <section id="profile" class="Panel-tab is-visible">
         <%= render(partial: "cases/forms/details", locals: form_locals) %>
@@ -89,20 +90,11 @@
       </div>
     <% end %>
 
-    <%- if @chat != nil %>
-      <div class="EditCase-phone Phone-frame">
-        <%=
-          render(partial: "chats/chat", locals: {
-            chat: @chat,
-            sender: Chat::Sender.cohere(cookies.signed[:chat_user_id]),
-            receiver: @view.recipient_first_name,
-            data: {
-              id: @chat.id.val,
-            },
-          })
-        %>
-        <%= render(partial: "chats/macros") %>
-      </div>
-    <% end %>
+    <%=
+      render(partial: "cohere/cases/chat", locals: {
+        chat: @chat,
+        recevier: @view.recipient_first_name
+      })
+    %>
   </div>
 </main>

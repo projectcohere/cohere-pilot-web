@@ -1,9 +1,4 @@
 .CaseForm {
-  @extend .u-panel-cozy;
-
-  flex: 1;
-  max-width: $width1;
-
   /* CaseForm-details */
   &-status {
     grid-column: 1 / 3;

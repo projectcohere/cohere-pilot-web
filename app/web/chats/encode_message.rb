@@ -8,6 +8,7 @@ module Chats
 
     Message = Struct.new(
       :body,
+      :timestamp,
       :attachments
     )
 
@@ -39,6 +40,7 @@ module Chats
         m.sender,
         Message.new(
           m.body,
+          m.timestamp,
           m.attachments.map { |a|
             Attachment.new(
               a.filename,

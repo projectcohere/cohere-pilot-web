@@ -269,8 +269,6 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "save a signed contract" do
-    Sidekiq::Testing.inline!
-
     case_rec = cases(:pending_2)
 
     act = ->() do

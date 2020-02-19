@@ -15,6 +15,13 @@ class Chat < Entity
   attr(:new_message)
   attr(:selected_message)
 
+  # -- queries --
+  def sms_conversation_url
+    if @sms_conversation_id != nil
+      return "https://app.frontapp.com/open/#{@sms_conversation_id}"
+    end
+  end
+
   # -- factories --
   def self.open(recipient, macro_repo: Macro::Repo.get)
     chat = Chat.new(
@@ -45,9 +52,12 @@ class Chat < Entity
   # -- commands/messages
   def add_message(sender:, body:, attachments:)
     # add message to list
+    # TODO: does the discrepancy between this timestamp and the ultimate created_at
+    # date matter?
     message = Message.new(
       sender: sender,
       body: body,
+      timestamp: Time.zone.now.to_i,
       attachments: attachments,
       chat_id: @id.val,
     )
