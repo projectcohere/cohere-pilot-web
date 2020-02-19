@@ -116,7 +116,8 @@ class Chat
       # start the new records
       c = chat
       chat_rec = Chat::Record.new(
-        recipient_id: chat.recipient.id
+        recipient_id: chat.recipient.id,
+        notification: c.notification != nil ? "reminder_1" : "clear",
       )
 
       m = message
