@@ -24,7 +24,8 @@ type Sender = string | "recipient"
 interface Incoming {
   sender: Sender,
   message: {
-    body: string | null
+    body: string | null,
+    timestamp: number,
     attachments: IPreview[]
   }
 }
@@ -35,6 +36,12 @@ interface Outgoing {
     body: string
     attachmentIds?: number[]
   }
+}
+
+interface Metadata {
+  name: string,
+  time: Date,
+  classes: string,
 }
 
 // -- impls --
@@ -161,6 +168,7 @@ export class Chat implements IComponent {
       sender: this.sender,
       message: {
         body,
+        timestamp: new Date().getTime(),
         attachments: files.map((f) => f.preview)
       }
     })
@@ -250,10 +258,8 @@ export class Chat implements IComponent {
   }
 
   // -- view --
-  private render({ sender, message: { body, attachments } }: Incoming): string {
+  private render({ sender, message: { body, timestamp, attachments } }: Incoming): string {
     const isSent = this.isSent(sender)
-    const isRecipient = sender == kSenderRecipient
-    const name = isSent ? "Me" : this.receiver
 
     let classes = "ChatMessage"
     if (isSent) {
@@ -262,24 +268,45 @@ export class Chat implements IComponent {
       classes += " ChatMessage--received"
     }
 
-    if (isRecipient) {
+    const metadata: Metadata = {
+      name: isSent ? "Me" : this.receiver,
+      time: new Date(timestamp * 1000),
+      classes
+    }
+
+    if (sender == kSenderRecipient) {
       return `
-        ${this.renderAttachments(name, classes, attachments)}
-        ${this.renderBody(name, classes, body)}
+        ${this.renderAttachments(attachments, metadata)}
+        ${this.renderBody(body, metadata)}
       `
     } else {
       return `
-        ${this.renderBody(name, classes, body)}
-        ${this.renderAttachments(name, classes, attachments)}
+        ${this.renderBody(body, metadata)}
+        ${this.renderAttachments(attachments, metadata)}
       `
     }
   }
 
-  private renderAttachments(name: string, cls: string, attachments: IPreview[]): string {
-    const classes = `${cls} ChatMessage--image`
+  private renderBody(body: string | null, metadata: Metadata): string {
+    if (body == null || body.length === 0) {
+      return ""
+    }
+
+    return this.renderBubble(metadata, `
+      <p class="ChatMessage-body">
+        ${body}
+      </p>
+    `)
+  }
+
+  private renderAttachments(attachments: IPreview[], m: Metadata): string {
+    const metadata = {
+      ...m,
+      classes: `${m.classes} ChatMessage--image`
+    }
 
     return (
-      this.renderList(attachments, (a) => this.renderBubble(name, classes, `
+      this.renderList(attachments, (a) => this.renderBubble(metadata, `
         <a href=${a.url} target="_blank" rel="noopener">
           <img
             class="ChatMessage-attachment"
@@ -291,31 +318,38 @@ export class Chat implements IComponent {
     )
   }
 
-  private renderBody(name: string, cls: string, body: string | null): string {
-    if (body == null || body.length === 0) {
-      return ""
-    }
-
-    return this.renderBubble(name, cls, `
-      <p class="ChatMessage-body">
-        ${body}
-      </p>
-    `)
-  }
-
-  private renderBubble(name: string, classes: string, children: string): string {
+  private renderBubble(metadata: Metadata, children: string): string {
     return `
-      <li class= "${classes}">
+      <li class="${metadata.classes}">
         <label class="ChatMessage-sender">
-          ${name}
+          ${metadata.name}
         </label>
         ${children}
+        <time class="ChatMessage-timestamp" datetime=${metadata.time.toISOString()}>
+          ${this.renderTimeSince(metadata.time)}
+        </time>
       </li>
     `
   }
 
   private renderList<T>(list: T[], renderer: (item: T) => string): string {
     return list.map(renderer).join("\n")
+  }
+
+  private renderTimeSince(date: Date): string {
+    const delta = Math.max(new Date().getTime() - date.getTime(), 0)
+    const minutes = Math.floor(delta / 1000 / 60)
+    const hours = Math.floor(minutes / 60)
+
+    if (minutes < 1) {
+      return "Just now"
+    } else if (minutes < 60) {
+      return `${minutes} ${this.pluralize("minute", minutes)} ago`
+    } else if (hours < 24) {
+      return `${hours} ${this.pluralize("hour", hours)} ago`
+    } else {
+      return date.toLocaleString("en-US", { month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", hour12: true })
+    }
   }
 
   // -- utilities --
@@ -342,6 +376,14 @@ export class Chat implements IComponent {
       } else {
         image.addEventListener("load", didLoadImage, { once: true })
       }
+    }
+  }
+
+  private pluralize(label: string, quantity: number): string {
+    if (quantity === 1) {
+      return label
+    } else {
+      return label + "s"
     }
   }
 }

@@ -3,6 +3,7 @@ class Chat
     prop(:id, default: Id::None)
     prop(:sender)
     prop(:body)
+    prop(:timestamp)
     prop(:attachments, default: [])
     prop(:chat_id)
     props_end!

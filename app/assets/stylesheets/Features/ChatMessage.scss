@@ -20,6 +20,14 @@
 
   &-body {
     margin: $chat-message-margin;
+    margin-bottom: 0;
+  }
+
+  &-timestamp {
+    display: block;
+    margin: $chat-message-margin;
+    margin-top: 0;
+    font-size: $font-size6;
   }
 
   // -- variants --

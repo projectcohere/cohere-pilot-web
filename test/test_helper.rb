@@ -1,6 +1,7 @@
 ENV['RAILS_ENV'] ||= "test"
 require_relative "../config/environment"
 require "rails/test_help"
+require "minitest/mock"
 require "minitest/pride"
 require "config/vcr"
 require "config/sidekiq"

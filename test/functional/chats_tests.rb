@@ -126,18 +126,21 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
   test "receive and deliver a message from a cohere user" do
     Sidekiq::Testing.inline!
 
+    chat_message_timestamp = 7
     chat_rec = chats(:idle_1)
     chat = Chat::Repo.map_record(chat_rec)
     stub_connection(chat_user_id: "test-id", chat: nil)
     subscribe(chat: chat_rec.id)
 
     act = -> do
-      perform(:receive, {
-        "chat" => chat_rec.id,
-        "message" => {
-          "body" => "Test from Cohere.",
-        },
-      })
+      Time.stub(:now, Time.at(chat_message_timestamp)) do
+        perform(:receive, {
+          "chat" => chat_rec.id,
+          "message" => {
+            "body" => "Test from Cohere.",
+          },
+        })
+      end
     end
 
     assert_difference(
@@ -149,7 +152,8 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
       sender: Chat::Sender.cohere("test-id"),
       message: {
         body: "Test from Cohere.",
-        attachments: []
+        timestamp: chat_message_timestamp,
+        attachments: [],
       },
     })
   end
@@ -157,18 +161,21 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
   test "receive and deliver a message from a recipient" do
     Sidekiq::Testing.inline!
 
+    chat_message_timestamp = 5
     chat_rec = chats(:idle_1)
     chat = Chat::Repo.map_record(chat_rec)
     stub_connection(chat_user_id: nil, chat: chat)
     subscribe
 
     act = -> do
-      perform(:receive, {
-        "chat" => nil,
-        "message" => {
-          "body" => "Test from recipient.",
-        },
-      })
+      Time.stub(:now, Time.at(chat_message_timestamp)) do
+        perform(:receive, {
+          "chat" => nil,
+          "message" => {
+            "body" => "Test from recipient.",
+          },
+        })
+      end
     end
 
     assert_difference(
@@ -180,7 +187,8 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
       sender: Chat::Sender.recipient,
       message: {
         body: "Test from recipient.",
-        attachments: []
+        timestamp: chat_message_timestamp,
+        attachments: [],
       },
     })
   end
