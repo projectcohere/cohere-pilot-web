@@ -20,6 +20,15 @@
       <% form_locals = { f: f, form: @form, view: @view, policy: policy } %>
 
       <div id="application" class="Panel-tab is-visible">
+        <%= section_tag("Contact", class: "ShowCase-contact") do %>
+          <%= field_tag("Primary Residential Address", class: "ShowCase-address") do %>
+            <% @view.address.each do |line| %>
+              <%= line %>
+              <br>
+            <% end %>
+          <%- end %>
+        <%- end %>
+
         <%= render(partial: "cases/forms/mdhhs", locals: form_locals) %>
         <%= render(partial: "cases/forms/household", locals: form_locals) %>
       </div>
