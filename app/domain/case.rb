@@ -17,7 +17,6 @@ class Case < ::Entity
   prop(:received_message_at, default: nil)
   prop(:updated_at, default: nil)
   prop(:completed_at, default: nil)
-  props_end!
 
   # -- props/temporary
   attr(:new_documents)

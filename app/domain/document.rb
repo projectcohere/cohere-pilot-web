@@ -6,7 +6,6 @@ class Document < ::Entity
   prop(:classification)
   prop(:file, default: nil)
   prop(:source_url, default: nil)
-  props_end!
 
   # -- props/temp
   attr(:new_file)

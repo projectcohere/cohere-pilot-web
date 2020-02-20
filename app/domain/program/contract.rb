@@ -2,7 +2,6 @@ class Program
   class Contract < ::Value
     prop(:program)
     prop(:variant)
-    props_end!
 
     # -- variants --
     Meap = :meap

@@ -9,7 +9,6 @@ class Chat < Entity
   prop(:messages, default: [])
   prop(:notification, default: nil)
   prop(:sms_conversation_id, default: nil)
-  props_end!
 
   # -- props/temporary
   attr(:new_message)

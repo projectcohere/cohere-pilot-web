@@ -4,6 +4,5 @@ module Recipient
     prop(:name)
     prop(:address)
     prop(:phone)
-    props_end!
   end
 end

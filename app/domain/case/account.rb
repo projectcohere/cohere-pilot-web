@@ -3,7 +3,6 @@ class Case
     prop(:number)
     prop(:arrears_cents)
     prop(:has_active_service, default: true)
-    props_end!
 
     # -- queries --
     def arrears_dollars

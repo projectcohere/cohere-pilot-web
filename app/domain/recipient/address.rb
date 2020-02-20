@@ -6,7 +6,6 @@ module Recipient
     prop(:city)
     prop(:state)
     prop(:zip)
-    props_end!
 
     # -- queries --
     def to_lines

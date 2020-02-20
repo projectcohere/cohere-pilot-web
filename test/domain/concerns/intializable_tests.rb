@@ -8,14 +8,12 @@ class IntializableTests < ActiveSupport::TestCase
     prop(:r)
     prop(:g)
     prop(:b, default: 0)
-    props_end!
   end
 
-  class Cart < ::Value
+  class Cart
     include ::Initializable
 
     prop(:items, default: [])
-    props_end!
   end
 
   # -- tests --

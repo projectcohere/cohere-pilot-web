@@ -6,7 +6,6 @@ class Chat
     prop(:timestamp)
     prop(:attachments, default: [])
     prop(:chat_id)
-    props_end!
 
     # -- queries --
     def sent_by?(other)

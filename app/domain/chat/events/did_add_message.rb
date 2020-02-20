@@ -4,7 +4,6 @@ class Chat
       # -- props --
       prop(:chat_message_id)
       prop(:has_attachments)
-      props_end!
 
       # -- factories --
       def self.from_entity(chat)

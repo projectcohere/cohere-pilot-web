@@ -4,7 +4,6 @@ class Case
       # -- props --
       prop(:case_id)
       prop(:document_id)
-      props_end!
 
       # -- factories --
       def self.from_entity(kase, document)

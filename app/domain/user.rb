@@ -8,7 +8,6 @@ class User < ::Entity
   prop(:email)
   prop(:role)
   prop(:confirmation_token, default: nil)
-  props_end!
 
   # -- lifetime --
   def self.invite(invitation)
