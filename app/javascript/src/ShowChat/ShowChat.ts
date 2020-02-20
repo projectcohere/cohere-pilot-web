@@ -2,7 +2,7 @@ import { createConsumer } from "@rails/actioncable"
 import { Files, IPreview } from "./Files"
 import { Macros, IMacro } from "./Macros"
 import { UploadFiles } from "./UploadFiles"
-import { IComponent } from "../Component"
+import { IComponent } from "../Core"
 import { getReadableTimeSince } from "../Shared/Time"
 
 // -- constants --
@@ -46,7 +46,7 @@ interface Metadata {
 }
 
 // -- impls --
-export class Chat implements IComponent {
+export class ShowChat implements IComponent {
   isOnLoad = true
 
   // -- deps --

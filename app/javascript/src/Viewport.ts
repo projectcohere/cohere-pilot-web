@@ -1,4 +1,4 @@
-import { IComponent } from "./Component"
+import { IComponent } from "./Core"
 
 export class Viewport implements IComponent {
   // -- props --

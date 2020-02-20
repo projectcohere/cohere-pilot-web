@@ -1,4 +1,4 @@
-import { IComponent } from "./Component"
+import { IComponent } from "./Core"
 
 // -- constants --
 const kQueryFilters = ".Filter"
