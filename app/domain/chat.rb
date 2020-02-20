@@ -65,14 +65,6 @@ class Chat < Entity
     @new_message = message
     @messages << message
     @events << Events::DidAddMessage.from_entity(self)
-
-    # set notification based on sender
-    @notification = if sender != Sender::Recipient
-      Notification.new(
-        recipient_name: recipient.profile.name,
-        is_new_conversation: sms_conversation_id == nil,
-      )
-    end
   end
 
   def select_message(i)

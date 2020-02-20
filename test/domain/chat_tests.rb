@@ -85,36 +85,6 @@ class ChatTests < ActiveSupport::TestCase
     assert(event.has_attachments)
   end
 
-  test "notifies the recipient when a cohere user adds a message" do
-    chat = Chat.stub(
-      id: Id.new(42),
-      recipient: stub_recipient,
-    )
-
-    chat.add_message(
-      sender: Chat::Sender.cohere(:test_sender),
-      body: "This is a test.",
-      attachments: [],
-    )
-
-    assert_not_nil(chat.notification)
-  end
-
-  test "clears the notification when the recipient adds a message" do
-    chat = Chat.stub(
-      id: Id.new(42),
-      notification: Chat::Notification.stub,
-    )
-
-    chat.add_message(
-      sender: Chat::Sender.recipient,
-      body: "This is a test.",
-      attachments: [],
-    )
-
-    assert_nil(chat.notification)
-  end
-
   test "selects a message" do
     chat = Chat.stub(
       messages: [:test_message]

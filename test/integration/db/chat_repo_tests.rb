@@ -142,8 +142,8 @@ module Db
       )
 
       chat_rec = chat_rec
-      assert(chat_rec.saved_change_to_attribute?(:updated_at))
-      assert_equal(chat_rec.notification, "reminder_1")
+      assert_not(chat_rec.saved_change_to_attribute?(:updated_at))
+      assert_equal(chat_rec.notification, "clear")
 
       message_rec = chat_rec.messages
         .find { |r| r.id == message_id.val }
