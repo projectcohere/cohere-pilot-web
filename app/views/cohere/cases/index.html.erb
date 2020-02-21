@@ -12,13 +12,14 @@
     </h1>
     <div class="Main-filters">
       <nav class="Filters">
-        <%= filter_link_to.("open") %>
-        <%= filter_link_to.("completed") %>
+        <%= filter_link_to.(Cohere::CaseScope::Open) %>
+        <%= filter_link_to.(Cohere::CaseScope::Completed) %>
       </nav>
     </div>
   </header>
 
-  <ul class="CaseList">
+  <%- is_open_cases = @scope == Cohere::CaseScope::Open %>
+  <%= tag.ul(class: "CaseList", id: is_open_cases ? "case-list" : "") do %>
     <% if @cases&.blank? %>
       <h2 class="CaseList-fallback">
         No <%= @scope %> cases left.
@@ -35,6 +36,10 @@
             <%- end %>
 
             <%= link_to(view.recipient_name, link_path, action: :edit, class: "CaseCell-name") %>
+
+            <%- if is_open_cases %>
+              <%= tag.span("", class: view.has_new_activity ? "CaseCell-active" : "") %>
+            <%- end %>
           </div>
           <div class="CaseCell-row">
             <p class="CaseCell-organizations">
@@ -52,5 +57,5 @@
         </li>
       <% end %>
     <% end %>
-  </ul>
+  <% end %>
 </main>

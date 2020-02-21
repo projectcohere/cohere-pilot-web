@@ -31,6 +31,10 @@ module Cases
       @case.status == :approved
     end
 
+    def has_new_activity
+      @case.has_new_activity
+    end
+
     # -- queries/profile
     def recipient_name
       profile.name
