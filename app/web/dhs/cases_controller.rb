@@ -21,7 +21,7 @@ module Dhs
       @view = Cases::View.new(@case)
       @form = CaseForm.new(@case)
 
-      events << Cases::Events::DidViewDhsForm.from_entity(@case)
+      events.add(Cases::Events::DidViewDhsForm.from_entity(@case))
     end
 
     def update

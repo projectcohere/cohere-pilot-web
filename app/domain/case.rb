@@ -39,7 +39,7 @@ class Case < ::Entity
       has_new_activity: true,
     )
 
-    kase.events << Events::DidOpen.from_entity(kase)
+    kase.events.add(Events::DidOpen.from_entity(kase))
     kase
   end
 
@@ -49,7 +49,7 @@ class Case < ::Entity
 
     if @status == Status::Opened
       @status = Status::Pending
-      events << Events::DidBecomePending.from_entity(self)
+      events.add(Events::DidBecomePending.from_entity(self))
     end
 
     track_new_activity(true)
@@ -65,7 +65,7 @@ class Case < ::Entity
   def remove_from_pilot
     @completed_at = Time.zone.now
     @status = Status::Removed
-    @events << Events::DidComplete.from_entity(self)
+    @events.add(Events::DidComplete.from_entity(self))
 
     track_new_activity(false)
   end
@@ -76,7 +76,7 @@ class Case < ::Entity
     end
 
     @status = Status::Submitted
-    @events << Events::DidSubmit.from_entity(self)
+    @events.add(Events::DidSubmit.from_entity(self))
 
     track_new_activity(false)
   end
@@ -88,7 +88,7 @@ class Case < ::Entity
 
     @completed_at = Time.zone.now
     @status = status
-    @events << Events::DidComplete.from_entity(self)
+    @events.add(Events::DidComplete.from_entity(self))
 
     track_new_activity(false)
   end
@@ -100,9 +100,9 @@ class Case < ::Entity
 
     # mark as referrer
     @is_referrer = true
-    @events << Events::DidMakeReferral.from_entity(self,
+    @events.add(Events::DidMakeReferral.from_entity(self,
       program: program
-    )
+    ))
 
     # create referred case
     referred = Case.new(
@@ -123,7 +123,7 @@ class Case < ::Entity
       end
     end
 
-    referred.events << Events::DidOpen.from_entity(referred)
+    referred.events.add(Events::DidOpen.from_entity(referred))
 
     # produce referral
     Referral.new(
@@ -138,7 +138,7 @@ class Case < ::Entity
     message.attachments&.each do |attachment|
       new_document = Document.upload(attachment.url)
       add_document(new_document)
-      @events << Events::DidUploadMessageAttachment.from_entity(self, new_document)
+      @events.add(Events::DidUploadMessageAttachment.from_entity(self, new_document))
     end
 
     # track messages
@@ -166,7 +166,7 @@ class Case < ::Entity
   private def track_message_receipt
     is_first = @received_message_at == nil
     @received_message_at = Time.zone.now
-    @events << Events::DidReceiveMessage.from_entity(self, is_first: is_first)
+    @events.add(Events::DidReceiveMessage.from_entity(self, is_first: is_first))
   end
 
   # -- commands/documents
@@ -181,7 +181,7 @@ class Case < ::Entity
 
     new_document = Document.sign_contract(program_contract)
     add_document(new_document)
-    @events << Events::DidSignContract.from_entity(self, new_document)
+    @events.add(Events::DidSignContract.from_entity(self, new_document))
   end
 
   def copy_document(document)
@@ -219,7 +219,7 @@ class Case < ::Entity
     end
 
     @has_new_activity = has_new_activity
-    @events << Events::DidChangeActivity.from_entity(self)
+    @events.add(Events::DidChangeActivity.from_entity(self))
   end
 
   # -- queries --

@@ -85,7 +85,7 @@ module Events
     private def tracker
       @tracker ||= begin
         Mixpanel::Tracker.new(ENV["MIXPANEL_TOKEN"]) do |type, message|
-          @analytics_events << [type, message].to_json
+          @analytics_events.add([type, message].to_json)
         end
       end
     end

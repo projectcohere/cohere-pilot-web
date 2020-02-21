@@ -12,7 +12,7 @@ class User < ::Entity
   # -- lifetime --
   def self.invite(invitation)
     user = User.new(email: invitation.email, role: invitation.role)
-    user.events << Events::DidInvite.from_user(user)
+    user.events.add(Events::DidInvite.from_user(user))
     return user
   end
 

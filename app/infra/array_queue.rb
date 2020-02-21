@@ -11,8 +11,8 @@ class ArrayQueue
   end
 
   # -- commands --
-  def <<(event)
-    @queue << event
+  def add(event)
+    @queue.push(event)
   end
 
   def drain(&block)
@@ -22,8 +22,8 @@ class ArrayQueue
     end
   end
 
-  def consume(events)
-    events.drain do |event|
+  def consume(other)
+    other.drain do |event|
       @queue << event
     end
   end

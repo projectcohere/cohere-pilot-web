@@ -42,7 +42,7 @@ class Enroller
         return deny_access
       end
 
-      events << Cases::Events::DidViewEnrollerCase.from_entity(@case)
+      events.add(Cases::Events::DidViewEnrollerCase.from_entity(@case))
     end
 
     # -- queries --

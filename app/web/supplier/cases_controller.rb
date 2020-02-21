@@ -20,7 +20,7 @@ class Supplier
       end
 
       @form = CaseForm::new
-      events << Cases::Events::DidViewSupplierForm.new
+      events.add(Cases::Events::DidViewSupplierForm.new)
     end
 
     def create

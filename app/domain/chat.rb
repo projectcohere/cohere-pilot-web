@@ -63,7 +63,7 @@ class Chat < Entity
 
     @new_message = message
     @messages << message
-    @events << Events::DidAddMessage.from_entity(self)
+    @events.add(Events::DidAddMessage.from_entity(self))
   end
 
   def select_message(i)
