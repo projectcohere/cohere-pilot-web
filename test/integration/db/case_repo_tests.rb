@@ -270,7 +270,7 @@ module Db
     test "saves a cohere contribution" do
       domain_events = ArrayQueue.new
 
-      case_rec = cases(:opened_1)
+      case_rec = cases(:opened_2)
 
       supplier_account = Case::Account.new(
         number: "12345",

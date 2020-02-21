@@ -1,3 +1,4 @@
+
 opened_1:
   status: :opened
   recipient: recipient_1
@@ -5,7 +6,7 @@ opened_1:
   supplier: supplier_1
   supplier_account_number: A1
   supplier_account_arrears_cents: 1000_00
-  has_new_activity: true
+  has_new_activity: false
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now %>
   received_message_at: null
@@ -18,7 +19,7 @@ opened_2:
   supplier: supplier_1
   supplier_account_number: A1
   supplier_account_arrears_cents: 1000_00
-  has_new_activity: false
+  has_new_activity: true
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now - 1.hours %>
   received_message_at: null
@@ -57,7 +58,7 @@ submitted_1:
   supplier: supplier_1
   supplier_account_number: A1
   supplier_account_arrears_cents: 1000_00
-  has_new_activity: false
+  has_new_activity: true
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now - 2.hours %>
   received_message_at: <%= Time.zone.now %>

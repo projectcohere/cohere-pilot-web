@@ -123,9 +123,15 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
     assert_has_stream_for(chat)
   end
 
-  test "receive and deliver a message from a cohere user" do
+  test "receive and publish a message from a cohere user" do
     chat_message_timestamp = 7
+
     chat_rec = chats(:idle_1)
+    case_rec = chat_rec.recipient.cases.order(updated_at: :desc).first
+
+    case_rec.has_new_activity = true
+    case_rec.save
+
     chat = Chat::Repo.map_record(chat_rec)
     stub_connection(chat_user_id: "test-id", chat: nil)
     subscribe(chat: chat_rec.id)
@@ -154,11 +160,22 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
         attachments: [],
       },
     })
+
+    assert_broadcast_on(Cases::ActivityChannel.active, {
+      case_id: case_rec.id,
+      case_has_new_activity: false,
+    })
   end
 
-  test "receive and deliver a message from a recipient" do
+  test "receive and publish a message from a recipient" do
     chat_message_timestamp = 5
+
     chat_rec = chats(:idle_1)
+    case_rec = chat_rec.recipient.cases.order(updated_at: :desc).first
+
+    case_rec.has_new_activity = false
+    case_rec.save
+
     chat = Chat::Repo.map_record(chat_rec)
     stub_connection(chat_user_id: nil, chat: chat)
     subscribe
@@ -187,9 +204,14 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
         attachments: [],
       },
     })
+
+    assert_broadcast_on(Cases::ActivityChannel.active, {
+      case_id: case_rec.id,
+      case_has_new_activity: true,
+    })
   end
 
-  test "receive and deliver a message with attachments" do
+  test "receive and publish a message with attachments" do
     blob_rec = active_storage_blobs(:blob_1)
     chat_rec = chats(:idle_1)
     chat = Chat::Repo.map_record(chat_rec)

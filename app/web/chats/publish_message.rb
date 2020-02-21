@@ -1,5 +1,5 @@
 module Chats
-  class DeliverMessage < ApplicationWorker
+  class PublishMessage < ApplicationWorker
     # -- lifetime --
     def initialize(
       encode: EncodeMessage.get,

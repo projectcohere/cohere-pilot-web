@@ -88,6 +88,7 @@ class Case
     def find_active_by_recipient(recipient_id)
       case_rec = Case::Record
         .where(status: [:opened, :pending, :submitted])
+        .order(updated_at: :desc)
         .find_by!(recipient_id: recipient_id)
 
       return entity_from(case_rec)
