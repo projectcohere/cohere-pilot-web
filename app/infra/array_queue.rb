@@ -1,4 +1,6 @@
 class ArrayQueue
+  include Enumerable
+
   # -- lifetime --
   def initialize
     @queue = []
@@ -32,11 +34,16 @@ class ArrayQueue
 
   # -- queries --
   def [](index)
-    @queue[index]
+    return @queue[index]
   end
 
   def length
-    @queue.length
+    return @queue.length
+  end
+
+  # -- Enumerable --
+  def each(&block)
+    return @queue.each(&block)
   end
 
   # -- constants --

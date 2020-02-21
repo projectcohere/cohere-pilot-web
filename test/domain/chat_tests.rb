@@ -35,15 +35,13 @@ class ChatTests < ActiveSupport::TestCase
     chat = Chat.stub(
       id: Id.new(42),
       recipient: stub_recipient,
-      messages: [
-        Chat::Message.stub,
-      ]
+      messages: [Chat::Message.stub]
     )
 
     chat.add_message(
       sender: Chat::Sender.cohere(:test_sender),
       body: "This is a test.",
-      attachments: [:test_attachment]
+      attachments: %i[test_attachment]
     )
 
     assert_length(chat.messages, 2)
@@ -54,35 +52,15 @@ class ChatTests < ActiveSupport::TestCase
     assert_equal(message.sender, :test_sender)
     assert_equal(message.body, "This is a test.")
     assert_equal(message.chat_id, 42)
+
+    attachment = message.attachments[0]
     assert_length(message.attachments, 1)
+    assert_equal(attachment, :test_attachment)
 
     event = chat.events[0]
     assert_length(chat.events, 1)
     assert_instance_of(Chat::Events::DidAddMessage, event)
     assert_equal(event.chat_message_id, message.id)
-    assert_not(event.has_attachments)
-  end
-
-  test "adds a message with recipient attachments" do
-    chat = Chat.stub(
-      id: Id.new(42),
-      recipient: stub_recipient,
-    )
-
-    chat.add_message(
-      sender: Chat::Sender.recipient,
-      body: "This is a test.",
-      attachments: ["test-file"],
-    )
-
-    message = chat.new_message
-    assert_not_nil(message)
-    assert_length(message.attachments, 1)
-
-    event = chat.events[0]
-    assert_instance_of(Chat::Events::DidAddMessage, event)
-    assert_equal(event.chat_message_id, message.id)
-    assert(event.has_attachments)
   end
 
   test "selects a message" do

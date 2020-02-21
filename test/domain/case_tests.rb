@@ -15,13 +15,13 @@ class CaseTests < ActiveSupport::TestCase
       supplier_account: :test_account
     )
 
+    assert(kase.has_new_activity)
     assert_equal(kase.recipient.profile, profile)
     assert_equal(kase.supplier_account, :test_account)
     assert_equal(kase.enroller_id, 1)
     assert_equal(kase.supplier_id, 2)
 
-    assert_length(kase.events, 1)
-    assert_instance_of(Case::Events::DidOpen, kase.events[0])
+    assert_instances_of(kase.events, [Case::Events::DidOpen])
   end
 
   # -- commands --
@@ -32,50 +32,65 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     kase.add_dhs_data(:test_account)
+    assert(kase.has_new_activity)
     assert_equal(kase.recipient.dhs_account, :test_account)
     assert_equal(kase.status, Case::Status::Pending)
 
-    assert_length(kase.events, 1)
-    assert_instance_of(Case::Events::DidBecomePending, kase.events[0])
+    assert_instances_of(kase.events, [
+      Case::Events::DidBecomePending,
+      Case::Events::DidChangeActivity,
+    ])
   end
 
   test "submits a pending case to an enroller" do
     kase = Case.stub(
       status: Case::Status::Pending,
-      recipient: Case::Recipient.stub
+      recipient: Case::Recipient.stub,
+      has_new_activity: true,
     )
 
     kase.submit_to_enroller
+    assert_not(kase.has_new_activity)
     assert_equal(kase.status, Case::Status::Submitted)
 
-    assert_length(kase.events, 1)
-    assert_instance_of(Case::Events::DidSubmit, kase.events[0])
+    assert_instances_of(kase.events, [
+      Case::Events::DidSubmit,
+      Case::Events::DidChangeActivity,
+    ])
   end
 
   test "completes a submitted case" do
     kase = Case.stub(
-      status: Case::Status::Submitted
+      status: Case::Status::Submitted,
+      has_new_activity: true,
     )
 
     kase.complete(Case::Status::Approved)
+    assert_not(kase.has_new_activity)
     assert_equal(kase.status, Case::Status::Approved)
     assert_in_delta(Time.zone.now, kase.completed_at, 1.0)
 
-    assert_length(kase.events, 1)
-    assert_instance_of(Case::Events::DidComplete, kase.events[0])
+    assert_instances_of(kase.events, [
+      Case::Events::DidComplete,
+      Case::Events::DidChangeActivity,
+    ])
   end
 
   test "removes a case from the pilot" do
     kase = Case.stub(
-      status: Case::Status::Pending
+      status: Case::Status::Pending,
+      has_new_activity: true,
     )
 
     kase.remove_from_pilot
+    assert_not(kase.has_new_activity)
     assert_equal(kase.status, Case::Status::Removed)
     assert_in_delta(Time.zone.now, kase.completed_at, 1.0)
 
-    assert_length(kase.events, 1)
-    assert_instance_of(Case::Events::DidComplete, kase.events[0])
+    assert_instances_of(kase.events, [
+      Case::Events::DidComplete,
+      Case::Events::DidChangeActivity,
+    ])
   end
 
   test "makes a referral to a new program" do
@@ -103,19 +118,18 @@ class CaseTests < ActiveSupport::TestCase
 
     referred = referral.referred
     assert(referred.referral?)
+    assert(referred.has_new_activity)
     assert_equal(referred.program, Program::Name::Wrap)
 
     new_documents = referred.new_documents
     assert_length(new_documents, referrer.documents.length)
 
-    assert_length(referrer.events, 1)
     event = referrer.events[0]
-    assert_instance_of(Case::Events::DidMakeReferral, event)
+    assert_instances_of(referrer.events, [Case::Events::DidMakeReferral])
     assert_equal(event.case_program, Program::Name::Wrap)
 
-    assert_length(referred.events, 1)
     event = referred.events[0]
-    assert_instance_of(Case::Events::DidOpen, event)
+    assert_instances_of(referred.events, [Case::Events::DidOpen])
     assert(event.case_is_referred)
   end
 
@@ -151,60 +165,79 @@ class CaseTests < ActiveSupport::TestCase
   end
 
   # -- commands/messages
-  test "adds the first message" do
+  test "adds the first mms message" do
     kase = Case.stub
 
     kase.add_mms_message(Mms::Message.stub)
     assert_not_nil(kase.received_message_at)
 
     event = kase.events[0]
-    assert_length(kase.events, 1)
-    assert_instance_of(Case::Events::DidReceiveMessage, event)
+    assert_instances_of(kase.events, [Case::Events::DidReceiveMessage])
     assert(event.is_first)
   end
 
-  test "uploads mms message attachments" do
+  test "adds an mms message and its attachments" do
     kase = Case.stub
-
-    message = Mms::Message.new(
+    text_message = Mms::Message.stub(
       sender: Mms::Message::Sender.stub,
       attachments: [
-        Mms::Message::Attachment.new(
-          url: "https://website.com/image.jpg"
-        )
+        Mms::Message::Attachment.stub(url: "https://website.com/image.jpg")
       ]
     )
 
-    kase.add_mms_message(message)
+    kase.add_mms_message(text_message)
 
     new_document = kase.new_documents[0]
     assert_length(kase.new_documents, 1)
     assert_equal(new_document.classification, :unknown)
     assert_equal(new_document.source_url, "https://website.com/image.jpg")
 
-    assert_length(kase.events, 2)
-    assert_instance_of(Case::Events::DidReceiveMessage, kase.events[0])
-    assert_instance_of(Case::Events::DidUploadMessageAttachment, kase.events[1])
+    assert_instances_of(kase.events, [
+      Case::Events::DidUploadMessageAttachment,
+      Case::Events::DidReceiveMessage,
+    ])
   end
 
-  test "attaches chat message attachments" do
-    kase = Case.stub
-
-    message = Chat::Message.stub(
-      attachments: [
-        :test_attachment
-      ]
+  test "adds a chat message from a recipient and its attachments" do
+    kase = Case.stub(
+      status: Case::Status::Opened,
+      has_new_activity: false,
     )
 
-    kase.add_chat_message(message)
+    chat_message = Chat::Message.stub(
+      sender: Chat::Sender.recipient,
+      attachments: %i[test_attachment],
+    )
+
+    kase.add_chat_message(chat_message)
+    assert(kase.has_new_activity)
 
     new_document = kase.new_documents[0]
     assert_length(kase.new_documents, 1)
     assert_equal(new_document.classification, :unknown)
     assert_equal(new_document.new_file, :test_attachment)
 
-    assert_length(kase.events, 1)
-    assert_instance_of(Case::Events::DidReceiveMessage, kase.events[0])
+    assert_instances_of(kase.events, [
+      Case::Events::DidReceiveMessage,
+      Case::Events::DidChangeActivity,
+    ])
+  end
+
+  test "adds a chat message from cohere" do
+    kase = Case.stub(
+      has_new_activity: true,
+    )
+
+    chat_message = Chat::Message.stub(
+      sender: Chat::Sender.automated,
+      attachments: %i[test_attachment]
+    )
+
+    kase.add_chat_message(chat_message)
+    assert_not(kase.has_new_activity)
+    assert_blank(kase.new_documents)
+
+    assert_instances_of(kase.events, [Case::Events::DidChangeActivity])
   end
 
   test "signs a contract" do
@@ -219,11 +252,11 @@ class CaseTests < ActiveSupport::TestCase
 
     kase.sign_contract(contract)
     assert_length(kase.new_documents, 1)
-    assert_length(kase.events, 1)
-    assert_instance_of(Case::Events::DidSignContract, kase.events[0])
 
     new_contract = kase.new_documents[0]
     assert_equal(new_contract.classification, :contract)
+
+    assert_instances_of(kase.events, [Case::Events::DidSignContract])
   end
 
   test "doesn't sign a contract when one already exists" do
@@ -235,7 +268,7 @@ class CaseTests < ActiveSupport::TestCase
 
     kase.sign_contract(nil)
     assert_nil(kase.new_documents)
-    assert_length(kase.events, 0)
+    assert_empty(kase.events)
   end
 
   test "doesn't sign a contract for the wrong program" do
@@ -250,7 +283,7 @@ class CaseTests < ActiveSupport::TestCase
 
     kase.sign_contract(contract)
     assert_nil(kase.new_documents)
-    assert_length(kase.events, 0)
+    assert_empty(kase.events)
   end
 
   # -- commands/documents/selection

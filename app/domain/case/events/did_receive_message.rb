@@ -8,12 +8,12 @@ class Case
       prop(:is_first)
 
       # -- factories --
-      def self.from_entity(kase)
+      def self.from_entity(kase, is_first:)
         DidReceiveMessage.new(
           case_id: kase.id,
           case_program: kase.program,
           case_is_referred: kase.referral?,
-          is_first: kase.received_message_at.nil?
+          is_first: is_first,
         )
       end
     end

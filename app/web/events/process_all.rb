@@ -66,11 +66,9 @@ module Events
           event.chat_message_id.val
         )
 
-        if event.has_attachments
-          Cases::AddChatMessage.perform_async(
-            event.chat_message_id.val
-          )
-        end
+        Cases::AddChatMessage.perform_async(
+          event.chat_message_id.val
+        )
       end
     end
 

@@ -17,6 +17,10 @@ class Chat
       end
     end
 
+    def sent_by_recipient?
+      sent_by?(Chat::Sender::Recipient)
+    end
+
     # -- callbacks --
     def did_save(record)
       @id.set(record.id)
