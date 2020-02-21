@@ -15,6 +15,11 @@ class ArrayQueue
     @queue.push(event)
   end
 
+  def add_unique(event)
+    @queue.delete(event)
+    @queue.push(event)
+  end
+
   def drain(&block)
     @queue.reject! do |event|
       block.(event)

@@ -5,6 +5,11 @@ class Case
       prop(:case_id)
       prop(:case_has_new_activity)
 
+      # -- equality --
+      def ==(other)
+        return other.is_a?(DidChangeActivity) && @case_id == other.case_id
+      end
+
       # -- factories --
       def self.from_entity(kase)
         DidChangeActivity.new(

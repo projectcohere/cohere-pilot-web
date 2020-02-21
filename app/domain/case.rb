@@ -123,7 +123,9 @@ class Case < ::Entity
       end
     end
 
-    referred.events.add(Events::DidOpen.from_entity(referred))
+    referred.events.add(
+      Events::DidOpen.from_entity(referred)
+    )
 
     # produce referral
     Referral.new(
@@ -219,7 +221,7 @@ class Case < ::Entity
     end
 
     @has_new_activity = has_new_activity
-    @events.add(Events::DidChangeActivity.from_entity(self))
+    @events.add_unique(Events::DidChangeActivity.from_entity(self))
   end
 
   # -- queries --

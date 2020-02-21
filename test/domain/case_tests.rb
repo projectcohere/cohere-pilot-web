@@ -318,6 +318,30 @@ class CaseTests < ActiveSupport::TestCase
     end
   end
 
+  # -- commands/activity
+  test "doesn't add redundant activity events" do
+    kase = Case.stub(
+      status: Case::Status::Opened,
+      has_new_activity: false,
+    )
+
+    kase.add_chat_message(Chat::Message.stub(
+      sender: Chat::Sender.recipient,
+    ))
+
+    kase.add_chat_message(Chat::Message.stub(
+      sender: Chat::Sender.automated,
+    ))
+
+    assert_instances_of(kase.events, [
+      Case::Events::DidReceiveMessage,
+      Case::Events::DidChangeActivity,
+    ])
+
+    event = kase.events[1]
+    assert_not(event.case_has_new_activity)
+  end
+
   # -- queries --
   test "has an fpl percentage with a household" do
     household = Recipient::Household.stub(
