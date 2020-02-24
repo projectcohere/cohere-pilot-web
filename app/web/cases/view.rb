@@ -15,6 +15,10 @@ module Cases
     end
 
     # -- queries --
+    def id
+      @case.id
+    end
+
     def status
       @case.status.to_s.camelize
     end

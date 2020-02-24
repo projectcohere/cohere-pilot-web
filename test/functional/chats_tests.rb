@@ -162,8 +162,8 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
     })
 
     assert_broadcast_on(Cases::ActivityChannel.active, {
-      case_id: case_rec.id,
-      case_has_new_activity: false,
+      id: case_rec.id,
+      hasNewActivity: false,
     })
   end
 
@@ -206,8 +206,8 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
     })
 
     assert_broadcast_on(Cases::ActivityChannel.active, {
-      case_id: case_rec.id,
-      case_has_new_activity: true,
+      id: case_rec.id,
+      hasNewActivity: true,
     })
   end
 

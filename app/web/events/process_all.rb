@@ -71,7 +71,7 @@ module Events
           event.chat_message_id.val
         )
 
-        Cases::AddChatMessage.perform_async(
+        Cases::AddChatMessage.(
           event.chat_message_id.val
         )
       end

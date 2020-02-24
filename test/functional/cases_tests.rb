@@ -242,8 +242,8 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:notice])
 
     assert_broadcast_on(Cases::ActivityChannel.active, {
-      case_id: case_rec.id,
-      case_has_new_activity: true,
+      id: case_rec.id,
+      hasNewActivity: true,
     })
 
     assert_analytics_events(1) do |events|
@@ -272,8 +272,8 @@ class CasesTests < ActionDispatch::IntegrationTest
     })
 
     assert_broadcast_on(Cases::ActivityChannel.active, {
-      case_id: case_rec.id,
-      case_has_new_activity: false,
+      id: case_rec.id,
+      hasNewActivity: false,
     })
 
     assert_redirected_to("/cases/#{case_rec.id}/edit")
@@ -364,8 +364,8 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:notice])
 
     assert_broadcast_on(Cases::ActivityChannel.active, {
-      case_id: case_rec.id,
-      case_has_new_activity: false,
+      id: case_rec.id,
+      hasNewActivity: false,
     })
 
     assert_analytics_events(1) do |events|
@@ -407,8 +407,8 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:notice])
 
     assert_broadcast_on(Cases::ActivityChannel.active, {
-      case_id: case_rec.id,
-      case_has_new_activity: false,
+      id: case_rec.id,
+      hasNewActivity: false,
     })
 
     assert_analytics_events(1) do |events|
@@ -436,8 +436,8 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:notice])
 
     assert_broadcast_on(Cases::ActivityChannel.active, {
-      case_id: case_rec.id,
-      case_has_new_activity: false,
+      id: case_rec.id,
+      hasNewActivity: false,
     })
 
     assert_analytics_events(1) do |events|
@@ -465,8 +465,8 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:notice])
 
     assert_broadcast_on(Cases::ActivityChannel.active, {
-      case_id: case_rec.id,
-      case_has_new_activity: false,
+      id: case_rec.id,
+      hasNewActivity: false,
     })
 
     assert_analytics_events(1) do |events|

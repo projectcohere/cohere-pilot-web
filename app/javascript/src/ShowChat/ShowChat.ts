@@ -1,12 +1,11 @@
-import { createConsumer } from "@rails/actioncable"
 import { Files, IPreview } from "./Files"
 import { Macros, IMacro } from "./Macros"
 import { UploadFiles } from "./UploadFiles"
-import { IComponent } from "../Core"
+import { IComponent, kConsumer } from "../Core"
 import { getReadableTimeSince } from "../Shared/Time"
 
 // -- constants --
-const kConsumer = createConsumer()
+const kChannelChat = "Chats::Channel"
 
 const kIdChat = "chat"
 const kIdChatJson = "chat-json"
@@ -143,7 +142,7 @@ export class ShowChat implements IComponent {
   // -- commands --
   private subscribe() {
     const subscription = {
-      channel: "Chats::Channel",
+      channel: kChannelChat,
       chat: this.id
     }
 
@@ -200,9 +199,7 @@ export class ShowChat implements IComponent {
     this.channel.send(outgoing)
   }
 
-  private receiveMesasage(incoming: Incoming) {
-    console.debug("Chat - received:", incoming)
-
+  private showMessage(incoming: Incoming) {
     if (incoming.sender !== this.sender) {
       this.appendMessage(incoming)
     }
@@ -239,7 +236,8 @@ export class ShowChat implements IComponent {
 
   // -- events --
   private didReceiveData(data: any) {
-    this.receiveMesasage(data)
+    console.debug("ShowChat - received:", data)
+    this.showMessage(data)
   }
 
   private didSubmitMessage(event: Event) {

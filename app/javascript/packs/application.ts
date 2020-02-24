@@ -3,8 +3,9 @@ import {
   Viewport,
   Flash,
   TabControl,
-  ShowPasswords,
+  ShowCaseList,
   ShowChat,
+  ShowPasswords,
 } from "../src"
 
 // -- main --
@@ -15,6 +16,7 @@ start(
   new Viewport(),
   new Flash(),
   new TabControl(),
+  new ShowCaseList(),
   new ShowChat(),
   new ShowPasswords(),
 )

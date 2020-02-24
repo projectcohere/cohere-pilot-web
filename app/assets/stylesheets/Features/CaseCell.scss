@@ -23,15 +23,6 @@
     font-size: $font-size3;
   }
 
-  &-active {
-    $size: 8px;
-    align-self: center;
-    width: $size;
-    height: $size;
-    background-color: $brand-secondary1;
-    border-radius: $size / 2;
-  }
-
   &-organizations {
     color: $gray1;
   }
@@ -52,4 +43,15 @@
     margin-left: $spacing5;
     color: transparent;
   }
+
+  // -- variants --
+  &.is-active &-activity {
+    $size: 8px;
+    align-self: center;
+    width: $size;
+    height: $size;
+    background-color: $brand-secondary1;
+    border-radius: $size / 2;
+  }
+
 }

@@ -1,16 +1,17 @@
 module Cases
   class PublishActivity < ApplicationWorker
     ## -- types --
-    Activity = Struct.new(
-      :case_id,
-      :case_has_new_activity,
+    CaseActivity = Struct.new(
+      :id,
+      :hasNewActivity,
     )
+
 
     ## -- command --
     def call(case_id, case_has_new_activity)
-      activity = Activity.new(
+      activity = CaseActivity.new(
         case_id,
-        case_has_new_activity
+        case_has_new_activity,
       )
 
       ActivityChannel.broadcast_to(ActivityChannel::Active, activity)
