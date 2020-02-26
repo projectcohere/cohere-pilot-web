@@ -3,7 +3,6 @@ class User
     class DidInvite < ::Value
       # -- props --
       prop(:user_id)
-      props_end!
 
       # -- factories --
       def self.from_user(user)

@@ -1,11 +1,11 @@
-import { createConsumer } from "@rails/actioncable"
 import { Files, IPreview } from "./Files"
 import { Macros, IMacro } from "./Macros"
 import { UploadFiles } from "./UploadFiles"
-import { IComponent } from "../Component"
+import { IComponent, kConsumer } from "../Core"
+import { getReadableTimeSince } from "../Shared/Time"
 
 // -- constants --
-const kConsumer = createConsumer()
+const kChannelChat = "Chats::Channel"
 
 const kIdChat = "chat"
 const kIdChatJson = "chat-json"
@@ -45,7 +45,7 @@ interface Metadata {
 }
 
 // -- impls --
-export class Chat implements IComponent {
+export class ShowChat implements IComponent {
   isOnLoad = true
 
   // -- deps --
@@ -54,7 +54,7 @@ export class Chat implements IComponent {
 
   // -- props --
   private channel: ActionCable.Channel = null!
-  private dispose: (() => void) | null = null
+  private refreshInterval: number | null = null
 
   private id: string | null = null
   private sender: Sender = null!
@@ -96,14 +96,12 @@ export class Chat implements IComponent {
     }
 
     // show chat after initial images load
-    const query = document.querySelectorAll<HTMLImageElement>(`#${kIdChatMessages} img`)
-    this.onImagesLoaded(query, () => {
-      $chat.scrollTop = $chat.scrollHeight
-      $chat.classList.toggle(kClassIsLoaded, true)
-    })
+    const $chatImages = document.querySelectorAll<HTMLImageElement>(`#${kIdChatMessages} img`)
+    this.onImagesLoaded($chatImages, this.didLoadImages.bind(this))
 
     // bind to events
     $chatForm.addEventListener("submit", this.didSubmitMessage.bind(this))
+    this.refreshInterval = window.setInterval(this.didFireRefreshTimer.bind(this), 60 * 1000)
 
     // subscribe to channel
     this.subscribe()
@@ -128,10 +126,10 @@ export class Chat implements IComponent {
     this.$chatMessages = null
     this.$chatInput = null
 
-    // run any bound disposal
-    if (this.dispose != null) {
-      this.dispose()
-      this.dispose = null
+    // cleanup interval
+    if (this.refreshInterval != null) {
+      window.clearInterval(this.refreshInterval)
+      this.refreshInterval = null
     }
 
     // unsubscribe from channel
@@ -144,7 +142,7 @@ export class Chat implements IComponent {
   // -- commands --
   private subscribe() {
     const subscription = {
-      channel: "Chats::Channel",
+      channel: kChannelChat,
       chat: this.id
     }
 
@@ -153,6 +151,12 @@ export class Chat implements IComponent {
     })
   }
 
+  // -- comands/ui
+  private clearInput() {
+    this.$chatInput!.textContent = ""
+  }
+
+  // -- commands/messages
   private async sendMessage() {
     const field = this.$chatInput!
 
@@ -195,9 +199,7 @@ export class Chat implements IComponent {
     this.channel.send(outgoing)
   }
 
-  private receiveMesasage(incoming: Incoming) {
-    console.debug("Chat - received:", incoming)
-
+  private showMessage(incoming: Incoming) {
     if (incoming.sender !== this.sender) {
       this.appendMessage(incoming)
     }
@@ -222,11 +224,6 @@ export class Chat implements IComponent {
     $chat.scrollTo(0, $chat.scrollHeight)
   }
 
-  private clearInput() {
-    this.$chatInput!.textContent = ""
-  }
-
-
   // -- queries --
   isSent(sender: Sender): boolean {
     switch (this.sender) {
@@ -239,7 +236,8 @@ export class Chat implements IComponent {
 
   // -- events --
   private didReceiveData(data: any) {
-    this.receiveMesasage(data)
+    console.debug("ShowChat - received:", data)
+    this.showMessage(data)
   }
 
   private didSubmitMessage(event: Event) {
@@ -254,6 +252,22 @@ export class Chat implements IComponent {
       this.files.clear()
     } else {
       this.files.set([macro.attachment])
+    }
+  }
+
+  private didLoadImages() {
+    const $chat = this.$chat!
+    $chat.scrollTop = $chat.scrollHeight
+    $chat.classList.toggle(kClassIsLoaded, true)
+  }
+
+  private didFireRefreshTimer() {
+    const $timestamps = document.querySelectorAll<HTMLTimeElement>(`#${kIdChatMessages} time`)
+
+    for (let i = 0; i < $timestamps.length; i++) {
+      const $timestamp = $timestamps[$timestamps.length - 1]
+      const time = new Date($timestamp.dateTime)
+      $timestamp.textContent = getReadableTimeSince(time)
     }
   }
 
@@ -326,7 +340,7 @@ export class Chat implements IComponent {
         </label>
         ${children}
         <time class="ChatMessage-timestamp" datetime=${metadata.time.toISOString()}>
-          ${this.renderTimeSince(metadata.time)}
+          ${getReadableTimeSince(metadata.time)}
         </time>
       </li>
     `
@@ -334,22 +348,6 @@ export class Chat implements IComponent {
 
   private renderList<T>(list: T[], renderer: (item: T) => string): string {
     return list.map(renderer).join("\n")
-  }
-
-  private renderTimeSince(date: Date): string {
-    const delta = Math.max(new Date().getTime() - date.getTime(), 0)
-    const minutes = Math.floor(delta / 1000 / 60)
-    const hours = Math.floor(minutes / 60)
-
-    if (minutes < 1) {
-      return "Just now"
-    } else if (minutes < 60) {
-      return `${minutes} ${this.pluralize("minute", minutes)} ago`
-    } else if (hours < 24) {
-      return `${hours} ${this.pluralize("hour", hours)} ago`
-    } else {
-      return date.toLocaleString("en-US", { month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", hour12: true })
-    }
   }
 
   // -- utilities --
@@ -376,14 +374,6 @@ export class Chat implements IComponent {
       } else {
         image.addEventListener("load", didLoadImage, { once: true })
       }
-    }
-  }
-
-  private pluralize(label: string, quantity: number): string {
-    if (quantity === 1) {
-      return label
-    } else {
-      return label + "s"
     }
   }
 }

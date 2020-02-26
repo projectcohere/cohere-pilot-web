@@ -1,10 +1,3 @@
-<%# -- helpers -- %>
-<% filter_link_to = ->(scope) do %>
-<%   link_class = "Filter #{@scope == scope && "is-selected"}" %>
-<%   link_to(scope.titlecase, "#{cases_path}/#{scope}", class: link_class) %>
-<% end %>
-
-<%# -- template -- %>
 <main class="Main">
   <header class="Main-header">
     <h1 class="Main-title">
@@ -12,13 +5,13 @@
     </h1>
     <div class="Main-filters">
       <nav class="Filters">
-        <%= filter_link_to.("open") %>
-        <%= filter_link_to.("completed") %>
+        <%= cases_filter_link_to(Cohere::CaseScope::Open) %>
+        <%= cases_filter_link_to(Cohere::CaseScope::Completed) %>
       </nav>
     </div>
   </header>
 
-  <ul class="CaseList">
+  <%= tag.ul(cases_list_options) do %>
     <% if @cases&.blank? %>
       <h2 class="CaseList-fallback">
         No <%= @scope %> cases left.
@@ -26,15 +19,19 @@
     <% else %>
       <% @cases.each do |kase| %>
         <%- view = Cases::View.new(kase) %>
-        <li class="CaseCell">
+        <%= tag.li(cases_cell_options(view)) do %>
           <div class="CaseCell-row">
-            <%- link_path = if @scope == "open" %>
+            <%- link_path = if cases_is_open %>
             <%-   edit_case_path(kase) %>
             <%- else %>
             <%-   case_path(kase) %>
             <%- end %>
 
             <%= link_to(view.recipient_name, link_path, action: :edit, class: "CaseCell-name") %>
+
+            <%- if cases_is_open %>
+              <span class="CaseCell-activity"></span>
+            <%- end %>
           </div>
           <div class="CaseCell-row">
             <p class="CaseCell-organizations">
@@ -49,8 +46,8 @@
               Updated <%= time_ago_in_words(view.updated_at) %> ago
             </p>
           </div>
-        </li>
+        <% end %>
       <% end %>
     <% end %>
-  </ul>
+  <% end %>
 </main>

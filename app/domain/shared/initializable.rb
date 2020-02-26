@@ -11,62 +11,63 @@ module Initializable
     end
 
     def prop(name, default: Required)
-      prop_definitions[name] = default
+      props[name] = default
       read(name)
     end
 
-    def props_end!
-      define_initialize!
-    end
-
-    def define_initialize!
-      @prop_definitions.freeze
-
-      # grab all keywords
-      props_keywords = @prop_definitions.keys.freeze
-
-      # split all required and default props
-      props_required = []
-      props_defaults = {}
-
-      @prop_definitions.each do |k, v|
-        if v.equal?(Required)
-          props_required << k
-        else
-          props_defaults[k] = v
-        end
-      end
-
-      props_required.freeze
-      props_defaults.freeze
-
-      # synthesize the constructor
-      define_method(:initialize) do |**kwargs|
-        unknown_keywords = kwargs.keys - props_keywords
-        if not unknown_keywords.empty?
-          raise(ArgumentError, "unknown keywords: #{unknown_keywords}")
-        end
-
-        missing_keywords = props_required - kwargs.keys
-        if not missing_keywords.empty?
-          raise(ArgumentError, "missing keywords: #{missing_keywords}")
-        end
-
-        props_keywords.each do |key|
-          value = if kwargs.has_key?(key)
-            kwargs[key]
-          else
-            props_defaults[key].clone
-          end
-
-          instance_variable_set("@#{key}", value)
-        end
-      end
-    end
-
     # -- definition/storage
-    def prop_definitions
-      @prop_definitions ||= {}
+    def props
+      return @props ||= {}
     end
+
+    def finalize_props!
+      return props.freeze
+    end
+  end
+
+  def initialize(**kwargs)
+    super()
+
+    # get props and attrs
+    props = self.class.finalize_props!
+    attrs = kwargs.clone
+
+    # set a value for each key in props
+    props.each do |key, default|
+      value = if attrs.has_key?(key)
+        attrs.delete(key)
+      elsif default == Required
+        raise_missing_attrs!(props, attrs)
+      else
+        default.clone
+      end
+
+      instance_variable_set("@#{key}", value)
+    end
+
+    # throw an error if there unknown attrs leftover
+    if attrs.count != 0
+      raise_unknown_attrs!(props, attrs)
+    end
+  end
+
+  private def raise_missing_attrs!(props, attrs)
+    raise(ArgumentError, "missing attrs: #{find_missing_attrs(props, attrs)}")
+  end
+
+  private def raise_unknown_attrs!(props, attrs)
+    raise(ArgumentError, "unknown attrs: #{attrs.keys - props.keys}")
+  end
+
+  private def find_missing_attrs(props, attrs)
+    missing_props = []
+
+    props.each do |key, default|
+      if default == Required && !attrs.has_key?(key)
+        missing_props << key
+      end
+    end
+
+    return missing_props
   end
 end

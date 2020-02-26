@@ -6,7 +6,7 @@ class RedisQueue
   end
 
   # -- commands --
-  def <<(event)
+  def add(event)
     @redis.rpush(@key, event)
   end
 

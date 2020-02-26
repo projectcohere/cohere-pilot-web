@@ -4,7 +4,6 @@ module Recipient
     prop(:income_cents)
     prop(:ownership, default: Ownership::Unknown)
     prop(:is_primary_residence, default: true)
-    props_end!
 
     # -- queries --
     def income_dollars

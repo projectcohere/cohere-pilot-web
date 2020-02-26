@@ -1,4 +1,12 @@
-import { start, Flash, Passwords, TabControl, Chat, Viewport } from "../src"
+import {
+  start,
+  Viewport,
+  Flash,
+  TabControl,
+  ShowCaseList,
+  ShowChat,
+  ShowPasswords,
+} from "../src"
 
 // -- main --
 start(
@@ -6,8 +14,9 @@ start(
   require("@rails/activestorage"),
   require("turbolinks"),
   new Viewport(),
-  new Chat(),
   new Flash(),
-  new Passwords(),
   new TabControl(),
+  new ShowCaseList(),
+  new ShowChat(),
+  new ShowPasswords(),
 )

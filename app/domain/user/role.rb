@@ -3,7 +3,6 @@ class User
     # -- props --
     prop(:name)
     prop(:organization_id, default: nil)
-    props_end!
 
     # -- factories --
     def self.named(name)

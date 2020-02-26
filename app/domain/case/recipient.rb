@@ -6,7 +6,6 @@ class Case
     prop(:id, default: Id::None)
     prop(:profile)
     prop(:dhs_account, default: nil)
-    props_end!
 
     # -- commands --
     def add_dhs_data(dhs_account)

@@ -3,7 +3,6 @@ class Supplier < ::Entity
   prop(:id)
   prop(:name)
   prop(:program)
-  props_end!
 
   # -- factories --
   def open_case(enroller, account:, profile:)

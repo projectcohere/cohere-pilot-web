@@ -4,7 +4,6 @@ class Case
       # -- props --
       prop(:case_id)
       prop(:case_program)
-      props_end!
 
       # -- factories --
       def self.from_entity(kase, program:)

@@ -32,7 +32,7 @@ module Support
     # accepts a type to stub. the type must include `Initializable`.
     # synthesizes a `.stub` factory method that makes every prop optional.
     def self.define_stub(type_to_stub)
-      props_required = type_to_stub.prop_definitions
+      props_required = type_to_stub.props
         .filter { |_, v| v.equal?(Initializable::Required) }
         .transform_values { |_| nil }
         .freeze

@@ -1,6 +1,8 @@
 require "test_helper"
 
 class CasesTests < ActionDispatch::IntegrationTest
+  include ActionCable::Channel::TestCase::Behavior
+
   # -- list --
   test "can't list cases if signed-out" do
     get("/cases")
@@ -239,6 +241,11 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
 
+    assert_broadcast_on(Cases::ActivityChannel.active, {
+      id: case_rec.id,
+      hasNewActivity: true,
+    })
+
     assert_analytics_events(1) do |events|
       assert_match(/Did Become Pending/, events[0])
     end
@@ -262,6 +269,11 @@ class CasesTests < ActionDispatch::IntegrationTest
           income: "$300.00"
         }
       }
+    })
+
+    assert_broadcast_on(Cases::ActivityChannel.active, {
+      id: case_rec.id,
+      hasNewActivity: false,
     })
 
     assert_redirected_to("/cases/#{case_rec.id}/edit")
@@ -351,6 +363,11 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/#{case_rec.id}/edit")
     assert_present(flash[:notice])
 
+    assert_broadcast_on(Cases::ActivityChannel.active, {
+      id: case_rec.id,
+      hasNewActivity: false,
+    })
+
     assert_analytics_events(1) do |events|
       assert_match(/Did Submit/, events[0])
     end
@@ -389,6 +406,11 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/#{case_rec.id}")
     assert_present(flash[:notice])
 
+    assert_broadcast_on(Cases::ActivityChannel.active, {
+      id: case_rec.id,
+      hasNewActivity: false,
+    })
+
     assert_analytics_events(1) do |events|
       assert_match(/Did Complete/, events[0])
     end
@@ -413,6 +435,11 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/#{case_rec.id}")
     assert_present(flash[:notice])
 
+    assert_broadcast_on(Cases::ActivityChannel.active, {
+      id: case_rec.id,
+      hasNewActivity: false,
+    })
+
     assert_analytics_events(1) do |events|
       assert_match(/Did Complete/, events[0])
     end
@@ -436,6 +463,11 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_redirected_to("/cases/#{case_rec.id}")
     assert_present(flash[:notice])
+
+    assert_broadcast_on(Cases::ActivityChannel.active, {
+      id: case_rec.id,
+      hasNewActivity: false,
+    })
 
     assert_analytics_events(1) do |events|
       assert_match(/Did Complete/, events[0])

@@ -57,20 +57,23 @@ module Events
           event.case_id.val,
           event.document_id.val
         )
+      when Case::Events::DidChangeActivity
+        Cases::PublishActivity.perform_async(
+          event.case_id.val,
+          event.case_has_new_activity,
+        )
       when User::Events::DidInvite
         deliver(UsersMailer.did_invite(
           event.user_id.val
         ))
       when Chat::Events::DidAddMessage
-        Chats::DeliverMessage.perform_async(
+        Chats::PublishMessage.perform_async(
           event.chat_message_id.val
         )
 
-        if event.has_attachments
-          Cases::AddChatMessage.perform_async(
-            event.chat_message_id.val
-          )
-        end
+        Cases::AddChatMessage.(
+          event.chat_message_id.val
+        )
       end
     end
 

@@ -16,6 +16,7 @@ class Case
       assert_not_nil(kase.received_message_at)
       assert_not_nil(kase.updated_at)
       assert_not_nil(kase.completed_at)
+      assert(kase.has_new_activity)
       assert(kase.is_referrer)
       assert_not(kase.is_referred)
 

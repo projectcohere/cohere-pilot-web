@@ -2,7 +2,6 @@ class Chat
   class Notification < ::Value
     prop(:recipient_name)
     prop(:is_new_conversation)
-    props_end!
 
     # -- queries --
     def text

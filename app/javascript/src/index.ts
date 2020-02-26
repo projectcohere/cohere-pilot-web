@@ -1,6 +1,11 @@
-export { start } from "./Component"
+export { start } from "./Core"
+
+// -- layout --
 export { Viewport } from "./Viewport"
-export { Chat } from "./Chat"
 export { Flash } from "./Flash"
-export { Passwords } from "./Passwords"
 export { TabControl } from "./TabControl"
+
+// -- scenes --
+export { ShowCaseList } from "./ShowCaseList"
+export { ShowChat } from "./ShowChat"
+export { ShowPasswords } from "./ShowPasswords"

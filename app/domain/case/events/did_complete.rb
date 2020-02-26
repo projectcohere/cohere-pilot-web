@@ -6,7 +6,6 @@ class Case
       prop(:case_status)
       prop(:case_program)
       prop(:case_is_referred)
-      props_end!
 
       # -- factories --
       def self.from_entity(kase)

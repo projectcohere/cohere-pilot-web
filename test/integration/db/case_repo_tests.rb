@@ -191,29 +191,33 @@ module Db
     test "saves an opened case for an existing recipient" do
       domain_events = ArrayQueue.new
 
+      profile = Recipient::Profile.new(
+        phone: Recipient::Phone.new(
+          number: "1112223333"
+        ),
+        name: Recipient::Name.new(
+          first: "Janice",
+          last: "Sample"
+        ),
+        address: Recipient::Address.new(
+          street: "123 Test St.",
+          city: "Testburg",
+          state: "Testissippi",
+          zip: "12345"
+        )
+      )
+
+      supplier_account = Case::Account.new(
+        number: "12345",
+        arrears_cents: 1000_00
+      )
+
       kase = Case.open(
         program: Program::Name::Meap,
-        profile: Recipient::Profile.new(
-          phone: Recipient::Phone.new(
-            number: recipients(:recipient_1).phone_number
-          ),
-          name: Recipient::Name.new(
-            first: "Janice",
-            last: "Sample"
-          ),
-          address: Recipient::Address.new(
-            street: "123 Test St.",
-            city: "Testburg",
-            state: "Testissippi",
-            zip: "12345"
-          )
-        ),
+        profile: profile,
         enroller: Enroller::Repo.map_record(enrollers(:enroller_1)),
         supplier: Supplier::Repo.map_record(suppliers(:supplier_1)),
-        supplier_account: Case::Account.new(
-          number: "12345",
-          arrears_cents: 1000_00
-        )
+        supplier_account: supplier_account,
       )
 
       case_repo = Case::Repo.new(domain_events: domain_events)
@@ -236,7 +240,7 @@ module Db
       assert_length(domain_events, 1)
     end
 
-    test "saves the dhs contribution" do
+    test "saves a dhs contribution" do
       case_rec = cases(:opened_1)
 
       kase = Case::Repo.map_record(case_rec)
@@ -254,6 +258,7 @@ module Db
       case_repo.save_dhs_contribution(kase)
 
       case_rec = kase.record
+      assert(case_rec.has_new_activity)
       assert_equal(case_rec.status, "pending")
 
       recipient_rec = case_rec.recipient
@@ -262,12 +267,33 @@ module Db
       assert_equal(recipient_rec.household_income_cents, 999_00)
     end
 
-    test "saves all fields and new documents" do
+    test "saves a cohere contribution" do
       domain_events = ArrayQueue.new
 
-      case_rec = cases(:opened_1)
+      case_rec = cases(:opened_2)
 
-      account = Recipient::DhsAccount.new(
+      supplier_account = Case::Account.new(
+        number: "12345",
+        arrears_cents: 1000_00
+      )
+
+      profile = Recipient::Profile.new(
+        phone: Recipient::Phone.new(
+          number: "1112223333"
+        ),
+        name: Recipient::Name.new(
+          first: "Janice",
+          last: "Sample"
+        ),
+        address: Recipient::Address.new(
+          street: "123 Test St.",
+          city: "Testburg",
+          state: "Testissippi",
+          zip: "12345"
+        )
+      )
+
+      dhs_account = Recipient::DhsAccount.new(
         number: "11111",
         household: Recipient::Household.stub(
           size: 3,
@@ -281,7 +307,7 @@ module Db
       )
 
       kase = Case::Repo.map_record(case_rec)
-      kase.add_dhs_data(account)
+      kase.add_cohere_data(supplier_account, profile, dhs_account)
       kase.sign_contract(contract)
       kase.submit_to_enroller
       kase.complete(Case::Status::Approved)
@@ -289,23 +315,33 @@ module Db
       case_repo = Case::Repo.new(domain_events: domain_events)
       case_repo.save_cohere_contribution(kase)
 
-      case_rec = kase.record
-      assert_equal(case_rec.status, "approved")
-      assert_not_nil(case_rec.completed_at)
+      c = kase.record
+      assert_equal(c.status, "approved")
+      assert_equal(c.supplier_account_number, "12345")
+      assert_equal(c.supplier_account_arrears_cents, 1000_00)
+      assert_not_nil(c.completed_at)
 
-      recipient_rec = case_rec.recipient
-      assert_equal(recipient_rec.dhs_number, "11111")
-      assert_equal(recipient_rec.household_size, 3)
-      assert_equal(recipient_rec.household_income_cents, 999_00)
+      r = c.recipient
+      assert_equal(r.first_name, "Janice")
+      assert_equal(r.last_name, "Sample")
+      assert_equal(r.phone_number, "1112223333")
+      assert_equal(r.street, "123 Test St.")
+      assert_equal(r.city, "Testburg")
+      assert_equal(r.state, "Testissippi")
+      assert_equal(r.zip, "12345")
+      assert_equal(r.dhs_number, "11111")
+      assert_equal(r.household_size, 3)
+      assert_equal(r.household_income_cents, 999_00)
 
-      document_rec = kase.new_documents[0].record
-      assert_not_nil(document_rec)
+      d = kase.new_documents[0].record
+      assert_not_nil(d)
+      assert_equal(d.classification, "contract")
 
       assert_length(kase.events, 0)
       assert_length(domain_events, 4)
     end
 
-    test "saves a new message" do
+    test "saves a new mms message" do
       case_rec = cases(:pending_1)
 
       kase = Case::Repo.map_record(case_rec)
@@ -340,6 +376,45 @@ module Db
       assert_not_nil(document_rec)
       assert_not_nil(document_rec.case_id)
       assert_not_nil(document_rec.source_url)
+
+      assert_length(kase.events, 0)
+      assert_length(domain_events, 2)
+    end
+
+    test "saves a new chat message" do
+      case_rec = cases(:pending_2)
+
+      kase = Case::Repo.map_record(case_rec)
+      kase.add_chat_message(Chat::Message.stub(
+        sender: Chat::Sender.recipient,
+        attachments: [
+          active_storage_blobs(:blob_1)
+        ]
+      ))
+
+      domain_events = ArrayQueue.new
+      case_repo = Case::Repo.new(domain_events: domain_events)
+
+      act = -> do
+        case_repo.save_new_message(kase)
+      end
+
+      assert_difference(
+        -> { Document::Record.count } => 1,
+        &act
+      )
+
+      case_rec = kase.record
+      assert_not_nil(case_rec.received_message_at)
+      assert(case_rec.has_new_activity)
+
+      document = kase.new_documents[0]
+      assert_not_nil(document.record)
+      assert_not_nil(document.id.val)
+
+      document_rec = document.record
+      assert_not_nil(document_rec)
+      assert_not_nil(document_rec.case_id)
 
       assert_length(kase.events, 0)
       assert_length(domain_events, 2)

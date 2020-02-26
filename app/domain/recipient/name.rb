@@ -3,7 +3,6 @@ module Recipient
     # -- props --
     prop(:first)
     prop(:last)
-    props_end!
 
     # -- queries --
     def to_s

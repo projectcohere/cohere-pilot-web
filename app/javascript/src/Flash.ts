@@ -1,4 +1,4 @@
-import { IComponent } from "./Component"
+import { IComponent } from "./Core"
 
 // -- impls --
 export class Flash implements IComponent {

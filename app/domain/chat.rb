@@ -9,7 +9,6 @@ class Chat < Entity
   prop(:messages, default: [])
   prop(:notification, default: nil)
   prop(:sms_conversation_id, default: nil)
-  props_end!
 
   # -- props/temporary
   attr(:new_message)
@@ -64,7 +63,7 @@ class Chat < Entity
 
     @new_message = message
     @messages << message
-    @events << Events::DidAddMessage.from_entity(self)
+    @events.add(Events::DidAddMessage.from_entity(self))
   end
 
   def select_message(i)

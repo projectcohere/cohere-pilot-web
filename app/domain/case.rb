@@ -14,10 +14,10 @@ class Case < ::Entity
   prop(:documents, default: nil)
   prop(:is_referrer, default: false)
   prop(:is_referred, default: false)
+  prop(:has_new_activity, default: false)
   prop(:received_message_at, default: nil)
   prop(:updated_at, default: nil)
   prop(:completed_at, default: nil)
-  props_end!
 
   # -- props/temporary
   attr(:new_documents)
@@ -35,10 +35,11 @@ class Case < ::Entity
       recipient: recipient,
       enroller_id: enroller.id,
       supplier_id: supplier.id,
-      supplier_account: supplier_account
+      supplier_account: supplier_account,
+      has_new_activity: true,
     )
 
-    kase.events << Events::DidOpen.from_entity(kase)
+    kase.events.add(Events::DidOpen.from_entity(kase))
     kase
   end
 
@@ -48,19 +49,25 @@ class Case < ::Entity
 
     if @status == Status::Opened
       @status = Status::Pending
-      events << Events::DidBecomePending.from_entity(self)
+      events.add(Events::DidBecomePending.from_entity(self))
     end
+
+    track_new_activity(true)
   end
 
   def add_cohere_data(supplier_account, profile, dhs_account)
     @supplier_account = supplier_account
     @recipient.add_cohere_data(profile, dhs_account)
+
+    track_new_activity(false)
   end
 
   def remove_from_pilot
     @completed_at = Time.zone.now
     @status = Status::Removed
-    @events << Events::DidComplete.from_entity(self)
+    @events.add(Events::DidComplete.from_entity(self))
+
+    track_new_activity(false)
   end
 
   def submit_to_enroller
@@ -69,7 +76,9 @@ class Case < ::Entity
     end
 
     @status = Status::Submitted
-    @events << Events::DidSubmit.from_entity(self)
+    @events.add(Events::DidSubmit.from_entity(self))
+
+    track_new_activity(false)
   end
 
   def complete(status)
@@ -79,7 +88,9 @@ class Case < ::Entity
 
     @completed_at = Time.zone.now
     @status = status
-    @events << Events::DidComplete.from_entity(self)
+    @events.add(Events::DidComplete.from_entity(self))
+
+    track_new_activity(false)
   end
 
   def make_referral_to_program(program, supplier_id: nil)
@@ -89,9 +100,9 @@ class Case < ::Entity
 
     # mark as referrer
     @is_referrer = true
-    @events << Events::DidMakeReferral.from_entity(self,
+    @events.add(Events::DidMakeReferral.from_entity(self,
       program: program
-    )
+    ))
 
     # create referred case
     referred = Case.new(
@@ -102,7 +113,8 @@ class Case < ::Entity
       supplier_id: supplier_id,
       supplier_account: nil,
       documents: new_documents,
-      is_referred: true
+      is_referred: true,
+      has_new_activity: true,
     )
 
     documents&.each do |d|
@@ -111,7 +123,9 @@ class Case < ::Entity
       end
     end
 
-    referred.events << Events::DidOpen.from_entity(referred)
+    referred.events.add(
+      Events::DidOpen.from_entity(referred)
+    )
 
     # produce referral
     Referral.new(
@@ -122,28 +136,39 @@ class Case < ::Entity
 
   # -- commands/messages
   def add_mms_message(message)
-    track_message_receipt
-
     # upload mms message attachments
     message.attachments&.each do |attachment|
       new_document = Document.upload(attachment.url)
       add_document(new_document)
-      @events << Events::DidUploadMessageAttachment.from_entity(self, new_document)
+      @events.add(Events::DidUploadMessageAttachment.from_entity(self, new_document))
     end
+
+    # track messages
+    track_message_receipt
   end
 
   def add_chat_message(message)
-    track_message_receipt
+    sent_by_recipient = message.sent_by_recipient?
 
-    # attach chat message attachments
-    message.attachments.each do |attachment|
-      add_document(Document.attach(attachment))
+    if sent_by_recipient
+      # attach chat message attachments
+      message.attachments.each do |attachment|
+        add_document(Document.attach(attachment))
+      end
+
+      # track messages
+      track_message_receipt
     end
+
+    # track activity
+    track_new_activity(sent_by_recipient)
   end
 
+  # -- commands/messages/helpers
   private def track_message_receipt
-    @events << Events::DidReceiveMessage.from_entity(self)
+    is_first = @received_message_at == nil
     @received_message_at = Time.zone.now
+    @events.add(Events::DidReceiveMessage.from_entity(self, is_first: is_first))
   end
 
   # -- commands/documents
@@ -158,7 +183,7 @@ class Case < ::Entity
 
     new_document = Document.sign_contract(program_contract)
     add_document(new_document)
-    @events << Events::DidSignContract.from_entity(self, new_document)
+    @events.add(Events::DidSignContract.from_entity(self, new_document))
   end
 
   def copy_document(document)
@@ -187,33 +212,67 @@ class Case < ::Entity
     @selected_document.attach_file(file)
   end
 
+  # -- commands/activity
+  private def track_new_activity(has_new_activity)
+    if @has_new_activity == has_new_activity
+      return
+    elsif has_new_activity && complete?
+      return
+    end
+
+    @has_new_activity = has_new_activity
+    @events.add_unique(Events::DidChangeActivity.from_entity(self))
+  end
+
   # -- queries --
   # -- queries/status
   alias :referrer? :is_referrer
   alias :referral? :is_referred
 
+  def opened?
+    return @status == Status::Opened
+  end
+
+  def pending?
+    return @status == Status::Pending
+  end
+
   def submitted?
-    @status == Status::Submitted
+    return @status == Status::Submitted
+  end
+
+  def approved?
+    return @status == Status::Approved
+  end
+
+  def denied?
+    return @status == Status::Denied
+  end
+
+  def removed?
+    return @status == Status::Removed
+  end
+
+  def active?
+    return opened? || pending? || submitted?
   end
 
   def complete?
-    @status == Status::Approved ||
-    @status == Status::Denied ||
-    @status == Status::Removed
+    return !active?
   end
 
   def wrap?
-    @program == Program::Name::Wrap
+    return @program == Program::Name::Wrap
   end
 
   alias :can_complete? :submitted?
 
   def can_submit?
-    @status == Status::Opened || @status == Status::Pending
+    return opened? || pending?
   end
 
   def can_make_referral?(program)
-    @status == Status::Approved &&
+    approved? &&
     @program != program &&
     !@is_referred &&
     !@is_referrer

@@ -6,14 +6,13 @@ class Document < ::Entity
   prop(:classification)
   prop(:file, default: nil)
   prop(:source_url, default: nil)
-  props_end!
 
   # -- props/temp
   attr(:new_file)
 
   # -- lifetime
   def self.upload(source_url)
-    Document.new(
+    return Document.new(
       classification: :unknown,
       source_url: source_url
     )
@@ -26,14 +25,14 @@ class Document < ::Entity
   end
 
   def self.sign_contract(program_contract)
-    Document.new(
+    return Document.new(
       classification: :contract,
       source_url: program_contract.variant.to_s
     )
   end
 
   def self.copy(document)
-    Document.new(
+    return Document.new(
       classification: document.classification,
       file: document.file,
       source_url: document.source_url

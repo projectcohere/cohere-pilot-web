@@ -88,6 +88,7 @@ class Case
     def find_active_by_recipient(recipient_id)
       case_rec = Case::Record
         .where(status: [:opened, :pending, :submitted])
+        .order(updated_at: :desc)
         .find_by!(recipient_id: recipient_id)
 
       return entity_from(case_rec)
@@ -163,6 +164,8 @@ class Case
       case_rec = Case::Record.new
 
       # update the case record
+      assign_status(kase, case_rec)
+      assign_activity(kase, case_rec)
       assign_partners(kase, case_rec)
       assign_supplier_account(kase, case_rec)
 
@@ -196,6 +199,7 @@ class Case
 
       # update records
       assign_status(kase, case_rec)
+      assign_activity(kase, case_rec)
       assign_dhs_account(kase, recipient_rec)
 
       # save records
@@ -218,6 +222,7 @@ class Case
 
       # update records
       assign_status(kase, case_rec)
+      assign_activity(kase, case_rec)
       assign_supplier_account(kase, case_rec)
       assign_recipient_profile(kase, recipient_rec)
       assign_dhs_account(kase, recipient_rec)
@@ -240,8 +245,7 @@ class Case
       end
 
       # update records
-      c = kase
-      case_rec.received_message_at = c.received_message_at
+      assign_activity(kase, case_rec)
 
       # save records
       transaction do
@@ -280,18 +284,12 @@ class Case
       @domain_events.consume(kase.events)
     end
 
-    def save_new_attachments(kase)
-      create_documents!(kase.id.val, kase.new_documents)
-
-      # consume all entity events
-      @domain_events.consume(kase.events)
-    end
-
     def save_completed(kase)
       case_rec = kase.record
 
       # update records
       assign_status(kase, case_rec)
+      assign_activity(kase, case_rec)
 
       # save records
       case_rec.save!
@@ -319,6 +317,7 @@ class Case
       )
 
       assign_status(referred, referred_rec)
+      assign_activity(referred, referred_rec)
       assign_supplier_account(referred, referred_rec)
       assign_recipient_profile(referred, recipient_rec)
       assign_dhs_account(referred, recipient_rec)
@@ -353,6 +352,14 @@ class Case
       case_rec.assign_attributes(
         status: c.status,
         completed_at: c.completed_at
+      )
+    end
+
+    private def assign_activity(kase, case_rec)
+      c = kase
+      case_rec.assign_attributes(
+        has_new_activity: c.has_new_activity,
+        received_message_at: c.received_message_at,
       )
     end
 
@@ -452,6 +459,7 @@ class Case
         },
         is_referrer: is_referrer,
         is_referred: r.referrer_id.present?,
+        has_new_activity: r.has_new_activity,
         received_message_at: r.received_message_at,
         updated_at: r.updated_at,
         completed_at: r.completed_at

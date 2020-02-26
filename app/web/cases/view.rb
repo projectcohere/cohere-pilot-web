@@ -15,6 +15,10 @@ module Cases
     end
 
     # -- queries --
+    def id
+      @case.id
+    end
+
     def status
       @case.status.to_s.camelize
     end
@@ -29,6 +33,10 @@ module Cases
 
     def approved?
       @case.status == :approved
+    end
+
+    def has_new_activity
+      @case.has_new_activity
     end
 
     # -- queries/profile

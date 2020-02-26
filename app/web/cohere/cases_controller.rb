@@ -12,9 +12,9 @@ module Cohere
       @scope = params[:scope]
 
       case @scope
-      when "open"
+      when CaseScope::Open
         @cases = Case::Repo.get.find_all_opened
-      when "completed"
+      when CaseScope::Completed
         @cases = Case::Repo.get.find_all_completed
       end
     end

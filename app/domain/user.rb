@@ -8,12 +8,11 @@ class User < ::Entity
   prop(:email)
   prop(:role)
   prop(:confirmation_token, default: nil)
-  props_end!
 
   # -- lifetime --
   def self.invite(invitation)
     user = User.new(email: invitation.email, role: invitation.role)
-    user.events << Events::DidInvite.from_user(user)
+    user.events.add(Events::DidInvite.from_user(user))
     return user
   end
 

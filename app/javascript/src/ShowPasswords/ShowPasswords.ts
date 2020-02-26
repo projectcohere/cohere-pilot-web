@@ -1,7 +1,7 @@
-import { IComponent } from "./Component"
+import { IComponent } from "../Core"
 
 // -- impls --
-export class Passwords implements IComponent {
+export class ShowPasswords implements IComponent {
   isOnLoad = true
 
   // -- props --

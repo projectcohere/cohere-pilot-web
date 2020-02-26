@@ -1,11 +1,9 @@
 .CaseCell {
   @extend .u-panel-cozy;
 
-  &-name {
-    display: inline-block;
-    font-size: $font-size3;
-  }
+  position: relative;
 
+  // -- row --
   &-row {
     display: flex;
     align-items: baseline;
@@ -17,6 +15,12 @@
 
   &-row:last-child {
     justify-content: space-between;
+  }
+
+  // -- elements --
+  &-name {
+    display: inline-block;
+    font-size: $font-size3;
   }
 
   &-organizations {
@@ -39,4 +43,15 @@
     margin-left: $spacing5;
     color: transparent;
   }
+
+  // -- variants --
+  &.is-active &-activity {
+    $size: 8px;
+    align-self: center;
+    width: $size;
+    height: $size;
+    background-color: $brand-secondary1;
+    border-radius: $size / 2;
+  }
+
 }
