@@ -24,6 +24,6 @@ class MessagesController < ApplicationController
       request.raw_post
     ))
 
-    signature == evaluated
+    return signature == evaluated
   end
 end

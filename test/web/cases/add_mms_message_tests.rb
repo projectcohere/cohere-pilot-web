@@ -4,10 +4,8 @@ require "minitest/mock"
 module Cases
   class AddMmsMessageTests < ActiveSupport::TestCase
     test "uploads documents from message attachments" do
-      message = Mms::Message.new(
-        sender: Mms::Sender.new(
-          phone_number: "111-222-3333",
-        ),
+      message = Mms::Message.stub(
+        sender_phone_number: "111-222-3333",
         attachments: [
           Mms::Attachment.new(
             url: "https://website.com/image.jpg",
@@ -43,10 +41,8 @@ module Cases
     end
 
     test "raises an error if the case is missing" do
-      message = Mms::Message.new(
-        sender: Mms::Sender.new(
-          phone_number: "111-222-3333"
-        ),
+      message = Mms::Message.stub(
+        sender_phone_number: "111-222-3333",
         attachments: [
           Mms::Attachment.new(
             url: "https://website.com/image.jpg"

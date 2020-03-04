@@ -3,13 +3,14 @@ require "test_helper"
 class MessagesTests < ActionDispatch::IntegrationTest
   def setup
     # if you change the json, the signature below will also change. you'll need
-    # to copy the `evaluated` signature from FrontController#is_signed?...
+    # to copy the `evaluated` signature from MessagesController#is_signed?...
     @json = <<-JSON.chomp
       {
         "target": {
           "data": {
             "recipients": [
-              { "handle": "+1#{recipients(:recipient_1).phone_number}", "role": "from" }
+              { "handle": "+1#{recipients(:recipient_1).phone_number}", "role": "from" },
+              { "handle": "+1#{ENV["FRONT_API_PHONE_NUMBER"]}", "role": "to" }
             ],
             "attachments": [
               { "url": "https://api2.frontapp.com/download/fil_atg8kcn" }
@@ -20,7 +21,7 @@ class MessagesTests < ActionDispatch::IntegrationTest
     JSON
 
     # ...and paste it here
-    @signature = "q6gpVNetS/5dH4e0km0nMttDW6I="
+    @signature = "qMrKrW2lybzD/7xXxKjBEFVOYX0="
   end
 
   # -- messages --

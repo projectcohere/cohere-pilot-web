@@ -182,9 +182,7 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     text_message = Mms::Message.stub(
-      sender: Mms::Sender.stub(
-        phone_number: "1112223333",
-      ),
+      sender_phone_number: "1112223333",
     )
 
     kase.add_mms_message(text_message)
@@ -207,9 +205,7 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     text_message = Mms::Message.stub(
-      sender: Mms::Sender.stub(
-        phone_number: "1112223333",
-      ),
+      sender_phone_number: "1112223333",
       attachments: [
         Mms::Attachment.stub(url: "https://website.com/image.jpg")
       ],
@@ -238,7 +234,8 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     text_message = Mms::Message.stub(
-      sender: Mms::Sender.stub,
+      sender_phone_number: ENV["FRONT_API_PHONE_NUMBER"],
+      receiver_phone_number: "1112223333",
       attachments: [
         Mms::Attachment.stub(url: "https://website.com/image.jpg")
       ],

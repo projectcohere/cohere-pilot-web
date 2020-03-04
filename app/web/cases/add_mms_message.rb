@@ -14,9 +14,11 @@ module Cases
 
     # -- command/helpers
     private def find_case_by_message(message)
-      kase = @case_repo.find_by_phone_number(message.sender.phone_number)
+      case_phone_number = message.recipient_phone_number
+
+      kase = @case_repo.find_by_phone_number(case_phone_number)
       if kase.nil?
-        raise "No case found for phone number #{message.sender.phone_number}"
+        raise "No case found for phone number #{case_phone_number}"
       end
 
       return kase

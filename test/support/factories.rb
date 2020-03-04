@@ -20,7 +20,6 @@ module Support
         Chat::Recipient,
         Chat::Notification,
         Mms::Message,
-        Mms::Sender,
         Mms::Attachment,
       ]
 
