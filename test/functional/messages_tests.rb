@@ -21,7 +21,7 @@ class MessagesTests < ActionDispatch::IntegrationTest
     JSON
 
     # ...and paste it here
-    @signature = "qMrKrW2lybzD/7xXxKjBEFVOYX0="
+    @signature = "0942mwgeczvy9EyclPWEOumpgqE="
   end
 
   # -- messages --
