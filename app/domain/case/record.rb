@@ -7,7 +7,7 @@ class Case
     belongs_to(:enroller, class_name: "::Enroller::Record")
     belongs_to(:supplier, class_name: "::Supplier::Record")
     belongs_to(:referrer, class_name: "::Supplier::Record", optional: true)
-    has_many(:documents, foreign_key: "case_id", class_name: "::Document::Record")
+    has_many(:documents, foreign_key: "case_id", class_name: "::Document::Record", dependent: :destroy)
 
     # -- program --
     enum(program: Program::Name.all)
