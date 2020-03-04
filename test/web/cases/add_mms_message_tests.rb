@@ -6,16 +6,25 @@ module Cases
     test "uploads documents from message attachments" do
       message = Mms::Message.new(
         sender: Mms::Sender.new(
-          phone_number: "111-222-3333"
+          phone_number: "111-222-3333",
         ),
         attachments: [
           Mms::Attachment.new(
-            url: "https://website.com/image.jpg"
-          )
-        ]
+            url: "https://website.com/image.jpg",
+          ),
+        ],
       )
 
-      kase = Case.stub
+      kase = Case.stub(
+        recipient: Case::Recipient.stub(
+          profile: Recipient::Profile.stub(
+            phone: Recipient::Phone.stub(
+              number: "111-222-3333",
+            ),
+          ),
+        ),
+      )
+
       case_repo = Minitest::Mock.new
         .expect(
           :find_by_phone_number,

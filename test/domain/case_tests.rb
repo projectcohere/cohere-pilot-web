@@ -165,27 +165,58 @@ class CaseTests < ActiveSupport::TestCase
   end
 
   # -- commands/messages
-  test "adds the first mms message" do
-    kase = Case.stub
-
-    kase.add_mms_message(Mms::Message.stub)
-    assert_not_nil(kase.received_message_at)
-
-    event = kase.events[0]
-    assert_instances_of(kase.events, [Case::Events::DidReceiveMessage])
-    assert(event.is_first)
+  def stub_recipient_with_phone_number(phone_number)
+    return Case::Recipient.stub(
+      profile: Recipient::Profile.stub(
+        phone: Recipient::Phone.stub(
+          number: phone_number,
+        ),
+      ),
+    )
   end
 
-  test "adds an mms message and its attachments" do
-    kase = Case.stub
+  test "adds the first text message from a recipient" do
+    kase = Case.stub(
+      status: Case::Status::Opened,
+      recipient: stub_recipient_with_phone_number("1112223333"),
+    )
+
     text_message = Mms::Message.stub(
-      sender: Mms::Sender.stub,
-      attachments: [
-        Mms::Attachment.stub(url: "https://website.com/image.jpg")
-      ]
+      sender: Mms::Sender.stub(
+        phone_number: "1112223333",
+      ),
     )
 
     kase.add_mms_message(text_message)
+    assert_not_nil(kase.received_message_at)
+    assert(kase.has_new_activity)
+
+    assert_instances_of(kase.events, [
+      Case::Events::DidReceiveMessage,
+      Case::Events::DidChangeActivity,
+    ])
+
+    event = kase.events[0]
+    assert(event.is_first)
+  end
+
+  test "adds a text message from a recipient and its attachments" do
+    kase = Case.stub(
+      status: Case::Status::Opened,
+      recipient: stub_recipient_with_phone_number("1112223333"),
+    )
+
+    text_message = Mms::Message.stub(
+      sender: Mms::Sender.stub(
+        phone_number: "1112223333",
+      ),
+      attachments: [
+        Mms::Attachment.stub(url: "https://website.com/image.jpg")
+      ],
+    )
+
+    kase.add_mms_message(text_message)
+    assert(kase.has_new_activity)
 
     new_document = kase.new_documents[0]
     assert_length(kase.new_documents, 1)
@@ -195,7 +226,28 @@ class CaseTests < ActiveSupport::TestCase
     assert_instances_of(kase.events, [
       Case::Events::DidUploadMessageAttachment,
       Case::Events::DidReceiveMessage,
+      Case::Events::DidChangeActivity,
     ])
+  end
+
+  test "adds a text message from cohere" do
+    kase = Case.stub(
+      status: Case::Status::Opened,
+      has_new_activity: true,
+      recipient: stub_recipient_with_phone_number("1112223333"),
+    )
+
+    text_message = Mms::Message.stub(
+      sender: Mms::Sender.stub,
+      attachments: [
+        Mms::Attachment.stub(url: "https://website.com/image.jpg")
+      ],
+    )
+
+    kase.add_mms_message(text_message)
+    assert_not(kase.has_new_activity)
+    assert_blank(kase.new_documents)
+    assert_instances_of(kase.events, [Case::Events::DidChangeActivity])
   end
 
   test "adds a chat message from a recipient and its attachments" do
