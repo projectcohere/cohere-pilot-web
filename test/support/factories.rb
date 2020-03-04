@@ -20,8 +20,7 @@ module Support
         Chat::Recipient,
         Chat::Notification,
         Mms::Message,
-        Mms::Message::Sender,
-        Mms::Message::Attachment,
+        Mms::Attachment,
       ]
 
       types_to_stub.each do |type_to_stub|

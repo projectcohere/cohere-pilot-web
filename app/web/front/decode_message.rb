@@ -5,26 +5,26 @@ module Front
       json = ActiveSupport::JSON.decode(json_string)
       json["target"]["data"].then { |json|
         Mms::Message.new(
-          sender: decode_sender(json),
-          attachments: decode_attachments(json)
+          sender_phone_number: decode_phone_number(json, "from"),
+          receiver_phone_number: decode_phone_number(json, "to"),
+          attachments: decode_attachments(json),
         )
       }
     end
 
     # -- command/helpers
-    private def decode_sender(json)
-      json = json["recipients"]
-        .find { |j| j["role"] == "from" }
+    private def decode_phone_number(json, role)
+      phone_number = json["recipients"]
+        .find { |j| j["role"] == role }
+        .dig("handle")
 
-      Mms::Message::Sender::new(
-        phone_number: json["handle"].delete_prefix("+1")
-      )
+      return phone_number.delete_prefix("+1")
     end
 
     private def decode_attachments(json)
       json = json["attachments"]
       json.map do |j|
-        Mms::Message::Attachment.new(url: j["url"])
+        Mms::Attachment.new(url: j["url"])
       end
     end
   end

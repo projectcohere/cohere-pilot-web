@@ -2,20 +2,27 @@ require "test_helper"
 require "minitest/mock"
 
 module Cases
-  class UploadMessageAttachmentsTests < ActiveSupport::TestCase
+  class AddMmsMessageTests < ActiveSupport::TestCase
     test "uploads documents from message attachments" do
-      message = Mms::Message.new(
-        sender: Mms::Message::Sender.new(
-          phone_number: "111-222-3333"
-        ),
+      message = Mms::Message.stub(
+        sender_phone_number: "111-222-3333",
         attachments: [
-          Mms::Message::Attachment.new(
-            url: "https://website.com/image.jpg"
-          )
-        ]
+          Mms::Attachment.new(
+            url: "https://website.com/image.jpg",
+          ),
+        ],
       )
 
-      kase = Case.stub
+      kase = Case.stub(
+        recipient: Case::Recipient.stub(
+          profile: Recipient::Profile.stub(
+            phone: Recipient::Phone.stub(
+              number: "111-222-3333",
+            ),
+          ),
+        ),
+      )
+
       case_repo = Minitest::Mock.new
         .expect(
           :find_by_phone_number,
@@ -28,18 +35,16 @@ module Cases
           [kase]
         )
 
-      upload = UploadMessageAttachments.new(case_repo: case_repo)
+      upload = AddMmsMessage.new(case_repo: case_repo)
       upload.(message)
       assert_mock(case_repo)
     end
 
     test "raises an error if the case is missing" do
-      message = Mms::Message.new(
-        sender: Mms::Message::Sender.new(
-          phone_number: "111-222-3333"
-        ),
+      message = Mms::Message.stub(
+        sender_phone_number: "111-222-3333",
         attachments: [
-          Mms::Message::Attachment.new(
+          Mms::Attachment.new(
             url: "https://website.com/image.jpg"
           )
         ]
@@ -48,7 +53,7 @@ module Cases
       case_repo = Minitest::Mock.new
         .expect(:find_by_phone_number, nil, ["111-222-3333"])
 
-      upload = UploadMessageAttachments.new(case_repo: case_repo)
+      upload = AddMmsMessage.new(case_repo: case_repo)
 
       assert_raises do
         upload.(message)

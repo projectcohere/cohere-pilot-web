@@ -136,15 +136,21 @@ class Case < ::Entity
 
   # -- commands/messages
   def add_mms_message(message)
-    # upload mms message attachments
-    message.attachments&.each do |attachment|
-      new_document = Document.upload(attachment.url)
-      add_document(new_document)
-      @events.add(Events::DidUploadMessageAttachment.from_entity(self, new_document))
+    sent_by_recipient = message.sent_by?(@recipient.profile.phone.number)
+
+    if sent_by_recipient
+      # upload mms message attachments
+      message.attachments&.each do |attachment|
+        new_document = Document.upload(attachment.url)
+        add_document(new_document)
+        @events.add(Events::DidUploadMessageAttachment.from_entity(self, new_document))
+      end
+
+      # track messages
+      track_message_receipt
     end
 
-    # track messages
-    track_message_receipt
+    track_new_activity(sent_by_recipient)
   end
 
   def add_chat_message(message)
