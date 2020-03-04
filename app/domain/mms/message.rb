@@ -9,7 +9,7 @@ module Mms
       if @sender_phone_number != ENV["FRONT_API_PHONE_NUMBER"]
         return @sender_phone_number
       else
-        return @recipient_phone_number
+        return @receiver_phone_number
       end
     end
 
