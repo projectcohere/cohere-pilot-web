@@ -16,7 +16,7 @@ module Front
       json = json["recipients"]
         .find { |j| j["role"] == "from" }
 
-      Mms::Message::Sender::new(
+      Mms::Sender::new(
         phone_number: json["handle"].delete_prefix("+1")
       )
     end
@@ -24,7 +24,7 @@ module Front
     private def decode_attachments(json)
       json = json["attachments"]
       json.map do |j|
-        Mms::Message::Attachment.new(url: j["url"])
+        Mms::Attachment.new(url: j["url"])
       end
     end
   end

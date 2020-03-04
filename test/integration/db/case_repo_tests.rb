@@ -347,7 +347,7 @@ module Db
       kase = Case::Repo.map_record(case_rec)
       kase.add_mms_message(Mms::Message.stub(
         attachments: [
-          Mms::Message::Attachment.new(
+          Mms::Attachment.new(
             url: Faker::Internet.url
           )
         ]

@@ -2,14 +2,14 @@ require "test_helper"
 require "minitest/mock"
 
 module Cases
-  class UploadMessageAttachmentsTests < ActiveSupport::TestCase
+  class AddMmsMessageTests < ActiveSupport::TestCase
     test "uploads documents from message attachments" do
       message = Mms::Message.new(
-        sender: Mms::Message::Sender.new(
+        sender: Mms::Sender.new(
           phone_number: "111-222-3333"
         ),
         attachments: [
-          Mms::Message::Attachment.new(
+          Mms::Attachment.new(
             url: "https://website.com/image.jpg"
           )
         ]
@@ -28,18 +28,18 @@ module Cases
           [kase]
         )
 
-      upload = UploadMessageAttachments.new(case_repo: case_repo)
+      upload = AddMmsMessage.new(case_repo: case_repo)
       upload.(message)
       assert_mock(case_repo)
     end
 
     test "raises an error if the case is missing" do
       message = Mms::Message.new(
-        sender: Mms::Message::Sender.new(
+        sender: Mms::Sender.new(
           phone_number: "111-222-3333"
         ),
         attachments: [
-          Mms::Message::Attachment.new(
+          Mms::Attachment.new(
             url: "https://website.com/image.jpg"
           )
         ]
@@ -48,7 +48,7 @@ module Cases
       case_repo = Minitest::Mock.new
         .expect(:find_by_phone_number, nil, ["111-222-3333"])
 
-      upload = UploadMessageAttachments.new(case_repo: case_repo)
+      upload = AddMmsMessage.new(case_repo: case_repo)
 
       assert_raises do
         upload.(message)

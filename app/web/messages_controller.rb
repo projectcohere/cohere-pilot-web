@@ -10,7 +10,7 @@ class MessagesController < ApplicationController
     end
 
     message = Front::DecodeMessage.new.(request.raw_post)
-    Cases::UploadMessageAttachments.new.(message)
+    Cases::AddMmsMessage.new.(message)
   end
 
   # -- queries --

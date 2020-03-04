@@ -179,9 +179,9 @@ class CaseTests < ActiveSupport::TestCase
   test "adds an mms message and its attachments" do
     kase = Case.stub
     text_message = Mms::Message.stub(
-      sender: Mms::Message::Sender.stub,
+      sender: Mms::Sender.stub,
       attachments: [
-        Mms::Message::Attachment.stub(url: "https://website.com/image.jpg")
+        Mms::Attachment.stub(url: "https://website.com/image.jpg")
       ]
     )
 
