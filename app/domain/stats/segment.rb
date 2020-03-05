@@ -3,6 +3,12 @@ class Stats
     # -- props --
     prop(:filter)
     prop(:count)
+    prop(:total)
+
+    # -- queries --
+    def ratio
+      return @count.to_f / @total
+    end
 
     # -- comparison --
     include Comparable

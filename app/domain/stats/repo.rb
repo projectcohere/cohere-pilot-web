@@ -8,8 +8,10 @@ class Stats
     # -- queries --
     def find_current
       case_recs = ::Case::Record
-        .where(program: Program::Name::Meap)
-        .where(status: [:approved, :denied]
+        .where(
+          program: Program::Name::Meap,
+          status: [::Case::Status::Approved, ::Case::Status::Denied],
+        )
 
       supplier_recs = ::Supplier::Record
         .where(program: Program::Name::Meap)

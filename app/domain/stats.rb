@@ -22,7 +22,7 @@ class Stats < ::Value
   def cases_by_supplier
     segments = @cases
       .group_by(&:supplier)
-      .map { |s, cs| Segment.new(filter: s, count: cs.count) }
+      .map { |s, cs| Segment.new(filter: s, count: cs.count, total: @cases.count) }
 
     return segments.sort
   end

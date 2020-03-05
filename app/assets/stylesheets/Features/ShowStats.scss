@@ -1,0 +1,46 @@
+.ShowStats {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing0 0;
+
+  > * {
+    padding: 0 $spacing0;
+  }
+
+  // -- stats --
+  &-stats {
+    display: flex;
+
+    > * + * {
+      margin-left: 5vw;
+    }
+  }
+
+  // -- quotes --
+  &-quotes[class] {
+    align-self: stretch;
+    display: flex;
+    margin-top: $spacing0;
+    padding: $spacing3 0;
+    background-color: $color-field;
+
+    > * + * {
+      margin-left: $spacing0;
+    }
+  }
+
+  &-quote {
+    min-width: 100%;
+    font-size: 5vw;
+    text-align: center;
+  }
+
+  // -- charts --
+  &-charts {
+    display: flex;
+    justify-content: center;
+    margin-top: $spacing0;
+  }
+}

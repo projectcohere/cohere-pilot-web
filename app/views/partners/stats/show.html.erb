@@ -1,6 +1,30 @@
-<%= pie_tag do %>
-  <%= pie_slice_tag(0.1, offset: 0.0, label: "R") %>
-  <%= pie_slice_tag(0.2, offset: 0.1, label: "G") %>
-  <%= pie_slice_tag(0.3, offset: 0.3, label: "B") %>
-  <%= pie_slice_tag(0.4, offset: 0.6, label: "A") %>
-<%- end %>
+<main class="ShowStats">
+  <ul class="ShowStats-stats">
+    <li class="Stat">
+      <p class="Stat-value"><%= @stats.min_minutes_to_enroll %> mins</p>
+      <label class="Stat-label">Fastest Time to Enroll</label>
+    </li>
+    <li class="Stat">
+      <p class="Stat-value"><%= @stats.avg_minutes_to_enroll %> mins</p>
+      <label class="Stat-label">Average Time to Enroll</label>
+    </li>
+    <li class="Stat">
+      <p class="Stat-value"><%= @stats.percent_approved %>%</p>
+      <label class="Stat-label">Approved</label>
+    </li>
+  </ul>
+
+  <ul class="ShowStats-quotes">
+    <li class="ShowStats-quote">"Cohere is really great."</li>
+    <li class="ShowStats-quote">"It was so easy!"</li>
+  </ul>
+
+  <section class="ShowStats-charts">
+    <%= pie_tag(class: "ShowStats-suppliers") do %>
+      <%- @stats.cases_by_supplier.reduce(0.0) do |total, segment| %>
+        <%= pie_slice_tag(segment.ratio, offset: total, label: segment.filter.name) %>
+        <%- segment.ratio + total %>
+      <%- end %>
+    <%- end %>
+  </section>
+</main>

@@ -15,36 +15,75 @@ module Partners
       L_H = 1.5
     end
 
-    def pie_tag(&children)
+    def pie_tag(**kwargs, &children)
+      a_class = kwargs.delete(:class)
+
       # pre-render slices
       slice_tags = capture(&children)
 
       # render pie with background
-      return tag.svg(class: "Pie", viewBox: "0 0 #{Pie::D} #{Pie::D}") do
+      return tag.svg(class: cx("Pie", a_class), viewBox: "0 0 #{Pie::D} #{Pie::D}", **kwargs) do
         tag.circle(class: "Pie-background", r: Pie::R, cx: Pie::R, cy: Pie::R) +
         slice_tags
       end
     end
 
-    def pie_slice_tag(percent, offset:, label:)
-      slice_tag = tag.circle(
+    def pie_slice_tag(ratio, offset:, label:)
+      # orient pie so 0 is the vertical
+      offset -= 0.25
+
+      # render slice
+      slice_d = "
+        M #{point(offset)}
+        A #{point(0, r: 0)}, 0, #{ratio >= 0.5 ? 1 : 0}, 1, #{point((offset + ratio))}
+        L #{point(0, r: 0)}
+      "
+
+      slice_tag = tag.path(
         class: "Pie-slice",
-        r: Pie::R_2, cx: Pie::R, cy: Pie::R,
-        "stroke-width": Pie::R,
-        "stroke-dasharray": "#{percent * Pie::C_2} #{Pie::C_2}",
-        transform: "rotate(#{offset * 360} #{Pie::R} #{Pie::R})",
+        d: slice_d.strip,
       )
 
-      label_a = (offset + percent / 2) * 2 * Math::PI
-      label_tag = tag.text(
+      # render text
+      hover_tag = tag.text(
         label,
+        class: "Pie-hover",
+        **point((offset + ratio / 2), r: Pie::R_2, dy: 0.8).to_h,
+        "font-size": 0.8,
+      )
+
+      label_tag = tag.text(
+        "#{(ratio * 100).round}%",
         class: "Pie-label",
-        x: Pie::R + Pie::R * Math.cos(label_a),
-        y: Pie::R + Pie::R * Math.sin(label_a) + Pie::L_H * 0.5,
+        **point((offset + ratio / 2), r: Pie::R_2, dy: -0.8).to_h,
         "font-size": Pie::L_H,
       )
 
-      return slice_tag + label_tag
+      return slice_tag + hover_tag + label_tag
+    end
+
+    # -- impls/helpers
+    class Point < ::Value
+      # -- props --
+      prop(:x)
+      prop(:y)
+
+      # -- queries --
+      def to_s
+        return "#{x} #{y}"
+      end
+
+      def to_h
+        return { x: x, y: y }
+      end
+    end
+
+    private def point(ratio, r: Pie::R, dy: 0)
+      angle = ratio * Math::PI * 2
+      return Point.new(
+        x: (Pie::R + r * Math.cos(angle)).round(2),
+        y: (Pie::R + r * Math.sin(angle)).round(2) + dy,
+      )
     end
   end
 end
