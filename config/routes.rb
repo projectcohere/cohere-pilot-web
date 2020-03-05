@@ -8,6 +8,7 @@ Rails.application.routes.draw do
 
     # users
     get("/partner", to: redirect("/sign-in"))
+    get("/partner/stats", to: "partners/stats#show")
 
     scope(module: "users") do
       get("/sign-in", to: "sessions#new")
