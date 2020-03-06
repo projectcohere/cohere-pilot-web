@@ -21,9 +21,9 @@
 
   <section class="ShowStats-charts">
     <%= pie_tag(class: "ShowStats-suppliers") do %>
-      <%- @stats.cases_by_supplier.reduce(0.0) do |total, segment| %>
-        <%= pie_slice_tag(segment.ratio, offset: total, label: segment.filter.name) %>
-        <%- segment.ratio + total %>
+      <%- @stats.cases_by_supplier.reduce(0.0) do |total, quantity| %>
+        <%= pie_slice_tag(quantity.ratio, offset: total, label: quantity.filter.name) %>
+        <%- quantity.ratio + total %>
       <%- end %>
     <%- end %>
   </section>

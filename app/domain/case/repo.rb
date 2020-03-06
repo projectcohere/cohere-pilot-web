@@ -95,6 +95,14 @@ class Case
     end
 
     # -- queries/many
+    def find_all_by_ids(case_ids)
+      case_recs = Case::Record
+        .where(id: case_ids)
+        .includes(:recipient)
+
+      entities_from(case_recs)
+    end
+
     def find_all_opened
       case_recs = Case::Record
         .where(completed_at: nil)
@@ -461,6 +469,7 @@ class Case
         is_referred: r.referrer_id.present?,
         has_new_activity: r.has_new_activity,
         received_message_at: r.received_message_at,
+        created_at: r.created_at,
         updated_at: r.updated_at,
         completed_at: r.completed_at
       )

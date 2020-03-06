@@ -1,6 +1,7 @@
 class Stats < ::Value
   # -- props --
   prop(:cases)
+  prop(:durations)
 
   # -- queries --
   def min_minutes_to_enroll
@@ -20,10 +21,10 @@ class Stats < ::Value
   end
 
   def cases_by_supplier
-    segments = @cases
+    quantities = @cases
       .group_by(&:supplier)
-      .map { |s, cs| Segment.new(filter: s, count: cs.count, total: @cases.count) }
+      .map { |s, cs| Quantity.new(filter: s, count: cs.count, total: @cases.count) }
 
-    return segments.sort
+    return quantities.sort
   end
 end

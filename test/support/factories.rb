@@ -24,7 +24,9 @@ module Support
         Stats,
         Stats::Case,
         Stats::Supplier,
-        Stats::Segment,
+        Stats::Durations,
+        Stats::Duration,
+        Stats::Quantity,
       ]
 
       types_to_stub.each do |type_to_stub|

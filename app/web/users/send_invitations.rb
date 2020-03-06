@@ -1,7 +1,7 @@
 require "csv"
 
 module Users
-  class SendInvitations
+  class SendInvitations < ::Command
     # -- lifetime --
     def initialize(
       user_repo: User::Repo.get,

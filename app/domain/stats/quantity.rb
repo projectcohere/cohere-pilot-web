@@ -1,5 +1,5 @@
 class Stats
-  class Segment < ::Value
+  class Quantity < ::Value
     # -- props --
     prop(:filter)
     prop(:count)
@@ -14,11 +14,11 @@ class Stats
     include Comparable
 
     def ==(other)
-      return other.is_a?(Segment) && @filter == other.filter && @count == other.count
+      return other.is_a?(Quantity) && @filter == other.filter && @count == other.count
     end
 
     def <=>(other)
-      return other.is_a?(Segment) ? @filter <=> other.filter : other
+      return other.is_a?(Quantity) ? @filter <=> other.filter : other
     end
   end
 end
