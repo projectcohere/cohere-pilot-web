@@ -6,13 +6,16 @@
       class: "Header-logo",
     )
   %>
-  <div class="Header-user">
-    <%= current_user.email %>
-    <%=
-      button_to(t(".sign-out"), sign_out_path,
-        method: :delete,
-        class: "Header-signOut Link"
-      )
-    %>
-  </div>
+
+  <% if signed_in? %>
+    <div class="Header-user">
+      <%= current_user.email %>
+      <%=
+        button_to(t(".sign-out"), sign_out_path,
+          method: :delete,
+          class: "Header-signOut Link"
+        )
+      %>
+    </div>
+  <% end %>
 </header>

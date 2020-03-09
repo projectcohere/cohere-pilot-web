@@ -6,6 +6,7 @@ module Partners
     )
 
     def show
+      show_header!
       @stats = ::Stats::Repo.get.find_current
     end
   end

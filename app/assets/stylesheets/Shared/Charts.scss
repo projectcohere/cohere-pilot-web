@@ -2,11 +2,6 @@
 .PieChart {
   overflow: visible;
 
-  // TODO: extract
-  width: 300px;
-  height: 300px;
-  margin: 20px;
-
   &-background {
     fill: papayawhip;
   }
@@ -45,12 +40,8 @@
   display: grid;
   grid-auto-columns: 1fr;
   grid-template-rows: 1fr 1px max-content;
+  column-gap: $spacing4;
   justify-items: center;
-
-  // TODO: extract
-  width: 300px;
-  height: 300px;
-  margin: 20px;
 
   &-bar {
     grid-row: 1;

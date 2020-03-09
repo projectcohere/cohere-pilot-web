@@ -20,27 +20,44 @@
 
   // -- quotes --
   &-quotes[class] {
-    align-self: stretch;
-    display: flex;
+    display: grid;
+    grid-template-rows: max-content;
+    align-items: center;
+    width: 100%;
     margin-top: $spacing0;
     padding: $spacing3 0;
     background-color: $color-field;
+  }
+
+  &-quote {
+    grid-row: 1;
+    grid-column: 1;
+    font-size: 5vw;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.5s;
+
+    &.is-visible {
+      opacity: 1;
+    }
+  }
+
+  // -- charts --
+  &-charts[class] {
+    display: flex;
+    justify-content: center;
+    margin-top: $spacing0;
 
     > * + * {
       margin-left: $spacing0;
     }
   }
 
-  &-quote {
-    min-width: 100%;
-    font-size: 5vw;
-    text-align: center;
-  }
-
-  // -- charts --
-  &-charts {
-    display: flex;
-    justify-content: center;
-    margin-top: $spacing0;
+  &-chart {
+    display: grid;
+    row-gap: 30px;
+    width: 300px;
+    grid-template-rows: max-content 300px;
+    justify-items: center;
   }
 }

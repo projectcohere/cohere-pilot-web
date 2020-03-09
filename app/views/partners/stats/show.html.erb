@@ -14,23 +14,29 @@
     </li>
   </ul>
 
-  <ul class="ShowStats-quotes">
-    <li class="ShowStats-quote">"Cohere is really great."</li>
+  <ul id="stats--quotes" class="ShowStats-quotes">
+    <li class="ShowStats-quote is-visible">"Cohere is really great."</li>
     <li class="ShowStats-quote">"It was so easy!"</li>
   </ul>
 
-  <section class="ShowStats-charts">
-    <%= pie_chart_tag(class: "ShowStats-suppliers") do %>
-      <%- @stats.num_cases_by_supplier.reduce(0.0) do |filled, quantity| %>
-        <%= pie_slice_tag(quantity.ratio, offset: filled, label: quantity.filter.name) %>
-        <%- quantity.ratio + filled %>
+  <ul class="ShowStats-charts">
+    <li class="ShowStats-chart">
+      <label class="ShowStats-chartTitle">Number of Cases by Utility</label>
+      <%= pie_chart_tag(class: "ShowStats-suppliers") do %>
+        <%- @stats.num_cases_by_supplier.reduce(0.0) do |filled, quantity| %>
+          <%= pie_slice_tag(quantity.ratio, offset: filled, label: quantity.filter.name) %>
+          <%- quantity.ratio + filled %>
+        <%- end %>
       <%- end %>
-    <%- end %>
+    </li>
 
-    <%= bar_chart_tag(class: "ShowStats-partners") do %>
-      <%- @stats.avg_minutes_by_partner.each do |quantity| %>
-        <%= bar_tag("#{quantity.count} mins", quantity.ratio, label: quantity.filter) %>
+    <li class="ShowStats-chart">
+      <label class="ShowStats-chartTitle">Average Contribution by Partner</label>
+      <%= bar_chart_tag(class: "ShowStats-partners") do %>
+        <%- @stats.avg_minutes_by_partner.each do |quantity| %>
+          <%= bar_tag("#{quantity.count} mins", quantity.ratio, label: quantity.filter) %>
+        <%- end %>
       <%- end %>
-    <%- end %>
-  </section>
+    </li>
+  </ul>
 </main>
