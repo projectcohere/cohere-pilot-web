@@ -1,7 +1,7 @@
 module Partners
   module StatsHelper
     # -- impls --
-    # -- impls/elements
+    # -- impls/pie-chart
     module Pie
       # the pie radius
       R = 10
@@ -15,15 +15,15 @@ module Partners
       L_H = 1.5
     end
 
-    def pie_tag(**kwargs, &children)
+    def pie_chart_tag(**kwargs, &children)
       a_class = kwargs.delete(:class)
 
       # pre-render slices
       slice_tags = capture(&children)
 
       # render pie with background
-      return tag.svg(class: cx("Pie", a_class), viewBox: "0 0 #{Pie::D} #{Pie::D}", **kwargs) do
-        tag.circle(class: "Pie-background", r: Pie::R, cx: Pie::R, cy: Pie::R) +
+      return tag.svg(class: cx(a_class, "PieChart"), viewBox: "0 0 #{Pie::D} #{Pie::D}", **kwargs) do
+        tag.circle(class: "PieChart-background", r: Pie::R, cx: Pie::R, cy: Pie::R) +
         slice_tags
       end
     end
@@ -40,21 +40,21 @@ module Partners
       "
 
       slice_tag = tag.path(
-        class: "Pie-slice",
+        class: "PieChart-slice",
         d: slice_d.strip,
       )
 
       # render text
       hover_tag = tag.text(
         label,
-        class: "Pie-hover",
+        class: "PieChart-hover",
         **point((offset + ratio / 2), r: Pie::R_2, dy: 0.8).to_h,
         "font-size": 0.8,
       )
 
       label_tag = tag.text(
         "#{(ratio * 100).round}%",
-        class: "Pie-label",
+        class: "PieChart-label",
         **point((offset + ratio / 2), r: Pie::R_2, dy: -0.8).to_h,
         "font-size": Pie::L_H,
       )
@@ -62,7 +62,7 @@ module Partners
       return slice_tag + hover_tag + label_tag
     end
 
-    # -- impls/helpers
+    # -- impls/pie-chart/helpers
     class Point < ::Value
       # -- props --
       prop(:x)
@@ -84,6 +84,26 @@ module Partners
         x: (Pie::R + r * Math.cos(angle)).round(2),
         y: (Pie::R + r * Math.sin(angle)).round(2) + dy,
       )
+    end
+
+    # -- impls/bar-chart
+    def bar_chart_tag(**kwargs, &children)
+      a_class = kwargs.delete(:class)
+      return tag.div(class: cx(a_class, "BarChart"), **kwargs, &children)
+    end
+
+    def bar_tag(value, ratio, label:)
+      bar_tag = tag.div(
+        class: "BarChart-bar",
+        style: "height: #{(ratio * 100).round(2)}%;"
+      )
+
+      label_tag = tag.label(class: "BarChart-label") do
+        tag.p(value, class: "BarChart-value") +
+        tag.p(label, class: "BarChart-filter")
+      end
+
+      bar_tag + label_tag
     end
   end
 end

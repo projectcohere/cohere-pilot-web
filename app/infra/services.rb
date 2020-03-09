@@ -42,7 +42,7 @@ class Services < ActiveSupport::CurrentAttributes
 
     if service.nil?
       service = Redis.new
-      self.redis = redis
+      self.redis = service
     end
 
     return service

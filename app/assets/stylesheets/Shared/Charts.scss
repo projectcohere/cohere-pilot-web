@@ -1,5 +1,5 @@
-// .Pie
-.Pie {
+// .PieChart
+.PieChart {
   overflow: visible;
 
   // TODO: extract
@@ -37,5 +37,60 @@
 
   &-label {
     text-anchor: middle;
+  }
+}
+
+// .BarChart
+.BarChart {
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-template-rows: 1fr 1px max-content;
+  justify-items: center;
+
+  // TODO: extract
+  width: 300px;
+  height: 300px;
+  margin: 20px;
+
+  &-bar {
+    grid-row: 1;
+    align-self: end;
+    width: 20px;
+
+    &:nth-of-type(1) {
+      background-color: lightblue;
+    }
+
+    &:nth-of-type(2) {
+      background-color: lightgoldenrodyellow;
+    }
+
+    &:nth-of-type(3) {
+      background-color: lightsalmon;
+    }
+
+    &:nth-of-type(4) {
+      background-color: lightgreen;
+    }
+  }
+
+  &::after {
+    content: "";
+    grid-row: 2;
+    grid-column: 1 / 4;
+    width: 100%;
+    background-color: black;
+  }
+
+  &-label {
+    display: flex;
+    flex-direction: column;
+    grid-row: 3;
+    align-self: start;
+    text-align: center;
+  }
+
+  &-filter {
+    font-size: 11px;
   }
 }

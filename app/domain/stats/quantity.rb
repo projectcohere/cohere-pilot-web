@@ -7,6 +7,10 @@ class Stats
 
     # -- queries --
     def ratio
+      if @total == nil || @total == 0
+        return 0.0
+      end
+
       return @count.to_f / @total
     end
 
