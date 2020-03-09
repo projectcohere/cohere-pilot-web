@@ -9,7 +9,7 @@
     <%= javascript_pack_tag("application", defer: "defer", "data-turbolinks-track": "reload") %>
   </head>
   <body>
-    <% if signed_in? %>
+    <% if header? %>
       <%= render(partial: "layouts/header") %>
     <% end %>
     <div class="Layout">

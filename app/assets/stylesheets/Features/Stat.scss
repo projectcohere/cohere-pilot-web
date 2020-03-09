@@ -1,0 +1,15 @@
+.Stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &-value {
+    @extend .u-title;
+    font-size: 6vw;
+  }
+
+  &-label {
+    @extend .u-subtitle;
+    font-size: 2vw;
+  }
+}

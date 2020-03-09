@@ -21,6 +21,12 @@ module Support
         Chat::Notification,
         Mms::Message,
         Mms::Attachment,
+        Stats,
+        Stats::Case,
+        Stats::Supplier,
+        Stats::Durations,
+        Stats::Duration,
+        Stats::Quantity,
       ]
 
       types_to_stub.each do |type_to_stub|

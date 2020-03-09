@@ -6,7 +6,6 @@ namespace :users do
       raise "must provide a csv through STDIN"
     end
 
-    send_invitations = Users::SendInvitations.new
-    send_invitations.(csv)
+    Users::SendInvitations.(csv)
   end
 end

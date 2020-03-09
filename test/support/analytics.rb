@@ -3,17 +3,13 @@ module Support
     # -- constants --
     Queue = ArrayQueue.new
 
-    # -- lifecycle --
-    Services.resets do
+    # -- mocks --
+    Services.mock do |s|
       # fake the tracking events queue
-      Services.analytics_events = Queue
+      s.analytics_events = Queue
     end
 
-    def before_setup
-      super
-      Services.reset
-    end
-
+    # -- lifecycle --
     def after_teardown
       Queue.clear
       super

@@ -1,0 +1,42 @@
+<main class="ShowStats">
+  <ul class="ShowStats-stats">
+    <li class="Stat">
+      <p class="Stat-value"><%= @stats.min_minutes_to_enroll %> mins</p>
+      <label class="Stat-label">Fastest Time to Enroll</label>
+    </li>
+    <li class="Stat">
+      <p class="Stat-value"><%= @stats.avg_minutes_to_enroll %> mins</p>
+      <label class="Stat-label">Average Time to Enroll</label>
+    </li>
+    <li class="Stat">
+      <p class="Stat-value"><%= @stats.percent_approved %>%</p>
+      <label class="Stat-label">Approved</label>
+    </li>
+  </ul>
+
+  <ul id="stats--quotes" class="ShowStats-quotes">
+    <li class="ShowStats-quote is-visible">"Cohere is really great."</li>
+    <li class="ShowStats-quote">"It was so easy!"</li>
+  </ul>
+
+  <ul class="ShowStats-charts">
+    <li class="ShowStats-chart">
+      <label class="ShowStats-chartTitle">Number of Cases by Utility</label>
+      <%= pie_chart_tag(class: "ShowStats-suppliers") do %>
+        <%- @stats.num_cases_by_supplier.reduce(0.0) do |filled, quantity| %>
+          <%= pie_slice_tag(quantity.ratio, offset: filled, label: quantity.filter.name) %>
+          <%- quantity.ratio + filled %>
+        <%- end %>
+      <%- end %>
+    </li>
+
+    <li class="ShowStats-chart">
+      <label class="ShowStats-chartTitle">Average Contribution by Partner</label>
+      <%= bar_chart_tag(class: "ShowStats-partners") do %>
+        <%- @stats.avg_minutes_by_partner.each do |quantity| %>
+          <%= bar_tag("#{quantity.count} mins", quantity.ratio, label: quantity.filter) %>
+        <%- end %>
+      <%- end %>
+    </li>
+  </ul>
+</main>

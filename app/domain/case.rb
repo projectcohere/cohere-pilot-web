@@ -16,6 +16,7 @@ class Case < ::Entity
   prop(:is_referred, default: false)
   prop(:has_new_activity, default: false)
   prop(:received_message_at, default: nil)
+  prop(:created_at, default: nil)
   prop(:updated_at, default: nil)
   prop(:completed_at, default: nil)
 

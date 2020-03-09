@@ -6,6 +6,7 @@ import {
   ShowCaseList,
   ShowChat,
   ShowPasswords,
+  ShowStats,
 } from "../src"
 
 // -- main --
@@ -19,4 +20,5 @@ start(
   new ShowCaseList(),
   new ShowChat(),
   new ShowPasswords(),
+  new ShowStats(),
 )
