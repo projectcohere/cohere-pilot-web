@@ -12,7 +12,7 @@ class Services < ActiveSupport::CurrentAttributes
       self.analytics_events = service
     end
 
-    service
+    return service
   end
 
   # -- domain --
@@ -26,11 +26,25 @@ class Services < ActiveSupport::CurrentAttributes
       self.domain_events = service
     end
 
-    service
+    return service
   end
 
   # -- domain/repos
   attribute(:user_repo)
   attribute(:enroller_repo)
   attribute(:supplier_repo)
+
+  # -- infra --
+  attribute(:redis)
+
+  def redis
+    service = super
+
+    if service.nil?
+      service = Redis.new
+      self.redis = redis
+    end
+
+    return service
+  end
 end

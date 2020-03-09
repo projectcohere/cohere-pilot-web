@@ -8,7 +8,7 @@ class Stats
       Repo.new
     end
 
-    def initialize(redis: Redis.new)
+    def initialize(redis: Services.redis)
       @redis = redis
     end
 
