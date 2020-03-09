@@ -79,8 +79,8 @@ class StatsTest < ActiveSupport::TestCase
     )
 
     assert_equal(stats.cases_by_supplier, [
-      Stats::Segment.stub(filter: supplier_1, count: 1),
-      Stats::Segment.stub(filter: supplier_2, count: 2),
+      Stats::Quantity.stub(filter: supplier_1, count: 1),
+      Stats::Quantity.stub(filter: supplier_2, count: 2),
     ])
   end
 end

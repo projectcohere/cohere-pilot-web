@@ -3,6 +3,9 @@ require "csv"
 module Partners
   module Stats
     class ProcessCaseEvents < ::Command
+      # -- constant --
+      EventTimeOffset = 8 * 60 * 60
+
       # -- types --
       Interval = Struct.new(
         :start,
@@ -53,7 +56,7 @@ module Partners
           end
 
           # update case based on event
-          time = row[:time].to_i / 1000
+          time = row[:time].to_i / 1000 + EventTimeOffset
 
           case row[:name].to_sym
           when :"Did Open"

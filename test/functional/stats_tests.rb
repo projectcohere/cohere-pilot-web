@@ -29,7 +29,6 @@ class StatsTests < ActionDispatch::IntegrationTest
     end
 
     stats = Stats::Repo.get.find_current
-    binding.pry
     assert_equal(stats.durations.count, 1)
   end
 end
