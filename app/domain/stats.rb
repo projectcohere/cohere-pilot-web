@@ -21,7 +21,8 @@ class Stats < ::Value
   end
 
   def percent_same_day_determinations
-    return 23
+    same_day = @cases.count(&:same_day_determination?).to_f
+    return ((same_day / @cases.count) * 100).round
   end
 
   def num_cases_by_supplier
