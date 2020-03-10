@@ -6,18 +6,16 @@
     <% if kase != nil %>
       <section class="ShowStats-case ShowStats-panel">
         <h1 class="ShowStats-panelTitle ShowStats-sectionTitle">
-          <span>Most Recent Case</span>
+          <span>Most Recent Application</span>
         </h1>
 
-        <div class="ShowStats-caseSupplier ShowStats-info">
-          <label class="ShowStats-infoLabel">Opened By</label>
-          <p class="ShowStats-infoText"><%= kase.supplier.name %></p>
-        </div>
-
-        <div class="ShowStats-caseDetermined ShowStats-info">
-          <label class="ShowStats-infoLabel">Determined</label>
-          <p class="ShowStats-infoText"><%= time_ago_in_words(kase.completed_at) %> ago</p>
-        </div>
+        <p class="ShowStats-caseDescription">
+          Opened by
+          <%= kase.supplier.name %>,
+          determined
+          <%= time_ago_in_words(kase.completed_at) %>
+          ago.
+        </p>
 
         <div class="ShowStats-caseDuration Stat">
           <p class="Stat-value"><%= kase.minutes_to_determination %></p>
