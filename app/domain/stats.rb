@@ -5,6 +5,10 @@ class Stats < ::Value
   prop(:durations)
 
   # -- queries --
+  def most_recent_case
+    return @cases.max_by(&:completed_at)
+  end
+
   def min_minutes_to_determination
     if @cases.length == 0
       return 0

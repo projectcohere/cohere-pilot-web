@@ -15,33 +15,30 @@
     background-color: $color-field;
   }
 
-  &-sectionTitle {
-    @extend .u-section-name;
-
-    font-size: $font-size2;
-    font-weight: $font-weight-medium;
-
-    > span {
-      position: relative;
-      display: inline-block;
-      padding-bottom: $spacing5;
-
-      /* bottom-border */
-      &::after {
-        content: "";
-        position: absolute;
-        display: block;
-        bottom: 0;
-        width: 100%;
-        height: 3px;
-        background-color: $color-divider;
-      }
-    }
-  }
-
   // -- ShowStats-quantitative/children --
   &-title > span {
     font-weight: $font-weight-thin;
+  }
+
+  &-case &-sectionTitle {
+    margin: 0;
+  }
+
+  &-caseSupplier {
+    grid-row: 2;
+  }
+
+  &-caseDetermined {
+    grid-row: 2;
+  }
+
+  &-caseDuration {
+    grid-row: 3;
+    grid-column: 1 / 3;
+  }
+
+  &-caseApproval {
+    font-weight: $font-weight-regular;
   }
 
   &-timeMin {
@@ -77,6 +74,30 @@
   }
 
   // -- ShowStats-quantitative/elements --
+  &-sectionTitle {
+    @extend .u-section-name;
+
+    font-size: $font-size2;
+    font-weight: $font-weight-medium;
+
+    > span {
+      position: relative;
+      display: inline-block;
+      padding-bottom: $spacing5;
+
+      /* bottom-border */
+      &::after {
+        content: "";
+        position: absolute;
+        display: block;
+        bottom: 0;
+        width: 100%;
+        height: 3px;
+        background-color: $color-divider;
+      }
+    }
+  }
+
   &-panel {
     @extend .u-panel-cozy;
 
@@ -91,6 +112,11 @@
   &-panelTitle {
     grid-area: 1 / span 2;
     margin-bottom: $spacing3;
+  }
+
+  &-infoLabel {
+    @extend .u-hint;
+    white-space: nowrap;
   }
 
   // -- quotes --
