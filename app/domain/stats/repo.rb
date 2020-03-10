@@ -27,10 +27,13 @@ class Stats
       supplier_recs = ::Supplier::Record
         .where(program: Program::Name::Meap)
 
+      quotes_recs = (ENV["STATS_QUOTES"] || "")
+        .split(";")
+
       durations_rec = ActiveSupport::JSON
         .decode(@redis.get(DurationsKey) || "{}")
 
-      return entity_from(case_recs, supplier_recs, durations_rec)
+      return entity_from(case_recs, supplier_recs, quotes_recs, durations_rec)
     end
 
     # -- commands --
@@ -39,13 +42,14 @@ class Stats
     end
 
     # -- factories --
-    def self.map_record(case_recs, supplier_recs, durations_rec)
+    def self.map_record(case_recs, supplier_recs, quotes_recs, durations_rec)
       suppliers_by_id = supplier_recs
         .map { |r| map_supplier(r) }
         .each_with_object({}) { |r, h| h[r.id] = r }
 
       return Stats.new(
         cases: case_recs.map { |r| map_case(r, suppliers_by_id) },
+        quotes: quotes_recs,
         durations: durations_rec.then { |r| map_durations(r) },
       )
     end

@@ -1,14 +1,23 @@
 class Stats < ::Value
   # -- props --
   prop(:cases)
+  prop(:quotes)
   prop(:durations)
 
   # -- queries --
   def min_minutes_to_determination
+    if @cases.length == 0
+      return 0
+    end
+
     return @cases.map(&:minutes_to_determination).min
   end
 
   def avg_minutes_to_determination
+    if @cases.length == 0
+      return 0
+    end
+
     sorted = @cases.map(&:minutes_to_determination).sort
     length = sorted.length
     median = (sorted[(length - 1) / 2] + sorted[length / 2]) / 2.0
@@ -16,11 +25,19 @@ class Stats < ::Value
   end
 
   def percent_enrolled
+    if @cases.length == 0
+      return 0
+    end
+
     approved = @cases.count(&:approved?).to_f
     return ((approved / @cases.count) * 100).round
   end
 
   def percent_same_day_determinations
+    if @cases.length == 0
+      return 0
+    end
+
     same_day = @cases.count(&:same_day_determination?).to_f
     return ((same_day / @cases.count) * 100).round
   end

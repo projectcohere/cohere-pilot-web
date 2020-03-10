@@ -62,8 +62,11 @@
     </h1>
 
     <ul class="ShowStats-quotes">
-      <li class="ShowStats-quote">"Cohere is really great."</li>
-      <li class="ShowStats-quote">"It was so easy!"</li>
+      <% @stats.quotes.each do |quote| %>
+        <li class="ShowStats-quote">
+          "<%= quote %>"
+        </li>
+      <% end %>
     </ul>
   </article>
 </main>
