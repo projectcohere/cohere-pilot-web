@@ -64,7 +64,6 @@ class Stats
 
     def self.map_durations(r)
       return Durations.new(
-        count: r.dig("count"),
         dhs: Duration.new(
           avg_seconds: r.dig("dhs", "avg_seconds"),
         ),
