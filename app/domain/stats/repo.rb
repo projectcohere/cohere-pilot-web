@@ -1,6 +1,9 @@
 class Stats
   class Repo < ::Repo
     # -- constants --
+    StartDate = Date.new(2020, 1, 21)
+
+    # -- constants/internal
     DurationsKey = "cohere--stats/durations".freeze
 
     # -- lifetime --
@@ -19,6 +22,7 @@ class Stats
           program: Program::Name::Meap,
           status: [::Case::Status::Approved, ::Case::Status::Denied],
         )
+        .where("created_at >= ?", StartDate)
 
       supplier_recs = ::Supplier::Record
         .where(program: Program::Name::Meap)
