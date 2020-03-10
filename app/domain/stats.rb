@@ -4,20 +4,24 @@ class Stats < ::Value
   prop(:durations)
 
   # -- queries --
-  def min_minutes_to_enroll
-    return @cases.map(&:minutes_to_enroll).min
+  def min_minutes_to_determination
+    return @cases.map(&:minutes_to_determination).min
   end
 
-  def avg_minutes_to_enroll
-    sorted = @cases.map(&:minutes_to_enroll).sort
+  def avg_minutes_to_determination
+    sorted = @cases.map(&:minutes_to_determination).sort
     length = sorted.length
     median = (sorted[(length - 1) / 2] + sorted[length / 2]) / 2.0
     return median.round
   end
 
-  def percent_approved
+  def percent_enrolled
     approved = @cases.count(&:approved?).to_f
     return ((approved / @cases.count) * 100).round
+  end
+
+  def percent_same_day_determinations
+    return 23
   end
 
   def num_cases_by_supplier

@@ -1,15 +1,12 @@
 .Stat {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
   &-value {
     @extend .u-title;
-    font-size: 6vw;
+    font-size: 64px;
   }
 
   &-label {
     @extend .u-subtitle;
-    font-size: 2vw;
+    font-size: 30px;
+    white-space: nowrap;
   }
 }

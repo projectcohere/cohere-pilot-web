@@ -11,7 +11,7 @@ class Stats
       return @status == ::Case::Status::Approved
     end
 
-    def minutes_to_enroll
+    def minutes_to_determination
       return ((completed_at - created_at) / 60).round
     end
   end
