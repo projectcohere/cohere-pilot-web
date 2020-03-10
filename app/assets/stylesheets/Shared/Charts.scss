@@ -1,3 +1,9 @@
+// -- constants --
+$color-chart1: #f7ebaa;
+$color-chart2: #a5ffc6;
+$color-chart3: #ffa8cc;
+
+// -- .Chart --
 .Chart {
   position: relative;
 
@@ -12,7 +18,7 @@
   }
 
   &:hover &-title {
-    opacity: 0;
+    opacity: 0.3;
   }
 }
 
@@ -28,19 +34,15 @@
     fill: none;
 
     &:nth-of-type(1) {
-      fill: lightblue;
+      fill: $color-chart1;
     }
 
     &:nth-of-type(2) {
-      fill: lightgoldenrodyellow;
+      fill: $color-chart2;
     }
 
     &:nth-of-type(3) {
-      fill: lightsalmon;
-    }
-
-    &:nth-of-type(4) {
-      fill: lightgreen;
+      fill: $color-chart3;
     }
   }
 
@@ -67,19 +69,15 @@
     width: 20px;
 
     &:nth-of-type(1) {
-      background-color: lightblue;
+      background-color: $color-chart1;
     }
 
     &:nth-of-type(2) {
-      background-color: lightgoldenrodyellow;
+      background-color: $color-chart2;
     }
 
     &:nth-of-type(3) {
-      background-color: lightsalmon;
-    }
-
-    &:nth-of-type(4) {
-      background-color: lightgreen;
+      background-color: $color-chart3;
     }
   }
 

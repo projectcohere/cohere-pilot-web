@@ -29,7 +29,7 @@ module Partners
     end
 
     def pie_slice_tag(ratio, offset:, label:)
-      # orient pie so 0 is the vertical
+      # rotate pie so 0 is the vertical
       offset -= 0.25
 
       # render slice

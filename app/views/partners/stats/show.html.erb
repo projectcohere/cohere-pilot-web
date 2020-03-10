@@ -2,6 +2,35 @@
   <article class="ShowStats-quantitative ShowStats-split">
     <h1 class="ShowStats-title">Pilot Statistics <span>(Round 3)</span></h1>
 
+    <% kase = @stats.most_recent_case %>
+    <% if kase != nil %>
+      <section class="ShowStats-case ShowStats-panel">
+        <h1 class="ShowStats-panelTitle ShowStats-sectionTitle">
+          <span>Most Recent Application</span>
+        </h1>
+
+        <p class="ShowStats-caseDescription">
+          Opened by
+          <%= kase.supplier.name %>,
+          determined
+          <%= time_ago_in_words(kase.completed_at) %>
+          ago.
+        </p>
+
+        <div class="ShowStats-caseDuration Stat">
+          <p class="Stat-value"><%= kase.minutes_to_determination %></p>
+          <label class="Stat-label">
+            Mins to
+            <% if kase.approved? %>
+              <span class="ShowStats-caseApproval">Approval</span>
+            <% else %>
+              <span class="ShowStats-caseDenial">Denial</span>
+            <% end %>
+          </label>
+        </div>
+      </section>
+    <% end %>
+
     <section class="ShowStats-time ShowStats-panel">
       <h1 class="ShowStats-panelTitle ShowStats-sectionTitle">
         <span>Time to Determination</span>
@@ -31,7 +60,7 @@
     <section class="ShowStats-applications ShowStats-panel">
       <h1 class="ShowStats-panelTitle ShowStats-sectionTitle">
         <span>Applications</span>
-      </h2>
+      </h1>
 
       <div class="ShowStats-applicationsEnrolled Stat">
         <p class="Stat-value"><%= @stats.percent_enrolled %> %</p>
@@ -62,8 +91,11 @@
     </h1>
 
     <ul class="ShowStats-quotes">
-      <li class="ShowStats-quote">"Cohere is really great."</li>
-      <li class="ShowStats-quote">"It was so easy!"</li>
+      <% @stats.quotes.each do |quote| %>
+        <li class="ShowStats-quote">
+          "<%= quote %>"
+        </li>
+      <% end %>
     </ul>
   </article>
 </main>
