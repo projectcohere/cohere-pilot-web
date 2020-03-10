@@ -60,11 +60,11 @@ module Partners
 
           case row[:name].to_sym
           when :"Did Open"
-            intervals.dhs.start = time if !row[:case_is_referred]
+            intervals.dhs.start = time if row[:case_is_referred] != "true"
           when :"Did Become Pending"
             intervals.dhs.end = time
           when :"Did Receive Message"
-            intervals.recipient.start = time if row[:is_first]
+            intervals.recipient.start = time if row[:is_first] == "true"
           when :"Did Submit"
             intervals.recipient.end = time
             intervals.enroller.start = time
@@ -85,21 +85,18 @@ module Partners
         end
 
         # filter unpopulated intervals
-        populated = intervals_by_case_id.values.filter do |intervals|
-          populated?(intervals)
-        end
+        intervals = intervals_by_case_id.values
 
         # save new durations
         durations = ::Stats::Durations.new(
-          count: populated.count,
           dhs: ::Stats::Duration.new(
-            avg_seconds: median(populated.map { |i| i.dhs })
+            avg_seconds: median_duration(intervals.map(&:dhs))
           ),
           enroller: ::Stats::Duration.new(
-            avg_seconds: median(populated.map { |i| i.enroller })
+            avg_seconds: median_duration(intervals.map(&:enroller))
           ),
           recipient: ::Stats::Duration.new(
-            avg_seconds: median(populated.map { |i| i.recipient })
+            avg_seconds: median_duration(intervals.map(&:recipient))
           ),
         )
 
@@ -108,34 +105,25 @@ module Partners
 
       def rescuable?(intervals)
         return ((
-          intervals.dhs.end != nil &&
+          intervals.dhs.start == nil &&
+          intervals.dhs.end != nil
+        ) || (
           intervals.enroller.start != nil &&
-          intervals.recipient.start != nil &&
-          intervals.recipient.end != nil
-        ) && (
-          intervals.dhs.start == nil ||
           intervals.enroller.end == nil
         ))
       end
 
-      def populated?(intervals)
-        return (
-          intervals.dhs.start != nil &&
-          intervals.dhs.end != nil &&
-          intervals.enroller.start != nil &&
-          intervals.enroller.end != nil &&
-          intervals.recipient.start != nil &&
-          intervals.recipient.end != nil
-        )
-      end
+      def median_duration(intervals)
+        durations = intervals
+          .map { |i| i.start != nil && i.end != nil ? i.end - i.start : nil }
+          .compact
 
-      def median(intervals)
-        if intervals.length == 0
+        if durations.length == 0
           return nil
         end
 
-        sorted = intervals.map { |i| i.end - i.start }.sort
-        length = sorted.length
+        sorted = durations.sort
+        length = durations.length
         median = (sorted[(length - 1) / 2] + sorted[length / 2]) / 2.0
         return median.round
       end

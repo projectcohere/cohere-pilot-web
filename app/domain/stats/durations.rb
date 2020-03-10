@@ -1,7 +1,6 @@
 class Stats
   class Durations < ::Value
     # -- props --
-    prop(:count)
     prop(:dhs)
     prop(:enroller)
     prop(:recipient)

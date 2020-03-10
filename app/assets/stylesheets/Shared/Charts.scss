@@ -1,3 +1,21 @@
+.Chart {
+  position: relative;
+
+  &-figure {
+    height: 100%;
+  }
+
+  &-title {
+    position: absolute;
+    width: 30%;
+    transition: opacity 0.1s;
+  }
+
+  &:hover &-title {
+    opacity: 0;
+  }
+}
+
 // .PieChart
 .PieChart {
   overflow: visible;
