@@ -13,10 +13,17 @@ module Partners
       )
 
       class Intervals < ::Value
+        #-- props --
         prop(:case_id)
+        prop(:case_status, default: nil)
         prop(:dhs, default: Interval.new)
         prop(:enroller, default: Interval.new)
         prop(:recipient, default: Interval.new)
+
+        # -- writers --
+        def case_status=(status)
+          @case_status = status
+        end
       end
 
       # -- lifetime --
@@ -69,6 +76,7 @@ module Partners
             intervals.recipient.end = time
             intervals.enroller.start = time
           when :"Did Complete"
+            intervals.case_status = row[:case_status]&.to_sym
             intervals.enroller.end = time
           end
         end
@@ -80,12 +88,16 @@ module Partners
 
         cases.each do |kase|
           intervals = intervals_by_case_id[kase.id.val]
+          intervals.case_status = kase.status
           intervals.dhs.start = kase.created_at.to_i
           intervals.enroller.end = kase.completed_at.to_i
         end
 
-        # filter unpopulated intervals
-        intervals = intervals_by_case_id.values
+        # filter out cases that don't have a determination
+        intervals = intervals_by_case_id.values.filter do |i|
+          i.case_status == ::Case::Status::Approved ||
+          i.case_status == ::Case::Status::Denied
+        end
 
         # save new durations
         durations = ::Stats::Durations.new(
