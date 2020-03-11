@@ -103,7 +103,7 @@
 
     display: grid;
     row-gap: $spacing3;
-    column-gap: $spacing2;
+    column-gap: $spacing0;
     margin-top: $spacing2;
     padding: 50px;
   }
@@ -118,7 +118,6 @@
     white-space: nowrap;
   }
 
-  // -- quotes --
   // -- ShowStats-qualitative/children --
   &-quotes[class] {
     margin-top: $spacing3 + $spacing4;
@@ -139,5 +138,42 @@
       font-size: 36px;
       line-height: 30px;
     }
+  }
+}
+
+// -- .StatsQuestion --
+.StatsQuestion {
+  $size: 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  width: $size;
+  height: $size;
+  bottom: $spacing3;
+  right: $spacing3;
+  font-size: $font-size2;
+  border-radius: $size / 2;
+  box-shadow: 0px 0px 5px fade-out($brand-black, 0.7);
+
+  &-tooltip {
+    @extend .u-panel;
+
+    position: absolute;
+    width: 162px;
+    bottom: $size + $spacing4;
+    right: 0;
+    padding: $spacing5;
+    opacity: 0;
+    color: $black;
+    line-height: 1.4;
+    font-size: $font-size5;
+    background-color: $white;
+    transition: opacity 0.1s;
+  }
+
+  &:hover > &-tooltip {
+    opacity: 1;
   }
 }
