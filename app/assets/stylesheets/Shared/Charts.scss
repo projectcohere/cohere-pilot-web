@@ -5,20 +5,20 @@ $color-chart3: #ffa8cc;
 
 // -- .Chart --
 .Chart {
-  position: relative;
+  display: flex;
+  flex-direction: column;
 
   &-figure {
-    height: 100%;
+    flex: 1;
   }
 
   &-title {
-    position: absolute;
-    width: 30%;
-    transition: opacity 0.1s;
+    display: block;
+    text-align: center;
   }
 
-  &:hover &-title {
-    opacity: 0.3;
+  > * + * {
+    margin-top: $spacing4;
   }
 }
 

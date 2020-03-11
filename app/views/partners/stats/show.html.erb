@@ -64,7 +64,7 @@
 
       <div class="ShowStats-applicationsEnrolled Stat">
         <p class="Stat-value"><%= @stats.percent_enrolled %> %</p>
-        <label class="Stat-label">Enrolled</label>
+        <label class="Stat-label">Approved</label>
       </div>
 
       <div class="ShowStats-applicationsSameDay Stat">
@@ -73,14 +73,14 @@
       </div>
 
       <div class="ShowStats-applicationsByUtility Chart">
-        <label class="Chart-title">Applications by Utility</label>
-
         <%= pie_chart_tag(class: "Chart-figure") do %>
           <%- @stats.num_cases_by_supplier.reduce(0.0) do |filled, quantity| %>
             <%= pie_slice_tag(quantity.ratio, offset: filled, label: quantity.filter.name) %>
             <%- quantity.ratio + filled %>
           <%- end %>
         <%- end %>
+
+        <label class="Chart-title">By Utility</label>
       </div>
     </section>
   </article>
@@ -93,7 +93,7 @@
     <ul class="ShowStats-quotes">
       <% @stats.quotes.each do |quote| %>
         <li class="ShowStats-quote">
-          "<%= quote %>"
+          <%= quote %>
         </li>
       <% end %>
     </ul>
