@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   # -- signed-out --
   constraints(Clearance::Constraints::SignedOut.new) do
-    root_path = "/chat"
+    root_path = "/sign-in"
 
     # root
     root(to: redirect(root_path), as: :root_signed_out)
