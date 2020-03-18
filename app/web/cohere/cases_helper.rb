@@ -1,5 +1,6 @@
 module Cohere
   module CasesHelper
+    # -- impls --
     def cases_is_open
       @scope == CaseScope::Open
     end

@@ -103,17 +103,20 @@ class Case
       entities_from(case_recs)
     end
 
-    def find_all_opened
-      case_recs = Case::Record
+    def find_all_opened(page:)
+      case_query = Case::Record
         .where(completed_at: nil)
         .order(updated_at: :desc)
         .includes(:recipient)
+
+      case_page = Pagy.new(count: case_query.count(:all), page: page)
+      case_recs = case_query.offset(case_page.offset).limit(case_page.items)
 
       # pre-load associated aggregates
       @supplier_repo.find_many(case_recs.map(&:supplier_id))
       @enroller_repo.find_many(case_recs.map(&:enroller_id))
 
-      entities_from(case_recs)
+      return case_page, entities_from(case_recs)
     end
 
     def find_all_completed

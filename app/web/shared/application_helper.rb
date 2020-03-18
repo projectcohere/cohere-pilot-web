@@ -1,5 +1,20 @@
 module ApplicationHelper
+  include Pagy::Frontend
+
   # -- elements --
+  def totals_for(page, of:)
+    name = of
+
+    if page == nil
+      return ""
+    end
+
+    return tag.h2(
+      "#{page.items} of #{page.count} #{name}",
+      class: "Main-totals"
+    )
+  end
+
   def filter_for(id, is_selected: false, is_error: false)
     link_to(id.to_s.titlecase, "##{id}",
       class: cx("Filter", "is-selected" => is_selected, "is-error" => is_error),
@@ -7,6 +22,7 @@ module ApplicationHelper
     )
   end
 
+  # -- elements/layout
   def section_tag(title = nil, header_tag = :h2, *args, **kwargs, &children)
     a_class = kwargs.delete(:class)
 
@@ -59,6 +75,7 @@ module ApplicationHelper
     end
   end
 
+  # -- elements/chat
   def chat_message_tag(chat_message, sender, receiver, &children)
     # pre-render children
     message_content = capture(&children)
@@ -76,6 +93,29 @@ module ApplicationHelper
     tag.li(class: classes) do
       sender_tag = tag.label(sender_name, class: "ChatMessage-sender")
       sender_tag + message_content
+    end
+  end
+
+  # -- elements/pager
+  def pager_for(page, of:)
+    name = of
+
+    if page == nil
+      return ""
+    end
+
+    return tag.div(class: "Pager") do
+      pager_nav = ""
+      if page.pages > 1
+        pager_nav = pagy_nav(page)
+      end
+
+      pager_total = tag.p(
+        "#{page.from} to #{page.to} of #{page.count} #{name}",
+        class: "Pager-total"
+      )
+
+      raw(pager_nav + pager_total)
     end
   end
 

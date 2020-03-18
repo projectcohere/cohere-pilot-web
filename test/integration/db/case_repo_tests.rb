@@ -113,10 +113,18 @@ module Db
       assert_equal(kase.recipient.id.val, case_recipient_rec.id)
     end
 
-    test "finds all opened cases" do
+    test "finds a page of all opened cases" do
       case_repo = Case::Repo.new
-      cases = case_repo.find_all_opened
+
+      Case::Record.create(Array.new(20, {
+        supplier: suppliers(:supplier_1),
+        enroller: enrollers(:enroller_1),
+        recipient: recipients(:recipient_1),
+      }))
+
+      case_page, cases = case_repo.find_all_opened(page: 2)
       assert_length(cases, 8)
+      assert_equal(case_page.count, 28)
     end
 
     test "finds all completed cases" do

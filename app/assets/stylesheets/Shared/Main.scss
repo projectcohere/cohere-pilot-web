@@ -24,6 +24,11 @@
     font-size: $font-size0;
   }
 
+  &-totals {
+    margin-left: $spacing4;
+    margin-bottom: 4px;
+  }
+
   &-filters {
     width: 100%;
     margin-top: $spacing3;

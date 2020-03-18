@@ -18,7 +18,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 7)
   end
 
-  test "can list opened cases as a dhs user" do
+  test "can list open cases as a dhs user" do
     user_rec = users(:dhs_1)
 
     get(auth("/cases", as: user_rec))

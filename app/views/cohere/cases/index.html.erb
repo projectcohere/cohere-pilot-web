@@ -3,6 +3,9 @@
     <h1 class="Main-title">
       <%= @scope.titlecase %> Cases
     </h1>
+
+    <%= totals_for(@case_page, of: "cases") %>
+
     <div class="Main-filters">
       <nav class="Filters">
         <%= cases_filter_link_to(Cohere::CaseScope::Open) %>
@@ -33,11 +36,13 @@
               <span class="CaseCell-activity"></span>
             <%- end %>
           </div>
+
           <div class="CaseCell-row">
             <p class="CaseCell-organizations">
               <%= view.program_name %>, <%= view.supplier_name %>, <%= view.enroller_name %>
             </p>
           </div>
+
           <div class="CaseCell-row">
             <p class="CaseCell-status">
               <%= view.status %>
@@ -50,4 +55,6 @@
       <% end %>
     <% end %>
   <% end %>
+
+  <%= pager_for(@case_page, of: "cases") %>
 </main>

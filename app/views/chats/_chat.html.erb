@@ -1,7 +1,7 @@
 <%# -- json -- %>
 <%- chat_json = Chats::EncodeMessage.(chat.messages) %>
 <script id="chat-json" type="application/json">
-  <%= raw(chat_json.to_json) %>
+  <%== chat_json.to_json %>
 </script>
 
 <%# -- view -- %>
