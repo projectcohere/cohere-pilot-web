@@ -265,9 +265,14 @@ class CasesTests < ActionDispatch::IntegrationTest
       case: {
         household: {
           income: "$300.00"
-        }
+        },
+        admin: {
+          status: "submitted",
+        },
       }
     })
+
+    assert_equal(case_rec.reload.status, "submitted")
 
     assert_broadcast_on(Cases::ActivityChannel.active, {
       id: case_rec.id,
@@ -276,6 +281,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_redirected_to("/cases/#{case_rec.id}/edit")
     assert_present(flash[:notice])
+    assert_send_emails(0)
   end
 
   test "save a signed contract" do

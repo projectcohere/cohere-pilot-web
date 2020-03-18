@@ -10,11 +10,11 @@ module Cohere
     # -- command --
     def call
       scopes = []
-      if @action == :submit || @case.submitted?
+      if @action == :submit || @case.submitted? || @form.admin.submitted?
         scopes << :submitted
       end
 
-      if @action == :complete
+      if @action == :complete || @form.admin.completed?
         scopes << :completed
       end
 
@@ -26,6 +26,10 @@ module Cohere
         @form.map_to_case_supplier_account,
         @form.map_to_recipient_profile,
         @form.map_to_recipient_dhs_account,
+      )
+
+      @case.add_admin_data(
+        @form.map_to_admin
       )
 
       # sign the contract if necessary

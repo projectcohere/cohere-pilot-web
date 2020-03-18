@@ -11,43 +11,54 @@
         <%= filter_for(:profile, is_error: errors?(@form.details, @form.contact), is_selected: true) %>
         <%= filter_for(:household, is_error: errors?(@form.address, @form.household)) %>
         <%= filter_for(:accounts, is_error: errors?(@form.mdhhs, @form.supplier_account)) %>
-        <%= filter_for(:documents) %>
+        <%= filter_for(:documents, is_error: errors?(@form.documents)) %>
       </nav>
     </div>
   </header>
 
-  <%= form_for(@form, url: case_referrals_path, html: { class: "CaseForm Panel" }) do |f| %>
-    <% form_locals = { f: f, form: @form, view: @view, policy: policy } %>
-    <section id="profile" class="Panel-tab is-visible">
-      <%= render(partial: "cases/forms/details", locals: form_locals) %>
-      <%= render(partial: "cases/forms/contact", locals: form_locals) %>
-    </section>
+  <div class="CaseDetail">
+    <%- form_class = "CaseForm CaseDetail-case Panel" %>
+    <%= form_for(@form, url: case_referrals_path, html: { class: form_class }) do |f| %>
+      <% form_locals = { f: f, form: @form, view: @view, policy: policy } %>
 
-    <section id="household" class="Panel-tab">
-      <%= render(partial: "cases/forms/address", locals: form_locals) %>
-      <%= render(partial: "cases/forms/household", locals: form_locals) %>
-    </section>
+      <section id="profile" class="Panel-tab is-visible">
+        <%= render(partial: "cases/forms/details", locals: form_locals) %>
+        <%= render(partial: "cases/forms/contact", locals: form_locals) %>
+      </section>
 
-    <section id="accounts" class="Panel-tab">
-      <%= render(partial: "cases/forms/mdhhs", locals: form_locals) %>
-      <%= render(partial: "cases/forms/supplier_account", locals: form_locals) %>
-    </section>
+      <section id="household" class="Panel-tab">
+        <%= render(partial: "cases/forms/address", locals: form_locals) %>
+        <%= render(partial: "cases/forms/household", locals: form_locals) %>
+      </section>
 
-    <section id="documents" class="Panel-tab">
-      <%= render(partial: "cases/documents", locals: { documents: @view.documents }) %>
-    </section>
+      <section id="accounts" class="Panel-tab">
+        <%= render(partial: "cases/forms/mdhhs", locals: form_locals) %>
+        <%= render(partial: "cases/forms/supplier_account", locals: form_locals) %>
+      </section>
 
-    <div class="Panel-actions">
-      <%= f.submit("Save", class: "Button--action") %>
-      <%=
-        f.submit("Save & Submit to Enroller",
-          name: :submit,
-          class: "Button--secondary",
-          data: {
-            confirm: "Are you sure you want to submit this case?"
-          },
-        )
-      %>
-    </div>
-  <% end %>
+      <section id="documents" class="Panel-tab">
+        <%= render(partial: "cases/documents", locals: { documents: @form.documents.all }) %>
+      </section>
+
+      <div class="Panel-actions">
+        <%= f.submit("Save", class: "Button--action") %>
+        <%=
+          f.submit("Save & Submit to Enroller",
+            name: :submit,
+            class: "Button--secondary",
+            data: {
+              confirm: "Are you sure you want to submit this case?"
+            },
+          )
+        %>
+      </div>
+    <% end %>
+
+    <%=
+      render(partial: "cohere/cases/chat", locals: {
+        chat: @chat,
+        recevier: @view.recipient_first_name
+      })
+    %>
+  </div>
 </main>

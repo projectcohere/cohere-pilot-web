@@ -9,15 +9,20 @@
     </h1>
 
     <div class="Main-actions">
-      <% program = Program::Name::Wrap %>
-      <% if @case.can_make_referral?(program) %>
+      <% if @case.can_make_referral?(Program::Name::Wrap) %>
         <%=
           link_to("Make Referral to WRAP", new_case_referral_path(@case),
-            params: { program: program },
-            class: "Button--action"
+            params: { program: Program::Name::Wrap },
+            class: "Button--action",
           )
         %>
       <% end %>
+
+      <%=
+        link_to("Edit Case", edit_case_path(@case),
+          class: "Button--secondary",
+        )
+      %>
     </div>
 
     <div class="Main-filters">

@@ -1,0 +1,8 @@
+<%- form = form.admin %>
+<%= f.fields_for(:admin, form) do |f| %>
+  <%= section_tag("Admin", class: "CaseFormAdmin") do %>
+    <%= f.field(:status, class: "CaseFormAdmin-status Field--select") do %>
+      <%= f.select(:status, form.status_options) %>
+    <%- end %>
+  <%- end %>
+<% end %>

@@ -63,6 +63,13 @@ class Case < ::Entity
     track_new_activity(false)
   end
 
+  def add_admin_data(status)
+    if status != @status
+      @status = status
+      @completed_at = complete? ? Time.zone.now : nil
+    end
+  end
+
   def remove_from_pilot
     @completed_at = Time.zone.now
     @status = Status::Removed

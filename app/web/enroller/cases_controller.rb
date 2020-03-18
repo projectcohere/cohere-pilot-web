@@ -21,7 +21,7 @@ class Enroller
         User::Repo.get.find_current.role.organization_id
       )
 
-      if policy.forbid?(:edit_status)
+      if policy.forbid?(:complete)
         return deny_access
       end
 

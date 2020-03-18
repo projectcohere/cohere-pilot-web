@@ -19,8 +19,6 @@ class Case
         cohere? || dhs?
       when :edit_supplier
         cohere?
-      when :edit_status
-        cohere? || enroller?
       when :edit_ownership
         cohere? && wrap?
       when :edit_is_primary_residence
@@ -41,6 +39,8 @@ class Case
       # actions
       when :referral
         cohere?
+      when :complete
+        cohere? || enroller?
       else
         super
       end

@@ -1,8 +1,8 @@
 module Cases
   module Forms
-    class Mdhhs < ApplicationForm
+    class Documents < ApplicationForm
       # -- fields --
-      field(:dhs_number, :string,
+      field(:all, :object,
         on: {
           submitted: { presence: true },
           completed: { presence: true },
@@ -11,9 +11,8 @@ module Cases
 
       # -- lifecycle --
       protected def initialize_attrs(attrs)
-        a = @model.recipient.dhs_account
         assign_defaults!(attrs, {
-          dhs_number: a&.number
+          all: @model.documents,
         })
       end
     end

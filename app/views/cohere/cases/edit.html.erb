@@ -26,7 +26,8 @@
         <%= filter_for(:profile, is_error: errors?(@form.details, @form.contact), is_selected: true) %>
         <%= filter_for(:household, is_error: errors?(@form.address, @form.household)) %>
         <%= filter_for(:accounts, is_error: errors?(@form.mdhhs, @form.supplier_account)) %>
-        <%= filter_for(:documents) %>
+        <%= filter_for(:documents, is_error: errors?(@form.documents)) %>
+        <%= filter_for(:admin) %>
       </nav>
     </div>
   </header>
@@ -35,6 +36,7 @@
     <%- form_class = "CaseForm CaseDetail-case Panel" %>
     <%= form_for(@form, url: case_path(@case.id), html: { class: form_class }) do |f| %>
       <% form_locals = { f: f, form: @form, view: @view, policy: policy } %>
+
       <section id="profile" class="Panel-tab is-visible">
         <%= render(partial: "cases/forms/details", locals: form_locals) %>
         <%= render(partial: "cases/forms/contact", locals: form_locals) %>
@@ -51,7 +53,11 @@
       </section>
 
       <section id="documents" class="Panel-tab">
-        <%= render(partial: "cases/documents", locals: { documents: @view.documents }) %>
+        <%= render(partial: "cases/documents", locals: { documents: @form.documents.all }) %>
+      </section>
+
+      <section id="admin" class="Panel-tab">
+        <%= render(partial: "cases/forms/admin", locals: form_locals) %>
       </section>
 
       <div class="Panel-actions">
