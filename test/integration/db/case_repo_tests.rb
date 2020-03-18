@@ -113,38 +113,41 @@ module Db
       assert_equal(kase.recipient.id.val, case_recipient_rec.id)
     end
 
-    test "finds a page of all opened cases" do
+    test "finds a page of opened cases" do
       case_repo = Case::Repo.new
-
-      Case::Record.create(Array.new(20, {
-        supplier: suppliers(:supplier_1),
-        enroller: enrollers(:enroller_1),
-        recipient: recipients(:recipient_1),
-      }))
-
-      case_page, cases = case_repo.find_all_opened(page: 2)
+      case_page, cases = case_repo.find_all_opened(page: 1)
       assert_length(cases, 8)
-      assert_equal(case_page.count, 28)
+      assert_equal(case_page.count, 8)
     end
 
-    test "finds all completed cases" do
+    test "finds a page of completed cases" do
       case_repo = Case::Repo.new
-      cases = case_repo.find_all_completed
+      case_page, cases = case_repo.find_all_completed(page: 1)
       assert_length(cases, 2)
+      assert_equal(case_page.count, 2)
     end
 
-    test "finds all submitted cases for an enroller" do
+    test "finds a page of cases opened for an supplier" do
+      case_repo = Case::Repo.new
+      case_rec = cases(:opened_1)
+      case_page, cases = case_repo.find_all_for_supplier(case_rec.supplier_id, page: 1)
+      assert_length(cases, 7)
+      assert_equal(case_page.count, 7)
+    end
+
+    test "finds a page of submitted cases for an enroller" do
       case_repo = Case::Repo.new
       case_rec = cases(:submitted_1)
-
-      cases = case_repo.find_all_for_enroller(case_rec.enroller_id)
+      case_page, cases = case_repo.find_all_for_enroller(case_rec.enroller_id, page: 1)
       assert_length(cases, 3)
+      assert_equal(case_page.count, 3)
     end
 
-    test "finds all dhs cases" do
+    test "finds a page of dhs cases" do
       case_repo = Case::Repo.new
-      cases = case_repo.find_all_for_dhs
+      case_page, cases = case_repo.find_all_for_dhs(page: 1)
       assert_length(cases, 5)
+      assert_equal(case_page.count, 5)
     end
 
     # -- test/save

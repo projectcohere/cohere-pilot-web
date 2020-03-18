@@ -9,8 +9,9 @@ class Enroller
         return deny_access
       end
 
-      @cases = Case::Repo.get.find_all_for_enroller(
-        User::Repo.get.find_current.role.organization_id
+      @page, @cases = Case::Repo.get.find_all_for_enroller(
+        User::Repo.get.find_current.role.organization_id,
+        page: params[:page],
       )
     end
 

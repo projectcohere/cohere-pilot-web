@@ -9,7 +9,7 @@ module Dhs
         return deny_access
       end
 
-      @cases = Case::Repo.get.find_all_for_dhs
+      @page, @cases = Case::Repo.get.find_all_for_dhs(page: params[:page])
     end
 
     def edit

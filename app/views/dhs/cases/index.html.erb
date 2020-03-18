@@ -3,6 +3,8 @@
     <h1 class="Main-title">
       Open Cases
     </h1>
+
+    <%= totals_for(@page, of: "cases") %>
   </header>
 
   <ul class="CaseList">
@@ -17,6 +19,7 @@
           <div class="CaseCell-row">
             <%= link_to(view.recipient_name, edit_case_path(kase), action: :edit, class: "CaseCell-name") %>
           </div>
+
           <div class="CaseCell-row">
             <p class="CaseCell-updateTime">
               Updated <%= time_ago_in_words(view.updated_at) %> ago
@@ -26,4 +29,6 @@
       <% end %>
     <% end %>
   </ul>
+
+  <%= pager_for(@page, of: "cases") %>
 </main>

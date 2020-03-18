@@ -1,12 +1,14 @@
-<main class="Main">
+<main class="Main Main--actions">
   <header class="Main-header">
     <h1 class="Main-title">
       Inbound Cases
     </h1>
+
     <div class="Main-actions">
       <%= link_to("Add a Case", new_case_path, class: "Button--action") %>
     </div>
   </header>
+
   <ul class="CaseList">
     <% if @cases.blank? %>
       <h2 class="CaseList-fallback">
@@ -18,6 +20,7 @@
         <li class="CaseCell">
           <div class="CaseCell-row">
             <p class="CaseCell-name"><%= view.recipient_name %></p>
+
             <% if view.approved? %>
               <p class="CaseCell-approved">
                 Approved
@@ -34,4 +37,6 @@
       <% end %>
     <% end %>
   </ul>
+
+  <%= pager_for(@page, of: "cases") %>
 </main>

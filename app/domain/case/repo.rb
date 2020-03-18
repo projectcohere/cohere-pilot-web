@@ -109,8 +109,7 @@ class Case
         .order(updated_at: :desc)
         .includes(:recipient)
 
-      case_page = Pagy.new(count: case_query.count(:all), page: page)
-      case_recs = case_query.offset(case_page.offset).limit(case_page.items)
+      case_page, case_recs = paged(case_query, page)
 
       # pre-load associated aggregates
       @supplier_repo.find_many(case_recs.map(&:supplier_id))
@@ -119,21 +118,23 @@ class Case
       return case_page, entities_from(case_recs)
     end
 
-    def find_all_completed
-      case_recs = Case::Record
+    def find_all_completed(page:)
+      case_query = Case::Record
         .where.not(completed_at: nil)
         .order(completed_at: :desc)
         .includes(:recipient)
+
+      case_page, case_recs = paged(case_query, page)
 
       # pre-load associated aggregates
       @supplier_repo.find_many(case_recs.map(&:supplier_id))
       @enroller_repo.find_many(case_recs.map(&:enroller_id))
 
-      entities_from(case_recs)
+      return case_page, entities_from(case_recs)
     end
 
-    def find_all_for_dhs
-      case_recs = Case::Record
+    def find_all_for_dhs(page:)
+      case_query = Case::Record
         .where(
           program: :meap,
           status: [:opened, :pending]
@@ -141,20 +142,24 @@ class Case
         .order(created_at: :desc)
         .includes(:recipient)
 
-      entities_from(case_recs)
+      case_page, case_recs = paged(case_query, page)
+
+      return case_page, entities_from(case_recs)
     end
 
-    def find_all_for_supplier(supplier_id)
-      case_recs = Case::Record
+    def find_all_for_supplier(supplier_id, page:)
+      case_query = Case::Record
         .where(supplier_id: supplier_id)
         .order(updated_at: :desc)
         .includes(:recipient)
 
-      entities_from(case_recs)
+      case_page, case_recs = paged(case_query, page)
+
+      return case_page, entities_from(case_recs)
     end
 
-    def find_all_for_enroller(enroller_id)
-      case_recs = Case::Record
+    def find_all_for_enroller(enroller_id, page:)
+      case_query = Case::Record
         .where(
           enroller_id: enroller_id,
           status: [:submitted, :approved, :denied]
@@ -162,11 +167,20 @@ class Case
         .order(updated_at: :desc)
         .includes(:recipient)
 
+      case_page, case_recs = paged(case_query, page)
+
       # pre-load associated aggregates
       @enroller_repo.find(enroller_id)
       @supplier_repo.find_many(case_recs.map(&:supplier_id))
 
-      entities_from(case_recs)
+      return case_page, entities_from(case_recs)
+    end
+
+    # -- queries/helpers
+    def paged(case_query, page)
+      case_page = Pagy.new(count: case_query.count(:all), page: page)
+      case_recs = case_query.offset(case_page.offset).limit(case_page.items)
+      return case_page, case_recs
     end
 
     # -- commands --

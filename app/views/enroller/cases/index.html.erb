@@ -3,6 +3,8 @@
     <h1 class="Main-title">
       Submitted Cases
     </h1>
+
+    <%= totals_for(@page, of: "cases") %>
   </header>
 
   <ul class="CaseList">
@@ -17,15 +19,18 @@
           <div class="CaseCell-row">
             <%= link_to(view.recipient_name, case_path(kase), class: "CaseCell-name") %>
           </div>
+
           <div class="CaseCell-row">
             <p class="CaseCell-organizations">
               <%= view.program_name %>, <%= view.supplier_name %>
             </p>
           </div>
+
           <div class="CaseCell-row">
             <p class="CaseCell-status">
               <%= view.status %>
             </p>
+
             <p class="CaseCell-updateTime">
               Updated <%= time_ago_in_words(view.updated_at) %> ago
             </p>
@@ -34,4 +39,6 @@
       <% end %>
     <% end %>
   </ul>
+
+  <%= pager_for(@page, of: "cases") %>
 </main>

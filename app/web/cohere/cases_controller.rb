@@ -13,9 +13,9 @@ module Cohere
 
       case @scope
       when CaseScope::Open
-        @case_page, @cases = Case::Repo.get.find_all_opened(page: params[:page])
+        @page, @cases = Case::Repo.get.find_all_opened(page: params[:page])
       when CaseScope::Completed
-        @cases = Case::Repo.get.find_all_completed
+        @page, @cases = Case::Repo.get.find_all_completed(page: params[:page])
       end
     end
 

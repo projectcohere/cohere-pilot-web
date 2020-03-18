@@ -9,8 +9,9 @@ class Supplier
         return deny_access
       end
 
-      @cases = Case::Repo.get.find_all_for_supplier(
-        User::Repo.get.find_current.organization_id
+      @page, @cases = Case::Repo.get.find_all_for_supplier(
+        User::Repo.get.find_current.organization_id,
+        page: params[:page],
       )
     end
 

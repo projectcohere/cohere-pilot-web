@@ -4,7 +4,7 @@
       <%= @scope.titlecase %> Cases
     </h1>
 
-    <%= totals_for(@case_page, of: "cases") %>
+    <%= totals_for(@page, of: "cases") %>
 
     <div class="Main-filters">
       <nav class="Filters">
@@ -56,5 +56,5 @@
     <% end %>
   <% end %>
 
-  <%= pager_for(@case_page, of: "cases") %>
+  <%= pager_for(@page, of: "cases") %>
 </main>
