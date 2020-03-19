@@ -118,6 +118,8 @@ class Case
       return case_page, entities_from(case_recs)
     end
 
+    alias :find_all_queued :find_all_opened
+
     def find_all_completed(page:)
       case_query = Case::Record
         .where.not(completed_at: nil)

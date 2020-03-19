@@ -1,8 +1,8 @@
 module Cohere
   module CasesHelper
     # -- impls --
-    def cases_is_queue
-      @scope == CaseScope::Queue
+    def cases_is_open
+      @scope == CaseScope::Open
     end
 
     def cases_filter_link_to(scope)
@@ -17,7 +17,7 @@ module Cohere
         class: "CaseList"
       }
 
-      if cases_is_queue
+      if cases_is_open
         options[:id] = "case-list"
       end
 
@@ -27,13 +27,13 @@ module Cohere
     def cases_cell_options(view)
       options = {}
 
-      if cases_is_queue
+      if cases_is_open
         options[:id] = "case-#{view.id}"
       end
 
       options[:class] = cx(
         "CaseCell",
-        "is-active" => view.has_new_activity && cases_is_queue,
+        "is-active" => view.has_new_activity && cases_is_open,
       )
 
       return options

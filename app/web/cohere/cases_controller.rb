@@ -11,11 +11,14 @@ module Cohere
 
       @scope = CaseScope.from_path(params[:scope])
 
+      case_repo = Case::Repo.get
       case @scope
-      when CaseScope::Queue
-        @page, @cases = Case::Repo.get.find_all_opened(page: params[:page])
+      when CaseScope::Queued
+        @page, @cases = case_repo.find_all_queued(page: params[:page])
+      when CaseScope::Open
+        @page, @cases = case_repo.find_all_opened(page: params[:page])
       when CaseScope::Completed
-        @page, @cases = Case::Repo.get.find_all_completed(page: params[:page])
+        @page, @cases = case_repo.find_all_completed(page: params[:page])
       end
     end
 

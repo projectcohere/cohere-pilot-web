@@ -6,8 +6,10 @@ module Cohere
     # -- queries --
     def name
       return case self
-      when Queue
+      when Open
         "Open"
+      when Queued
+        "Queued"
       when Completed
         "Completed"
       end
@@ -18,14 +20,17 @@ module Cohere
       return CaseScope.new(path: path).freeze
     end
 
-    Queue = option("queue")
+    Queued = option("queued")
+    Open = option("open")
     Completed = option("completed")
 
     # -- factories --
     def self.from_path(path)
       return case path
-      when "queue"
-        Queue
+      when "queued"
+        Queued
+      when "open"
+        Open
       when "completed"
         Completed
       end

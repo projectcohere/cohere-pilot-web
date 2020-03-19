@@ -34,6 +34,15 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/open")
   end
 
+  test "can list queued cases as a cohere user" do
+    user_rec = users(:cohere_1)
+
+    get(auth("/cases/queued", as: user_rec))
+    assert_response(:success)
+    assert_select(".Main-title", text: /Queued Cases/)
+    assert_select(".CaseCell", 8)
+  end
+
   test "can list open cases as a cohere user" do
     user_rec = users(:cohere_1)
 

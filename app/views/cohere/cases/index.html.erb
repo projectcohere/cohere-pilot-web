@@ -8,8 +8,10 @@
 
     <div class="Main-filters">
       <nav class="Filters">
-        <%= cases_filter_link_to(Cohere::CaseScope::Queue) %>
-        <%= cases_filter_link_to(Cohere::CaseScope::Completed) %>
+        <%- s = Cohere::CaseScope %>
+        <%= cases_filter_link_to(s::Queued) %>
+        <%= cases_filter_link_to(s::Open) %>
+        <%= cases_filter_link_to(s::Completed) %>
       </nav>
     </div>
   </header>
@@ -24,7 +26,7 @@
         <%- view = Cases::View.new(kase) %>
         <%= tag.li(cases_cell_options(view)) do %>
           <div class="CaseCell-row">
-            <%- link_path = if cases_is_queue %>
+            <%- link_path = if cases_is_open %>
             <%-   edit_case_path(kase) %>
             <%- else %>
             <%-   case_path(kase) %>
@@ -32,7 +34,7 @@
 
             <%= link_to(view.recipient_name, link_path, action: :edit, class: "CaseCell-name") %>
 
-            <%- if cases_is_queue %>
+            <%- if cases_is_open %>
               <span class="CaseCell-activity"></span>
             <%- end %>
           </div>

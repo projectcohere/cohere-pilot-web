@@ -120,7 +120,7 @@ Rails.application.routes.draw do
         get("/:scope",
           on: :collection,
           action: :index,
-          constraints: { scope: /queue|completed/ }
+          constraints: { scope: /queued|open|completed/ }
         )
 
         get("/",
