@@ -115,6 +115,7 @@ Rails.application.routes.draw do
         edit
         update
         show
+        destroy
       ]) do
         get("/:scope",
           on: :collection,

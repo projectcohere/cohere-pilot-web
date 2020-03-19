@@ -74,6 +74,21 @@ module Cohere
       end
     end
 
+    def destroy
+      case_repo = Case::Repo.get
+
+      @case = case_repo.find(params[:id])
+      if policy.forbid?(:destroy)
+        return deny_access
+      end
+
+      case_repo.save_destroyed(@case)
+
+      redirect_to(cases_path,
+        notice: "Destroyed #{Cases::View.new(@case).recipient_name}'s case!"
+      )
+    end
+
     # -- queries --
     private def policy
       Case::Policy.new(User::Repo.get.find_current, @case)

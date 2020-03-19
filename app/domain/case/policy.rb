@@ -41,6 +41,9 @@ class Case
         cohere?
       when :complete
         cohere? || enroller?
+      # destroy
+      when :destroy
+        cohere?
       else
         super
       end

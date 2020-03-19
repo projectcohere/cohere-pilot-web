@@ -110,3 +110,17 @@
     grid-column: 1 / 4;
   }
 }
+
+.CaseFormDanger {
+  &-warning {
+    grid-column: 1 / 10;
+    justify-self: start;
+    border-bottom: 1px solid $color-error;
+    margin-bottom: $spacing5;
+  }
+
+  &-delete {
+    grid-column: 1 / 10;
+    justify-self: start;
+  }
+}

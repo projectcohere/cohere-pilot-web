@@ -363,6 +363,10 @@ class Case
       @domain_events.consume(referred.events)
     end
 
+    def save_destroyed(kase)
+      kase.record.destroy
+    end
+
     # -- commands/helpers
     private def assign_partners(kase, case_rec)
       c = kase
