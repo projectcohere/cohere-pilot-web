@@ -13,14 +13,14 @@
         <%=
           link_to("Make Referral to WRAP", new_case_referral_path(@case),
             params: { program: Program::Name::Wrap },
-            class: "Button--action",
+            class: "Button Button--action",
           )
         %>
       <% end %>
 
       <%=
         link_to("Edit Case", edit_case_path(@case),
-          class: "Button--secondary",
+          class: "Button Button--secondary",
         )
       %>
     </div>
