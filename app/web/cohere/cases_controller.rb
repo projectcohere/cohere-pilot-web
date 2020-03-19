@@ -9,10 +9,10 @@ module Cohere
         return deny_access
       end
 
-      @scope = params[:scope]
+      @scope = CaseScope.from_path(params[:scope])
 
       case @scope
-      when CaseScope::Open
+      when CaseScope::Queue
         @page, @cases = Case::Repo.get.find_all_opened(page: params[:page])
       when CaseScope::Completed
         @page, @cases = Case::Repo.get.find_all_completed(page: params[:page])
