@@ -13,13 +13,11 @@
 .Button {
   @extend %button;
   height: $height2;
-  line-height: $height2;
 }
 
-.Button--small {
+.ButtonSm {
   @extend %button;
   height: $height3;
-  line-height: $height3;
 }
 
 .Button--action {
@@ -35,7 +33,6 @@
 .Button--secondary {
   color: $brand-primary;
   border: 2px solid $brand-primary;
-  line-height: $height2 - 4px;
 
   &:hover {
     color: lighten($brand-primary, 5%);
@@ -47,7 +44,6 @@
 .Button--destructive {
   color: $brand-primary;
   border: 2px solid $brand-primary;
-  line-height: $height2 - 4px;
 
   &:hover {
     color: $color-error;

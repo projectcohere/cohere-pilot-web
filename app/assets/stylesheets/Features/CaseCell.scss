@@ -6,20 +6,28 @@
   // -- row --
   &-row {
     display: flex;
-    align-items: baseline;
 
     > * + * {
       margin-left: $spacing5;
     }
   }
 
-  &-row:last-child {
+  &-header {
+    @extend .CaseCell-row;
+    margin-bottom: $spacing6;
     justify-content: space-between;
+  }
+
+  &-footer {
+    @extend .CaseCell-row;
+    justify-content: space-between;
+    align-items: baseline;
   }
 
   // -- elements --
   &-name {
-    display: inline-block;
+    display: flex;
+    align-items: center;
     font-size: $font-size3;
   }
 
@@ -38,8 +46,8 @@
   &-approvedCheckmark {
     @include u-checkmark($offset-x: 2px, $offset-y: 10px);
 
-    width: $height3;
-    height: $height3;
+    width: $height4;
+    height: $height4;
     margin-left: $spacing5;
     color: transparent;
   }
@@ -47,11 +55,10 @@
   // -- variants --
   &.is-active &-activity {
     $size: 8px;
-    align-self: center;
     width: $size;
     height: $size;
     background-color: $brand-secondary1;
     border-radius: $size / 2;
+    margin-left: $spacing5;
   }
-
 }

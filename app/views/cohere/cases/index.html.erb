@@ -1,3 +1,5 @@
+<% s = Cohere::CaseScope %>
+
 <main class="Main">
   <header class="Main-header">
     <h1 class="Main-title">
@@ -8,7 +10,6 @@
 
     <div class="Main-filters">
       <nav class="Filters">
-        <%- s = Cohere::CaseScope %>
         <%= cases_filter_link_to(s::Queued) %>
         <%= cases_filter_link_to(s::Open) %>
         <%= cases_filter_link_to(s::Completed) %>
@@ -16,7 +17,7 @@
     </div>
   </header>
 
-  <%= tag.ul(cases_list_options) do %>
+  <ul id="case-list" class="CaseList">
     <% if @cases&.blank? %>
       <h2 class="CaseList-fallback">
         No <%= @scope %> cases left.
@@ -25,18 +26,26 @@
       <% @cases.each do |kase| %>
         <%- view = Cases::View.new(kase) %>
         <%= tag.li(cases_cell_options(view)) do %>
-          <div class="CaseCell-row">
-            <%- link_path = if cases_is_open %>
-            <%-   edit_case_path(kase) %>
-            <%- else %>
-            <%-   case_path(kase) %>
-            <%- end %>
+          <div class="CaseCell-header">
+            <% link_path = if @scope.completed? %>
+              <% case_path(kase) %>
+            <% else %>
+              <% edit_case_path(kase) %>
+            <% end %>
 
-            <%= link_to(view.recipient_name, link_path, action: :edit, class: "CaseCell-name") %>
-
-            <%- if cases_is_open %>
+            <%= link_to(link_path, class: "CaseCell-name") do %>
+              <%= view.recipient_name %>
               <span class="CaseCell-activity"></span>
             <%- end %>
+
+            <% if @scope.queued? %>
+              <%=
+                button_to("Assign to Me",
+                  case_assignments_path(kase),
+                  class: "CaseCell-assign ButtonSm Button--secondary"
+                )
+              %>
+            <% end %>
           </div>
 
           <div class="CaseCell-row">
@@ -45,7 +54,7 @@
             </p>
           </div>
 
-          <div class="CaseCell-row">
+          <div class="CaseCell-footer">
             <p class="CaseCell-status">
               <%= view.status %>
             </p>
@@ -56,7 +65,7 @@
         <% end %>
       <% end %>
     <% end %>
-  <% end %>
+  </ul>
 
   <%= pager_for(@page, of: "cases") %>
 </main>

@@ -128,6 +128,10 @@ Rails.application.routes.draw do
           to: redirect("/cases/open")
         )
 
+        resources(:assignments, only: %i[
+          create
+        ])
+
         resources(:referrals, only: %i[
           new
           create
