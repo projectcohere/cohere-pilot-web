@@ -8,6 +8,7 @@ class Case
     belongs_to(:supplier, class_name: "::Supplier::Record")
     belongs_to(:referrer, class_name: "::Supplier::Record", optional: true)
     has_many(:documents, foreign_key: "case_id", class_name: "::Document::Record", dependent: :destroy)
+    has_many(:assignments, foreign_key: "case_id", class_name: "::Case::Assignment::Record", dependent: :destroy)
 
     # -- program --
     enum(program: Program::Name.all)

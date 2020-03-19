@@ -6,6 +6,7 @@ module Support
         Case,
         Case::Account,
         Case::Recipient,
+        Case::Assignment,
         Recipient::Profile,
         Recipient::Name,
         Recipient::Address,

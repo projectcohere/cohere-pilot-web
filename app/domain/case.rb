@@ -12,6 +12,7 @@ class Case < ::Entity
   prop(:supplier_id)
   prop(:supplier_account)
   prop(:documents, default: nil)
+  prop(:assignments, default: [])
   prop(:is_referrer, default: false)
   prop(:is_referred, default: false)
   prop(:has_new_activity, default: false)
@@ -21,10 +22,11 @@ class Case < ::Entity
   prop(:completed_at, default: nil)
 
   # -- props/temporary
+  attr(:new_assignment)
   attr(:new_documents)
   attr(:selected_document)
 
-  # -- lifetime --
+  # -- factory --
   def self.open(program:, profile:, enroller:, supplier:, supplier_account:)
     recipient = Recipient.new(
       profile: profile
@@ -140,6 +142,24 @@ class Case < ::Entity
       referrer: self,
       referred: referred
     )
+  end
+
+  # -- commands/assignments
+  def assign_user(user)
+    has_assignment = @assignments.any? do |a|
+      a.role_name == user.role.name
+    end
+
+    if has_assignment
+      return
+    end
+
+    @new_assignment = Assignment.new(
+      user_id: user.id,
+      role_name: user.role.name,
+    )
+
+    @assignments.push(@new_assignment)
   end
 
   # -- commands/messages

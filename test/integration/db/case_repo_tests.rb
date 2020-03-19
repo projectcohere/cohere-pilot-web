@@ -352,6 +352,31 @@ module Db
       assert_length(domain_events, 4)
     end
 
+    test "save a new assignment" do
+      case_rec = cases(:opened_1)
+      user_rec = users(:cohere_1)
+
+      kase = Case::Repo.map_record(case_rec)
+      user = User::Repo.map_record(user_rec)
+      kase.assign_user(user)
+
+      case_repo = Case::Repo.new
+      act = -> do
+        case_repo.save_new_assignment(kase)
+      end
+
+      assert_difference(
+        -> { Case::Assignment::Record.count } => 1,
+        &act
+      )
+
+      assignment_rec = case_rec.assignments.first
+      assert_not_nil(assignment_rec)
+      assert_equal(assignment_rec.case_id, case_rec.id)
+      assert_equal(assignment_rec.user_id, user_rec.id)
+      assert_equal(assignment_rec.role_name, "cohere")
+    end
+
     test "saves a new mms message" do
       case_rec = cases(:pending_1)
 

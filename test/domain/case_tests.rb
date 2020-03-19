@@ -192,6 +192,39 @@ class CaseTests < ActiveSupport::TestCase
     assert_nil(referral)
   end
 
+  # -- commands/assignments
+  test "assigns a user" do
+    kase = Case.stub
+    user = User.stub(
+      id: Id.new(3),
+      role: User::Role.named(:cohere),
+    )
+
+    kase.assign_user(user)
+
+    assignment = kase.new_assignment
+    assert_not_nil(assignment)
+    assert_equal(kase.assignments, [assignment])
+    assert_equal(assignment.role_name, :cohere)
+    assert_equal(assignment.user_id.val, 3)
+  end
+
+  test "doesn't assign a user if an assignment for that role exists" do
+    kase = Case.stub(
+      assignments: [
+        Case::Assignment.stub(role_name: :cohere)
+      ]
+    )
+
+    user = User.stub(
+      id: Id.new(3),
+      role: User::Role.named(:cohere),
+    )
+
+    kase.assign_user(user)
+    assert_nil(kase.new_assignment)
+  end
+
   # -- commands/messages
   def stub_recipient_with_phone_number(phone_number)
     return Case::Recipient.stub(

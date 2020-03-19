@@ -265,6 +265,26 @@ class Case
       @domain_events.consume(kase.events)
     end
 
+    def save_new_assignment(kase)
+      case_rec = kase.record
+      if case_rec == nil
+        raise "case must be fetched from the db!"
+      end
+
+      assignment = kase.new_assignment
+      if assignment == nil
+        raise "case has no new assignment"
+      end
+
+      assignment_rec = Assignment::Record.new(
+        case_id: kase.id.val,
+        user_id: assignment.user_id.val,
+        role_name: assignment.role_name,
+      )
+
+      assignment_rec.save!
+    end
+
     def save_new_message(kase)
       case_rec = kase.record
       if case_rec.nil?
