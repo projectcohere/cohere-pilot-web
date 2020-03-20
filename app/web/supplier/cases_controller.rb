@@ -10,7 +10,7 @@ class Supplier
       end
 
       @page, @cases = Case::Repo.get.find_all_for_supplier(
-        User::Repo.get.find_current.organization_id,
+        User::Repo.get.find_current.role.partner_id,
         page: params[:page],
       )
     end

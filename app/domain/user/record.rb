@@ -6,6 +6,7 @@ class User
     set_table_name!
 
     # -- associations --
+    belongs_to(:partner, class_name: "::Partner::Record")
     belongs_to(:organization, polymorphic: true, optional: true)
 
     # -- validations --

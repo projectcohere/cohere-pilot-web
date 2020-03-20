@@ -149,11 +149,11 @@ class UsersTests < ActionDispatch::IntegrationTest
     Rake.application.rake_require("tasks/users")
 
     input = <<-CSV.strip_heredoc
-      email,role_name,role_organization_id
-      test@cohere.org,cohere,
-      test@michigan.gov,dhs,
-      test@testenergy.org,supplier,#{suppliers(:supplier_1).id}
-      test@testmetro.org,enroller,#{enrollers(:enroller_1).id}
+      email,parter_id
+      test@cohere.org,#{partners(:cohere_1).id}
+      test@michigan.gov,#{partners(:governor_1).id}
+      test@testenergy.org,#{partners(:supplier_1).id}
+      test@testmetro.org,#{partners(:enroller_1).id}
     CSV
 
     act = -> do

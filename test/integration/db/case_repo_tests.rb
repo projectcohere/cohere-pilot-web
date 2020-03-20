@@ -171,7 +171,7 @@ module Db
             zip: "12345"
           )
         ),
-        enroller: Enroller::Repo.map_record(enrollers(:enroller_1)),
+        enroller: Partner::Repo.map_record(partners(:enroller_1)),
         supplier: Supplier::Repo.map_record(suppliers(:supplier_1)),
         supplier_account: Case::Account.new(
           number: "12345",
@@ -226,7 +226,7 @@ module Db
       kase = Case.open(
         program: Program::Name::Meap,
         profile: profile,
-        enroller: Enroller::Repo.map_record(enrollers(:enroller_1)),
+        enroller: Partner::Repo.map_record(partners(:enroller_1)),
         supplier: Supplier::Repo.map_record(suppliers(:supplier_1)),
         supplier_account: supplier_account,
       )

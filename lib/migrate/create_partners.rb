@@ -2,10 +2,6 @@ def execute(sql)
   ActiveRecord::Base.connection.execute(sql)
 end
 
-def index(option_type, option)
-  option_type.all.find_index(option)
-end
-
 # -- constants --
 P = Program::Name
 M = Partner::MembershipClass
@@ -16,7 +12,7 @@ execute <<-SQL
 
   -- migrations/cohere
   INSERT INTO partners (name, membership_class)
-  SELECT 'Cohere', #{index(M, M::Cohere)};
+  SELECT 'Cohere', #{M.index(M::Cohere)};
 
   UPDATE users AS u
   SET partner_id = p.id
@@ -25,7 +21,7 @@ execute <<-SQL
 
   -- migrations/governors
   INSERT INTO partners (name, membership_class)
-  SELECT 'MDHHS', #{index(M, M::Governor)};
+  SELECT 'MDHHS', #{M.index(M::Governor)};
 
   UPDATE users AS u
   SET partner_id = p.id
@@ -34,7 +30,7 @@ execute <<-SQL
 
   -- migrations/suppliers
   INSERT INTO partners (name, membership_class, programs)
-  SELECT name, #{index(M, M::Supplier)}, Array[program]
+  SELECT name, #{M.index(M::Supplier)}, Array[program]
   FROM suppliers;
 
   UPDATE users AS u
@@ -44,7 +40,7 @@ execute <<-SQL
 
   -- migrations/enrollers
   INSERT INTO partners (name, membership_class, programs)
-  SELECT name, #{index(M, M::Enroller)}, Array[#{index(P, P::Meap)}, #{index(P, P::Wrap)}]
+  SELECT name, #{M.index(M::Enroller)}, Array[#{P.index(P::Meap)}, #{P.index(P::Wrap)}]
   FROM enrollers;
 
   UPDATE users AS u

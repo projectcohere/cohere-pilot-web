@@ -13,11 +13,11 @@ class Supplier
     # -- queries/one
     def find_current
       current_user = @user_repo.find_current
-      if current_user.role.name != :supplier
+      if not current_user.role.supplier?
         return nil
       end
 
-      find(current_user.role.organization_id)
+      find(current_user.role.partner_id)
     end
 
     def find(id)

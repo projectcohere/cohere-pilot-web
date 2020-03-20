@@ -6,11 +6,11 @@ module Cases
     # -- lifetime --
     def initialize(
       kase,
-      enroller_repo: Enroller::Repo.get,
+      partner_repo: Partner::Repo.get,
       supplier_repo: Supplier::Repo.get
     )
       @case = kase
-      @enroller_repo = enroller_repo
+      @partner_repo = partner_repo
       @supplier_repo = supplier_repo
     end
 
@@ -123,7 +123,7 @@ module Cases
     end
 
     def enroller_name
-      @enroller_repo.find(@case.enroller_id).name
+      @partner_repo.find(@case.enroller_id).name
     end
 
     # -- queries/timestamps

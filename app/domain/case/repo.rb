@@ -8,11 +8,11 @@ class Case
     def initialize(
       domain_events: Services.domain_events,
       supplier_repo: ::Supplier::Repo.get,
-      enroller_repo: ::Enroller::Repo.get
+      partner_repo: ::Partner::Repo.get
     )
       @domain_events = domain_events
       @supplier_repo = supplier_repo
-      @enroller_repo = enroller_repo
+      @partner_repo = partner_repo
     end
 
     # -- queries --
@@ -113,7 +113,7 @@ class Case
 
       # pre-load associated aggregates
       @supplier_repo.find_many(case_recs.map(&:supplier_id))
-      @enroller_repo.find_many(case_recs.map(&:enroller_id))
+      @partner_repo.find_many(case_recs.map(&:enroller_id))
 
       return case_page, entities_from(case_recs)
     end
@@ -130,7 +130,7 @@ class Case
 
       # pre-load associated aggregates
       @supplier_repo.find_many(case_recs.map(&:supplier_id))
-      @enroller_repo.find_many(case_recs.map(&:enroller_id))
+      @partner_repo.find_many(case_recs.map(&:enroller_id))
 
       return case_page, entities_from(case_recs)
     end
@@ -172,7 +172,7 @@ class Case
       case_page, case_recs = paged(case_query, page)
 
       # pre-load associated aggregates
-      @enroller_repo.find(enroller_id)
+      @partner_repo.find(enroller_id)
       @supplier_repo.find_many(case_recs.map(&:supplier_id))
 
       return case_page, entities_from(case_recs)

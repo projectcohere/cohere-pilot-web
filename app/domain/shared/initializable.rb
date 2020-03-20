@@ -37,7 +37,7 @@ module Initializable
       value = if attrs.has_key?(key)
         attrs.delete(key)
       elsif default == Required
-        raise_missing_attrs!(props, attrs)
+        raise_missing_attrs!(key)
       else
         default.clone
       end
@@ -51,8 +51,8 @@ module Initializable
     end
   end
 
-  private def raise_missing_attrs!(props, attrs)
-    raise(ArgumentError, "missing attrs: #{find_missing_attrs(props, attrs)}")
+  private def raise_missing_attrs!(key)
+    raise(ArgumentError, "missing attr: #{key}")
   end
 
   private def raise_unknown_attrs!(props, attrs)

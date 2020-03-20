@@ -17,19 +17,19 @@ class Policy
   end
 
   # -- queries --
-  protected def supplier?
-    @user.role_name == :supplier
+  protected def cohere?
+    return @user.role.cohere?
   end
 
   protected def dhs?
-    @user.role_name == :dhs
+    return @user.role.dhs?
   end
 
-  protected def cohere?
-    @user.role_name == :cohere
+  protected def supplier?
+    return @user.role.supplier?
   end
 
   protected def enroller?
-    @user.role_name == :enroller
+    return @user.role.enroller?
   end
 end

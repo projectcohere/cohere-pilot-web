@@ -1,34 +1,38 @@
 require "test_helper"
 
 module Db
-  class EnrollerRepoTests < ActiveSupport::TestCase
-    test "finds an enroller" do
-      enroller_repo = Enroller::Repo.new
-      enroller_id = enrollers(:enroller_1).id
+  class PartnerRepoTests < ActiveSupport::TestCase
+    # -- queries --
+    # -- queries/one
+    test "finds a partner" do
+      partner_repo = Partner::Repo.new
+      partner_id = partners(:enroller_1).id
 
-      enroller = enroller_repo.find(enroller_id)
-      assert_not_nil(enroller)
-      assert_equal(enroller.id, enroller_id)
+      partner = partner_repo.find(partner_id)
+      assert_not_nil(partner)
+      assert_equal(partner.id, partner_id)
     end
 
     test "finds the default enroller" do
-      enroller_repo = Enroller::Repo.new
+      partner_repo = Partner::Repo.new
 
-      enroller = enroller_repo.find_default
-      assert_not_nil(enroller)
-      assert_equal(enroller, enroller_repo.find_default)
+      partner = partner_repo.find_default_enroller
+      assert_not_nil(partner)
+      assert_equal(partner.membership_class, Partner::MembershipClass::Enroller)
+      assert_equal(partner, partner_repo.find_default_enroller)
     end
 
-    test "finds many enrollers" do
-      enroller_repo = Enroller::Repo.new
-      enroller_ids = [
-        enrollers(:enroller_1).id,
-        enrollers(:enroller_2).id
+    # -- queries/many
+    test "finds many partners" do
+      partner_repo = Partner::Repo.new
+      partner_ids = [
+        partners(:enroller_1).id,
+        partners(:enroller_2).id
       ]
 
-      enrollers = enroller_repo.find_many(enroller_ids)
-      assert_length(enrollers, 2)
-      assert_same_elements(enrollers.map(&:id), enroller_ids)
+      partners = partner_repo.find_many(partner_ids)
+      assert_length(partners, 2)
+      assert_same_elements(partners.map(&:id), partner_ids)
     end
   end
 end

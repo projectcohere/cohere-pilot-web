@@ -29,10 +29,7 @@ module Users
     private def decode_invitation(row)
       User::Invitation.new(
         email: row[0],
-        role: User::Role.new(
-          name: row[1].to_sym,
-          organization_id: row[2]
-        )
+        partner_id: row[1],
       )
     end
   end

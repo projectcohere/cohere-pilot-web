@@ -84,7 +84,7 @@ Rails.application.routes.draw do
     end
   end
 
-  constraints(signed_in(role: :dhs)) do
+  constraints(signed_in(role: :governor)) do
     scope(module: :dhs) do
       resources(:cases, only: %i[
         index

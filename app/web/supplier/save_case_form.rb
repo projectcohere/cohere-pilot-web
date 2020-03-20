@@ -4,12 +4,12 @@ class Supplier
     def initialize(
       form,
       case_repo: Case::Repo.get,
-      enroller_repo: Enroller::Repo.get,
+      partner_repo: Partner::Repo.get,
       supplier_repo: Supplier::Repo.get
     )
       @form = form
       @case_repo = case_repo
-      @enroller_repo = enroller_repo
+      @partner_repo = partner_repo
       @supplier_repo = supplier_repo
     end
 
@@ -20,7 +20,7 @@ class Supplier
       end
 
       # open a new case for the recipient
-      enroller = @enroller_repo.find_default
+      enroller = @partner_repo.find_default_enroller
       supplier = @supplier_repo.find_current
 
       new_case = supplier.open_case(enroller,

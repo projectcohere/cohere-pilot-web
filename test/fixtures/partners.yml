@@ -1,0 +1,32 @@
+cohere_1:
+  name: "Cohere"
+  membership_class: :cohere
+
+governor_1:
+  name: "MDHHS"
+  membership_class: :governor
+
+enroller_1:
+  name: "Test Metro"
+  membership_class: :enroller
+  programs: [0, 1]
+
+enroller_2:
+  name: "Test United"
+  membership_class: :enroller
+  programs: [0, 1]
+
+supplier_1:
+  name: "Test Energy"
+  membership_class: :supplier
+  programs: [0]
+
+supplier_2:
+  name: "Test Energon"
+  membership_class: :supplier
+  programs: [0]
+
+supplier_3:
+  name: "Test Water"
+  membership_class: :supplier
+  programs: [1]

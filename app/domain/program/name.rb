@@ -11,5 +11,9 @@ class Program
         Wrap,
       ]
     end
+
+    def self.index(option)
+      return all.find_index(option)
+    end
   end
 end

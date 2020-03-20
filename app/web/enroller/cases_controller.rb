@@ -1,4 +1,4 @@
-class Enroller
+module Enroller
   class CasesController < ApplicationController
     # -- helpers --
     helper_method(:policy)
@@ -10,7 +10,7 @@ class Enroller
       end
 
       @page, @cases = Case::Repo.get.find_all_for_enroller(
-        User::Repo.get.find_current.role.organization_id,
+        User::Repo.get.find_current.role.partner_id,
         page: params[:page],
       )
     end
@@ -18,7 +18,7 @@ class Enroller
     def complete
       @case = Case::Repo.get.find_by_enroller_with_documents(
         params[:case_id],
-        User::Repo.get.find_current.role.organization_id
+        User::Repo.get.find_current.role.partner_id,
       )
 
       if policy.forbid?(:complete)
@@ -36,7 +36,7 @@ class Enroller
     def show
       @case = Case::Repo.get.find_by_enroller_with_documents(
         params[:id],
-        User::Repo.get.find_current.role.organization_id
+        User::Repo.get.find_current.role.partner_id
       )
 
       if policy.forbid?(:view)

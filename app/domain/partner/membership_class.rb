@@ -15,5 +15,9 @@ class Partner
         Enroller,
       ]
     end
+
+    def self.index(option)
+      return all.find_index(option)
+    end
   end
 end

@@ -10,7 +10,7 @@ class CaseTests < ActiveSupport::TestCase
     kase = Case.open(
       program: Program::Name::Meap,
       profile: profile,
-      enroller: Enroller.stub(id: 1),
+      enroller: Partner.stub(id: 1),
       supplier: Supplier.stub(id: 2),
       supplier_account: :test_account
     )
@@ -197,7 +197,7 @@ class CaseTests < ActiveSupport::TestCase
     kase = Case.stub
     user = User.stub(
       id: Id.new(3),
-      role: User::Role.named(:cohere),
+      role: User::Role.stub(name: :cohere),
     )
 
     kase.assign_user(user)
@@ -218,7 +218,7 @@ class CaseTests < ActiveSupport::TestCase
 
     user = User.stub(
       id: Id.new(3),
-      role: User::Role.named(:cohere),
+      role: User::Role.stub(name: :cohere),
     )
 
     kase.assign_user(user)

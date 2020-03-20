@@ -11,7 +11,14 @@ class User < ::Entity
 
   # -- lifetime --
   def self.invite(invitation)
-    user = User.new(email: invitation.email, role: invitation.role)
+    user = User.new(
+      email: invitation.email,
+      role: Role.new(
+        name: :unknown,
+        partner_id: invitation.partner_id
+      )
+    )
+
     user.events.add(Events::DidInvite.from_user(user))
     return user
   end
@@ -26,8 +33,8 @@ class User < ::Entity
     @role.name
   end
 
-  def organization_id
-    @role.organization_id
+  def partner_id
+    @role.partner_id
   end
 
   # -- events --
