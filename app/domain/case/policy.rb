@@ -12,8 +12,11 @@ class Case
       case action
       when :list
         true
+      # create
       when :create
         supplier?
+      when :create_assignment
+        cohere?
       # edit
       when :edit
         cohere? || dhs?

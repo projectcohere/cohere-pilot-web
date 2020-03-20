@@ -88,7 +88,7 @@ module Cohere
       case_repo.save_destroyed(@case)
 
       redirect_to(cases_path,
-        notice: "Destroyed #{Cases::View.new(@case).recipient_name}'s case!"
+        notice: "Destroyed #{Cases::View.new(@case).recipient_name}'s case."
       )
     end
 
