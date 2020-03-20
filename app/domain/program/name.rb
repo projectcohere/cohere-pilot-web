@@ -8,7 +8,7 @@ class Program
     def self.all
       @all ||= [
         Meap,
-        Wrap
+        Wrap,
       ]
     end
   end

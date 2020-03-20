@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_20_155750) do
+ActiveRecord::Schema.define(version: 2020_03_20_164451) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -40,8 +40,11 @@ ActiveRecord::Schema.define(version: 2020_03_20_155750) do
     t.bigint "user_id", null: false
     t.bigint "case_id", null: false
     t.string "role_name", default: "0", null: false
+    t.bigint "partner_id"
     t.index ["case_id"], name: "index_case_assignments_on_case_id"
+    t.index ["partner_id"], name: "index_case_assignments_on_partner_id"
     t.index ["role_name", "user_id", "case_id"], name: "by_natural_key", unique: true
+    t.index ["user_id", "case_id", "partner_id"], name: "by_natural_key_v2", unique: true
     t.index ["user_id"], name: "index_case_assignments_on_user_id"
   end
 
@@ -103,6 +106,13 @@ ActiveRecord::Schema.define(version: 2020_03_20_155750) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "partners", force: :cascade do |t|
+    t.string "name", null: false
+    t.integer "membership_class", null: false
+    t.integer "programs", array: true
+    t.index ["membership_class"], name: "index_partners_on_membership_class"
+  end
+
   create_table "recipients", force: :cascade do |t|
     t.string "first_name", null: false
     t.string "last_name", null: false
@@ -139,8 +149,10 @@ ActiveRecord::Schema.define(version: 2020_03_20_155750) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "organization_type", null: false
     t.bigint "organization_id"
+    t.bigint "partner_id"
     t.index ["email"], name: "index_users_on_email"
     t.index ["organization_type", "organization_id"], name: "index_users_on_organization_type_and_organization_id"
+    t.index ["partner_id"], name: "index_users_on_partner_id"
     t.index ["remember_token"], name: "index_users_on_remember_token"
   end
 
