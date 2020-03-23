@@ -7,11 +7,9 @@ class Case
 
     def initialize(
       domain_events: Services.domain_events,
-      supplier_repo: ::Supplier::Repo.get,
       partner_repo: ::Partner::Repo.get
     )
       @domain_events = domain_events
-      @supplier_repo = supplier_repo
       @partner_repo = partner_repo
     end
 
@@ -112,8 +110,9 @@ class Case
       case_page, case_recs = paged(case_query, page)
 
       # pre-load associated aggregates
-      @supplier_repo.find_many(case_recs.map(&:supplier_id))
-      @partner_repo.find_many(case_recs.map(&:enroller_id))
+      @partner_repo.find_all_by_ids(
+        case_recs.map(&:supplier_id) + case_recs.map(&:enroller_id)
+      )
 
       return case_page, entities_from(case_recs)
     end
@@ -129,8 +128,9 @@ class Case
       case_page, case_recs = paged(case_query, page)
 
       # pre-load associated aggregates
-      @supplier_repo.find_many(case_recs.map(&:supplier_id))
-      @partner_repo.find_many(case_recs.map(&:enroller_id))
+      @partner_repo.find_all_by_ids(
+        case_recs.map(&:supplier_id) + case_recs.map(&:enroller_id)
+      )
 
       return case_page, entities_from(case_recs)
     end
@@ -172,8 +172,9 @@ class Case
       case_page, case_recs = paged(case_query, page)
 
       # pre-load associated aggregates
-      @partner_repo.find(enroller_id)
-      @supplier_repo.find_many(case_recs.map(&:supplier_id))
+      @partner_repo.find_all_by_ids(
+        [enroller_id] + case_recs.map(&:supplier_id)
+      )
 
       return case_page, entities_from(case_recs)
     end

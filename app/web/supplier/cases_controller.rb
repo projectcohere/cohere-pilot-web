@@ -1,4 +1,4 @@
-class Supplier
+module Supplier
   class CasesController < ApplicationController
     # -- helpers --
     helper_method(:policy)

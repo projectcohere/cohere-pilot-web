@@ -1,4 +1,4 @@
-class Supplier
+module Supplier
   class CaseForm < ApplicationForm
     # -- fields --
     subform(:address, Cases::Forms::Address)

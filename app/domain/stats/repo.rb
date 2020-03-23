@@ -19,13 +19,14 @@ class Stats
     def find_current
       case_recs = ::Case::Record
         .where(
-          program: Program::Name::Meap,
+          program: ::Program::Name::Meap,
           status: [::Case::Status::Approved, ::Case::Status::Denied],
         )
         .where("created_at >= ?", StartDate)
 
-      supplier_recs = ::Supplier::Record
-        .where(program: Program::Name::Meap)
+      supplier_recs = ::Partner::Record
+        .where(membership_class: Partner::MembershipClass::Supplier)
+        .where("programs @> '{?}'", ::Program::Name.index(::Program::Name::Meap))
 
       quotes_recs = (ENV["STATS_QUOTES"] || "")
         .split(";")

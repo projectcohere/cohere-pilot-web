@@ -38,6 +38,11 @@ execute <<-SQL
   FROM partners AS p, suppliers as s
   WHERE u.organization_type = 'Supplier::Record' AND s.id = u.organization_id AND s.name = p.name;
 
+  UPDATE cases AS c
+  SET supplier_id = p.id
+  FROM partners AS p, suppliers AS s
+  WHERE s.id = c.supplier_id AND s.name = p.name;
+
   -- migrations/enrollers
   INSERT INTO partners (name, membership_class, programs)
   SELECT name, #{M.index(M::Enroller)}, Array[#{P.index(P::Meap)}, #{P.index(P::Wrap)}]
@@ -47,6 +52,11 @@ execute <<-SQL
   SET partner_id = p.id
   FROM partners AS p, enrollers as e
   WHERE u.organization_type = 'Enroller::Record' AND e.id = u.organization_id AND e.name = p.name;
+
+  UPDATE cases AS c
+  SET enroller_id = p.id
+  FROM partners AS p, enrollers AS e
+  WHERE e.id = c.enroller_id AND e.name = p.name;
 
   COMMIT;
 SQL

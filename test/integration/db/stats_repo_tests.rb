@@ -1,7 +1,7 @@
 require "test_helper"
 
 module Db
-  class FileRepoTests < ActiveSupport::TestCase
+  class StatsRepoTests < ActiveSupport::TestCase
     include ActionDispatch::TestProcess::FixtureFile
 
     test "finds stats for the current round" do

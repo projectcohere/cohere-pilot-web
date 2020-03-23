@@ -126,14 +126,25 @@ t/a/rescue:
 	PRY_RESCUE=1 $(call run-tests,$(tests-path-all))
 .PHONY: t/a/rescue
 
+## runs failed tests
+t/fail:
+	$(tools-rails) test $(tests-path-fail)
+.PHONY: t/fail
+
+## runs failed tests and stops on exceptions
+t/f/rescue:
+	PRY_RESCUE=1 $(tools-rails) test $(tests-path-fail)
+.PHONY: t/f/rescue
+
 # -- test/helpers
 define run-tests
 	$(tools-rails) test $$(find $(1) -name "*_tests.rb")
 endef
 
-tests-path     = test/domain test/web
-tests-path-int = $(tests-path) test/integration
-tests-path-all = test
+tests-path      = test/domain test/web
+tests-path-int  = $(tests-path) test/integration
+tests-path-all  = test
+tests-path-fail = $$(cat tmp/failures.log | paste -sd " " -)
 
 # -- utilties --
 ## no-op, group utitlies

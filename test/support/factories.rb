@@ -16,7 +16,6 @@ module Support
         Recipient::DhsAccount,
         Recipient::Household,
         Document,
-        Supplier,
         Chat,
         Chat::Message,
         Chat::Recipient,

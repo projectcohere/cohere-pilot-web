@@ -156,15 +156,15 @@ module Db
 
       kase = Case.open(
         program: Program::Name::Meap,
-        profile: Recipient::Profile.new(
-          phone: Recipient::Phone.new(
+        profile: Recipient::Profile.stub(
+          phone: Recipient::Phone.stub(
             number: Faker::PhoneNumber.phone_number
           ),
-          name: Recipient::Name.new(
+          name: Recipient::Name.stub(
             first: "Janice",
             last: "Sample"
           ),
-          address: Recipient::Address.new(
+          address: Recipient::Address.stub(
             street: "123 Test St.",
             city: "Testburg",
             state: "Testissippi",
@@ -172,8 +172,8 @@ module Db
           )
         ),
         enroller: Partner::Repo.map_record(partners(:enroller_1)),
-        supplier: Supplier::Repo.map_record(suppliers(:supplier_1)),
-        supplier_account: Case::Account.new(
+        supplier: Partner::Repo.map_record(partners(:supplier_1)),
+        supplier_account: Case::Account.stub(
           number: "12345",
           arrears_cents: 1000_00
         )
@@ -227,7 +227,7 @@ module Db
         program: Program::Name::Meap,
         profile: profile,
         enroller: Partner::Repo.map_record(partners(:enroller_1)),
-        supplier: Supplier::Repo.map_record(suppliers(:supplier_1)),
+        supplier: Partner::Repo.map_record(partners(:supplier_1)),
         supplier_account: supplier_account,
       )
 
@@ -495,7 +495,7 @@ module Db
     end
 
     test "saves a referral" do
-      supplier_rec = suppliers(:supplier_3)
+      supplier_rec = partners(:supplier_3)
       case_rec = cases(:approved_1)
 
       referrer = Case::Repo.map_record(case_rec, case_rec.documents)

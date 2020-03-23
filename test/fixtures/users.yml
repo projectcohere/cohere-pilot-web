@@ -29,6 +29,6 @@ enroller_2:
 supplier_1:
   email: me@testenergy.com
   encrypted_password: <%= password("password123$") %>
-  organization: supplier_1 (Supplier::Record)
+  organization: supplier_1 (Partner::Record)
   partner: supplier_1
   remember_token: <%= SecureRandom.uuid %>

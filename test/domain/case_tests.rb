@@ -11,7 +11,7 @@ class CaseTests < ActiveSupport::TestCase
       program: Program::Name::Meap,
       profile: profile,
       enroller: Partner.stub(id: 1),
-      supplier: Supplier.stub(id: 2),
+      supplier: Partner.stub(id: 2),
       supplier_account: :test_account
     )
 

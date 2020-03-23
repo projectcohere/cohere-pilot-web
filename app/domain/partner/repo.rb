@@ -5,6 +5,10 @@ class Partner
       Services.partner_repo ||= Repo.new
     end
 
+    def initialize(user_repo: User::Repo.get)
+      @user_repo = user_repo
+    end
+
     # -- queries --
     # -- queries/one
     def find(id)
@@ -14,6 +18,15 @@ class Partner
 
         entity_from(record)
       end
+    end
+
+    def find_current_supplier
+      current_user = @user_repo.find_current
+      if not current_user.role.supplier?
+        return nil
+      end
+
+      find(current_user.role.partner_id)
     end
 
     def find_default_enroller
@@ -27,7 +40,7 @@ class Partner
     end
 
     # -- queries/many
-    def find_many(ids)
+    def find_all_by_ids(ids)
       ids = ids.uniq
 
       find_cached(ids.join(",")) do
@@ -36,6 +49,14 @@ class Partner
 
         entities_from(records)
       end
+    end
+
+    def find_all_suppliers_by_program(program)
+      partner_recs = Partner::Record
+        .where(membership_class: MembershipClass::Supplier)
+        .where("programs @> '{?}'", ::Program::Name.index(program))
+
+      return entities_from(partner_recs)
     end
 
     # -- factories --

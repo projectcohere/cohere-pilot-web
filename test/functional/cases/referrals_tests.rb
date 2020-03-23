@@ -25,7 +25,7 @@ module Cases
     test "save a referral as a cohere user" do
       user_rec = users(:cohere_1)
       case_rec = cases(:approved_1)
-      supplier_rec = suppliers(:supplier_3)
+      supplier_rec = partners(:supplier_3)
 
       post(auth("/cases/#{case_rec.id}/referrals", as: user_rec), params: {
         case: {
@@ -48,7 +48,7 @@ module Cases
     test "show errors when saving an invalid referral as a cohere user" do
       user_rec = users(:cohere_1)
       case_rec = cases(:approved_1)
-      supplier_rec = suppliers(:supplier_3)
+      supplier_rec = partners(:supplier_3)
 
       post(auth("/cases/#{case_rec.id}/referrals", as: user_rec), params: {
         case: {
