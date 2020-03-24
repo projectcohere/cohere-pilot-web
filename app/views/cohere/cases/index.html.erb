@@ -26,6 +26,7 @@
     <% else %>
       <% @cases.each do |kase| %>
         <%- view = Cases::View.new(kase) %>
+
         <%= tag.li(cases_cell_options(view)) do %>
           <div class="CaseCell-header">
             <% link_path = if @scope.completed? %>

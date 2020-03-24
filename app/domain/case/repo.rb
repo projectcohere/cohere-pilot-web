@@ -105,7 +105,7 @@ class Case
       case_query = Case::Record
         .includes(:recipient)
         .incomplete
-        .with_no_assigned_user_for_partner(@partner_repo.find_cohere.id)
+        .with_no_assignment_for_partner(@partner_repo.find_cohere.id)
         .by_most_recently_updated
 
       case_page, case_recs = paged(case_query, page)
@@ -585,14 +585,14 @@ class Case
       return scope
     end
 
-    def self.with_no_assigned_user_for_partner(partner_id)
-      partner_id = connection.quote(partner_id)
+    def self.with_no_assignment_for_partner(partner_id)
+      query = <<-SQL
+        SELECT 1
+        FROM case_assignments AS ca
+        WHERE ca.case_id = cases.id AND ca.partner_id = ?)
+      SQL
 
-      scope = self
-        .joins("LEFT JOIN case_assignments AS ca ON cases.id = ca.case_id AND ca.partner_id = #{partner_id}")
-        .where("ca.partner_id ISNULL")
-
-      return scope
+      return where("NOT EXISTS (#{query})", partner_id)
     end
 
     def self.by_most_recently_updated
