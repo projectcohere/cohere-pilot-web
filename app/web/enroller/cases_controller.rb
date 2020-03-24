@@ -9,7 +9,7 @@ module Enroller
       @scope = Cases::Scope.from_key(params[:scope])
       @page, @cases = case @scope
       when Cases::Scope::Queued
-        case_repo.find_all_queued_for_cohere_for_enroller(enroller_id, page: params[:page])
+        case_repo.find_all_queued_for_enroller(enroller_id, page: params[:page])
       when Cases::Scope::Assigned
         case_repo.find_all_assigned_by_user(user.id, page: params[:page])
       when Cases::Scope::Submitted
@@ -18,7 +18,7 @@ module Enroller
     end
 
     def complete
-      @case = case_repo.find_by_enroller_with_documents(params[:case_id], enroller_id)
+      @case = case_repo.find_with_documents_for_enroller(params[:case_id], enroller_id)
       if policy.forbid?(:complete)
         return deny_access
       end
@@ -32,7 +32,7 @@ module Enroller
     end
 
     def show
-      @case = Case::Repo.get.find_by_enroller_with_documents(params[:id], enroller_id)
+      @case = case_repo.find_with_documents_for_enroller(params[:id], enroller_id)
       if policy.forbid?(:view)
         return deny_access
       end

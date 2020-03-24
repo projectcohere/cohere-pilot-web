@@ -9,7 +9,7 @@ module Supplier
         return deny_access
       end
 
-      @page, @cases = Case::Repo.get.find_all_for_supplier(
+      @page, @cases = Case::Repo.get.find_all_opened_for_supplier(
         User::Repo.get.find_current.role.partner_id,
         page: params[:page],
       )

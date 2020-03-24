@@ -62,7 +62,7 @@ module Db
       case_repo = Case::Repo.new
       case_rec = cases(:submitted_1)
 
-      kase = case_repo.find_by_enroller_with_documents(case_rec.id, case_rec.enroller_id)
+      kase = case_repo.find_with_documents_for_enroller(case_rec.id, case_rec.enroller_id)
       assert_not_nil(kase)
       assert_equal(kase.status, Case::Status::Submitted)
     end
@@ -72,7 +72,7 @@ module Db
       case_rec = cases(:opened_1)
 
       assert_raises(ActiveRecord::RecordNotFound) do
-        case_repo.find_by_enroller_with_documents(case_rec.id, case_rec.enroller_id)
+        case_repo.find_with_documents_for_enroller(case_rec.id, case_rec.enroller_id)
       end
     end
 
@@ -82,7 +82,7 @@ module Db
       case_rec2 = cases(:submitted_2)
 
       assert_raises(ActiveRecord::RecordNotFound) do
-        case_repo.find_by_enroller_with_documents(case_rec1.id, case_rec2.enroller_id)
+        case_repo.find_with_documents_for_enroller(case_rec1.id, case_rec2.enroller_id)
       end
     end
 
@@ -146,7 +146,7 @@ module Db
     test "finds a page of cases opened for an supplier" do
       case_repo = Case::Repo.new
       case_rec = cases(:opened_1)
-      case_page, cases = case_repo.find_all_for_supplier(case_rec.supplier_id, page: 1)
+      case_page, cases = case_repo.find_all_opened_for_supplier(case_rec.supplier_id, page: 1)
       assert_length(cases, 7)
       assert_equal(case_page.count, 7)
     end
@@ -155,7 +155,7 @@ module Db
       case_repo = Case::Repo.new
       enroller_rec = partners(:enroller_1)
 
-      case_page, cases = case_repo.find_all_queued_for_cohere_for_enroller(enroller_rec.id, page: 1)
+      case_page, cases = case_repo.find_all_queued_for_enroller(enroller_rec.id, page: 1)
       assert_length(cases, 2)
       assert_equal(case_page.count, 2)
     end

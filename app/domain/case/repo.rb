@@ -24,8 +24,7 @@ class Case
 
     def find_by_phone_number(phone_number)
       case_rec = Case::Record
-        .includes(:recipient)
-        .references(:recipients)
+        .join_recipient(references: true)
         .find_by(recipients: { phone_number: phone_number })
 
       entity_from(case_rec)
@@ -68,12 +67,9 @@ class Case
       entity_from(case_rec, document_recs)
     end
 
-    def find_by_enroller_with_documents(case_id, enroller_id)
+    def find_with_documents_for_enroller(case_id, enroller_id)
       case_rec = Case::Record
-        .where(
-          enroller_id: enroller_id,
-          status: [:submitted, :approved, :denied]
-        )
+        .for_enroller(enroller_id)
         .find(case_id)
 
       document_recs = Document::Record
@@ -95,141 +91,108 @@ class Case
     # -- queries/many
     def find_all_by_ids(case_ids)
       case_recs = Case::Record
+        .join_recipient
         .where(id: case_ids)
-        .includes(:recipient)
 
       entities_from(case_recs)
     end
 
-    def find_all_queued_for_cohere(page:)
-      case_query = Case::Record
-        .includes(:recipient)
-        .incomplete
-        .with_no_assignment_for_partner(@partner_repo.find_cohere.id)
-        .by_most_recently_updated
-
-      case_page, case_recs = paged(case_query, page)
-
-      # pre-load associated aggregates
-      @partner_repo.find_all_by_ids(
-        case_recs.map(&:supplier_id) + case_recs.map(&:enroller_id)
-      )
-
-      return case_page, entities_from(case_recs)
-    end
-
-    def find_all_assigned_by_user(user_id, page:)
-      case_query = Case::Record
-        .includes(:recipient)
-        .incomplete
-        .with_assigned_user(user_id.val)
-        .by_most_recently_updated
-
-      case_page, case_recs = paged(case_query, page)
-
-      # pre-load associated aggregates
-      @partner_repo.find_all_by_ids(
-        case_recs.map(&:supplier_id) + case_recs.map(&:enroller_id)
-      )
-
-      return case_page, entities_from(case_recs)
-    end
-
     def find_all_opened(page:)
       case_query = Case::Record
-        .includes(:recipient)
+        .join_recipient
         .incomplete
         .by_most_recently_updated
 
-      case_page, case_recs = paged(case_query, page)
-
-      # pre-load associated aggregates
-      @partner_repo.find_all_by_ids(
-        case_recs.map(&:supplier_id) + case_recs.map(&:enroller_id)
-      )
-
-      return case_page, entities_from(case_recs)
+      return pipeline(case_query, page)
     end
 
     def find_all_completed(page:)
       case_query = Case::Record
-        .includes(:recipient)
+        .join_recipient
         .where.not(completed_at: nil)
         .order(completed_at: :desc)
 
-      case_page, case_recs = paged(case_query, page)
+      return pipeline(case_query, page)
+    end
 
-      # pre-load associated aggregates
-      @partner_repo.find_all_by_ids(
-        case_recs.map(&:supplier_id) + case_recs.map(&:enroller_id)
-      )
+    def find_all_assigned_by_user(user_id, page:)
+      case_query = Case::Record
+        .join_recipient
+        .incomplete
+        .with_assigned_user(user_id.val)
+        .by_most_recently_updated
 
-      return case_page, entities_from(case_recs)
+      return pipeline(case_query, page)
+    end
+
+    def find_all_queued_for_cohere(page:)
+      case_query = Case::Record
+        .join_recipient
+        .incomplete
+        .with_no_assignment_for_partner(@partner_repo.find_cohere.id)
+        .by_most_recently_updated
+
+      return pipeline(case_query, page)
     end
 
     def find_all_for_dhs(page:)
       case_query = Case::Record
-        .includes(:recipient)
+        .join_recipient
         .where(
           program: :meap,
           status: [:opened, :pending]
         )
         .by_most_recently_updated
 
-      case_page, case_recs = paged(case_query, page)
-
-      return case_page, entities_from(case_recs)
+      return pipeline(case_query, page, preloaded: false)
     end
 
-    def find_all_for_supplier(supplier_id, page:)
+    def find_all_opened_for_supplier(supplier_id, page:)
       case_query = Case::Record
-        .includes(:recipient)
+        .join_recipient
         .where(supplier_id: supplier_id)
         .by_most_recently_updated
 
-      case_page, case_recs = paged(case_query, page)
-
-      return case_page, entities_from(case_recs)
+      return pipeline(case_query, page, preloaded: false)
     end
 
-    def find_all_queued_for_cohere_for_enroller(enroller_id, page:)
+    def find_all_queued_for_enroller(enroller_id, page:)
       case_query = Case::Record
-        .includes(:recipient)
+        .join_recipient
         .for_enroller(enroller_id)
         .with_no_assignment_for_partner(enroller_id)
         .by_most_recently_updated
 
-      case_page, case_recs = paged(case_query, page)
-
-      # pre-load associated aggregates
-      @partner_repo.find_all_by_ids(
-        [enroller_id] + case_recs.map(&:supplier_id)
-      )
-
-      return case_page, entities_from(case_recs)
+      return pipeline(case_query, page)
     end
 
     def find_all_submitted_for_enroller(enroller_id, page:)
       case_query = Case::Record
-        .includes(:recipient)
+        .join_recipient
         .for_enroller(enroller_id)
         .by_most_recently_updated
 
-      case_page, case_recs = paged(case_query, page)
-
-      # pre-load associated aggregates
-      @partner_repo.find_all_by_ids(
-        [enroller_id] + case_recs.map(&:supplier_id)
-      )
-
-      return case_page, entities_from(case_recs)
+      return pipeline(case_query, page)
     end
 
     # -- queries/helpers
-    def paged(case_query, page)
+    def pipeline(case_query, page, preloaded: true)
+      # paginate the results
       case_page = Pagy.new(count: case_query.count(:all), page: page)
       case_recs = case_query.offset(case_page.offset).limit(case_page.items)
-      return case_page, case_recs
+
+      # pre-load assosicated aggregates
+      if preloaded
+        partner_ids = case_recs
+          .map(&:enroller_id)
+          .concat(case_recs.map(&:supplier_id))
+          .uniq
+
+        @partner_repo.find_all_by_ids(partner_ids)
+      end
+
+      # transform the results
+      return case_page, entities_from(case_recs)
     end
 
     # -- commands --
@@ -587,13 +550,24 @@ class Case
 
   class Record
     # -- scopes --
+    def self.join_recipient(references: false)
+      scope = includes(:recipient)
+
+      if references
+        scope = scope.references(:recipients)
+      end
+
+      return scope
+    end
+
     def self.incomplete
       return where(completed_at: nil)
     end
 
     def self.with_assigned_user(user_id)
       scope = self
-        .includes(:assignments).references(:case_assignments)
+        .includes(:assignments)
+        .references(:case_assignments)
         .where(case_assignments: { user_id: user_id })
 
       return scope
