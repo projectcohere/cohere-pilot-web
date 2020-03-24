@@ -1,26 +1,46 @@
+<% s = ::Cases::Scope %>
+
 <main class="Main">
   <header class="Main-header">
     <h1 class="Main-title">
-      Open Cases
+      <%= @scope.name %> Cases
     </h1>
 
     <%= totals_for(@page, of: "cases") %>
+
+    <div class="Main-filters">
+      <nav class="Filters">
+        <%= cases_filter_link_to(s::Queued) %>
+        <%= cases_filter_link_to(s::Assigned) %>
+        <%= cases_filter_link_to(s::Open) %>
+      </nav>
+    </div>
   </header>
 
   <ul class="CaseList">
     <% if @cases.blank? %>
       <h2 class="CaseList-fallback">
-        No open cases left.
+        No <%= @scope.name.downcase %> cases left.
       </h2>
     <% else %>
       <% @cases.each do |kase| %>
         <%- view = Cases::View.new(kase) %>
+
         <li class="CaseCell">
-          <div class="CaseCell-row">
+          <div class="CaseCell-header">
             <%= link_to(view.recipient_name, edit_case_path(kase), action: :edit, class: "CaseCell-name") %>
+
+            <% if @scope.queued? %>
+              <%=
+                button_to("Assign to Me",
+                  case_assignments_path(kase),
+                  class: "CaseCell-assign ButtonSm Button--secondary"
+                )
+              %>
+            <% end %>
           </div>
 
-          <div class="CaseCell-row">
+          <div class="CaseCell-footer">
             <p class="CaseCell-updateTime">
               Updated <%= time_ago_in_words(view.updated_at) %> ago
             </p>

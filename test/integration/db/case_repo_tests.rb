@@ -67,7 +67,7 @@ module Db
       assert_equal(kase.status, Case::Status::Submitted)
     end
 
-    test "can't find a non-submitted case for an enroller" do
+    test "can't find a unsubmitted case for an enroller" do
       case_repo = Case::Repo.new
       case_rec = cases(:opened_1)
 
@@ -86,21 +86,21 @@ module Db
       end
     end
 
-    test "finds an opened case by id" do
+    test "finds an opened case by id for a dhs user" do
       case_repo = Case::Repo.new
       case_rec = cases(:opened_1)
 
-      kase = case_repo.find_opened_with_documents(case_rec.id)
+      kase = case_repo.find_with_documents_for_dhs(case_rec.id)
       assert_not_nil(kase)
       assert_equal(kase.status, Case::Status::Opened)
     end
 
-    test "can't find an opened case by id" do
+    test "can't find an submitted case by id for a dhs user" do
       case_repo = Case::Repo.new
       case_rec = cases(:submitted_1)
 
       assert_raises(ActiveRecord::RecordNotFound) do
-        case_repo.find_opened_with_documents(case_rec.id)
+        case_repo.find_with_documents_for_dhs(case_rec.id)
       end
     end
 
@@ -111,13 +111,6 @@ module Db
       kase = case_repo.find_active_by_recipient(case_recipient_rec.id)
       assert_not_nil(kase)
       assert_equal(kase.recipient.id.val, case_recipient_rec.id)
-    end
-
-    test "finds a page of queued cases" do
-      case_repo = Case::Repo.new
-      case_page, cases = case_repo.find_all_queued_for_cohere(page: 1)
-      assert_length(cases, 7)
-      assert_equal(case_page.count, 7)
     end
 
     test "finds a page of assigned cases" do
@@ -143,37 +136,54 @@ module Db
       assert_equal(case_page.count, 2)
     end
 
-    test "finds a page of cases opened for an supplier" do
+    test "finds a page of queued cases for cohere" do
       case_repo = Case::Repo.new
-      case_rec = cases(:opened_1)
-      case_page, cases = case_repo.find_all_opened_for_supplier(case_rec.supplier_id, page: 1)
+      case_page, cases = case_repo.find_all_queued_for_cohere(page: 1)
       assert_length(cases, 7)
       assert_equal(case_page.count, 7)
     end
 
+    test "finds a page of opened cases for a supplier" do
+      case_repo = Case::Repo.new
+      partner_rec = partners(:supplier_1)
+
+      case_page, cases = case_repo.find_all_opened_for_supplier(partner_rec.id, page: 1)
+      assert_length(cases, 7)
+      assert_equal(case_page.count, 7)
+    end
+
+    test "finds a page of queued cases for a dhs partner" do
+      case_repo = Case::Repo.new
+      partner_rec = partners(:governor_1)
+
+      case_page, cases = case_repo.find_all_queued_for_dhs(partner_rec.id, page: 1)
+      assert_length(cases, 4)
+      assert_equal(case_page.count, 4)
+    end
+
+    test "finds a page of opened cases for a dhs partner" do
+      case_repo = Case::Repo.new
+      case_page, cases = case_repo.find_all_opened_for_dhs(page: 1)
+      assert_length(cases, 5)
+      assert_equal(case_page.count, 5)
+    end
+
     test "finds a page of queued cases for an enroller" do
       case_repo = Case::Repo.new
-      enroller_rec = partners(:enroller_1)
+      partner_rec = partners(:enroller_1)
 
-      case_page, cases = case_repo.find_all_queued_for_enroller(enroller_rec.id, page: 1)
-      assert_length(cases, 2)
-      assert_equal(case_page.count, 2)
+      case_page, cases = case_repo.find_all_queued_for_enroller(partner_rec.id, page: 1)
+      assert_length(cases, 0)
+      assert_equal(case_page.count, 0)
     end
 
     test "finds a page of submitted cases for an enroller" do
       case_repo = Case::Repo.new
-      enroller_rec = partners(:enroller_1)
+      partner_rec = partners(:enroller_1)
 
-      case_page, cases = case_repo.find_all_submitted_for_enroller(enroller_rec.id, page: 1)
+      case_page, cases = case_repo.find_all_submitted_for_enroller(partner_rec.id, page: 1)
       assert_length(cases, 3)
       assert_equal(case_page.count, 3)
-    end
-
-    test "finds a page of dhs cases" do
-      case_repo = Case::Repo.new
-      case_page, cases = case_repo.find_all_for_dhs(page: 1)
-      assert_length(cases, 5)
-      assert_equal(case_page.count, 5)
     end
 
     # -- test/save

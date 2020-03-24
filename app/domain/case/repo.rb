@@ -55,9 +55,17 @@ class Case
       return entity_from(case_rec, document_recs, is_referrer)
     end
 
-    def find_opened_with_documents(case_id)
+    def find_for_dhs(case_id)
       case_rec = Case::Record
-        .where(status: [:opened, :pending])
+        .for_governor
+        .find(case_id)
+
+      return entity_from(case_rec)
+    end
+
+    def find_with_documents_for_dhs(case_id)
+      case_rec = Case::Record
+        .for_governor
         .find(case_id)
 
       document_recs = Document::Record
@@ -143,13 +151,20 @@ class Case
       return pipeline(case_query, page)
     end
 
-    def find_all_for_dhs(page:)
+    def find_all_queued_for_dhs(governor_id, page:)
       case_query = Case::Record
         .join_recipient
-        .where(
-          program: :meap,
-          status: [:opened, :pending]
-        )
+        .for_governor
+        .with_no_assignment_for_partner(governor_id)
+        .by_most_recently_updated
+
+      return pipeline(case_query, page, preloaded: false)
+    end
+
+    def find_all_opened_for_dhs(page:)
+      case_query = Case::Record
+        .join_recipient
+        .for_governor
         .by_most_recently_updated
 
       return pipeline(case_query, page, preloaded: false)
@@ -167,6 +182,7 @@ class Case
     def find_all_queued_for_enroller(enroller_id, page:)
       case_query = Case::Record
         .join_recipient
+        .incomplete
         .for_enroller(enroller_id)
         .with_no_assignment_for_partner(enroller_id)
         .by_most_recently_updated
@@ -579,6 +595,13 @@ class Case
         .where(case_assignments: { user_id: user_id })
 
       return scope
+    end
+
+    def self.for_governor
+      return where(
+        program: Program::Name::Meap,
+        status: [Status::Opened, Status::Pending]
+      )
     end
 
     def self.for_enroller(enroller_id)

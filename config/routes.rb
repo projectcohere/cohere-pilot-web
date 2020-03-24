@@ -87,10 +87,24 @@ Rails.application.routes.draw do
   constraints(signed_in(role: :governor)) do
     scope(module: :dhs) do
       resources(:cases, only: %i[
-        index
         edit
         update
-      ])
+      ]) do
+        get("/:scope",
+          on: :collection,
+          action: :index,
+          constraints: { scope: /queued|assigned|open/ }
+        )
+
+        get("/",
+          on: :collection,
+          to: redirect("/cases/queued")
+        )
+
+        resources(:assignments, only: %i[
+          create
+        ])
+      end
     end
   end
 

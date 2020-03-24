@@ -16,7 +16,7 @@ class Case
       when :create
         supplier?
       when :create_assignment
-        cohere? || enroller?
+        cohere? || enroller? || dhs?
       # edit
       when :edit
         cohere? || dhs?

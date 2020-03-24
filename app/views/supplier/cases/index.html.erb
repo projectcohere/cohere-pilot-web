@@ -17,6 +17,7 @@
     <% else %>
       <% @cases.each do |kase| %>
         <%- view = Cases::View.new(kase) %>
+
         <li class="CaseCell">
           <div class="CaseCell-row">
             <p class="CaseCell-name"><%= view.recipient_name %></p>
