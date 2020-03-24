@@ -197,7 +197,10 @@ class CaseTests < ActiveSupport::TestCase
     kase = Case.stub
     user = User.stub(
       id: Id.new(3),
-      role: User::Role.stub(name: :cohere),
+      role: User::Role.stub(
+        name: :cohere,
+        partner_id: 5
+      ),
     )
 
     kase.assign_user(user)
@@ -205,20 +208,20 @@ class CaseTests < ActiveSupport::TestCase
     assignment = kase.new_assignment
     assert_not_nil(assignment)
     assert_equal(kase.assignments, [assignment])
-    assert_equal(assignment.role_name, :cohere)
     assert_equal(assignment.user_id.val, 3)
+    assert_equal(assignment.partner_id, 5)
   end
 
-  test "doesn't assign a user if an assignment for that role exists" do
+  test "doesn't assign a user if an assignment for that partner exists" do
     kase = Case.stub(
       assignments: [
-        Case::Assignment.stub(role_name: :cohere)
+        Case::Assignment.stub(partner_id: 3)
       ]
     )
 
     user = User.stub(
       id: Id.new(3),
-      role: User::Role.stub(name: :cohere),
+      role: User::Role.stub(partner_id: 3),
     )
 
     kase.assign_user(user)

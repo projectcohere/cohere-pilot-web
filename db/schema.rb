@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_20_164451) do
+ActiveRecord::Schema.define(version: 2020_03_23_203527) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -39,12 +39,10 @@ ActiveRecord::Schema.define(version: 2020_03_20_164451) do
   create_table "case_assignments", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "case_id", null: false
-    t.string "role_name", default: "0", null: false
-    t.bigint "partner_id"
+    t.bigint "partner_id", null: false
     t.index ["case_id"], name: "index_case_assignments_on_case_id"
     t.index ["partner_id"], name: "index_case_assignments_on_partner_id"
-    t.index ["role_name", "user_id", "case_id"], name: "by_natural_key", unique: true
-    t.index ["user_id", "case_id", "partner_id"], name: "by_natural_key_v2", unique: true
+    t.index ["user_id", "case_id", "partner_id"], name: "by_natural_key", unique: true
     t.index ["user_id"], name: "index_case_assignments_on_user_id"
   end
 

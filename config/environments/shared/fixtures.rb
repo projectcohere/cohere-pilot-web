@@ -9,6 +9,7 @@ module Environment
       users: "User::Record",
       partners: "Partner::Record",
       cases: "Case::Record",
+      case_assignments: "Case::Assignment::Record",
       recipients: "Recipient::Record",
       documents: "Document::Record",
       chats: "Chat::Record",

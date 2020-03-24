@@ -20,6 +20,15 @@ class Partner
       end
     end
 
+    def find_cohere
+      find_cached(:cohere) do
+        record = Partner::Record
+          .find_by!(membership_class: MembershipClass::Cohere)
+
+        entity_from(record)
+      end
+    end
+
     def find_current_supplier
       current_user = @user_repo.find_current
       if not current_user.role.supplier?

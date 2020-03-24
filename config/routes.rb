@@ -125,7 +125,7 @@ Rails.application.routes.draw do
 
         get("/",
           on: :collection,
-          to: redirect("/cases/open")
+          to: redirect("/cases/queued")
         )
 
         resources(:assignments, only: %i[

@@ -14,7 +14,7 @@ module Minitest
 
     # -- Reporter --
     def record(result)
-      if result.error?
+      if result.failure != nil
         failures << result
       end
     end

@@ -4,8 +4,7 @@ module ApplicationHelper
   # -- elements --
   def totals_for(page, of:)
     name = of
-
-    if page == nil
+    if page == nil || page.count == 0
       return ""
     end
 
@@ -100,7 +99,7 @@ module ApplicationHelper
   def pager_for(page, of:)
     name = of
 
-    if page == nil
+    if page == nil || page.count == 0
       return ""
     end
 

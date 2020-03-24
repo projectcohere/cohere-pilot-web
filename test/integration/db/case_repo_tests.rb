@@ -113,6 +113,13 @@ module Db
       assert_equal(kase.recipient.id.val, case_recipient_rec.id)
     end
 
+    test "finds a page of queued cases" do
+      case_repo = Case::Repo.new
+      case_page, cases = case_repo.find_all_queued(page: 1)
+      assert_length(cases, 7)
+      assert_equal(case_page.count, 7)
+    end
+
     test "finds a page of opened cases" do
       case_repo = Case::Repo.new
       case_page, cases = case_repo.find_all_opened(page: 1)
@@ -352,8 +359,8 @@ module Db
       assert_length(domain_events, 4)
     end
 
-    test "save a new assignment" do
-      case_rec = cases(:opened_1)
+    test "saves a new assignment" do
+      case_rec = cases(:opened_2)
       user_rec = users(:cohere_1)
 
       kase = Case::Repo.map_record(case_rec)
@@ -374,7 +381,7 @@ module Db
       assert_not_nil(assignment_rec)
       assert_equal(assignment_rec.case_id, case_rec.id)
       assert_equal(assignment_rec.user_id, user_rec.id)
-      assert_equal(assignment_rec.role_name, "cohere")
+      assert_equal(assignment_rec.partner_id, user_rec.partner_id)
     end
 
     test "saves a new mms message" do

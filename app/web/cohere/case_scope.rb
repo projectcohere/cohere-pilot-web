@@ -6,10 +6,10 @@ module Cohere
     # -- queries --
     def name
       return case self
-      when Open
-        "Open"
       when Queued
         "Queued"
+      when Open
+        "Open"
       when Completed
         "Completed"
       end

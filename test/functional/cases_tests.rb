@@ -40,7 +40,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases/queued", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /Queued Cases/)
-    assert_select(".CaseCell", 8)
+    assert_select(".CaseCell", 7)
   end
 
   test "can list open cases as a cohere user" do

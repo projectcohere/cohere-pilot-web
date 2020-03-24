@@ -18,7 +18,7 @@ module Cases
 
     test "self-assign to a case as a cohere user" do
       user_rec = users(:cohere_1)
-      case_rec = cases(:opened_1)
+      case_rec = cases(:opened_2)
 
       act = -> do
         post(auth("/cases/#{case_rec.id}/assignments", as: user_rec))

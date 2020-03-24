@@ -147,7 +147,7 @@ class Case < ::Entity
   # -- commands/assignments
   def assign_user(user)
     has_assignment = @assignments.any? do |a|
-      a.role_name == user.role.name
+      a.partner_id == user.role.partner_id
     end
 
     if has_assignment
@@ -156,7 +156,7 @@ class Case < ::Entity
 
     @new_assignment = Assignment.new(
       user_id: user.id,
-      role_name: user.role.name,
+      partner_id: user.role.partner_id,
     )
 
     @assignments.push(@new_assignment)
