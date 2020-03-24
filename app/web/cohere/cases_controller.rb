@@ -11,15 +11,15 @@ module Cohere
 
       case_repo = Case::Repo.get
 
-      @scope = CaseScope.from_path(params[:scope])
+      @scope = Cases::Scope.from_key(params[:scope])
       @page, @cases = case @scope
-      when CaseScope::Queued
+      when Cases::Scope::Queued
         case_repo.find_all_queued(page: params[:page])
-      when CaseScope::Assigned
+      when Cases::Scope::Assigned
         case_repo.find_all_assigned_by_user(user.id, page: params[:page])
-      when CaseScope::Open
+      when Cases::Scope::Open
         case_repo.find_all_opened(page: params[:page])
-      when CaseScope::Completed
+      when Cases::Scope::Completed
         case_repo.find_all_completed(page: params[:page])
       end
     end

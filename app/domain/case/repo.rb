@@ -586,10 +586,10 @@ class Case
     end
 
     def self.with_no_assignment_for_partner(partner_id)
-      query = <<-SQL
+      query = <<~SQL
         SELECT 1
         FROM case_assignments AS ca
-        WHERE ca.case_id = cases.id AND ca.partner_id = ?)
+        WHERE ca.case_id = cases.id AND ca.partner_id = ?
       SQL
 
       return where("NOT EXISTS (#{query})", partner_id)

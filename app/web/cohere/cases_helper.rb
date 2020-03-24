@@ -2,7 +2,7 @@ module Cohere
   module CasesHelper
     # -- impls --
     def cases_is_open
-      @scope == CaseScope::Open
+      @scope == Cases::Scope::Open
     end
 
     def cases_filter_link_to(scope)
