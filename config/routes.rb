@@ -115,6 +115,10 @@ Rails.application.routes.draw do
           action: :complete,
           constraints: { complete_action: /approve|deny/ }
         )
+
+        resources(:assignments, only: %i[
+          create
+        ])
       end
     end
   end

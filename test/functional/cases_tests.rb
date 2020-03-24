@@ -426,6 +426,32 @@ class CasesTests < ActionDispatch::IntegrationTest
     end
   end
 
+  # -- destroy --
+  test "can't destroy a case if signed-out" do
+    assert_raises(ActionController::RoutingError) do
+      delete("/cases/3")
+    end
+  end
+
+  test "can't destroy a case without permission" do
+    user_rec = users(:supplier_1)
+
+    assert_raises(ActionController::RoutingError) do
+      delete(auth("/cases/4", as: user_rec))
+    end
+  end
+
+  test "destroy a case" do
+    user_rec = users(:cohere_1)
+    case_rec = cases(:pending_1)
+
+    delete(auth("/cases/#{case_rec.id}", as: user_rec))
+
+    assert_redirected_to("/cases")
+    assert_present(flash[:notice])
+  end
+
+  # -- complete --
   test "can't complete a case with an unknown status as an enroller" do
     user_rec = users(:enroller_1)
 
@@ -522,30 +548,4 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_send_emails(0)
   end
-
-  # -- destroy --
-  test "can't destroy a case if signed-out" do
-    assert_raises(ActionController::RoutingError) do
-      delete("/cases/3")
-    end
-  end
-
-  test "can't destroy a case without permission" do
-    user_rec = users(:supplier_1)
-
-    assert_raises(ActionController::RoutingError) do
-      delete(auth("/cases/4", as: user_rec))
-    end
-  end
-
-  test "destroy a case" do
-    user_rec = users(:cohere_1)
-    case_rec = cases(:pending_1)
-
-    delete(auth("/cases/#{case_rec.id}", as: user_rec))
-
-    assert_redirected_to("/cases")
-    assert_present(flash[:notice])
-  end
-
 end

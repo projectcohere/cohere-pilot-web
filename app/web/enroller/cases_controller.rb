@@ -1,5 +1,5 @@
 module Enroller
-  class CasesController < Cases::CasesController
+  class CasesController < Cases::BaseController
     # -- actions --
     def index
       if policy.forbid?(:list)

@@ -19,7 +19,7 @@ class Case
       case_rec = Case::Record
         .find(case_id)
 
-      entity_from(case_rec)
+      return entity_from(case_rec)
     end
 
     def find_by_phone_number(phone_number)
@@ -27,7 +27,7 @@ class Case
         .join_recipient(references: true)
         .find_by(recipients: { phone_number: phone_number })
 
-      entity_from(case_rec)
+      return entity_from(case_rec)
     end
 
     def find_with_document(case_id, document_id)
@@ -38,7 +38,7 @@ class Case
           case_id: case_id
         )
 
-      entity_from(document_rec.case, [document_rec])
+      return entity_from(document_rec.case, [document_rec])
     end
 
     def find_with_documents_and_referral(case_id)
@@ -52,7 +52,7 @@ class Case
       is_referrer = Case::Record
         .exists?(referrer_id: case_id)
 
-      entity_from(case_rec, document_recs, is_referrer)
+      return entity_from(case_rec, document_recs, is_referrer)
     end
 
     def find_opened_with_documents(case_id)
@@ -64,7 +64,15 @@ class Case
         .with_attached_file
         .where(case_id: case_id)
 
-      entity_from(case_rec, document_recs)
+      return entity_from(case_rec, document_recs)
+    end
+
+    def find_for_enroller(case_id, enroller_id)
+      case_rec = Case::Record
+        .for_enroller(enroller_id)
+        .find(case_id)
+
+      return entity_from(case_rec)
     end
 
     def find_with_documents_for_enroller(case_id, enroller_id)
@@ -76,7 +84,7 @@ class Case
         .with_attached_file
         .where(case_id: case_id)
 
-      entity_from(case_rec, document_recs)
+      return entity_from(case_rec, document_recs)
     end
 
     def find_active_by_recipient(recipient_id)
@@ -94,7 +102,7 @@ class Case
         .join_recipient
         .where(id: case_ids)
 
-      entities_from(case_recs)
+      return entities_from(case_recs)
     end
 
     def find_all_opened(page:)
