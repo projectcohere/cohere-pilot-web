@@ -9,16 +9,18 @@ module Cohere
         return deny_access
       end
 
-      @scope = CaseScope.from_path(params[:scope])
-
       case_repo = Case::Repo.get
-      case @scope
+
+      @scope = CaseScope.from_path(params[:scope])
+      @page, @cases = case @scope
       when CaseScope::Queued
-        @page, @cases = case_repo.find_all_queued(page: params[:page])
+        case_repo.find_all_queued(page: params[:page])
+      when CaseScope::Assigned
+        case_repo.find_all_assigned_by_user(user.id, page: params[:page])
       when CaseScope::Open
-        @page, @cases = case_repo.find_all_opened(page: params[:page])
+        case_repo.find_all_opened(page: params[:page])
       when CaseScope::Completed
-        @page, @cases = case_repo.find_all_completed(page: params[:page])
+        case_repo.find_all_completed(page: params[:page])
       end
     end
 
@@ -93,8 +95,12 @@ module Cohere
     end
 
     # -- queries --
+    private def user
+      return User::Repo.get.find_current
+    end
+
     private def policy
-      Case::Policy.new(User::Repo.get.find_current, @case)
+      return Case::Policy.new(user, @case)
     end
   end
 end

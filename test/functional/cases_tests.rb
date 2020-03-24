@@ -31,7 +31,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     user_rec = users(:cohere_1)
 
     get(auth("/cases", as: user_rec))
-    assert_redirected_to("/cases/open")
+    assert_redirected_to("/cases/queued")
   end
 
   test "can list queued cases as a cohere user" do
@@ -41,6 +41,15 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_response(:success)
     assert_select(".Main-title", text: /Queued Cases/)
     assert_select(".CaseCell", 7)
+  end
+
+  test "can list assigned cases as a cohere user" do
+    user_rec = users(:cohere_1)
+
+    get(auth("/cases/assigned", as: user_rec))
+    assert_response(:success)
+    assert_select(".Main-title", text: /Assigned Cases/)
+    assert_select(".CaseCell", 1)
   end
 
   test "can list open cases as a cohere user" do

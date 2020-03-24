@@ -8,6 +8,8 @@ module Cohere
       return case self
       when Queued
         "Queued"
+      when Assigned
+        "Assigned"
       when Open
         "Open"
       when Completed
@@ -17,6 +19,10 @@ module Cohere
 
     def queued?
       return self == Queued
+    end
+
+    def assigned?
+      return self == Assigned
     end
 
     def opened?
@@ -33,6 +39,7 @@ module Cohere
     end
 
     Queued = option("queued")
+    Assigned = option("assigned")
     Open = option("open")
     Completed = option("completed")
 
@@ -41,6 +48,8 @@ module Cohere
       return case path
       when "queued"
         Queued
+      when "assigned"
+        Assigned
       when "open"
         Open
       when "completed"

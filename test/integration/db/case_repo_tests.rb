@@ -120,6 +120,15 @@ module Db
       assert_equal(case_page.count, 7)
     end
 
+    test "finds a page of assigned cases" do
+      case_repo = Case::Repo.new
+      user_rec = users(:cohere_1)
+
+      case_page, cases = case_repo.find_all_assigned_by_user(Id.new(user_rec.id), page: 1)
+      assert_length(cases, 1)
+      assert_equal(case_page.count, 1)
+    end
+
     test "finds a page of opened cases" do
       case_repo = Case::Repo.new
       case_page, cases = case_repo.find_all_opened(page: 1)

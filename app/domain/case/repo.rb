@@ -105,7 +105,24 @@ class Case
       case_query = Case::Record
         .includes(:recipient)
         .incomplete
-        .with_no_assignment_for_partner(@partner_repo.find_cohere.id)
+        .with_no_assigned_user_for_partner(@partner_repo.find_cohere.id)
+        .by_most_recently_updated
+
+      case_page, case_recs = paged(case_query, page)
+
+      # pre-load associated aggregates
+      @partner_repo.find_all_by_ids(
+        case_recs.map(&:supplier_id) + case_recs.map(&:enroller_id)
+      )
+
+      return case_page, entities_from(case_recs)
+    end
+
+    def find_all_assigned_by_user(user_id, page:)
+      case_query = Case::Record
+        .includes(:recipient)
+        .incomplete
+        .with_assigned_user(user_id.val)
         .by_most_recently_updated
 
       case_page, case_recs = paged(case_query, page)
@@ -560,7 +577,15 @@ class Case
       return where(completed_at: nil)
     end
 
-    def self.with_no_assignment_for_partner(partner_id)
+    def self.with_assigned_user(user_id)
+      scope = self
+        .includes(:assignments).references(:case_assignments)
+        .where(case_assignments: { user_id: user_id })
+
+      return scope
+    end
+
+    def self.with_no_assigned_user_for_partner(partner_id)
       partner_id = connection.quote(partner_id)
 
       scope = self
