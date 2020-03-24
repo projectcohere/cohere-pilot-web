@@ -4,12 +4,12 @@ M = Partner::MembershipClass
 
 # -- partners --
 cohere_0 = Partner::Record.create!(
-  name: "Cohere"
+  name: "Cohere",
   membership_class: M::Cohere,
 )
 
 mdhhs_0 = Partner::Record.create!(
-  name: "MDHHS"
+  name: "MDHHS",
   membership_class: M::Governor,
 )
 
