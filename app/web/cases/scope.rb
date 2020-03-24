@@ -6,6 +6,7 @@ module Cases
     option("queued")
     option("assigned")
     option("open")
+    option("submitted")
     option("completed")
 
     # -- queries --

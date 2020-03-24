@@ -115,7 +115,7 @@ module Db
 
     test "finds a page of queued cases" do
       case_repo = Case::Repo.new
-      case_page, cases = case_repo.find_all_queued(page: 1)
+      case_page, cases = case_repo.find_all_queued_for_cohere(page: 1)
       assert_length(cases, 7)
       assert_equal(case_page.count, 7)
     end
@@ -151,10 +151,20 @@ module Db
       assert_equal(case_page.count, 7)
     end
 
+    test "finds a page of queued cases for an enroller" do
+      case_repo = Case::Repo.new
+      enroller_rec = partners(:enroller_1)
+
+      case_page, cases = case_repo.find_all_queued_for_cohere_for_enroller(enroller_rec.id, page: 1)
+      assert_length(cases, 2)
+      assert_equal(case_page.count, 2)
+    end
+
     test "finds a page of submitted cases for an enroller" do
       case_repo = Case::Repo.new
-      case_rec = cases(:submitted_1)
-      case_page, cases = case_repo.find_all_for_enroller(case_rec.enroller_id, page: 1)
+      enroller_rec = partners(:enroller_1)
+
+      case_page, cases = case_repo.find_all_submitted_for_enroller(enroller_rec.id, page: 1)
       assert_length(cases, 3)
       assert_equal(case_page.count, 3)
     end

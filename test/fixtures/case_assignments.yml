@@ -2,3 +2,8 @@ cohere_1:
   user: cohere_1
   case: opened_1
   partner: cohere_1
+
+cohere_2:
+  user: enroller_1
+  case: submitted_1
+  partner: enroller_1

@@ -70,10 +70,35 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 2)
   end
 
-  test "can list submitted cases as an enroller" do
+  test "can list cases as an enroller" do
     user_rec = users(:enroller_1)
 
     get(auth("/cases", as: user_rec))
+    assert_redirected_to("/cases/queued")
+  end
+
+  test "can list queued cases as an enroller" do
+    user_rec = users(:enroller_1)
+
+    get(auth("/cases/queued", as: user_rec))
+    assert_response(:success)
+    assert_select(".Main-title", text: /Queued Cases/)
+    assert_select(".CaseCell", 2)
+  end
+
+  test "can list assigned cases as an enroller" do
+    user_rec = users(:enroller_1)
+
+    get(auth("/cases/assigned", as: user_rec))
+    assert_response(:success)
+    assert_select(".Main-title", text: /Assigned Cases/)
+    assert_select(".CaseCell", 1)
+  end
+
+  test "can list submitted cases as an enroller" do
+    user_rec = users(:enroller_1)
+
+    get(auth("/cases/submitted", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /Submitted Cases/)
     assert_select(".CaseCell", 3)

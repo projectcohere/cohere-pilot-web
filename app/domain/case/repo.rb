@@ -101,7 +101,7 @@ class Case
       entities_from(case_recs)
     end
 
-    def find_all_queued(page:)
+    def find_all_queued_for_cohere(page:)
       case_query = Case::Record
         .includes(:recipient)
         .incomplete
@@ -192,13 +192,27 @@ class Case
       return case_page, entities_from(case_recs)
     end
 
-    def find_all_for_enroller(enroller_id, page:)
+    def find_all_queued_for_cohere_for_enroller(enroller_id, page:)
       case_query = Case::Record
         .includes(:recipient)
-        .where(
-          enroller_id: enroller_id,
-          status: [:submitted, :approved, :denied]
-        )
+        .for_enroller(enroller_id)
+        .with_no_assignment_for_partner(enroller_id)
+        .by_most_recently_updated
+
+      case_page, case_recs = paged(case_query, page)
+
+      # pre-load associated aggregates
+      @partner_repo.find_all_by_ids(
+        [enroller_id] + case_recs.map(&:supplier_id)
+      )
+
+      return case_page, entities_from(case_recs)
+    end
+
+    def find_all_submitted_for_enroller(enroller_id, page:)
+      case_query = Case::Record
+        .includes(:recipient)
+        .for_enroller(enroller_id)
         .by_most_recently_updated
 
       case_page, case_recs = paged(case_query, page)
@@ -583,6 +597,13 @@ class Case
         .where(case_assignments: { user_id: user_id })
 
       return scope
+    end
+
+    def self.for_enroller(enroller_id)
+      return where(
+        enroller_id: enroller_id,
+        status: [Status::Submitted, Status::Approved, Status::Denied],
+      )
     end
 
     def self.with_no_assignment_for_partner(partner_id)

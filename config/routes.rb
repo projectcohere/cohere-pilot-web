@@ -10,7 +10,7 @@ Rails.application.routes.draw do
     get("/partner", to: redirect("/sign-in"))
     get("/partner/stats", to: "partners/stats#show")
 
-    scope(module: "users") do
+    scope(module: :users) do
       get("/sign-in", to: "sessions#new")
 
       resources(:sessions, only: %i[
@@ -43,7 +43,7 @@ Rails.application.routes.draw do
       })
 
       # sessions
-      resources(:invites, module: "chats", only: [
+      resources(:invites, module: :chats, only: [
         :new,
         :create,
       ]) do
@@ -97,9 +97,19 @@ Rails.application.routes.draw do
   constraints(signed_in(role: :enroller)) do
     scope(module: :enroller) do
       resources(:cases, only: %i[
-        index
         show
       ]) do
+        get("/:scope",
+          on: :collection,
+          action: :index,
+          constraints: { scope: /queued|assigned|submitted/ }
+        )
+
+        get("/",
+          on: :collection,
+          to: redirect("/cases/queued")
+        )
+
         patch("/:complete_action",
           as: :complete,
           action: :complete,
@@ -154,7 +164,7 @@ Rails.application.routes.draw do
     root(to: redirect(cases_path))
 
     # users
-    scope(module: "users") do
+    scope(module: :users) do
       delete("/sign-out", to: "sessions#destroy")
     end
 

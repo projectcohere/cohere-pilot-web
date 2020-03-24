@@ -1,20 +1,15 @@
 module Cohere
-  class CasesController < ApplicationController
-    # -- helpers --
-    helper_method(:policy)
-
+  class CasesController < Cases::CasesController
     # -- actions --
     def index
       if policy.forbid?(:list)
         return deny_access
       end
 
-      case_repo = Case::Repo.get
-
       @scope = Cases::Scope.from_key(params[:scope])
       @page, @cases = case @scope
       when Cases::Scope::Queued
-        case_repo.find_all_queued(page: params[:page])
+        case_repo.find_all_queued_for_cohere(page: params[:page])
       when Cases::Scope::Assigned
         case_repo.find_all_assigned_by_user(user.id, page: params[:page])
       when Cases::Scope::Open
@@ -25,23 +20,23 @@ module Cohere
     end
 
     def edit
-      @case = Case::Repo.get.find_with_documents_and_referral(params[:id])
+      @case = case_repo.find_with_documents_and_referral(params[:id])
       if policy.forbid?(:edit)
         return deny_access
       end
 
-      @chat = Chat::Repo.get.find_by_recipient_with_messages(@case.recipient.id.val)
+      @chat = chat_repo.find_by_recipient_with_messages(@case.recipient.id.val)
       @view = Cases::View.new(@case)
       @form = CaseForm.new(@case)
     end
 
     def update
-      @case = Case::Repo.get.find_with_documents_and_referral(params[:id])
+      @case = case_repo.find_with_documents_and_referral(params[:id])
       if policy.forbid?(:edit)
         return deny_access
       end
 
-      @chat = Chat::Repo.get.find_by_recipient_with_messages(@case.recipient.id.val)
+      @chat = chat_repo.find_by_recipient_with_messages(@case.recipient.id.val)
       @view = Cases::View.new(@case)
       @form = CaseForm.new(@case,
         params
@@ -71,8 +66,8 @@ module Cohere
     end
 
     def show
-      @case = Case::Repo.get.find_with_documents_and_referral(params[:id])
-      @chat = Chat::Repo.get.find_by_recipient_with_messages(@case.recipient.id.val)
+      @case = case_repo.find_with_documents_and_referral(params[:id])
+      @chat = chat_repo.find_by_recipient_with_messages(@case.recipient.id.val)
 
       if policy.forbid?(:view)
         return deny_access
@@ -80,8 +75,6 @@ module Cohere
     end
 
     def destroy
-      case_repo = Case::Repo.get
-
       @case = case_repo.find(params[:id])
       if policy.forbid?(:destroy)
         return deny_access
@@ -94,13 +87,9 @@ module Cohere
       )
     end
 
-    # -- queries --
-    private def user
-      return User::Repo.get.find_current
-    end
-
-    private def policy
-      return Case::Policy.new(user, @case)
+    # -- helpers --
+    private def chat_repo
+      return Chat::Repo.get
     end
   end
 end
