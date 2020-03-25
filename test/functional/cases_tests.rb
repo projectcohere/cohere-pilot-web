@@ -195,9 +195,8 @@ class CasesTests < ActionDispatch::IntegrationTest
     end
 
     assert_matching_broadcast_on(case_activity_for(:cohere_1)) do |msg|
-      assert_equal(msg["name"], "ADD_CASE_TO_QUEUE")
+      assert_equal(msg["name"], "DID_ADD_QUEUED_CASE")
       assert_entry(msg["data"], "case_id")
-      assert_entry(msg["data"], "case_html")
     end
 
     assert_send_emails(1) do

@@ -16,7 +16,11 @@ module ApplicationHelper
 
   def filter_for(id, is_selected: false, is_error: false)
     link_to(id.to_s.titlecase, "##{id}",
-      class: cx("Filter", "is-selected" => is_selected, "is-error" => is_error),
+      class: cx(
+        "Filter",
+        "is-selected" => is_selected,
+        "is-active" => is_error
+      ),
       data: { turbolinks: false }
     )
   end

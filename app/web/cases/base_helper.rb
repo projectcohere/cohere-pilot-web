@@ -5,13 +5,16 @@ module Cases
     end
 
     def cases_filter_link_to(scope)
-      return link_to(scope.name, "#{cases_path}/#{scope.path}", class: cx(
-        "Filter",
-        "is-selected": @scope == scope,
-      ))
+      return link_to(scope.name, "#{cases_path}/#{scope.path}",
+        id: "filter-#{scope.path}",
+        class: cx(
+          "Filter",
+          "is-selected": @scope == scope,
+        ),
+      )
     end
 
-    def cases_cell_options(view)
+    def case_cell_options(view)
       return {
         id: "case-#{view.id}",
         class: cx(
