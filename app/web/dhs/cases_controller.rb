@@ -9,7 +9,7 @@ module Dhs
       @scope = Cases::Scope.from_key(params[:scope])
       @page, @cases = case @scope
       when Cases::Scope::Queued
-        case_repo.find_all_queued_for_dhs(user.role.partner_id, page: params[:page])
+        case_repo.find_all_queued_for_dhs(partner_id, page: params[:page])
       when Cases::Scope::Assigned
         case_repo.find_all_assigned_by_user(user.id, page: params[:page])
       when Cases::Scope::Open

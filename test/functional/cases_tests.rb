@@ -307,7 +307,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
 
-    assert_broadcast_on(Cases::ActivityChannel.active, {
+    assert_broadcast_on(case_activity_for(partners(:cohere_1)), {
       id: case_rec.id,
       hasNewActivity: true,
     })
@@ -342,7 +342,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_equal(case_rec.reload.status, "submitted")
 
-    assert_broadcast_on(Cases::ActivityChannel.active, {
+    assert_broadcast_on(case_activity_for(partners(:cohere_1)), {
       id: case_rec.id,
       hasNewActivity: false,
     })
@@ -435,7 +435,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/#{case_rec.id}/edit")
     assert_present(flash[:notice])
 
-    assert_broadcast_on(Cases::ActivityChannel.active, {
+    assert_broadcast_on(case_activity_for(partners(:cohere_1)), {
       id: case_rec.id,
       hasNewActivity: false,
     })
@@ -504,7 +504,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/#{case_rec.id}")
     assert_present(flash[:notice])
 
-    assert_broadcast_on(Cases::ActivityChannel.active, {
+    assert_broadcast_on(case_activity_for(partners(:cohere_1)), {
       id: case_rec.id,
       hasNewActivity: false,
     })
@@ -533,7 +533,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/#{case_rec.id}")
     assert_present(flash[:notice])
 
-    assert_broadcast_on(Cases::ActivityChannel.active, {
+    assert_broadcast_on(case_activity_for(partners(:cohere_1)), {
       id: case_rec.id,
       hasNewActivity: false,
     })
@@ -562,7 +562,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/#{case_rec.id}")
     assert_present(flash[:notice])
 
-    assert_broadcast_on(Cases::ActivityChannel.active, {
+    assert_broadcast_on(case_activity_for(partners(:cohere_1)), {
       id: case_rec.id,
       hasNewActivity: false,
     })

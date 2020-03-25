@@ -14,10 +14,5 @@ module Dhs
         notice: "You've been assigned to #{Cases::View.new(@case).recipient_name}'s case."
       )
     end
-
-    # -- helpers --
-    private def enroller_id
-      return user.role.partner_id
-    end
   end
 end

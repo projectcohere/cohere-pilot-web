@@ -1,9 +1,12 @@
-module Chats
+module ApplicationCable
   class Connection < ActionCable::Connection::Base
     identified_by(
-      :chat_user_id,
+      :user,
       :chat
     )
+
+    # -- props --
+    attr(:chat_user_id)
 
     # -- commands --
     def connect
@@ -16,15 +19,12 @@ module Chats
         return false
       end
 
-      user = User::Repo.get.find_by_remember_token(remember_token)
-      if user == nil
+      @user = User::Repo.get.find_by_remember_token(remember_token)
+      if @user == nil
         reject_unauthorized_connection
       end
 
       @chat_user_id = cookies.signed[:chat_user_id]
-      if @chat_user_id.blank?
-        reject_unauthorized_connection
-      end
 
       return true
     end
@@ -38,6 +38,7 @@ module Chats
       @chat = Chat::Repo.get.find_by_session(session_token)
       if @chat == nil
         raise "Could not find chat"
+        reject_unauthorized_connection
       end
 
       return true

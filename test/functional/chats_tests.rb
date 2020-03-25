@@ -161,7 +161,7 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
       },
     })
 
-    assert_broadcast_on(Cases::ActivityChannel.active, {
+    assert_broadcast_on(case_activity_for(partners(:cohere_1)), {
       id: case_rec.id,
       hasNewActivity: false,
     })
@@ -205,7 +205,7 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
       },
     })
 
-    assert_broadcast_on(Cases::ActivityChannel.active, {
+    assert_broadcast_on(case_activity_for(partners(:cohere_1)), {
       id: case_rec.id,
       hasNewActivity: true,
     })

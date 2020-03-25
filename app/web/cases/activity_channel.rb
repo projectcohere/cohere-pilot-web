@@ -1,16 +1,12 @@
 module Cases
-  class ActivityChannel < ActionCable::Channel::Base
-    Active = :active
-
+  class ActivityChannel < ApplicationCable::Channel
     # -- ActionCable::Channel::Base
     def subscribed
-      puts "subscribed to activity channel"
-      stream_for(Active)
+      stream_for(find_partner_id)
     end
 
-    # -- queries --
-    def self.active
-      return broadcasting_for(Active)
+    private def find_partner_id
+      return connection.user.role.partner_id
     end
   end
 end
