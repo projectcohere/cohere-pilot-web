@@ -28,6 +28,11 @@ module Support
     def assert_instances_of(actual, expected)
       assert_equal(actual.map(&:class), expected)
     end
+
+    def assert_entry(actual, key)
+      assert_not_nil(actual)
+      assert_present(actual[key])
+    end
   end
 end
 

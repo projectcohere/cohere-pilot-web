@@ -1,21 +1,21 @@
 module Cases
   class PublishActivity < ApplicationWorker
-    ## -- types --
+    # -- types --
     CaseActivity = Struct.new(
       :id,
       :hasNewActivity,
     )
 
-    ## -- command --
+    # -- command --
     def call(case_id, case_has_new_activity)
-      partner = Partner::Repo.get.find_cohere
+      cohere = Partner::Repo.get.find_cohere
 
       activity = CaseActivity.new(
         case_id,
         case_has_new_activity,
       )
 
-      ActivityChannel.broadcast_to(partner.id, activity)
+      ActivityChannel.broadcast_to(cohere.id, activity)
     end
 
     alias :perform :call

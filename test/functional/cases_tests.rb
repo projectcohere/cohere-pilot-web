@@ -194,6 +194,12 @@ class CasesTests < ActionDispatch::IntegrationTest
       assert_match(/Did Open/, events[0])
     end
 
+    assert_matching_broadcast_on(case_activity_for(:cohere_1)) do |msg|
+      assert_equal(msg["name"], "ADD_CASE_TO_QUEUE")
+      assert_entry(msg["data"], "case_id")
+      assert_entry(msg["data"], "case_html")
+    end
+
     assert_send_emails(1) do
       assert_select("a", text: /Janice Sample/) do |el|
         assert_match(%r[#{ENV["HOST"]}/cases/\d+/edit], el[0][:href])
@@ -307,7 +313,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
 
-    assert_broadcast_on(case_activity_for(partners(:cohere_1)), {
+    assert_broadcast_on(case_activity_for(:cohere_1), {
       id: case_rec.id,
       hasNewActivity: true,
     })
@@ -342,7 +348,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_equal(case_rec.reload.status, "submitted")
 
-    assert_broadcast_on(case_activity_for(partners(:cohere_1)), {
+    assert_broadcast_on(case_activity_for(:cohere_1), {
       id: case_rec.id,
       hasNewActivity: false,
     })
@@ -435,7 +441,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/#{case_rec.id}/edit")
     assert_present(flash[:notice])
 
-    assert_broadcast_on(case_activity_for(partners(:cohere_1)), {
+    assert_broadcast_on(case_activity_for(:cohere_1), {
       id: case_rec.id,
       hasNewActivity: false,
     })
@@ -504,7 +510,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/#{case_rec.id}")
     assert_present(flash[:notice])
 
-    assert_broadcast_on(case_activity_for(partners(:cohere_1)), {
+    assert_broadcast_on(case_activity_for(:cohere_1), {
       id: case_rec.id,
       hasNewActivity: false,
     })
@@ -533,7 +539,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/#{case_rec.id}")
     assert_present(flash[:notice])
 
-    assert_broadcast_on(case_activity_for(partners(:cohere_1)), {
+    assert_broadcast_on(case_activity_for(:cohere_1), {
       id: case_rec.id,
       hasNewActivity: false,
     })
@@ -562,7 +568,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/#{case_rec.id}")
     assert_present(flash[:notice])
 
-    assert_broadcast_on(case_activity_for(partners(:cohere_1)), {
+    assert_broadcast_on(case_activity_for(:cohere_1), {
       id: case_rec.id,
       hasNewActivity: false,
     })
