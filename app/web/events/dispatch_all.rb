@@ -58,7 +58,7 @@ module Events
           event.document_id.val,
         )
       when Case::Events::DidChangeActivity
-        Cases::PublishActivity.perform_async(
+        Cohere::PublishActivity.perform_async(
           event.case_id.val,
           event.case_has_new_activity,
         )

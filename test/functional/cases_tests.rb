@@ -314,8 +314,11 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:notice])
 
     assert_broadcast_on(case_activity_for(:cohere_1), {
-      id: case_rec.id,
-      hasNewActivity: true,
+      name: "HAS_NEW_ACTIVITY",
+      data: {
+        case_id: case_rec.id,
+        case_has_new_activity: true,
+      }
     })
 
     assert_analytics_events(1) do |events|
@@ -349,8 +352,11 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_equal(case_rec.reload.status, "submitted")
 
     assert_broadcast_on(case_activity_for(:cohere_1), {
-      id: case_rec.id,
-      hasNewActivity: false,
+      name: "HAS_NEW_ACTIVITY",
+      data: {
+        case_id: case_rec.id,
+        case_has_new_activity: false,
+      }
     })
 
     assert_redirected_to("/cases/#{case_rec.id}/edit")
@@ -442,8 +448,11 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:notice])
 
     assert_broadcast_on(case_activity_for(:cohere_1), {
-      id: case_rec.id,
-      hasNewActivity: false,
+      name: "HAS_NEW_ACTIVITY",
+      data: {
+        case_id: case_rec.id,
+        case_has_new_activity: false,
+      }
     })
 
     assert_analytics_events(1) do |events|
@@ -511,8 +520,11 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:notice])
 
     assert_broadcast_on(case_activity_for(:cohere_1), {
-      id: case_rec.id,
-      hasNewActivity: false,
+      name: "HAS_NEW_ACTIVITY",
+      data: {
+        case_id: case_rec.id,
+        case_has_new_activity: false,
+      }
     })
 
     assert_analytics_events(1) do |events|
@@ -540,8 +552,11 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:notice])
 
     assert_broadcast_on(case_activity_for(:cohere_1), {
-      id: case_rec.id,
-      hasNewActivity: false,
+      name: "HAS_NEW_ACTIVITY",
+      data: {
+        case_id: case_rec.id,
+        case_has_new_activity: false,
+      }
     })
 
     assert_analytics_events(1) do |events|
@@ -569,8 +584,11 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:notice])
 
     assert_broadcast_on(case_activity_for(:cohere_1), {
-      id: case_rec.id,
-      hasNewActivity: false,
+      name: "HAS_NEW_ACTIVITY",
+      data: {
+        case_id: case_rec.id,
+        case_has_new_activity: false,
+      }
     })
 
     assert_analytics_events(1) do |events|

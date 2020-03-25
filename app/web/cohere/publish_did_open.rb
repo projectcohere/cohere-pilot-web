@@ -12,13 +12,13 @@ module Cohere
       )
 
       # publish event to cohere users
-      event = Cases::ActivityEvent
+      e = Cases::ActivityEvent
 
       Cases::ActivityChannel.broadcast_to(
         Partner::Repo.get.find_cohere.id,
-        event.new(
-          name: event::AddCaseToQueue,
-          data: event::NewCase.new(
+        e.new(
+          name: e::AddCaseToQueue,
+          data: e::NewCase.new(
             case_id: kase.id.val,
             case_html: html
           ),
