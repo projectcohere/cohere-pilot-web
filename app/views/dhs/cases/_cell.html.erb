@@ -1,0 +1,20 @@
+<li class="CaseCell">
+  <div class="CaseCell-header">
+    <%= link_to(cell.recipient_name, cell.edit_path, action: :edit, class: "CaseCell-name") %>
+
+    <% if cell.shows_assign? %>
+      <%=
+        button_to("Assign to Me",
+          cell.assign_path,
+          class: "CaseCell-assign ButtonSm Button--secondary"
+        )
+      %>
+    <% end %>
+  </div>
+
+  <div class="CaseCell-footer">
+    <p class="CaseCell-updateTime">
+      Updated <%= time_ago_in_words(cell.updated_at) %> ago
+    </p>
+  </div>
+</li>

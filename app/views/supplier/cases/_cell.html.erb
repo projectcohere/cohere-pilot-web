@@ -1,0 +1,19 @@
+<li class="CaseCell">
+  <div class="CaseCell-row">
+    <p class="CaseCell-name">
+      <%= cell.recipient_name %>
+    </p>
+
+    <% if cell.approved? %>
+      <p class="CaseCell-approved">
+        Approved
+        <img class="CaseCell-approvedCheckmark" alt="Checkmark" />
+      </p>
+    <% else %>
+      <p class="CaseCell-createdDate">
+        Added
+        <%= cell.created_at.to_date %>
+      </p>
+    <% end %>
+  </div>
+</li>

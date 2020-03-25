@@ -24,48 +24,8 @@
         No <%= @scope.name.downcase %> cases left.
       </h2>
     <% else %>
-      <% @cases.each do |kase| %>
-        <%- view = Cases::View.new(kase) %>
-
-        <%= tag.li(cases_cell_options(view)) do %>
-          <div class="CaseCell-header">
-            <% link_path = if @scope.completed? %>
-              <% case_path(kase) %>
-            <% else %>
-              <% edit_case_path(kase) %>
-            <% end %>
-
-            <%= link_to(link_path, class: "CaseCell-name") do %>
-              <%= view.recipient_name %>
-              <span class="CaseCell-activity"></span>
-            <%- end %>
-
-            <% if @scope.queued? %>
-              <%=
-                button_to("Assign to Me",
-                  case_assignments_path(kase),
-                  class: "CaseCell-assign ButtonSm Button--secondary"
-                )
-              %>
-            <% end %>
-          </div>
-
-          <div class="CaseCell-row">
-            <p class="CaseCell-organizations">
-              <%= view.program_name %>, <%= view.supplier_name %>, <%= view.enroller_name %>
-            </p>
-          </div>
-
-          <div class="CaseCell-footer">
-            <p class="CaseCell-status">
-              <%= view.status %>
-            </p>
-            <p class="CaseCell-updateTime">
-              Updated <%= time_ago_in_words(view.updated_at) %> ago
-            </p>
-          </div>
-        <% end %>
-      <% end %>
+      <%- views = @cases.map { |c| Cases::View.new(c, @scope) } %>
+      <%= render(partial: "cohere/cases/cell", collection: views) %>
     <% end %>
   </ul>
 

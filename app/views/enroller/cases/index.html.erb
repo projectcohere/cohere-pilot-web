@@ -23,40 +23,8 @@
         No <%= @scope.name.downcase %> cases left.
       </h2>
     <% else %>
-      <% @cases.each do |kase| %>
-        <%- view = Cases::View.new(kase) %>
-
-        <li class="CaseCell">
-          <div class="CaseCell-header">
-            <%= link_to(view.recipient_name, case_path(kase), class: "CaseCell-name") %>
-
-            <% if @scope.queued? %>
-              <%=
-                button_to("Assign to Me",
-                  case_assignments_path(kase),
-                  class: "CaseCell-assign ButtonSm Button--secondary"
-                )
-              %>
-            <% end %>
-          </div>
-
-          <div class="CaseCell-row">
-            <p class="CaseCell-organizations">
-              <%= view.program_name %>, <%= view.supplier_name %>
-            </p>
-          </div>
-
-          <div class="CaseCell-footer">
-            <p class="CaseCell-status">
-              <%= view.status %>
-            </p>
-
-            <p class="CaseCell-updateTime">
-              Updated <%= time_ago_in_words(view.updated_at) %> ago
-            </p>
-          </div>
-        </li>
-      <% end %>
+      <%- views = @cases.map { |c| Cases::View.new(c, @scope) } %>
+      <%= render(partial: "enroller/cases/cell", collection: views) %>
     <% end %>
   </ul>
 

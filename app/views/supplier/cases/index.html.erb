@@ -15,27 +15,8 @@
         No cases added.
       </h2>
     <% else %>
-      <% @cases.each do |kase| %>
-        <%- view = Cases::View.new(kase) %>
-
-        <li class="CaseCell">
-          <div class="CaseCell-row">
-            <p class="CaseCell-name"><%= view.recipient_name %></p>
-
-            <% if view.approved? %>
-              <p class="CaseCell-approved">
-                Approved
-                <img class="CaseCell-approvedCheckmark" alt="Checkmark" />
-              </p>
-            <% else %>
-              <p class="CaseCell-createdDate">
-                Added
-                <%= view.created_at.to_date %>
-              </p>
-            <% end %>
-          </div>
-        </li>
-      <% end %>
+      <%- views = @cases.map { |c| Cases::View.new(c, @scope) } %>
+      <%= render(partial: "supplier/cases/cell", collection: views) %>
     <% end %>
   </ul>
 
