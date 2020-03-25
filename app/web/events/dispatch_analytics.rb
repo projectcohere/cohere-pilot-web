@@ -1,11 +1,11 @@
 module Events
-  class ProcessAnalytics
+  class DispatchAnalytics
     # -- constants --
     Unsaved = "Unsaved".freeze
 
     # -- lifetime --
     def self.get
-      ProcessAnalytics.new
+      DispatchAnalytics.new
     end
 
     def initialize(

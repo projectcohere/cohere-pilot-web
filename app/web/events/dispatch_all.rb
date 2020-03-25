@@ -1,23 +1,23 @@
 module Events
-  class ProcessAll
+  class DispatchAll
     # -- lifetime --
     def self.get
-      Events::ProcessAll.new
+      Events::DispatchAll.new
     end
 
     def initialize(
       domain_events: Services.domain_events,
-      process_analytics: ProcessAnalytics.get
+      dispatch_analytics: DispatchAnalytics.get
     )
       @domain_events = domain_events
-      @process_analytics = process_analytics
+      @dispatch_analytics = dispatch_analytics
     end
 
     # -- command --
     def call
       @domain_events.drain do |event|
         dispatch(event)
-        @process_analytics.(event)
+        @dispatch_analytics.(event)
       end
     end
 

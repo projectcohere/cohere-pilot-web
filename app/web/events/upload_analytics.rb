@@ -1,5 +1,5 @@
 module Events
-  class UploadAnalyticsWorker < ApplicationWorker
+  class UploadAnalytics < ApplicationWorker
     schedule(
       name: "Every 5 minutes",
       cron: "*/5 * * * *"

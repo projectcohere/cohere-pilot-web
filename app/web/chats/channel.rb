@@ -23,7 +23,7 @@ module Chats
       ))
 
       # handle events
-      Events::ProcessAll.get.()
+      Events::DispatchAll.get.()
     end
 
     # -- queries --

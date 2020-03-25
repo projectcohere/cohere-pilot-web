@@ -5,10 +5,10 @@ module Users
     # -- lifetime --
     def initialize(
       user_repo: User::Repo.get,
-      process_events: Events::ProcessAll.get
+      dispatch_events: Events::DispatchAll.get
     )
       @user_repo = user_repo
-      @process_events = process_events
+      @dispatch_events = dispatch_events
     end
 
     # -- command --
@@ -21,7 +21,7 @@ module Users
       invitations.each do |invitation|
         user = User.invite(invitation)
         @user_repo.save_invited(user)
-        @process_events.()
+        @dispatch_events.()
       end
     end
 

@@ -17,7 +17,7 @@
     </div>
   </header>
 
-  <ul class="CaseList">
+  <ul id="case-list" class="CaseList">
     <% if @cases.blank? %>
       <h2 class="CaseList-fallback">
         No <%= @scope.name.downcase %> cases left.
