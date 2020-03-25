@@ -1,4 +1,4 @@
-<li class="CaseCell">
+<%= tag.li(case_cell_options(cell)) do %>
   <div class="CaseCell-header">
     <%= link_to(cell.recipient_name, cell.show_path, class: "CaseCell-name") %>
 
@@ -23,8 +23,8 @@
       <%= cell.status %>
     </p>
 
-    <p class="CaseCell-updateTime">
+    <p class="CaseCell-updatedTime">
       Updated <%= time_ago_in_words(cell.updated_at) %> ago
     </p>
   </div>
-</li>
+<%- end %>

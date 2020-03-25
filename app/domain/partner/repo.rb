@@ -29,6 +29,15 @@ class Partner
       end
     end
 
+    def find_dhs
+      find_cached(:dhs) do
+        record = Partner::Record
+          .find_by!(membership_class: MembershipClass::Governor)
+
+        entity_from(record)
+      end
+    end
+
     def find_current_supplier
       current_user = @user_repo.find_current
       if not current_user.role.supplier?

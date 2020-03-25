@@ -199,6 +199,11 @@ class CasesTests < ActionDispatch::IntegrationTest
       assert_entry(msg["data"], "case_id")
     end
 
+    assert_matching_broadcast_on(case_activity_for(:governor_1)) do |msg|
+      assert_equal(msg["name"], "DID_ADD_QUEUED_CASE")
+      assert_entry(msg["data"], "case_id")
+    end
+
     assert_send_emails(1) do
       assert_select("a", text: /Janice Sample/) do |el|
         assert_match(%r[#{ENV["HOST"]}/cases/\d+/edit], el[0][:href])
@@ -453,6 +458,11 @@ class CasesTests < ActionDispatch::IntegrationTest
         case_has_new_activity: false,
       }
     })
+
+    assert_matching_broadcast_on(case_activity_for(:enroller_1)) do |msg|
+      assert_equal(msg["name"], "DID_ADD_QUEUED_CASE")
+      assert_entry(msg["data"], "case_id")
+    end
 
     assert_analytics_events(1) do |events|
       assert_match(/Did Submit/, events[0])

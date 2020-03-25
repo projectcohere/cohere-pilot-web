@@ -14,8 +14,11 @@
 
   &-header {
     @extend .CaseCell-row;
-    margin-bottom: $spacing6;
     justify-content: space-between;
+  }
+
+  &-header + &-row {
+    margin-top: $spacing6;
   }
 
   &-footer {
@@ -35,12 +38,17 @@
     color: $gray1;
   }
 
-  &-updateTime {
+  &-updatedTime {
     color: $gray1;
+  }
+
+  &-createdDate {
+    align-self: center;
   }
 
   &-approved {
     display: flex;
+    align-self: center;
   }
 
   &-approvedCheckmark {

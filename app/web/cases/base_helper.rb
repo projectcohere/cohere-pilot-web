@@ -14,12 +14,12 @@ module Cases
       )
     end
 
-    def case_cell_options(view)
+    def case_cell_options(view, shows_activity: false)
       return {
         id: "case-#{view.id}",
         class: cx(
           "CaseCell",
-          "is-active" => view.has_new_activity
+          "is-active" => shows_activity && view.has_new_activity
         )
       }
     end

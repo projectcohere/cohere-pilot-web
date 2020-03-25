@@ -34,13 +34,21 @@ module Events
           )
         end
 
-        Cohere::PublishDidOpen.perform_async(
+        Cohere::PublishQueuedCase.perform_async(
+          event.case_id.val,
+        )
+
+        Dhs::PublishQueuedCase.perform_async(
           event.case_id.val,
         )
       when Case::Events::DidSubmit
         deliver(CasesMailer.did_submit(
           event.case_id.val,
         ))
+
+        Enroller::PublishQueuedCase.perform_async(
+          event.case_id.val,
+        )
       when Case::Events::DidComplete
         if event.case_status != Case::Status::Removed
           deliver(CasesMailer.did_complete(
