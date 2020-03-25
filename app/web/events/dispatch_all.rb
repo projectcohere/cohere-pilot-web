@@ -41,6 +41,11 @@ module Events
         Dhs::PublishQueuedCase.perform_async(
           event.case_id.val,
         )
+      when Case::Events::DidAssignUser
+        Cases::PublishAssignment.perform_async(
+          event.case_id.val,
+          event.partner_id,
+        )
       when Case::Events::DidSubmit
         deliver(CasesMailer.did_submit(
           event.case_id.val,

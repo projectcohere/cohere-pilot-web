@@ -210,6 +210,7 @@ class CaseTests < ActiveSupport::TestCase
     assert_equal(kase.assignments, [assignment])
     assert_equal(assignment.user_id.val, 3)
     assert_equal(assignment.partner_id, 5)
+    assert_instances_of(kase.events, [Case::Events::DidAssignUser])
   end
 
   test "doesn't assign a user if an assignment for that partner exists" do
@@ -226,6 +227,7 @@ class CaseTests < ActiveSupport::TestCase
 
     kase.assign_user(user)
     assert_nil(kase.new_assignment)
+    assert_empty(kase.events)
   end
 
   # -- commands/messages

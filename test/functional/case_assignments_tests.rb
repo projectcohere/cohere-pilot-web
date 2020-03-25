@@ -1,6 +1,8 @@
 require "test_helper"
 
 class CaseAssignmentsTests < ActionDispatch::IntegrationTest
+  include ActionCable::Channel::TestCase::Behavior
+
   test "can't self-assign a case if signed-out" do
     assert_raises(ActionController::RoutingError) do
       post("/cases/3/assignments")
@@ -30,6 +32,11 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
 
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
+
+    assert_matching_broadcast_on(case_activity_for(:cohere_1)) do |msg|
+      assert_equal(msg["name"], "DID_ASSIGN_USER")
+      assert_entry(msg["data"], "case_id")
+    end
   end
 
   test "self-assign a case a dhs user" do
@@ -47,6 +54,11 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
 
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
+
+    assert_matching_broadcast_on(case_activity_for(:governor_1)) do |msg|
+      assert_equal(msg["name"], "DID_ASSIGN_USER")
+      assert_entry(msg["data"], "case_id")
+    end
   end
 
   test "can't self-assign another enroller's case as an enroller user" do
@@ -74,5 +86,10 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
 
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
+
+    assert_matching_broadcast_on(case_activity_for(:enroller_1)) do |msg|
+      assert_equal(msg["name"], "DID_ASSIGN_USER")
+      assert_entry(msg["data"], "case_id")
+    end
   end
 end

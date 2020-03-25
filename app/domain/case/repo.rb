@@ -317,6 +317,9 @@ class Case
       )
 
       assignment_rec.save!
+
+      # consume all entity events
+      @domain_events.consume(kase.events)
     end
 
     def save_new_message(kase)

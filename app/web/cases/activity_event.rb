@@ -23,5 +23,14 @@ module Cases
         },
       )
     end
+
+    def self.did_assign_user(case_id)
+      return ActivityEvent.new(
+        name: "DID_ASSIGN_USER",
+        data: {
+          case_id: case_id,
+        },
+      )
+    end
   end
 end

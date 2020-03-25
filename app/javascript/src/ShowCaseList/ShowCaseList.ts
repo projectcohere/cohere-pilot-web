@@ -12,16 +12,20 @@ const kClassIsActive = "is-active"
 // -- types --
 type ActivityEvent
   = { name: "HAS_NEW_ACTIVITY", data: IHasNewActivity }
-  | { name: "DID_ADD_QUEUED_CASE", data: IAddCaseToQueue }
+  | { name: "DID_ADD_QUEUED_CASE", data: IDidAddQueuedCase }
+  | { name: "DID_ASSIGN_USER", data: IDidAssignUser }
 
 interface IHasNewActivity {
   case_id: string
   case_has_new_activity: boolean
 }
 
-interface IAddCaseToQueue {
+interface IDidAddQueuedCase {
   case_id: string
-  case_html: string
+}
+
+interface IDidAssignUser {
+  case_id: string
 }
 
 // -- impls --
@@ -70,7 +74,7 @@ export class ShowCaseList implements IComponent {
     }
   }
 
-  private showNewCase(data: IAddCaseToQueue) {
+  private showQueuedCase(data: IDidAddQueuedCase) {
     const scope = document.location.pathname.split("/").pop()
 
     if (scope == kScopeQueued) {
@@ -80,10 +84,28 @@ export class ShowCaseList implements IComponent {
     }
   }
 
-  private addCaseToQueue(data: IAddCaseToQueue) {
+  private hideQueuedCase(data: IDidAssignUser) {
+    const scope = document.location.pathname.split("/").pop()
+
+    if (scope == kScopeQueued) {
+      this.removeCaseFromQueue(data)
+    } else {
+      this.showQueueActivity()
+    }
+  }
+
+  private addCaseToQueue(data: IDidAddQueuedCase) {
     const $case = document.getElementById(`case-${data.case_id}`)
 
     if ($case == null) {
+      document.location.reload(true)
+    }
+  }
+
+  private removeCaseFromQueue(data: IDidAssignUser) {
+    const $case = document.getElementById(`case-${data.case_id}`)
+
+    if ($case != null) {
       document.location.reload(true)
     }
   }
@@ -101,7 +123,9 @@ export class ShowCaseList implements IComponent {
       case "HAS_NEW_ACTIVITY":
         this.showActivity(event.data); break
       case "DID_ADD_QUEUED_CASE":
-        this.showNewCase(event.data); break
+        this.showQueuedCase(event.data); break
+      case "DID_ASSIGN_USER":
+        this.hideQueuedCase(event.data); break
     }
   }
 }

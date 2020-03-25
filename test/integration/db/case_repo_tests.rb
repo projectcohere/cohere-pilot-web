@@ -389,6 +389,8 @@ module Db
     end
 
     test "saves a new assignment" do
+      domain_events = ArrayQueue.new
+
       case_rec = cases(:opened_2)
       user_rec = users(:cohere_1)
 
@@ -396,7 +398,7 @@ module Db
       user = User::Repo.map_record(user_rec)
       kase.assign_user(user)
 
-      case_repo = Case::Repo.new
+      case_repo = Case::Repo.new(domain_events: domain_events)
       act = -> do
         case_repo.save_new_assignment(kase)
       end
@@ -411,6 +413,9 @@ module Db
       assert_equal(assignment_rec.case_id, case_rec.id)
       assert_equal(assignment_rec.user_id, user_rec.id)
       assert_equal(assignment_rec.partner_id, user_rec.partner_id)
+
+      assert_length(kase.events, 0)
+      assert_length(domain_events, 1)
     end
 
     test "saves a new mms message" do

@@ -160,6 +160,8 @@ class Case < ::Entity
     )
 
     @assignments.push(@new_assignment)
+
+    @events.add(Events::DidAssignUser.from_entity(self))
   end
 
   # -- commands/messages
