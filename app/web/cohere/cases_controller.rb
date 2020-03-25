@@ -26,7 +26,6 @@ module Cohere
       end
 
       @chat = chat_repo.find_by_recipient_with_messages(@case.recipient.id.val)
-      @view = Cases::View.new(@case)
       @form = CaseForm.new(@case)
     end
 
@@ -37,7 +36,6 @@ module Cohere
       end
 
       @chat = chat_repo.find_by_recipient_with_messages(@case.recipient.id.val)
-      @view = Cases::View.new(@case)
       @form = CaseForm.new(@case,
         params
           .fetch(:case, {})
@@ -50,7 +48,7 @@ module Cohere
 
       save_form = SaveCaseForm.new(@case, @form, save_action)
       if not save_form.()
-        flash.now[:alert] = "Please check #{@view.recipient_name}'s case for errors."
+        flash.now[:alert] = "Please check #{@case.recipient.profile.name}'s case for errors."
         return render(:edit)
       end
 
@@ -61,7 +59,7 @@ module Cohere
       end
 
       redirect_to(redirect_path,
-        notice: "Updated #{@view.recipient_name}'s case!"
+        notice: "Updated #{@case.recipient.profile.name}'s case!"
       )
     end
 
@@ -83,7 +81,7 @@ module Cohere
       case_repo.save_destroyed(@case)
 
       redirect_to(cases_path,
-        notice: "Destroyed #{Cases::View.new(@case).recipient_name}'s case."
+        notice: "Destroyed #{@case.recipient.profile.name}'s case."
       )
     end
 

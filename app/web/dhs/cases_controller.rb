@@ -23,9 +23,7 @@ module Dhs
         return deny_access
       end
 
-      @view = Cases::View.new(@case)
       @form = CaseForm.new(@case)
-
       events.add(Cases::Events::DidViewDhsForm.from_entity(@case))
     end
 
@@ -35,7 +33,6 @@ module Dhs
         return deny_access
       end
 
-      @view = Cases::View.new(@case)
       @form = CaseForm.new(@case,
         params
           .require(:case)

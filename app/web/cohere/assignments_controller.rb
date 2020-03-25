@@ -11,7 +11,7 @@ module Cohere
       case_repo.save_new_assignment(@case)
 
       redirect_to(cases_path,
-        notice: "You've been assigned to #{Cases::View.new(@case).recipient_name}'s case."
+        notice: "You've been assigned to #{@case.recipient.profile.name}'s case."
       )
     end
   end

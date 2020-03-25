@@ -16,7 +16,6 @@ module Cohere
 
       @case = referral.referred
       @chat = Chat::Repo.get.find_by_recipient_with_messages(@case.recipient.id.val)
-      @view = Cases::View.new(@case)
       @form = CaseForm.new(@case)
     end
 
@@ -37,7 +36,6 @@ module Cohere
 
       @case = referral.referred
       @chat = Chat::Repo.get.find_by_recipient_with_messages(@case.recipient.id.val)
-      @view = Cases::View.new(@case)
       @form = CaseForm.new(@case, case_params)
 
       save_action = %i[submit].find do |key|
