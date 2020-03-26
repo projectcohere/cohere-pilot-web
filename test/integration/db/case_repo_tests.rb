@@ -158,6 +158,7 @@ module Db
       case_page, cases = case_repo.find_all_opened_for_supplier(partner_rec.id, page: 1)
       assert_length(cases, 7)
       assert_equal(case_page.count, 7)
+      assert(cases.any? { |c| c.selected_assignment != nil })
     end
 
     test "finds a page of queued cases for a dhs partner" do
@@ -171,9 +172,12 @@ module Db
 
     test "finds a page of opened cases for a dhs partner" do
       case_repo = Case::Repo.new
-      case_page, cases = case_repo.find_all_opened_for_dhs(page: 1)
+      partner_rec = partners(:governor_1)
+
+      case_page, cases = case_repo.find_all_opened_for_dhs(partner_rec.id, page: 1)
       assert_length(cases, 5)
       assert_equal(case_page.count, 5)
+      assert(cases.any? { |c| c.selected_assignment != nil })
     end
 
     test "finds a page of queued cases for an enroller" do
@@ -192,35 +196,39 @@ module Db
       case_page, cases = case_repo.find_all_submitted_for_enroller(partner_rec.id, page: 1)
       assert_length(cases, 3)
       assert_equal(case_page.count, 3)
+      assert(cases.any? { |c| c.selected_assignment != nil })
     end
 
     # -- test/save
-    test "saves an opened case with account and profile" do
+    test "saves an opened case" do
       domain_events = ArrayQueue.new
 
-      kase = Case.open(
-        program: Program::Name::Meap,
-        profile: Recipient::Profile.stub(
-          phone: Recipient::Phone.stub(
-            number: Faker::PhoneNumber.phone_number
-          ),
-          name: Recipient::Name.stub(
-            first: "Janice",
-            last: "Sample"
-          ),
-          address: Recipient::Address.stub(
-            street: "123 Test St.",
-            city: "Testburg",
-            state: "Testissippi",
-            zip: "12345"
-          )
+      recipient_profile = Recipient::Profile.stub(
+        phone: Recipient::Phone.stub(
+          number: Faker::PhoneNumber.phone_number
         ),
-        enroller: Partner::Repo.map_record(partners(:enroller_1)),
-        supplier: Partner::Repo.map_record(partners(:supplier_1)),
-        supplier_account: Case::Account.stub(
-          number: "12345",
-          arrears_cents: 1000_00
+        name: Recipient::Name.stub(
+          first: "Janice",
+          last: "Sample"
+        ),
+        address: Recipient::Address.stub(
+          street: "123 Test St.",
+          city: "Testburg",
+          state: "Testissippi",
+          zip: "12345"
         )
+      )
+
+      supplier_account = Case::Account.stub(
+        number: "12345",
+        arrears_cents: 1000_00
+      )
+
+      kase = Case.open(
+        recipient_profile: recipient_profile,
+        enroller: Partner::Repo.map_record(partners(:enroller_1)),
+        supplier_user: User::Repo.map_record(users(:supplier_1)),
+        supplier_account: supplier_account,
       )
 
       case_repo = Case::Repo.new(domain_events: domain_events)
@@ -230,6 +238,7 @@ module Db
 
       assert_difference(
         -> { Case::Record.count } => 1,
+        -> { Case::Assignment::Record.count } => 1,
         -> { Recipient::Record.count } => 1,
         &act
       )
@@ -240,13 +249,13 @@ module Db
       assert_not_nil(kase.recipient.id.val)
 
       assert_length(kase.events, 0)
-      assert_length(domain_events, 1)
+      assert_length(domain_events, 2)
     end
 
     test "saves an opened case for an existing recipient" do
       domain_events = ArrayQueue.new
 
-      profile = Recipient::Profile.new(
+      recipient_profile = Recipient::Profile.new(
         phone: Recipient::Phone.new(
           number: "1112223333"
         ),
@@ -268,10 +277,9 @@ module Db
       )
 
       kase = Case.open(
-        program: Program::Name::Meap,
-        profile: profile,
+        recipient_profile: recipient_profile,
         enroller: Partner::Repo.map_record(partners(:enroller_1)),
-        supplier: Partner::Repo.map_record(partners(:supplier_1)),
+        supplier_user: User::Repo.map_record(users(:supplier_1)),
         supplier_account: supplier_account,
       )
 
@@ -282,6 +290,7 @@ module Db
 
       assert_difference(
         -> { Case::Record.count } => 1,
+        -> { Case::Assignment::Record.count } => 1,
         -> { Recipient::Record.count } => 0,
         &act
       )
@@ -292,7 +301,7 @@ module Db
       assert_not_nil(kase.recipient.id.val)
 
       assert_length(kase.events, 0)
-      assert_length(domain_events, 1)
+      assert_length(domain_events, 2)
     end
 
     test "saves a dhs contribution" do
@@ -332,7 +341,7 @@ module Db
         arrears_cents: 1000_00
       )
 
-      profile = Recipient::Profile.new(
+      recipient_profile = Recipient::Profile.new(
         phone: Recipient::Phone.new(
           number: "1112223333"
         ),
@@ -362,7 +371,7 @@ module Db
       )
 
       kase = Case::Repo.map_record(case_rec)
-      kase.add_cohere_data(supplier_account, profile, dhs_account)
+      kase.add_cohere_data(supplier_account, recipient_profile, dhs_account)
       kase.sign_contract(contract)
       kase.submit_to_enroller
       kase.complete(Case::Status::Approved)

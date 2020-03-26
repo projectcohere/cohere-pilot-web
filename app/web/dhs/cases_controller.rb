@@ -13,7 +13,7 @@ module Dhs
       when Cases::Scope::Assigned
         case_repo.find_all_assigned_by_user(user.id, page: params[:page])
       when Cases::Scope::Open
-        case_repo.find_all_opened_for_dhs(page: params[:page])
+        case_repo.find_all_opened_for_dhs(partner_id, page: params[:page])
       end
     end
 

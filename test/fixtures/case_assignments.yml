@@ -1,3 +1,8 @@
+supplier_1:
+  user: supplier_1
+  case: opened_1
+  partner: supplier_1
+
 cohere_1:
   user: cohere_1
   case: opened_1

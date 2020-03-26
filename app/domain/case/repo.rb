@@ -38,9 +38,7 @@ class Case
           case_id: case_id
         )
 
-      return entity_from(document_rec.case,
-        documents: [document_rec],
-      )
+      return entity_from(document_rec.case, documents: [document_rec])
     end
 
     def find_with_documents_and_referral(case_id)
@@ -54,10 +52,7 @@ class Case
       is_referrer = Case::Record
         .exists?(referrer_id: case_id)
 
-      return entity_from(case_rec,
-        documents: document_recs,
-        is_referrer: is_referrer,
-      )
+      return entity_from(case_rec, documents: document_recs, is_referrer: is_referrer)
     end
 
     def find_for_dhs(case_id)
@@ -77,9 +72,7 @@ class Case
         .with_attached_file
         .where(case_id: case_id)
 
-      return entity_from(case_rec,
-        documents: document_recs,
-      )
+      return entity_from(case_rec, documents: document_recs)
     end
 
     def find_for_enroller(case_id, enroller_id)
@@ -99,9 +92,7 @@ class Case
         .with_attached_file
         .where(case_id: case_id)
 
-      return entity_from(case_rec,
-        documents: document_recs
-      )
+      return entity_from(case_rec, documents: document_recs)
     end
 
     def find_active_by_recipient(recipient_id)
@@ -148,11 +139,7 @@ class Case
         .incomplete
         .by_most_recently_updated
 
-      return paged_entities_from(case_query, page,
-        assignments: Assignment::Record.by_partner(partner_id)
-      ) do |kase|
-        kase.select_assignment(partner_id)
-      end
+      return paged_entities_from(case_query, page, selected_assignment: partner_id)
     end
 
     def find_all_completed_for_cohere(partner_id, page:)
@@ -161,11 +148,7 @@ class Case
         .where.not(completed_at: nil)
         .order(completed_at: :desc)
 
-      return paged_entities_from(case_query, page,
-        assignments: Assignment::Record.by_partner(partner_id)
-      ) do |kase|
-        kase.select_assignment(partner_id)
-      end
+      return paged_entities_from(case_query, page, selected_assignment: partner_id)
     end
 
     def find_all_queued_for_dhs(governor_id, page:)
@@ -178,13 +161,13 @@ class Case
       return paged_entities_from(case_query, page, partners: false)
     end
 
-    def find_all_opened_for_dhs(page:)
+    def find_all_opened_for_dhs(governor_id, page:)
       case_query = Case::Record
         .join_recipient
         .for_governor
         .by_most_recently_updated
 
-      return paged_entities_from(case_query, page, partners: false)
+      return paged_entities_from(case_query, page, selected_assignment: governor_id, partners: false)
     end
 
     def find_all_opened_for_supplier(supplier_id, page:)
@@ -193,7 +176,7 @@ class Case
         .where(supplier_id: supplier_id)
         .by_most_recently_updated
 
-      return paged_entities_from(case_query, page, partners: false)
+      return paged_entities_from(case_query, page, selected_assignment: supplier_id, partners: false)
     end
 
     def find_all_queued_for_enroller(enroller_id, page:)
@@ -213,11 +196,11 @@ class Case
         .for_enroller(enroller_id)
         .by_most_recently_updated
 
-      return paged_entities_from(case_query, page)
+      return paged_entities_from(case_query, page, selected_assignment: enroller_id)
     end
 
     # -- queries/helpers
-    private def paged_entities_from(case_query, page, assignments: nil, partners: true)
+    private def paged_entities_from(case_query, page, selected_assignment: nil, partners: true)
       # paginate the results
       case_page = Pagy.new(count: case_query.count(:all), page: page)
       case_recs = case_query.offset(case_page.offset).limit(case_page.items)
@@ -233,21 +216,22 @@ class Case
       end
 
       # pre-load assignments records, if any
-      assignment_recs_by_id = if assignments != nil
-        assignments
-          .includes(:user)
-          .where(case: case_recs.map(&:id))
+      assignment_recs_by_id = if selected_assignment != nil
+        assignment_query = Assignment::Record
+          .join_user
+          .by_partner(selected_assignment)
+          .where(case: case_recs)
           .group_by(&:case_id)
       end
 
       # transform the results
       cases = case_recs.map do |r|
         entity = entity_from(r,
-          assignments: assignment_recs_by_id&.[](r.id) || []
+          assignments: assignment_recs_by_id&.dig(r.id)
         )
 
-        if block_given?
-          yield(entity)
+        if selected_assignment != nil
+          entity.select_assignment(selected_assignment)
         end
 
         entity
@@ -258,26 +242,30 @@ class Case
 
     # -- commands --
     def save_opened(kase)
-      # start a new case record
+      # intiailize record
       case_rec = Case::Record.new
-
-      # update the case record
       assign_status(kase, case_rec)
       assign_activity(kase, case_rec)
       assign_partners(kase, case_rec)
       assign_supplier_account(kase, case_rec)
 
-      # find or update a recipient record with a matching phone number
-      p = kase.recipient.profile.phone
+      # find or initialize a recipient record by phone number
       recipient_rec = ::Recipient::Record.find_or_initialize_by(
-        phone_number: p.number
+        phone_number: kase.recipient.profile.phone.number
       )
 
       assign_recipient_profile(kase, recipient_rec)
 
+      # initialize a new assignment
+      assignment_rec = Case::Assignment::Record.new
+      assign_new_assignment(kase, assignment_rec)
+
       # save the records
-      case_rec.recipient = recipient_rec
-      case_rec.save!
+      transaction do
+        case_rec.recipient = recipient_rec
+        case_rec.save!
+        case_rec.assignments << assignment_rec
+      end
 
       # send creation events back to entities
       kase.did_save(case_rec)
@@ -342,17 +330,11 @@ class Case
         raise "case must be fetched from the db!"
       end
 
-      assignment = kase.new_assignment
-      if assignment == nil
-        raise "case has no new assignment"
-      end
+      # initialize record
+      assignment_rec = Assignment::Record.new
+      assign_new_assignment(kase, assignment_rec)
 
-      assignment_rec = Assignment::Record.new(
-        case_id: kase.id.val,
-        user_id: assignment.user_id.val,
-        partner_id: assignment.partner_id,
-      )
-
+      # save record
       assignment_rec.save!
 
       # consume all entity events
@@ -485,6 +467,21 @@ class Case
       case_rec.assign_attributes(
         has_new_activity: c.has_new_activity,
         received_message_at: c.received_message_at,
+      )
+    end
+
+    private def assign_new_assignment(kase, assignment_rec)
+      assignment = kase.new_assignment
+      if assignment == nil
+        raise "case has no new assignment"
+      end
+
+      c = kase
+      a = assignment
+      assignment_rec.assign_attributes(
+        case_id: c.id.val,
+        user_id: assignment.user_id.val,
+        partner_id: assignment.partner_id,
       )
     end
 
@@ -682,6 +679,10 @@ class Case
   end
 
   class Assignment::Record
+    def self.join_user
+      return includes(:user)
+    end
+
     def self.by_partner(partner_id)
       return where(partner_id: partner_id)
     end

@@ -9,6 +9,10 @@
           class: "CaseCell-assign ButtonSm Button--secondary"
         )
       %>
+    <% else %>
+      <p class="CaseCell-assignee">
+        <%= cell.assignee %>
+      </p>
     <% end %>
   </div>
 
@@ -23,7 +27,7 @@
       <%= cell.status %>
     </p>
 
-    <p class="CaseCell-updatedTime">
+    <p class="CaseCell-date">
       Updated <%= time_ago_in_words(cell.updated_at) %> ago
     </p>
   </div>

@@ -181,6 +181,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_difference(
       -> { Case::Record.count } => 1,
+      -> { Case::Assignment::Record.count } => 1,
       -> { Recipient::Record.count } => 1,
       -> { Chat::Record.count } => 1,
       -> { Chat::Message::Record.count } => 1,

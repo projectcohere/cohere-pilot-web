@@ -2,17 +2,16 @@ require "test_helper"
 
 class CaseTests < ActiveSupport::TestCase
   # -- creation --
-  test "opens the case" do
+  test "opens a case" do
     profile = Recipient::Profile.stub(
       phone: Recipient::Phone.stub(number: "1")
     )
 
     kase = Case.open(
-      program: Program::Name::Meap,
-      profile: profile,
+      recipient_profile: profile,
       enroller: Partner.stub(id: 1),
-      supplier: Partner.stub(id: 2),
-      supplier_account: :test_account
+      supplier_user: User.stub(id: 3, role: User::Role.stub(partner_id: 2)),
+      supplier_account: :test_account,
     )
 
     assert(kase.has_new_activity)
@@ -20,8 +19,12 @@ class CaseTests < ActiveSupport::TestCase
     assert_equal(kase.supplier_account, :test_account)
     assert_equal(kase.enroller_id, 1)
     assert_equal(kase.supplier_id, 2)
+    assert_not_nil(kase.new_assignment)
 
-    assert_instances_of(kase.events, [Case::Events::DidOpen])
+    assert_instances_of(kase.events, [
+      Case::Events::DidOpen,
+      Case::Events::DidAssignUser,
+    ])
   end
 
   # -- commands --
@@ -197,9 +200,10 @@ class CaseTests < ActiveSupport::TestCase
     kase = Case.stub
     user = User.stub(
       id: Id.new(3),
+      email: :test_email,
       role: User::Role.stub(
         name: :cohere,
-        partner_id: 5
+        partner_id: 5,
       ),
     )
 
@@ -209,6 +213,7 @@ class CaseTests < ActiveSupport::TestCase
     assert_not_nil(assignment)
     assert_equal(kase.assignments, [assignment])
     assert_equal(assignment.user_id.val, 3)
+    assert_equal(assignment.user_email, :test_email)
     assert_equal(assignment.partner_id, 5)
     assert_instances_of(kase.events, [Case::Events::DidAssignUser])
   end

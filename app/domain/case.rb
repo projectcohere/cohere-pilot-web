@@ -28,22 +28,20 @@ class Case < ::Entity
   attr(:selected_document)
 
   # -- factory --
-  def self.open(program:, profile:, enroller:, supplier:, supplier_account:)
-    recipient = Recipient.new(
-      profile: profile
-    )
-
+  def self.open(recipient_profile:, enroller:, supplier_user:, supplier_account:)
     kase = Case.new(
       status: Status::Opened,
-      program: program,
-      recipient: recipient,
+      program: Program::Name::Meap,
+      recipient: Recipient.new(profile: recipient_profile),
       enroller_id: enroller.id,
-      supplier_id: supplier.id,
+      supplier_id: supplier_user.role.partner_id,
       supplier_account: supplier_account,
       has_new_activity: true,
     )
 
     kase.events.add(Events::DidOpen.from_entity(kase))
+    kase.assign_user(supplier_user)
+
     kase
   end
 
@@ -169,7 +167,7 @@ class Case < ::Entity
   end
 
   def select_assignment(partner_id)
-    @selected_assignment = @assignments.find do |a|
+    @selected_assignment = @assignments&.find do |a|
       a.partner_id == partner_id
     end
   end

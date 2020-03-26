@@ -39,21 +39,21 @@
     color: $gray1;
   }
 
-  &-updatedTime {
-    color: $gray1;
-  }
-
-  &-approved {
+  &-status {
     display: flex;
   }
 
-  &-approvedCheckmark {
+  &-checkmark {
     @include u-checkmark($offset-x: 2px, $offset-y: 10px);
 
     width: $height4;
     height: $height4;
     margin-left: $spacing5;
     color: transparent;
+  }
+
+  &-date {
+    color: $gray1;
   }
 
   // -- variants --

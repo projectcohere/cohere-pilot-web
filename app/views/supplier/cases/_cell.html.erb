@@ -4,16 +4,26 @@
       <%= cell.recipient_name %>
     </p>
 
-    <% if cell.approved? %>
-      <p class="CaseCell-approved">
-        Approved
-        <img class="CaseCell-approvedCheckmark" alt="Checkmark" />
-      </p>
-    <% else %>
-      <p class="CaseCell-createdDate">
-        Added
-        <%= cell.created_at.to_date %>
+    <% if not cell.shows_assign? %>
+      <p class="CaseCell-assignee">
+        <%= cell.assignee %>
       </p>
     <% end %>
+  </div>
+
+  <div class="CaseCell-footer">
+    <p class="CaseCell-status">
+      <% if cell.approved? %>
+        Approved
+        <img class="CaseCell-checkmark" alt="Checkmark" />
+      <% else %>
+        Opened
+      <% end %>
+    </p>
+
+    <p class="CaseCell-date">
+      Added
+      <%= cell.created_at.to_date %>
+    </p>
   </div>
 </li>

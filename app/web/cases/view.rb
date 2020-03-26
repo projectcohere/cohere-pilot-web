@@ -152,7 +152,7 @@ module Cases
 
     # -- queries/assignment
     def shows_assign?
-      return assignee == nil
+      return assignee == nil && !@scope.assigned?
     end
 
     def assignee
