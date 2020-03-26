@@ -30,7 +30,7 @@ class ActiveSupport::TestCase
     FileUtils.cp_r("./test/fixtures/files/storage", "./tmp")
   end
 
-  parallelize(workers: :number_of_processors)
+  parallelize(workers: ENV["PRY_RESCUE"] ? 1 : :number_of_processors)
 
   # load all fixtures
   fixtures(:all)

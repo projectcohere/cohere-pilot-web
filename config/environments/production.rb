@@ -1,3 +1,5 @@
+require "sidekiq/cron"
+
 Rails.application.configure do
   # -- root --
   config.cache_classes = true
