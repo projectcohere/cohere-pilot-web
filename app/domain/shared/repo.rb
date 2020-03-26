@@ -37,7 +37,7 @@ class Repo
   end
 
   protected def entities_from(records)
-    records.map.with_index do |record, i|
+    records.map do |record|
       if block_given?
         entity_from(record, *yield(record))
       else

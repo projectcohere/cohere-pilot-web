@@ -5,7 +5,7 @@ class Case
     test "maps a record" do
       case_rec = cases(:approved_2)
 
-      kase = Case::Repo.map_record(case_rec, case_rec.documents, true)
+      kase = Case::Repo.map_record(case_rec, documents: case_rec.documents, is_referrer: true)
       assert_not_nil(kase.record)
       assert_not_nil(kase.id.val)
       assert_not_nil(kase.status)
@@ -37,7 +37,7 @@ class Case
     test "maps a referral" do
       case_rec = cases(:referral_1)
 
-      kase = Case::Repo.map_record(case_rec, case_rec.documents)
+      kase = Case::Repo.map_record(case_rec, documents: case_rec.documents)
       assert_not(kase.is_referrer)
       assert(kase.is_referred)
       assert(kase.supplier_account.has_active_service)

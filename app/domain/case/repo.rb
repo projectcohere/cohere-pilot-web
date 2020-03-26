@@ -38,7 +38,9 @@ class Case
           case_id: case_id
         )
 
-      return entity_from(document_rec.case, [document_rec])
+      return entity_from(document_rec.case,
+        documents: [document_rec],
+      )
     end
 
     def find_with_documents_and_referral(case_id)
@@ -52,7 +54,10 @@ class Case
       is_referrer = Case::Record
         .exists?(referrer_id: case_id)
 
-      return entity_from(case_rec, document_recs, is_referrer)
+      return entity_from(case_rec,
+        documents: document_recs,
+        is_referrer: is_referrer,
+      )
     end
 
     def find_for_dhs(case_id)
@@ -72,7 +77,9 @@ class Case
         .with_attached_file
         .where(case_id: case_id)
 
-      return entity_from(case_rec, document_recs)
+      return entity_from(case_rec,
+        documents: document_recs,
+      )
     end
 
     def find_for_enroller(case_id, enroller_id)
@@ -92,7 +99,9 @@ class Case
         .with_attached_file
         .where(case_id: case_id)
 
-      return entity_from(case_rec, document_recs)
+      return entity_from(case_rec,
+        documents: document_recs
+      )
     end
 
     def find_active_by_recipient(recipient_id)
@@ -528,7 +537,7 @@ class Case
     end
 
     # -- factories --
-    def self.map_record(r, document_recs = nil, is_referrer = false)
+    def self.map_record(r, documents: nil, is_referrer: false)
       Case.new(
         record: r,
         id: Id.new(r.id),
@@ -537,14 +546,8 @@ class Case
         recipient: map_recipient(r.recipient),
         enroller_id: r.enroller_id,
         supplier_id: r.supplier_id,
-        supplier_account: Case::Account.new(
-          number: r.supplier_account_number,
-          arrears_cents: r.supplier_account_arrears_cents,
-          has_active_service: r.supplier_account_active_service
-        ),
-        documents: document_recs&.map { |d|
-          map_document(d)
-        },
+        supplier_account: map_supplier_account(r),
+        documents: documents&.map { |d| map_document(d) },
         is_referrer: is_referrer,
         is_referred: r.referrer_id.present?,
         has_new_activity: r.has_new_activity,
@@ -556,7 +559,7 @@ class Case
     end
 
     def self.map_recipient(r)
-      Recipient.new(
+      return Recipient.new(
         record: r,
         id: Id.new(r.id),
         profile: ::Recipient::Repo.map_profile(r),
@@ -564,8 +567,16 @@ class Case
       )
     end
 
+    def self.map_supplier_account(r)
+      return Case::Account.new(
+        number: r.supplier_account_number,
+        arrears_cents: r.supplier_account_arrears_cents,
+        has_active_service: r.supplier_account_active_service
+      )
+    end
+
     def self.map_document(r)
-      Document.new(
+      return Document.new(
         record: r,
         id: Id.new(r.id),
         classification: r.classification.to_sym,

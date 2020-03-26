@@ -500,7 +500,7 @@ module Db
 
     test "saves the selected attachment" do
       case_rec = cases(:submitted_1)
-      kase = Case::Repo.map_record(case_rec, case_rec.documents)
+      kase = Case::Repo.map_record(case_rec, documents: case_rec.documents)
 
       kase.select_document(1)
       kase.attach_file_to_selected_document(FileData.new(
@@ -526,7 +526,7 @@ module Db
 
     test "saves completed" do
       case_rec = cases(:submitted_1)
-      kase = Case::Repo.map_record(case_rec, case_rec.documents)
+      kase = Case::Repo.map_record(case_rec, documents: case_rec.documents)
       kase.complete(Case::Status::Approved)
       case_repo = Case::Repo.new
 
@@ -539,7 +539,7 @@ module Db
       supplier_rec = partners(:supplier_3)
       case_rec = cases(:approved_1)
 
-      referrer = Case::Repo.map_record(case_rec, case_rec.documents)
+      referrer = Case::Repo.map_record(case_rec, documents: case_rec.documents)
       referral = referrer.make_referral_to_program(
         Program::Name::Wrap,
         supplier_id: supplier_rec.id
