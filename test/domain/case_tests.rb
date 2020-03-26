@@ -230,6 +230,17 @@ class CaseTests < ActiveSupport::TestCase
     assert_empty(kase.events)
   end
 
+  test "selects an assignment" do
+    kase = Case.stub(
+      assignments: [
+        Case::Assignment.stub(partner_id: 3)
+      ]
+    )
+
+    kase.select_assignment(3)
+    assert_same(kase.selected_assignment, kase.assignments[0])
+  end
+
   # -- commands/messages
   def stub_recipient_with_phone_number(phone_number)
     return Case::Recipient.stub(

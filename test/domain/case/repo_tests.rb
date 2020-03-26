@@ -5,7 +5,12 @@ class Case
     test "maps a record" do
       case_rec = cases(:approved_2)
 
-      kase = Case::Repo.map_record(case_rec, documents: case_rec.documents, is_referrer: true)
+      kase = Case::Repo.map_record(case_rec,
+        documents: case_rec.documents,
+        assignments: case_rec.assignments,
+        is_referrer: true
+      )
+
       assert_not_nil(kase.record)
       assert_not_nil(kase.id.val)
       assert_not_nil(kase.status)
@@ -32,6 +37,11 @@ class Case
       assert_equal(document.classification, :contract)
       assert_not_nil(document.file)
       assert_not_nil(document.source_url)
+
+      assignment = kase.assignments[0]
+      assert_not_nil(assignment.user_id)
+      assert_not_nil(assignment.user_email)
+      assert_not_nil(assignment.partner_id)
     end
 
     test "maps a referral" do

@@ -9,13 +9,13 @@ module Cohere
       @scope = Cases::Scope.from_key(params[:scope])
       @page, @cases = case @scope
       when Cases::Scope::Queued
-        case_repo.find_all_queued_for_cohere(page: params[:page])
+        case_repo.find_all_queued_for_cohere(partner_id, page: params[:page])
       when Cases::Scope::Assigned
         case_repo.find_all_assigned_by_user(user.id, page: params[:page])
       when Cases::Scope::Open
-        case_repo.find_all_opened(page: params[:page])
+        case_repo.find_all_opened_for_cohere(partner_id, page: params[:page])
       when Cases::Scope::Completed
-        case_repo.find_all_completed(page: params[:page])
+        case_repo.find_all_completed_for_cohere(partner_id, page: params[:page])
       end
     end
 

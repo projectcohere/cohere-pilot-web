@@ -152,7 +152,12 @@ module Cases
 
     # -- queries/assignment
     def shows_assign?
-      return @scope&.queued?
+      return assignee == nil
+    end
+
+    def assignee
+      email = @case.selected_assignment&.user_email
+      return email&.split("@")&.first
     end
 
     # -- queries/timestamps

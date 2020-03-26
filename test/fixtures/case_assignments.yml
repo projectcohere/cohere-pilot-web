@@ -12,3 +12,8 @@ enroller_1:
   user: enroller_1
   case: submitted_1
   partner: enroller_1
+
+approved_2:
+  user: cohere_1
+  case: approved_2
+  partner: cohere_1

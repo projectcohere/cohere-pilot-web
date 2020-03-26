@@ -119,25 +119,7 @@ class Case
         .join_recipient
         .where(id: case_ids)
 
-      return entities_from(case_recs)
-    end
-
-    def find_all_opened(page:)
-      case_query = Case::Record
-        .join_recipient
-        .incomplete
-        .by_most_recently_updated
-
-      return pipeline(case_query, page)
-    end
-
-    def find_all_completed(page:)
-      case_query = Case::Record
-        .join_recipient
-        .where.not(completed_at: nil)
-        .order(completed_at: :desc)
-
-      return pipeline(case_query, page)
+      return case_recs.map { |r| entity_from(r) }
     end
 
     def find_all_assigned_by_user(user_id, page:)
@@ -147,17 +129,43 @@ class Case
         .with_assigned_user(user_id.val)
         .by_most_recently_updated
 
-      return pipeline(case_query, page)
+      return paged_entities_from(case_query, page)
     end
 
-    def find_all_queued_for_cohere(page:)
+    def find_all_queued_for_cohere(partner_id, page:)
       case_query = Case::Record
         .join_recipient
         .incomplete
-        .with_no_assignment_for_partner(@partner_repo.find_cohere.id)
+        .with_no_assignment_for_partner(partner_id)
         .by_most_recently_updated
 
-      return pipeline(case_query, page)
+      return paged_entities_from(case_query, page)
+    end
+
+    def find_all_opened_for_cohere(partner_id, page:)
+      case_query = Case::Record
+        .join_recipient
+        .incomplete
+        .by_most_recently_updated
+
+      return paged_entities_from(case_query, page,
+        assignments: Assignment::Record.by_partner(partner_id)
+      ) do |kase|
+        kase.select_assignment(partner_id)
+      end
+    end
+
+    def find_all_completed_for_cohere(partner_id, page:)
+      case_query = Case::Record
+        .join_recipient
+        .where.not(completed_at: nil)
+        .order(completed_at: :desc)
+
+      return paged_entities_from(case_query, page,
+        assignments: Assignment::Record.by_partner(partner_id)
+      ) do |kase|
+        kase.select_assignment(partner_id)
+      end
     end
 
     def find_all_queued_for_dhs(governor_id, page:)
@@ -167,7 +175,7 @@ class Case
         .with_no_assignment_for_partner(governor_id)
         .by_most_recently_updated
 
-      return pipeline(case_query, page, preloaded: false)
+      return paged_entities_from(case_query, page, partners: false)
     end
 
     def find_all_opened_for_dhs(page:)
@@ -176,7 +184,7 @@ class Case
         .for_governor
         .by_most_recently_updated
 
-      return pipeline(case_query, page, preloaded: false)
+      return paged_entities_from(case_query, page, partners: false)
     end
 
     def find_all_opened_for_supplier(supplier_id, page:)
@@ -185,7 +193,7 @@ class Case
         .where(supplier_id: supplier_id)
         .by_most_recently_updated
 
-      return pipeline(case_query, page, preloaded: false)
+      return paged_entities_from(case_query, page, partners: false)
     end
 
     def find_all_queued_for_enroller(enroller_id, page:)
@@ -196,7 +204,7 @@ class Case
         .with_no_assignment_for_partner(enroller_id)
         .by_most_recently_updated
 
-      return pipeline(case_query, page)
+      return paged_entities_from(case_query, page)
     end
 
     def find_all_submitted_for_enroller(enroller_id, page:)
@@ -205,17 +213,17 @@ class Case
         .for_enroller(enroller_id)
         .by_most_recently_updated
 
-      return pipeline(case_query, page)
+      return paged_entities_from(case_query, page)
     end
 
     # -- queries/helpers
-    def pipeline(case_query, page, preloaded: true)
+    private def paged_entities_from(case_query, page, assignments: nil, partners: true)
       # paginate the results
       case_page = Pagy.new(count: case_query.count(:all), page: page)
       case_recs = case_query.offset(case_page.offset).limit(case_page.items)
 
-      # pre-load assosicated aggregates
-      if preloaded
+      # pre-load other aggregates, if any
+      if partners
         partner_ids = case_recs
           .map(&:enroller_id)
           .concat(case_recs.map(&:supplier_id))
@@ -224,8 +232,28 @@ class Case
         @partner_repo.find_all_by_ids(partner_ids)
       end
 
+      # pre-load assignments records, if any
+      assignment_recs_by_id = if assignments != nil
+        assignments
+          .includes(:user)
+          .where(case: case_recs.map(&:id))
+          .group_by(&:case_id)
+      end
+
       # transform the results
-      return case_page, entities_from(case_recs)
+      cases = case_recs.map do |r|
+        entity = entity_from(r,
+          assignments: assignment_recs_by_id&.[](r.id) || []
+        )
+
+        if block_given?
+          yield(entity)
+        end
+
+        entity
+      end
+
+      return case_page, cases
     end
 
     # -- commands --
@@ -537,7 +565,7 @@ class Case
     end
 
     # -- factories --
-    def self.map_record(r, documents: nil, is_referrer: false)
+    def self.map_record(r, assignments: nil, documents: nil, is_referrer: false)
       Case.new(
         record: r,
         id: Id.new(r.id),
@@ -547,7 +575,8 @@ class Case
         enroller_id: r.enroller_id,
         supplier_id: r.supplier_id,
         supplier_account: map_supplier_account(r),
-        documents: documents&.map { |d| map_document(d) },
+        documents: documents&.map { |r| map_document(r) },
+        assignments: assignments&.map { |r| map_assignment(r) },
         is_referrer: is_referrer,
         is_referred: r.referrer_id.present?,
         has_new_activity: r.has_new_activity,
@@ -568,10 +597,18 @@ class Case
     end
 
     def self.map_supplier_account(r)
-      return Case::Account.new(
+      return Account.new(
         number: r.supplier_account_number,
         arrears_cents: r.supplier_account_arrears_cents,
         has_active_service: r.supplier_account_active_service
+      )
+    end
+
+    def self.map_assignment(r)
+      return Assignment.new(
+        user_id: r.user.id,
+        user_email: r.user.email,
+        partner_id: r.partner_id
       )
     end
 
@@ -598,17 +635,12 @@ class Case
       return scope
     end
 
-    def self.incomplete
-      return where(completed_at: nil)
+    def self.join_assignments
+      return includes(:assignments)
     end
 
-    def self.with_assigned_user(user_id)
-      scope = self
-        .includes(:assignments)
-        .references(:case_assignments)
-        .where(case_assignments: { user_id: user_id })
-
-      return scope
+    def self.incomplete
+      return where(completed_at: nil)
     end
 
     def self.for_governor
@@ -625,6 +657,15 @@ class Case
       )
     end
 
+    def self.with_assigned_user(user_id)
+      scope = self
+        .includes(:assignments)
+        .references(:case_assignments)
+        .where(case_assignments: { user_id: user_id })
+
+      return scope
+    end
+
     def self.with_no_assignment_for_partner(partner_id)
       query = <<~SQL
         SELECT 1
@@ -637,6 +678,12 @@ class Case
 
     def self.by_most_recently_updated
       return order(updated_at: :desc)
+    end
+  end
+
+  class Assignment::Record
+    def self.by_partner(partner_id)
+      return where(partner_id: partner_id)
     end
   end
 end

@@ -15,6 +15,7 @@
   &-header {
     @extend .CaseCell-row;
     justify-content: space-between;
+    align-items: center;
   }
 
   &-header + &-row {
@@ -42,13 +43,8 @@
     color: $gray1;
   }
 
-  &-createdDate {
-    align-self: center;
-  }
-
   &-approved {
     display: flex;
-    align-self: center;
   }
 
   &-approvedCheckmark {

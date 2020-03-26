@@ -31,24 +31,24 @@ class User
 
     # -- queries/many
     def find_all_for_opened_case
-      records = User::Record
+      user_recs = User::Record
         .where(organization_type: [:cohere, :dhs])
 
-      entities_from(records)
+      user_recs.map { |r| entity_from(r) }
     end
 
     def find_all_for_submitted_case(kase)
-      records = User::Record
+      user_recs = User::Record
         .where(partner_id: kase.enroller_id)
 
-      entities_from(records)
+      user_recs.map { |r| entity_from(r) }
     end
 
     def find_all_for_completed_case
-      records = User::Record
+      user_recs = User::Record
         .where(organization_type: :cohere)
 
-      entities_from(records)
+      user_recs.map { |r| entity_from(r) }
     end
 
     # -- commands --

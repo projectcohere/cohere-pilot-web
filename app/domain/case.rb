@@ -12,7 +12,7 @@ class Case < ::Entity
   prop(:supplier_id)
   prop(:supplier_account)
   prop(:documents, default: nil)
-  prop(:assignments, default: [])
+  prop(:assignments, default: nil)
   prop(:is_referrer, default: false)
   prop(:is_referred, default: false)
   prop(:has_new_activity, default: false)
@@ -23,6 +23,7 @@ class Case < ::Entity
 
   # -- props/temporary
   attr(:new_assignment)
+  attr(:selected_assignment)
   attr(:new_documents)
   attr(:selected_document)
 
@@ -146,6 +147,8 @@ class Case < ::Entity
 
   # -- commands/assignments
   def assign_user(user)
+    @assignments ||= []
+
     has_assignment = @assignments.any? do |a|
       a.partner_id == user.role.partner_id
     end
@@ -156,12 +159,19 @@ class Case < ::Entity
 
     @new_assignment = Assignment.new(
       user_id: user.id,
+      user_email: user.email,
       partner_id: user.role.partner_id,
     )
 
     @assignments.push(@new_assignment)
 
     @events.add(Events::DidAssignUser.from_entity(self))
+  end
+
+  def select_assignment(partner_id)
+    @selected_assignment = @assignments.find do |a|
+      a.partner_id == partner_id
+    end
   end
 
   # -- commands/messages

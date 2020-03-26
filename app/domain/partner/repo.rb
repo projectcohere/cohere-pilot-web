@@ -62,10 +62,10 @@ class Partner
       ids = ids.uniq
 
       find_cached(ids.join(",")) do
-        records = Partner::Record
+        partner_recs = Partner::Record
           .where(id: ids)
 
-        entities_from(records)
+        partner_recs.map { |r| entity_from(r) }
       end
     end
 
@@ -74,7 +74,7 @@ class Partner
         .where(membership_class: MembershipClass::Supplier)
         .where("programs @> '{?}'", ::Program::Name.index(program))
 
-      return entities_from(partner_recs)
+      partner_recs.map { |r| entity_from(r) }
     end
 
     # -- factories --

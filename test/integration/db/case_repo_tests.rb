@@ -122,23 +122,31 @@ module Db
       assert_equal(case_page.count, 1)
     end
 
-    test "finds a page of opened cases" do
+    test "finds a page of opened cases for a cohere user" do
       case_repo = Case::Repo.new
-      case_page, cases = case_repo.find_all_opened(page: 1)
+      user_rec = users(:cohere_1)
+
+      case_page, cases = case_repo.find_all_opened_for_cohere(user_rec.partner_id, page: 1)
       assert_length(cases, 8)
       assert_equal(case_page.count, 8)
+      assert(cases.any? { |c| c.selected_assignment != nil })
     end
 
-    test "finds a page of completed cases" do
+    test "finds a page of completed cases for a cohere user" do
       case_repo = Case::Repo.new
-      case_page, cases = case_repo.find_all_completed(page: 1)
+      user_rec = users(:cohere_1)
+
+      case_page, cases = case_repo.find_all_completed_for_cohere(user_rec.partner_id, page: 1)
       assert_length(cases, 2)
       assert_equal(case_page.count, 2)
+      assert(cases.any? { |c| c.selected_assignment != nil })
     end
 
-    test "finds a page of queued cases for cohere" do
+    test "finds a page of queued cases for a cohere user" do
       case_repo = Case::Repo.new
-      case_page, cases = case_repo.find_all_queued_for_cohere(page: 1)
+      user_rec = users(:cohere_1)
+
+      case_page, cases = case_repo.find_all_queued_for_cohere(user_rec.partner_id, page: 1)
       assert_length(cases, 7)
       assert_equal(case_page.count, 7)
     end
