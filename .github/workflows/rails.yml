@@ -22,24 +22,59 @@ jobs:
           --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
     - uses: actions/checkout@v1
+
+    - uses: actions/cache@v1
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-gems-
+
+    - name: Get yarn cache directory path
+      id: yarn-cache-path
+      run: |
+        echo "::set-output name=dir::$(yarn cache dir)"
+
+    - uses: actions/cache@v1
+      id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+      with:
+        path: ${{ steps.yarn-cache-path.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+
     - name: Setup Ruby
       uses: actions/setup-ruby@v1
       with:
         ruby-version: 2.6.x
+
     - name: Install Postgres Tools
       run: |
         sudo apt install -y libpq-dev
+
     - name: Install Yarn & Node
       run: |
         curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
         echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
         curl -sL https://deb.nodesource.com/setup_12.x | sudo bash -
         sudo apt install -y yarn nodejs
+
     - name: Install PDF Tools
       run: |
         curl -sS -L https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb > wkhtmltox.deb
         sudo apt install ./wkhtmltox.deb
         sudo apt install -y poppler-utils
+
+    - name: Install Ruby Deps
+      run: |
+        gem install bundler
+        bundle config path vendor/bundle
+        bundle install --jobs 4 --retry 3
+
+    - name: Install Yarn Deps
+      run: /
+        yarn install
+
     - name: Build
       env:
         PGHOST: localhost
@@ -48,11 +83,9 @@ jobs:
         RAILS_ENV: test
       run: |
         cp .env.sample .env
-        gem install bundler
-        bundle install --jobs 4 --retry 3
         bin/rails db:setup
-        yarn install
         bin/rails webpacker:compile
+
     - name: Test
       env:
         PGHOST: localhost

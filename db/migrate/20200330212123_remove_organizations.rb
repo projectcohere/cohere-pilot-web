@@ -1,5 +1,5 @@
 class RemoveOrganizations < ActiveRecord::Migration[6.0]
-  def down
+  def up
     # clean up user <-> partner relationship
     remove_column(:users, :organization_type, :string, null: false)
     remove_column(:users, :organization_id, :string, null: false)
@@ -13,7 +13,7 @@ class RemoveOrganizations < ActiveRecord::Migration[6.0]
     rename_column(:partners, :membership_class, :membership)
   end
 
-  def up
+  def down
     fail(ActiveRecord::IrreversibleMigration)
   end
 end
