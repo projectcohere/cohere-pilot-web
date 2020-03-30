@@ -23,20 +23,22 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
-    - uses: actions/cache@v1
+    - name: Cache Gems
+      uses: actions/cache@v1
       with:
         path: vendor/bundle
         key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
         restore-keys: |
           ${{ runner.os }}-gems-
 
-    - name: Get yarn cache directory path
+    - name: Get Yarn Cache Dir
       id: yarn-cache-path
       run: |
         echo "::set-output name=dir::$(yarn cache dir)"
 
-    - uses: actions/cache@v1
-      id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+    - name: Cache Node Packages
+      uses: actions/cache@v1
+      id: yarn-cache
       with:
         path: ${{ steps.yarn-cache-path.outputs.dir }}
         key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -48,16 +50,14 @@ jobs:
       with:
         ruby-version: 2.6.x
 
+    - name: Setup Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+
     - name: Install Postgres Tools
       run: |
         sudo apt install -y libpq-dev
-
-    - name: Install Yarn & Node
-      run: |
-        curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-        echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-        curl -sL https://deb.nodesource.com/setup_12.x | sudo bash -
-        sudo apt install -y yarn nodejs
 
     - name: Install PDF Tools
       run: |
