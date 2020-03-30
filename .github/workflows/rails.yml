@@ -65,14 +65,14 @@ jobs:
         sudo apt install ./wkhtmltox.deb
         sudo apt install -y poppler-utils
 
-    - name: Install Ruby Deps
+    - name: Install Gems
       run: |
         gem install bundler
         bundle config path vendor/bundle
         bundle install --jobs 4 --retry 3
 
-    - name: Install Yarn Deps
-      run: /
+    - name: Install Node Packages
+      run: |
         yarn install
 
     - name: Build
