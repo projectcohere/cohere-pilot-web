@@ -1,0 +1,44 @@
+<%- form = form.admin %>
+
+<%= f.fields_for(:admin, form) do |f| %>
+  <%= section_tag("Admin", class: "CaseFormAdmin") do %>
+    <%= f.field(:status, class: "CaseFormAdmin-status Field--select") do %>
+      <%= f.select(:status, form.status_options) %>
+    <%- end %>
+  <%- end %>
+
+  <%= section_tag("Assignments", class: "CaseFormAssignments") do %>
+    <ul class="CaseFormAssignments-list">
+      <% view.assignments.each do |assignment| %>
+        <li class="CaseFormAssignments-entry">
+          <%=
+            link_to("Unassign", destroy_case_assignments_path(form.model, assignment.partner_id),
+              method: :delete,
+              class: "CaseFormAssignments-unassign Button Button--destructive",
+              data: {
+                confirm: "Are you sure you want to unassign this user?"
+              },
+            )
+          %>
+          <%= assignment.user_email %>
+        </li>
+      <% end %>
+    </ul>
+  <%- end %>
+
+  <%= section_tag("Danger Zone", class: "CaseFormDanger") do %>
+    <p class="CaseFormDanger-warning">
+      These actions cannot be undone. Please be careful.
+    </p>
+
+    <%=
+      link_to("Delete Case", form.model,
+        method: :delete,
+        class: "CaseFormDanger-delete Button Button--destructive",
+        data: {
+          confirm: "Are you sure you want to delete this case?"
+        },
+      )
+    %>
+  <%- end %>
+<% end %>

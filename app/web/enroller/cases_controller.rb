@@ -1,26 +1,25 @@
-class Enroller
-  class CasesController < ApplicationController
-    # -- helpers --
-    helper_method(:policy)
-
+module Enroller
+  class CasesController < Cases::BaseController
     # -- actions --
     def index
       if policy.forbid?(:list)
         return deny_access
       end
 
-      @cases = Case::Repo.get.find_all_for_enroller(
-        User::Repo.get.find_current.role.organization_id
-      )
+      @scope = Cases::Scope.from_key(params[:scope])
+      @page, @cases = case @scope
+      when Cases::Scope::Queued
+        case_repo.find_all_queued_for_enroller(partner_id, page: params[:page])
+      when Cases::Scope::Assigned
+        case_repo.find_all_assigned_by_user(user.id, page: params[:page])
+      when Cases::Scope::Submitted
+        case_repo.find_all_submitted_for_enroller(partner_id, page: params[:page])
+      end
     end
 
     def complete
-      @case = Case::Repo.get.find_by_enroller_with_documents(
-        params[:case_id],
-        User::Repo.get.find_current.role.organization_id
-      )
-
-      if policy.forbid?(:edit_status)
+      @case = case_repo.find_with_documents_for_enroller(params[:case_id], partner_id)
+      if policy.forbid?(:complete)
         return deny_access
       end
 
@@ -33,21 +32,12 @@ class Enroller
     end
 
     def show
-      @case = Case::Repo.get.find_by_enroller_with_documents(
-        params[:id],
-        User::Repo.get.find_current.role.organization_id
-      )
-
+      @case = case_repo.find_with_documents_for_enroller(params[:id], partner_id)
       if policy.forbid?(:view)
         return deny_access
       end
 
       events.add(Cases::Events::DidViewEnrollerCase.from_entity(@case))
-    end
-
-    # -- queries --
-    private def policy
-      Case::Policy.new(User::Repo.get.find_current, @case)
     end
   end
 end

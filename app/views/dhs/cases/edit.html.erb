@@ -1,9 +1,11 @@
+<% view = Cases::View.new(@case) %>
+
 <main class="EditCase Main">
   <header class="Main-header">
     <%= link_to("Back to Cases", cases_path, class: "Main-back") %>
 
     <h1 class="Main-title">
-      <%= @view.recipient_name %>'s case
+      <%= view.recipient_name %>'s case
     </h1>
 
     <div class="Main-filters">
@@ -17,12 +19,12 @@
   <div class="CaseDetail">
     <%- form_class = "CaseFrom CaseDetail-case Panel" %>
     <%= form_for(@form, url: case_path(@case.id), html: { class: form_class }) do |f| %>
-      <% form_locals = { f: f, form: @form, view: @view, policy: policy } %>
+      <% form_locals = { f: f, form: @form, view: view, policy: policy } %>
 
       <div id="application" class="Panel-tab is-visible">
         <%= section_tag("Contact", class: "ShowCase-contact") do %>
           <%= field_tag("Primary Residential Address", class: "ShowCase-address") do %>
-            <% @view.address.each do |line| %>
+            <% view.address.each do |line| %>
               <%= line %>
               <br>
             <% end %>
@@ -34,11 +36,11 @@
       </div>
 
       <div id="documents" class="Panel-tab">
-        <%= render(partial: "cases/documents", locals: { documents: @view.documents }) %>
+        <%= render(partial: "cases/documents", locals: { documents: view.documents }) %>
       </div>
 
       <div class="Panel-actions">
-        <%= f.submit("Save", class: "Button--action") %>
+        <%= f.submit("Save", class: "Button Button--action") %>
       </div>
     <%- end %>
   </div>

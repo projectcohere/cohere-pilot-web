@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   # -- signed-out --
   constraints(Clearance::Constraints::SignedOut.new) do
-    root_path = "/chat"
+    root_path = "/sign-in"
 
     # root
     root(to: redirect(root_path), as: :root_signed_out)
@@ -10,7 +10,7 @@ Rails.application.routes.draw do
     get("/partner", to: redirect("/sign-in"))
     get("/partner/stats", to: "partners/stats#show")
 
-    scope(module: "users") do
+    scope(module: :users) do
       get("/sign-in", to: "sessions#new")
 
       resources(:sessions, only: %i[
@@ -43,7 +43,7 @@ Rails.application.routes.draw do
       })
 
       # sessions
-      resources(:invites, module: "chats", only: [
+      resources(:invites, module: :chats, only: [
         :new,
         :create,
       ]) do
@@ -84,27 +84,55 @@ Rails.application.routes.draw do
     end
   end
 
-  constraints(signed_in(role: :dhs)) do
+  constraints(signed_in(role: :governor)) do
     scope(module: :dhs) do
       resources(:cases, only: %i[
-        index
         edit
         update
-      ])
+      ]) do
+        get("/:scope",
+          on: :collection,
+          action: :index,
+          constraints: { scope: /queued|assigned|open/ }
+        )
+
+        get("/",
+          on: :collection,
+          to: redirect("/cases/queued")
+        )
+
+        resources(:assignments, only: %i[
+          create
+        ])
+      end
     end
   end
 
   constraints(signed_in(role: :enroller)) do
     scope(module: :enroller) do
       resources(:cases, only: %i[
-        index
         show
       ]) do
+        get("/:scope",
+          on: :collection,
+          action: :index,
+          constraints: { scope: /queued|assigned|submitted/ }
+        )
+
+        get("/",
+          on: :collection,
+          to: redirect("/cases/queued")
+        )
+
         patch("/:complete_action",
           as: :complete,
           action: :complete,
           constraints: { complete_action: /approve|deny/ }
         )
+
+        resources(:assignments, only: %i[
+          create
+        ])
       end
     end
   end
@@ -115,17 +143,24 @@ Rails.application.routes.draw do
         edit
         update
         show
+        destroy
       ]) do
         get("/:scope",
           on: :collection,
           action: :index,
-          constraints: { scope: /open|completed/ }
+          constraints: { scope: /queued|assigned|open|completed/ }
         )
 
         get("/",
           on: :collection,
-          to: redirect("/cases/open")
+          to: redirect("/cases/queued")
         )
+
+        resources(:assignments, only: %i[
+          create
+        ]) do
+          delete("/:partner_id", on: :collection, action: :destroy, as: :destroy)
+        end
 
         resources(:referrals, only: %i[
           new
@@ -149,7 +184,7 @@ Rails.application.routes.draw do
     root(to: redirect(cases_path))
 
     # users
-    scope(module: "users") do
+    scope(module: :users) do
       delete("/sign-out", to: "sessions#destroy")
     end
 

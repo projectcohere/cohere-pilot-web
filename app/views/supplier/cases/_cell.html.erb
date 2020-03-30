@@ -1,0 +1,23 @@
+<%= tag.li(case_cell_options(cell, shows_status: Case::Status::Approved)) do %>
+  <div class="CaseCell-title">
+    <p class="CaseCell-name">
+      <%= cell.recipient_name %>
+    </p>
+
+    <% if not cell.shows_assign? %>
+      <p class="CaseCell-assignee">
+        <%= cell.assignee %>
+      </p>
+    <% end %>
+  </div>
+
+  <div class="CaseCell-footer">
+    <p class="CaseCell-status">
+      <%= cell.approved? ? cell.status : "Opened" %>
+    </p>
+
+    <p class="CaseCell-date">
+      <%= cell.created_label %>
+    </p>
+  </div>
+<%- end %>

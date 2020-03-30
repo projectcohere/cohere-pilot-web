@@ -1,17 +1,13 @@
-class Supplier
-  class CasesController < ApplicationController
-    # -- helpers --
-    helper_method(:policy)
-
+module Supplier
+  class CasesController < Cases::BaseController
     # -- actions --
     def index
       if policy.forbid?(:list)
         return deny_access
       end
 
-      @cases = Case::Repo.get.find_all_for_supplier(
-        User::Repo.get.find_current.organization_id
-      )
+      @scope = Cases::Scope::Open
+      @page, @cases = case_repo.find_all_opened_for_supplier(partner_id, page: params[:page])
     end
 
     def new
@@ -41,11 +37,6 @@ class Supplier
       end
 
       redirect_to(cases_path, notice: "Created case!")
-    end
-
-    # -- queries --
-    private def policy
-      Case::Policy.new(User::Repo.get.find_current)
     end
   end
 end

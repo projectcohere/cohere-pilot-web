@@ -1,7 +1,7 @@
 .Field {
   // -- elements --
   &-hint {
-    @extend .u-hint;
+    @extend .u-label-hint;
 
     display: block;
     margin-bottom: $spacing6;

@@ -2,17 +2,16 @@ require "test_helper"
 
 class CaseTests < ActiveSupport::TestCase
   # -- creation --
-  test "opens the case" do
+  test "opens a case" do
     profile = Recipient::Profile.stub(
       phone: Recipient::Phone.stub(number: "1")
     )
 
     kase = Case.open(
-      program: Program::Name::Meap,
-      profile: profile,
-      enroller: Enroller.stub(id: 1),
-      supplier: Supplier.stub(id: 2),
-      supplier_account: :test_account
+      recipient_profile: profile,
+      enroller: Partner.stub(id: 1),
+      supplier_user: User.stub(id: 3, role: User::Role.stub(partner_id: 2)),
+      supplier_account: :test_account,
     )
 
     assert(kase.has_new_activity)
@@ -20,12 +19,34 @@ class CaseTests < ActiveSupport::TestCase
     assert_equal(kase.supplier_account, :test_account)
     assert_equal(kase.enroller_id, 1)
     assert_equal(kase.supplier_id, 2)
+    assert_not_nil(kase.new_assignment)
 
-    assert_instances_of(kase.events, [Case::Events::DidOpen])
+    assert_instances_of(kase.events, [
+      Case::Events::DidOpen,
+      Case::Events::DidAssignUser,
+    ])
   end
 
   # -- commands --
-  test "is pending after adding dhs data" do
+  test "adds cohere data" do
+    kase = Case.stub(
+      recipient: Case::Recipient.stub,
+      has_new_activity: true,
+    )
+
+    kase.add_cohere_data(
+      Case::Account.stub,
+      Recipient::Profile.stub,
+      Recipient::DhsAccount.stub,
+    )
+
+    assert_not_nil(kase.supplier_account)
+    assert_not_nil(kase.recipient.profile)
+    assert_not_nil(kase.recipient.dhs_account)
+    assert_not(kase.has_new_activity)
+  end
+
+  test "adds dhs data" do
     kase = Case.stub(
       status: Case::Status::Opened,
       recipient: Case::Recipient.stub,
@@ -40,6 +61,16 @@ class CaseTests < ActiveSupport::TestCase
       Case::Events::DidBecomePending,
       Case::Events::DidChangeActivity,
     ])
+  end
+
+  test "adds admin data" do
+    kase = Case.stub(
+      recipient: Case::Recipient.stub,
+    )
+
+    kase.add_admin_data(Case::Status::Approved)
+    assert_equal(kase.status, Case::Status::Approved)
+    assert_not_nil(kase.completed_at)
   end
 
   test "submits a pending case to an enroller" do
@@ -162,6 +193,71 @@ class CaseTests < ActiveSupport::TestCase
 
     referral = kase.make_referral_to_program(Program::Name::Meap)
     assert_nil(referral)
+  end
+
+  # -- commands/assignments
+  test "doesn't assign a user if an assignment for that partner exists" do
+    kase = Case.stub(
+      assignments: [
+        Case::Assignment.stub(partner_id: 3)
+      ]
+    )
+
+    user = User.stub(
+      id: Id.new(3),
+      role: User::Role.stub(partner_id: 3),
+    )
+
+    kase.assign_user(user)
+    assert_nil(kase.new_assignment)
+    assert_empty(kase.events)
+  end
+
+  test "assigns a user" do
+    kase = Case.stub
+    user = User.stub(
+      id: Id.new(3),
+      email: :test_email,
+      role: User::Role.stub(
+        name: :cohere,
+        partner_id: 5,
+      ),
+    )
+
+    kase.assign_user(user)
+
+    assignment = kase.new_assignment
+    assert_not_nil(assignment)
+    assert_equal(kase.assignments, [assignment])
+    assert_equal(assignment.user_id.val, 3)
+    assert_equal(assignment.user_email, :test_email)
+    assert_equal(assignment.partner_id, 5)
+    assert_instances_of(kase.events, [Case::Events::DidAssignUser])
+  end
+
+  test "selects an assignment" do
+    kase = Case.stub(
+      assignments: [
+        Case::Assignment.stub(partner_id: 3)
+      ]
+    )
+
+    kase.select_assignment(3)
+    assert_same(kase.selected_assignment, kase.assignments[0])
+  end
+
+  test "destroys a selected assignment" do
+    kase = Case.stub(
+      assignments: [
+        Case::Assignment.stub(partner_id: 3)
+      ]
+    )
+
+    kase.select_assignment(3)
+
+    kase.destroy_selected_assignment
+    assert_empty(kase.assignments)
+    assert_instances_of(kase.events, [Case::Events::DidUnassignUser])
   end
 
   # -- commands/messages

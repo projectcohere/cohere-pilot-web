@@ -12,6 +12,7 @@ class Case < ::Entity
   prop(:supplier_id)
   prop(:supplier_account)
   prop(:documents, default: nil)
+  prop(:assignments, default: nil)
   prop(:is_referrer, default: false)
   prop(:is_referred, default: false)
   prop(:has_new_activity, default: false)
@@ -21,26 +22,26 @@ class Case < ::Entity
   prop(:completed_at, default: nil)
 
   # -- props/temporary
+  attr(:new_assignment)
+  attr(:selected_assignment)
   attr(:new_documents)
   attr(:selected_document)
 
-  # -- lifetime --
-  def self.open(program:, profile:, enroller:, supplier:, supplier_account:)
-    recipient = Recipient.new(
-      profile: profile
-    )
-
+  # -- factory --
+  def self.open(recipient_profile:, enroller:, supplier_user:, supplier_account:)
     kase = Case.new(
       status: Status::Opened,
-      program: program,
-      recipient: recipient,
+      program: Program::Name::Meap,
+      recipient: Recipient.new(profile: recipient_profile),
       enroller_id: enroller.id,
-      supplier_id: supplier.id,
+      supplier_id: supplier_user.role.partner_id,
       supplier_account: supplier_account,
       has_new_activity: true,
     )
 
     kase.events.add(Events::DidOpen.from_entity(kase))
+    kase.assign_user(supplier_user)
+
     kase
   end
 
@@ -61,6 +62,13 @@ class Case < ::Entity
     @recipient.add_cohere_data(profile, dhs_account)
 
     track_new_activity(false)
+  end
+
+  def add_admin_data(status)
+    if status != @status
+      @status = status
+      @completed_at = complete? ? Time.zone.now : nil
+    end
   end
 
   def remove_from_pilot
@@ -133,6 +141,40 @@ class Case < ::Entity
       referrer: self,
       referred: referred
     )
+  end
+
+  # -- commands/assignments
+  def assign_user(user)
+    @assignments ||= []
+
+    has_assignment = @assignments.any? do |a|
+      a.partner_id == user.role.partner_id
+    end
+
+    if has_assignment
+      return
+    end
+
+    @new_assignment = Assignment.new(
+      user_id: user.id,
+      user_email: user.email,
+      partner_id: user.role.partner_id,
+    )
+
+    @assignments.push(@new_assignment)
+
+    @events.add(Events::DidAssignUser.from_entity(self))
+  end
+
+  def select_assignment(partner_id)
+    @selected_assignment = @assignments&.find do |a|
+      a.partner_id == partner_id
+    end
+  end
+
+  def destroy_selected_assignment
+    @assignments.delete(@selected_assignment)
+    @events.add(Events::DidUnassignUser.from_entity(self))
   end
 
   # -- commands/messages

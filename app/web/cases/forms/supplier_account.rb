@@ -11,8 +11,8 @@ module Cases
       validates(:arrears, presence: true, if: :is_account_required)
 
       # -- lifecycle --
-      def initialize(model, attrs = {}, supplier_repo: Supplier::Repo.get)
-        @supplier_repo = supplier_repo
+      def initialize(model, attrs = {}, partner_repo: Partner::Repo.get)
+        @partner_repo = partner_repo
         super(model, attrs)
       end
 
@@ -40,9 +40,11 @@ module Cases
 
       # -- queries --
       def supplier_options
-        @supplier_repo.find_all_by_program(@model.program).map do |s|
-          [s.name, s.id]
-        end
+        suppliers = @partner_repo
+          .find_all_suppliers_by_program(@model.program)
+          .map { |s| [s.name, s.id] }
+
+        return suppliers
       end
 
       def map_to_case_supplier_account

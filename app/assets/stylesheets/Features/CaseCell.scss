@@ -1,57 +1,110 @@
 .CaseCell {
-  @extend .u-panel-cozy;
+  @extend .u-panel;
 
   position: relative;
+  overflow: hidden;
+  background-color: $white;
 
   // -- row --
-  &-row {
+  $padding: $spacing3;
+
+  %row {
     display: flex;
-    align-items: baseline;
-
-    > * + * {
-      margin-left: $spacing5;
-    }
-  }
-
-  &-row:last-child {
     justify-content: space-between;
+    padding-left: $padding;
+    padding-right: $padding;
   }
 
-  // -- elements --
+  // -- row/title
+  &-title {
+    @extend %row;
+
+    align-items: center;
+    margin-top: $padding;
+  }
+
   &-name {
-    display: inline-block;
+    display: flex;
+    align-items: center;
     font-size: $font-size3;
   }
 
-  &-organizations {
-    color: $gray1;
-  }
-
-  &-updateTime {
-    color: $gray1;
-  }
-
-  &-approved {
-    display: flex;
-  }
-
-  &-approvedCheckmark {
-    @include u-checkmark($offset-x: 2px, $offset-y: 10px);
-
-    width: $height3;
-    height: $height3;
-    margin-left: $spacing5;
-    color: transparent;
-  }
-
-  // -- variants --
-  &.is-active &-activity {
+  &-activity {
     $size: 8px;
-    align-self: center;
+
+    display: none;
     width: $size;
     height: $size;
+    margin-left: $spacing5;
     background-color: $brand-secondary1;
     border-radius: $size / 2;
   }
 
+  // -- row/details
+  &-details {
+    @extend %row;
+
+    align-items: baseline;
+    margin-top: $spacing6;
+  }
+
+  &-organizations {
+    color: $brand-black;
+    font-size: $font-size6;
+  }
+
+  // -- row/footer
+  &-footer {
+    @extend %row;
+
+    align-items: center;
+    height: $height4;
+    margin-top: $spacing4;
+    background-color: $gray2;
+  }
+
+  &-status {
+    @extend .u-label-bold;
+
+    color: $brand-black;
+    opacity: 0.85;
+  }
+
+  &-date {
+    @extend .u-label;
+
+    color: $brand-black;
+    opacity: 0.85;
+  }
+
+  // -- variants --
+  @mixin progress($percent) {
+    --progress-color: #f0fbf3;
+    background: linear-gradient(to right, var(--progress-color) 0%, var(--progress-color) $percent, transparent $percent), $gray2;
+  }
+
+  &-opened &-footer, &-removed &-footer {
+    background-color: $gray2;
+  }
+
+  &-pending &-footer {
+    @include progress(33%);
+  }
+
+  &-submitted &-footer {
+    @include progress(66%);
+  }
+
+  &-approved &-footer {
+    background-color: #f0fbf3;
+  }
+
+  &-denied &-footer {
+    background-color: #fbf0f0;
+  }
+
+  // -- states --
+  &.is-active &-activity {
+    display: block;
+  }
 }

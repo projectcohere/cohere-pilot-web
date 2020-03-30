@@ -10,7 +10,9 @@ $width6: 120px;
 // height
 $height1: 42px;
 $height2: 36px;
-$height3: 20px;
+$height3: 30px;
+$height4: 24px;
+$height5: 20px;
 
 // spacing
 $spacing0: 60px;
@@ -40,7 +42,8 @@ $font-size2: 24px;
 $font-size3: 20px;
 $font-size4: 18px;
 $font-size5: 16px;
-$font-size6: 11px;
+$font-size6: 14px;
+$font-size7: 11px;
 
 $font-weight-thin: 100;
 $font-weight-regular: normal;
@@ -52,6 +55,7 @@ $black: #000000;
 $white: #ffffff;
 $gray0: #777777;
 $gray1: #cccccc;
+$gray2: #fbfbfb;
 
 // colors/brand
 $brand-primary: #807fff;
@@ -64,7 +68,7 @@ $brand-secondary3: #1c004a;
 $color-background: fade-out($brand-primary, 0.97);
 $color-field: fade-out($brand-primary, 0.90);
 $color-divider: fade-out($brand-primary, 0.7);
-$color-shadow: fade-out($brand-black, 0.95);
+$color-shadow: fade-out($brand-black, 0.92);
 $color-error: $brand-secondary2;
 $color-notice: $color-field;
 $color-alert: lighten($brand-secondary1, 15%);

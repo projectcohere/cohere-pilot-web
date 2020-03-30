@@ -1,16 +1,16 @@
-class Supplier
+module Supplier
   class SaveCaseForm < ::ApplicationForm
     # -- lifetime --
     def initialize(
       form,
       case_repo: Case::Repo.get,
-      enroller_repo: Enroller::Repo.get,
-      supplier_repo: Supplier::Repo.get
+      user_repo: User::Repo.get,
+      partner_repo: Partner::Repo.get
     )
       @form = form
       @case_repo = case_repo
-      @enroller_repo = enroller_repo
-      @supplier_repo = supplier_repo
+      @user_repo = user_repo
+      @partner_repo = partner_repo
     end
 
     # -- command --
@@ -20,15 +20,14 @@ class Supplier
       end
 
       # open a new case for the recipient
-      enroller = @enroller_repo.find_default
-      supplier = @supplier_repo.find_current
-
-      new_case = supplier.open_case(enroller,
-        account: @form.map_to_case_supplier_account,
-        profile: @form.map_to_recipient_profile,
+      opened_case = Case.open(
+        recipient_profile: @form.map_to_recipient_profile,
+        enroller: @partner_repo.find_default_enroller,
+        supplier_user: @user_repo.find_current,
+        supplier_account: @form.map_to_case_supplier_account,
       )
 
-      @case_repo.save_opened(new_case)
+      @case_repo.save_opened(opened_case)
       true
     end
   end

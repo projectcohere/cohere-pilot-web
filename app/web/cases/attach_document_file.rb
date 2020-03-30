@@ -12,7 +12,6 @@ module Cases
     # -- command --
     def call(case_id, document_id)
       @case = @case_repo.find_with_document(case_id, document_id)
-      @case.select_document(0)
 
       file = @generate_file.(@case)
       @case.attach_file_to_selected_document(file)

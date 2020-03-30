@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
 
   # -- callbacks --
   before_action(:set_file_host)
-  after_action(:process_events)
+  after_action(:dispatch_events)
 
   # -- helpers --
   helper_method(:header?)
@@ -32,8 +32,8 @@ class ApplicationController < ActionController::Base
     Services.domain_events
   end
 
-  protected def process_events
-    Events::ProcessAll.get.()
+  protected def dispatch_events
+    Events::DispatchAll.get.()
   end
 
   # -- Clearance::Authentication --

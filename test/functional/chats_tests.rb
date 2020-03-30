@@ -161,9 +161,12 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
       },
     })
 
-    assert_broadcast_on(Cases::ActivityChannel.active, {
-      id: case_rec.id,
-      hasNewActivity: false,
+    assert_broadcast_on(case_activity_for(:cohere_1), {
+      name: "HAS_NEW_ACTIVITY",
+      data: {
+        case_id: case_rec.id,
+        case_has_new_activity: false,
+      }
     })
   end
 
@@ -205,9 +208,12 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
       },
     })
 
-    assert_broadcast_on(Cases::ActivityChannel.active, {
-      id: case_rec.id,
-      hasNewActivity: true,
+    assert_broadcast_on(case_activity_for(:cohere_1), {
+      name: "HAS_NEW_ACTIVITY",
+      data: {
+        case_id: case_rec.id,
+        case_has_new_activity: true,
+      }
     })
   end
 

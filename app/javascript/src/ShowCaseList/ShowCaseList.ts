@@ -3,13 +3,26 @@ import { IComponent, kConsumer } from "../Core"
 // -- constants --
 const kChannelActivity = "Cases::ActivityChannel"
 
+const kScopeQueued = "queued"
+
 const kIdCaseList = "case-list"
+const kIdQueuedFilter = `filter-${kScopeQueued}`
 const kClassIsActive = "is-active"
 
 // -- types --
-interface CaseActivity {
-  id: string
-  hasNewActivity: boolean
+type ActivityEvent
+  = { name: "HAS_NEW_ACTIVITY", data: IHasNewActivity }
+  | { name: "DID_ADD_QUEUED_CASE", data: IHasQueueChange }
+  | { name: "DID_ASSIGN_USER", data: IHasQueueChange }
+  | { name: "DID_UNASSIGN_USER", data: IHasQueueChange }
+
+interface IHasNewActivity {
+  case_id: string
+  case_has_new_activity: boolean
+}
+
+interface IHasQueueChange {
+  case_id: string
 }
 
 // -- impls --
@@ -50,16 +63,68 @@ export class ShowCaseList implements IComponent {
   }
 
   // -- commands/activity
-  private showActivity(kase: CaseActivity) {
-    const $case = document.getElementById(`case-${kase.id}`)
+  private showActivity(data: IHasNewActivity) {
+    const $case = document.getElementById(`case-${data.case_id}`)
+
     if ($case != null) {
-      $case.classList.toggle(kClassIsActive, kase.hasNewActivity)
+      $case.classList.toggle(kClassIsActive, data.case_has_new_activity)
     }
   }
 
+  private showQueuedCase(data: IHasQueueChange) {
+    const scope = document.location.pathname.split("/").pop()
+
+    if (scope == kScopeQueued) {
+      this.addCaseToQueue(data)
+    } else {
+      this.showQueueActivity()
+    }
+  }
+
+  private hideQueuedCase(data: IHasQueueChange) {
+    const scope = document.location.pathname.split("/").pop()
+
+    if (scope == kScopeQueued) {
+      this.removeCaseFromQueue(data)
+    } else {
+      this.showQueueActivity()
+    }
+  }
+
+  private addCaseToQueue(data: IHasQueueChange) {
+    const $case = document.getElementById(`case-${data.case_id}`)
+
+    if ($case == null) {
+      document.location.reload(true)
+    }
+  }
+
+  private removeCaseFromQueue(data: IHasQueueChange) {
+    const $case = document.getElementById(`case-${data.case_id}`)
+
+    if ($case != null) {
+      document.location.reload(true)
+    }
+  }
+
+  private showQueueActivity() {
+    const $filter = document.getElementById(kIdQueuedFilter)!
+    $filter.classList.toggle(kClassIsActive, true)
+  }
+
   // -- events --
-  private didReceiveData(data: any) {
-    console.debug("ShowCaseList - received:", data)
-    this.showActivity(data)
+  private didReceiveData(event: ActivityEvent) {
+    console.debug("ShowCaseList - received:", event)
+
+    switch (event.name) {
+      case "HAS_NEW_ACTIVITY":
+        this.showActivity(event.data); break
+      case "DID_ADD_QUEUED_CASE":
+        this.showQueuedCase(event.data); break
+      case "DID_ASSIGN_USER":
+        this.hideQueuedCase(event.data); break
+      case "DID_UNASSIGN_USER":
+        this.showQueuedCase(event.data); break
+    }
   }
 }

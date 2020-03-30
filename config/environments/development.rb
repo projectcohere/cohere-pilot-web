@@ -1,4 +1,5 @@
 require_relative "shared/fixtures"
+require "sidekiq/cron"
 
 Rails.application.configure do
   should_cache = Rails.root.join('tmp', 'caching-dev.txt').exist?

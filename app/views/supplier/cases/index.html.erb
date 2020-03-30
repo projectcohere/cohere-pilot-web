@@ -1,37 +1,24 @@
-<main class="Main">
+<main class="Main Main--actions">
   <header class="Main-header">
     <h1 class="Main-title">
       Inbound Cases
     </h1>
+
     <div class="Main-actions">
-      <%= link_to("Add a Case", new_case_path, class: "Button--action") %>
+      <%= link_to("Add a Case", new_case_path, class: "Button Button--action") %>
     </div>
   </header>
+
   <ul class="CaseList">
     <% if @cases.blank? %>
       <h2 class="CaseList-fallback">
         No cases added.
       </h2>
     <% else %>
-      <% @cases.each do |kase| %>
-        <%- view = Cases::View.new(kase) %>
-        <li class="CaseCell">
-          <div class="CaseCell-row">
-            <p class="CaseCell-name"><%= view.recipient_name %></p>
-            <% if view.approved? %>
-              <p class="CaseCell-approved">
-                Approved
-                <img class="CaseCell-approvedCheckmark" alt="Checkmark" />
-              </p>
-            <% else %>
-              <p class="CaseCell-createdDate">
-                Added
-                <%= view.created_at.to_date %>
-              </p>
-            <% end %>
-          </div>
-        </li>
-      <% end %>
+      <%- views = @cases.map { |c| Cases::View.new(c, @scope) } %>
+      <%= render(partial: "supplier/cases/cell", collection: views) %>
     <% end %>
   </ul>
+
+  <%= pager_for(@page, of: "cases") %>
 </main>

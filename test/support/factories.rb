@@ -3,9 +3,12 @@ module Support
     def self.stub_all
       types_to_stub = [
         User,
+        User::Role,
+        Partner,
         Case,
         Case::Account,
         Case::Recipient,
+        Case::Assignment,
         Recipient::Profile,
         Recipient::Name,
         Recipient::Address,
@@ -13,8 +16,6 @@ module Support
         Recipient::DhsAccount,
         Recipient::Household,
         Document,
-        Enroller,
-        Supplier,
         Chat,
         Chat::Message,
         Chat::Recipient,

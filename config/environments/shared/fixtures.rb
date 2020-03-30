@@ -7,9 +7,9 @@ module Environment
     # named Record.
     K_ClassMap = {
       users: "User::Record",
-      suppliers: "Supplier::Record",
-      enrollers: "Enroller::Record",
+      partners: "Partner::Record",
       cases: "Case::Record",
+      case_assignments: "Case::Assignment::Record",
       recipients: "Recipient::Record",
       documents: "Document::Record",
       chats: "Chat::Record",

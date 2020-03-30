@@ -1,7 +1,6 @@
-.Button {
-  display: block;
-  height: $height2;
-  line-height: $height2;
+%button {
+  display: flex;
+  align-items: center;
   padding: 0 $spacing3;
   border-radius: 5px;
   text-decoration: none;
@@ -12,9 +11,17 @@
   -webkit-appearance: none;
 }
 
-.Button--action {
-  @extend .Button;
+.Button {
+  @extend %button;
+  height: $height2;
+}
 
+.ButtonSm {
+  @extend %button;
+  height: $height3;
+}
+
+.Button--action {
   color: $white;
   background-color: $brand-primary;
 
@@ -25,11 +32,8 @@
 }
 
 .Button--secondary {
-  @extend .Button;
-
   color: $brand-primary;
   border: 2px solid $brand-primary;
-  line-height: $height2 - 4px;
 
   &:hover {
     color: lighten($brand-primary, 5%);
@@ -39,11 +43,8 @@
 }
 
 .Button--destructive {
-  @extend .Button;
-
   color: $brand-primary;
   border: 2px solid $brand-primary;
-  line-height: $height2 - 4px;
 
   &:hover {
     color: $color-error;

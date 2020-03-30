@@ -3,7 +3,10 @@ module Cases
     class Mdhhs < ApplicationForm
       # -- fields --
       field(:dhs_number, :string,
-        on: { submitted: { presence: true } }
+        on: {
+          submitted: { presence: true },
+          completed: { presence: true },
+        },
       )
 
       # -- lifecycle --

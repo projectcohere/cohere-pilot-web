@@ -31,8 +31,7 @@ class Services < ActiveSupport::CurrentAttributes
 
   # -- domain/repos
   attribute(:user_repo)
-  attribute(:enroller_repo)
-  attribute(:supplier_repo)
+  attribute(:partner_repo)
 
   # -- infra --
   attribute(:redis)

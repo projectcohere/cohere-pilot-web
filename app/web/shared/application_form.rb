@@ -86,13 +86,22 @@ class ApplicationForm
       @form_type = form_type
     end
 
-    def cast(value)
+    def cast_value(value)
       values = value.respond_to?(:values) ? value.values : value
       values.map do |value|
         value.is_a?(@form_type) ? value : @form_type.new(value)
       end
     end
   end
+
+  class SymbolType < ActiveModel::Type::Value
+    def cast_value(value)
+      return value.to_sym
+    end
+  end
+
+  ActiveModel::Type.register(:symbol, SymbolType)
+  ActiveModel::Type.register(:object, ActiveModel::Type::Value)
 
   # -- forms/validators
   class ListValidator < ActiveModel::EachValidator

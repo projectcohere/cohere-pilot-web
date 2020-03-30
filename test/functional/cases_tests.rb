@@ -6,7 +6,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   # -- list --
   test "can't list cases if signed-out" do
     get("/cases")
-    assert_redirected_to("/chat")
+    assert_redirected_to("/sign-in")
   end
 
   test "can list cases as a supplier" do
@@ -18,20 +18,29 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 7)
   end
 
-  test "can list opened cases as a dhs user" do
-    user_rec = users(:dhs_1)
-
-    get(auth("/cases", as: user_rec))
-    assert_response(:success)
-    assert_select(".Main-title", text: /Open Cases/)
-    assert_select(".CaseCell", 5)
-  end
-
   test "can list cases as a cohere user" do
     user_rec = users(:cohere_1)
 
     get(auth("/cases", as: user_rec))
-    assert_redirected_to("/cases/open")
+    assert_redirected_to("/cases/queued")
+  end
+
+  test "can list queued cases as a cohere user" do
+    user_rec = users(:cohere_1)
+
+    get(auth("/cases/queued", as: user_rec))
+    assert_response(:success)
+    assert_select(".Main-title", text: /Queued Cases/)
+    assert_select(".CaseCell", 7)
+  end
+
+  test "can list assigned cases as a cohere user" do
+    user_rec = users(:cohere_1)
+
+    get(auth("/cases/assigned", as: user_rec))
+    assert_response(:success)
+    assert_select(".Main-title", text: /Assigned Cases/)
+    assert_select(".CaseCell", 1)
   end
 
   test "can list open cases as a cohere user" do
@@ -52,10 +61,69 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 2)
   end
 
-  test "can list submitted cases as an enroller" do
+  test "can list cases as a dhs user" do
+    user_rec = users(:dhs_1)
+
+    get(auth("/cases", as: user_rec))
+    assert_redirected_to("/cases/queued")
+  end
+
+  test "can list queued cases as a dhs user" do
+    user_rec = users(:dhs_1)
+
+    get(auth("/cases/queued", as: user_rec))
+    assert_response(:success)
+    assert_select(".Main-title", text: /Queued Cases/)
+    assert_select(".CaseCell", 4)
+  end
+
+  test "can list assigned cases as a dhs user" do
+    user_rec = users(:dhs_1)
+
+    get(auth("/cases/assigned", as: user_rec))
+    assert_response(:success)
+    assert_select(".Main-title", text: /Assigned Cases/)
+    assert_select(".CaseCell", 1)
+  end
+
+  test "can list open cases as a dhs user" do
+    user_rec = users(:dhs_1)
+
+    get(auth("/cases/open", as: user_rec))
+    assert_response(:success)
+    assert_select(".Main-title", text: /Open Cases/)
+    assert_select(".CaseCell", 5)
+  end
+
+  test "can list cases as an enroller" do
     user_rec = users(:enroller_1)
 
     get(auth("/cases", as: user_rec))
+    assert_redirected_to("/cases/queued")
+  end
+
+  test "can list queued cases as an enroller" do
+    user_rec = users(:enroller_1)
+
+    get(auth("/cases/queued", as: user_rec))
+    assert_response(:success)
+    assert_select(".Main-title", text: /Queued Cases/)
+    assert_select(".CaseCell", 0)
+  end
+
+  test "can list assigned cases as an enroller" do
+    user_rec = users(:enroller_1)
+
+    get(auth("/cases/assigned", as: user_rec))
+    assert_response(:success)
+    assert_select(".Main-title", text: /Assigned Cases/)
+    assert_select(".CaseCell", 1)
+  end
+
+  test "can list submitted cases as an enroller" do
+    user_rec = users(:enroller_1)
+
+    get(auth("/cases/submitted", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /Submitted Cases/)
     assert_select(".CaseCell", 3)
@@ -76,7 +144,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "can't view prompt to open a case if signed-out" do
     get("/cases/new")
-    assert_redirected_to("/chat")
+    assert_redirected_to("/sign-in")
   end
 
   test "can't view prompt to open a case without permission" do
@@ -113,6 +181,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_difference(
       -> { Case::Record.count } => 1,
+      -> { Case::Assignment::Record.count } => 1,
       -> { Recipient::Record.count } => 1,
       -> { Chat::Record.count } => 1,
       -> { Chat::Message::Record.count } => 1,
@@ -124,6 +193,16 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_analytics_events(1) do |events|
       assert_match(/Did Open/, events[0])
+    end
+
+    assert_matching_broadcast_on(case_activity_for(:cohere_1)) do |msg|
+      assert_equal(msg["name"], "DID_ADD_QUEUED_CASE")
+      assert_entry(msg["data"], "case_id")
+    end
+
+    assert_matching_broadcast_on(case_activity_for(:governor_1)) do |msg|
+      assert_equal(msg["name"], "DID_ADD_QUEUED_CASE")
+      assert_entry(msg["data"], "case_id")
     end
 
     assert_send_emails(1) do
@@ -151,7 +230,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     case_rec = cases(:submitted_1)
 
     get("/cases/#{case_rec.id}")
-    assert_redirected_to("/chat")
+    assert_redirected_to("/sign-in")
   end
 
   test "can't view a case without permission" do
@@ -200,7 +279,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     case_rec = cases(:submitted_1)
 
     get("/cases/#{case_rec.id}/edit")
-    assert_redirected_to("/chat")
+    assert_redirected_to("/sign-in")
   end
 
   test "can't edit a case without permission" do
@@ -239,9 +318,12 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
 
-    assert_broadcast_on(Cases::ActivityChannel.active, {
-      id: case_rec.id,
-      hasNewActivity: true,
+    assert_broadcast_on(case_activity_for(:cohere_1), {
+      name: "HAS_NEW_ACTIVITY",
+      data: {
+        case_id: case_rec.id,
+        case_has_new_activity: true,
+      }
     })
 
     assert_analytics_events(1) do |events|
@@ -265,17 +347,26 @@ class CasesTests < ActionDispatch::IntegrationTest
       case: {
         household: {
           income: "$300.00"
-        }
+        },
+        admin: {
+          status: "submitted",
+        },
       }
     })
 
-    assert_broadcast_on(Cases::ActivityChannel.active, {
-      id: case_rec.id,
-      hasNewActivity: false,
+    assert_equal(case_rec.reload.status, "submitted")
+
+    assert_broadcast_on(case_activity_for(:cohere_1), {
+      name: "HAS_NEW_ACTIVITY",
+      data: {
+        case_id: case_rec.id,
+        case_has_new_activity: false,
+      }
     })
 
     assert_redirected_to("/cases/#{case_rec.id}/edit")
     assert_present(flash[:notice])
+    assert_send_emails(0)
   end
 
   test "save a signed contract" do
@@ -361,10 +452,18 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/#{case_rec.id}/edit")
     assert_present(flash[:notice])
 
-    assert_broadcast_on(Cases::ActivityChannel.active, {
-      id: case_rec.id,
-      hasNewActivity: false,
+    assert_broadcast_on(case_activity_for(:cohere_1), {
+      name: "HAS_NEW_ACTIVITY",
+      data: {
+        case_id: case_rec.id,
+        case_has_new_activity: false,
+      }
     })
+
+    assert_matching_broadcast_on(case_activity_for(:enroller_1)) do |msg|
+      assert_equal(msg["name"], "DID_ADD_QUEUED_CASE")
+      assert_entry(msg["data"], "case_id")
+    end
 
     assert_analytics_events(1) do |events|
       assert_match(/Did Submit/, events[0])
@@ -377,6 +476,32 @@ class CasesTests < ActionDispatch::IntegrationTest
     end
   end
 
+  # -- destroy --
+  test "can't destroy a case if signed-out" do
+    assert_raises(ActionController::RoutingError) do
+      delete("/cases/3")
+    end
+  end
+
+  test "can't destroy a case without permission" do
+    user_rec = users(:supplier_1)
+
+    assert_raises(ActionController::RoutingError) do
+      delete(auth("/cases/4", as: user_rec))
+    end
+  end
+
+  test "destroy a case" do
+    user_rec = users(:cohere_1)
+    case_rec = cases(:pending_1)
+
+    delete(auth("/cases/#{case_rec.id}", as: user_rec))
+
+    assert_redirected_to("/cases")
+    assert_present(flash[:notice])
+  end
+
+  # -- complete --
   test "can't complete a case with an unknown status as an enroller" do
     user_rec = users(:enroller_1)
 
@@ -404,9 +529,12 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/#{case_rec.id}")
     assert_present(flash[:notice])
 
-    assert_broadcast_on(Cases::ActivityChannel.active, {
-      id: case_rec.id,
-      hasNewActivity: false,
+    assert_broadcast_on(case_activity_for(:cohere_1), {
+      name: "HAS_NEW_ACTIVITY",
+      data: {
+        case_id: case_rec.id,
+        case_has_new_activity: false,
+      }
     })
 
     assert_analytics_events(1) do |events|
@@ -433,9 +561,12 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/#{case_rec.id}")
     assert_present(flash[:notice])
 
-    assert_broadcast_on(Cases::ActivityChannel.active, {
-      id: case_rec.id,
-      hasNewActivity: false,
+    assert_broadcast_on(case_activity_for(:cohere_1), {
+      name: "HAS_NEW_ACTIVITY",
+      data: {
+        case_id: case_rec.id,
+        case_has_new_activity: false,
+      }
     })
 
     assert_analytics_events(1) do |events|
@@ -462,9 +593,12 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/#{case_rec.id}")
     assert_present(flash[:notice])
 
-    assert_broadcast_on(Cases::ActivityChannel.active, {
-      id: case_rec.id,
-      hasNewActivity: false,
+    assert_broadcast_on(case_activity_for(:cohere_1), {
+      name: "HAS_NEW_ACTIVITY",
+      data: {
+        case_id: case_rec.id,
+        case_has_new_activity: false,
+      }
     })
 
     assert_analytics_events(1) do |events|
@@ -472,69 +606,5 @@ class CasesTests < ActionDispatch::IntegrationTest
     end
 
     assert_send_emails(0)
-  end
-
-  # -- referrals --
-  test "can't make a referral if signed-out" do
-    get("/cases/3/referrals/new")
-    assert_redirected_to("/chat")
-  end
-
-  test "can't make a referral without permission" do
-    user_rec = users(:supplier_1)
-
-    get(auth("/cases/4/referrals/new", as: user_rec))
-    assert_redirected_to("/cases")
-  end
-
-  test "make a referral as a cohere user" do
-    user_rec = users(:cohere_1)
-    case_rec = cases(:approved_1)
-
-    get(auth("/cases/#{case_rec.id}/referrals/new", as: user_rec))
-    assert_response(:success)
-  end
-
-  test "save a referral as a cohere user" do
-    user_rec = users(:cohere_1)
-    case_rec = cases(:approved_1)
-    supplier_rec = suppliers(:supplier_3)
-
-    post(auth("/cases/#{case_rec.id}/referrals", as: user_rec), params: {
-      case: {
-        supplier_account: {
-          supplier_id: supplier_rec.id
-        }
-      }
-    })
-
-    assert_redirected_to(%r[/cases/\d+/edit])
-    assert_present(flash[:notice])
-
-    assert_send_emails(0)
-    assert_analytics_events(2) do |events|
-      assert_match(/Did Make Referral/, events[0])
-      assert_match(/Did Open/, events[1])
-    end
-  end
-
-  test "show errors when saving an invalid referral as a cohere user" do
-    user_rec = users(:cohere_1)
-    case_rec = cases(:approved_1)
-    supplier_rec = suppliers(:supplier_3)
-
-    post(auth("/cases/#{case_rec.id}/referrals", as: user_rec), params: {
-      case: {
-        contact: {
-          first_name: ""
-        },
-        supplier_account: {
-          supplier_id: supplier_rec.id,
-        }
-      }
-    })
-
-    assert_response(:success)
-    assert_present(flash[:alert])
   end
 end

@@ -12,15 +12,16 @@ class Case
       case action
       when :list
         true
+      # create
       when :create
         supplier?
+      when :create_assignment
+        cohere? || enroller? || dhs?
       # edit
       when :edit
         cohere? || dhs?
       when :edit_supplier
         cohere?
-      when :edit_status
-        cohere? || enroller?
       when :edit_ownership
         cohere? && wrap?
       when :edit_is_primary_residence
@@ -40,6 +41,13 @@ class Case
         cohere? && wrap?
       # actions
       when :referral
+        cohere?
+      when :complete
+        cohere? || enroller?
+      # destroy
+      when :destroy
+        cohere?
+      when :destroy_assignment
         cohere?
       else
         super

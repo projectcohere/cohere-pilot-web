@@ -35,14 +35,4 @@ class Repo
       self.class.map_record(record, *associations)
     end
   end
-
-  protected def entities_from(records)
-    records.map.with_index do |record, i|
-      if block_given?
-        entity_from(record, *yield(record))
-      else
-        entity_from(record)
-      end
-    end
-  end
 end

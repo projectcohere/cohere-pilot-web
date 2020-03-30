@@ -1,0 +1,53 @@
+.Pager {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: $width1;
+  margin-top: $spacing3;
+
+  // -- .Pager-total --
+  &-total {
+
+  }
+
+  // -- external --
+  .pagination {
+    display: flex;
+
+    > * + * {
+      margin-left: $spacing6;
+    }
+
+    .page {
+      &[class="page"] {
+        opacity: 0.75;
+
+        &:hover {
+          opacity: 1;
+        }
+      }
+
+      &.active {
+        font-weight: $font-weight-medium;
+      }
+
+      &.gap {
+        opacity: 0.75;
+        cursor: default;
+      }
+
+      &.disabled {
+        opacity: 0.25;
+        cursor: not-allowed;
+      }
+
+      &.prev, &.next {
+        font-weight: $font-weight-regular;
+      }
+
+      a {
+        text-decoration: none;
+      }
+    }
+  }
+}

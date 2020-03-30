@@ -1,4 +1,4 @@
-class Enroller
+module Enroller
   class SaveCompletedCase
     def initialize(kase, action, case_repo: Case::Repo.get)
       @case_repo = case_repo

@@ -25,8 +25,21 @@
   line-height: 1.5;
 }
 
-.u-hint {
-  font-size: $font-size6;
+.u-label {
+  font-size: $font-size7;
+  font-weight: $font-weight-regular;
+  letter-spacing: 1px;
+}
+
+.u-label-bold {
+  font-size: $font-size7;
+  font-weight: $font-weight-bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.u-label-hint {
+  font-size: $font-size7;
   font-weight: $font-weight-regular;
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -56,7 +69,6 @@
 
 .u-panel-cozy {
   @extend .u-panel;
-
   padding: $spacing3;
   background-color: $white;
 }

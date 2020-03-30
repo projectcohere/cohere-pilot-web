@@ -1,0 +1,41 @@
+<%= tag.li(case_cell_options(cell)) do %>
+  <div class="CaseCell-title">
+    <%=
+      link_to(
+        cell.recipient_name,
+        cell.show_path,
+        class: "CaseCell-name"
+      )
+    %>
+
+    <% if cell.shows_assign? %>
+      <%=
+        button_to(
+          cell.assign_label,
+          cell.assign_path,
+          class: "CaseCell-assign ButtonSm Button--secondary"
+        )
+      %>
+    <% else %>
+      <p class="CaseCell-assignee">
+        <%= cell.assignee %>
+      </p>
+    <% end %>
+  </div>
+
+  <div class="CaseCell-details">
+    <p class="CaseCell-organizations">
+      <%= cell.program_name %>, <%= cell.supplier_name %>
+    </p>
+  </div>
+
+  <div class="CaseCell-footer">
+    <p class="CaseCell-status">
+      <%= cell.status %>
+    </p>
+
+    <p class="CaseCell-date">
+      <%= cell.updated_label %>
+    </p>
+  </div>
+<%- end %>

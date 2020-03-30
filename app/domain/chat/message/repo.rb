@@ -20,7 +20,7 @@ class Chat
           .with_attached_files
           .find(id)
 
-        entity_from(message_rec, message_rec.files.blobs)
+        entity_from(message_rec, attachments: message_rec.files.blobs)
       end
 
       # -- queries/many
@@ -30,19 +30,17 @@ class Chat
           .order(created_at: :asc)
           .where(chat_id: chat_id)
 
-        entities_from(message_recs) do |message_rec|
-          [message_rec.files.blobs]
-        end
-      end
+        message_recs.map { |r| entity_from(r, attachments: r.files.blobs) }
+     end
 
       # -- factories --
-      def self.map_record(r, attachment_recs = [])
+      def self.map_record(r, attachments: [])
         Chat::Message.new(
           id: Id.new(r.id),
           sender: r.sender,
           body: r.body,
           timestamp: r.created_at.to_i,
-          attachments: attachment_recs.to_a,
+          attachments: attachments.to_a,
           chat_id: r.chat_id,
         )
       end

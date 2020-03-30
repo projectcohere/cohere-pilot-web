@@ -104,3 +104,39 @@
     grid-column: 1 / 6;
   }
 }
+
+.CaseFormAdmin {
+  &-status {
+    grid-column: 1 / 4;
+  }
+}
+
+.CaseFormAssignments {
+  &-list {
+    > * + * {
+      margin-top: $spacing4;
+    }
+  }
+
+  &-entry {
+    display: flex;
+    align-items: center;
+  }
+
+  &-unassign {
+    margin-right: $spacing5;
+  }
+}
+
+.CaseFormDanger {
+  &-warning {
+    grid-column: 1 / 10;
+    justify-self: start;
+    margin-bottom: $spacing5;
+  }
+
+  &-delete {
+    grid-column: 1 / 10;
+    justify-self: start;
+  }
+}

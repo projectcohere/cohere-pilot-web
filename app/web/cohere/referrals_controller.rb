@@ -5,7 +5,7 @@ module Cohere
 
     # -- actions --
     def new
-      @case = Case::Repo.get.find_with_documents_and_referral(params[:case_id])
+      @case = Case::Repo.get.find_with_associations(params[:case_id])
       if policy.forbid?(:referral)
         return deny_access
       end
@@ -15,12 +15,12 @@ module Cohere
       )
 
       @case = referral.referred
-      @view = Cases::View.new(@case)
+      @chat = Chat::Repo.get.find_by_recipient_with_messages(@case.recipient.id.val)
       @form = CaseForm.new(@case)
     end
 
     def create
-      @case = Case::Repo.get.find_with_documents_and_referral(params[:case_id])
+      @case = Case::Repo.get.find_with_associations(params[:case_id])
       if policy.forbid?(:referral)
         return deny_access
       end
@@ -35,7 +35,7 @@ module Cohere
       )
 
       @case = referral.referred
-      @view = Cases::View.new(@case)
+      @chat = Chat::Repo.get.find_by_recipient_with_messages(@case.recipient.id.val)
       @form = CaseForm.new(@case, case_params)
 
       save_action = %i[submit].find do |key|

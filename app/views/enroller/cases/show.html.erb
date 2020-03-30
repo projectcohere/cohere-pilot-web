@@ -13,7 +13,7 @@
         <%=
           button_to("Approve Case", case_complete_path(@case, complete_action: :approve),
             method: :patch,
-            class: "Button--action",
+            class: "Button Button--action",
             data: {
               confirm: "Are you sure you want to approve this case?"
             }
@@ -22,7 +22,7 @@
         <%=
           button_to("Deny Case", case_complete_path(@case, complete_action: :deny),
             method: :patch,
-            class: "Button--destructive",
+            class: "Button Button--destructive",
             data: {
               confirm: "Are you sure you want to deny this case?"
             }

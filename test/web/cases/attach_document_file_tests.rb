@@ -10,6 +10,8 @@ module Cases
         ]
       )
 
+      kase.select_document(0)
+
       case_repo = Minitest::Mock.new
         .expect(
           :find_with_document,

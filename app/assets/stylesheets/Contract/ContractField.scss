@@ -3,7 +3,7 @@
   box-sizing: border-box;
 
   &-hint {
-    @extend .u-hint;
+    @extend .u-label-hint;
     margin-bottom: $spacing6;
     color: $brand-black;
     // https://github.com/wkhtmltopdf/wkhtmltopdf/issues/3256

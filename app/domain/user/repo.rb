@@ -31,27 +31,24 @@ class User
 
     # -- queries/many
     def find_all_for_opened_case
-      records = User::Record
+      user_recs = User::Record
         .where(organization_type: [:cohere, :dhs])
 
-      entities_from(records)
+      user_recs.map { |r| entity_from(r) }
     end
 
     def find_all_for_submitted_case(kase)
-      records = User::Record
-        .where(
-          organization_type: Enroller::Record.name,
-          organization_id: kase.enroller_id
-        )
+      user_recs = User::Record
+        .where(partner_id: kase.enroller_id)
 
-      entities_from(records)
+      user_recs.map { |r| entity_from(r) }
     end
 
     def find_all_for_completed_case
-      records = User::Record
+      user_recs = User::Record
         .where(organization_type: :cohere)
 
-      entities_from(records)
+      user_recs.map { |r| entity_from(r) }
     end
 
     # -- commands --
@@ -68,19 +65,11 @@ class User
         password: SecureRandom.uuid
       )
 
+      # TODO: remove
       r = user.role
-      organization_type = case r.name
-      when :cohere, :dhs
-        r.name.to_s
-      when :supplier
-        Supplier::Record.name
-      when :enroller
-        Enroller::Record.name
-      end
-
       user_rec.assign_attributes(
-        organization_type: organization_type,
-        organization_id: r.organization_id
+        organization_type: r.name.to_s, # TODO: delete this
+        partner_id: r.partner_id,
       )
 
       # save record
@@ -97,8 +86,7 @@ class User
 
     # -- factories --
     def self.map_record(r)
-      # create entity
-      User.new(
+      return User.new(
         id: Id.new(r.id),
         email: r.email,
         role: map_role(r),
@@ -107,18 +95,10 @@ class User
     end
 
     def self.map_role(r)
-      # parse role from org type. if the user has an org with
-      # an associated record it will be the record's class name.
-      role = case r.organization_type
-      when "cohere"
-        Role.new(name: :cohere)
-      when "dhs"
-        Role.new(name: :dhs)
-      when Enroller::Record.to_s
-        Role.new(name: :enroller, organization_id: r.organization_id)
-      when Supplier::Record.to_s
-        Role.new(name: :supplier, organization_id: r.organization_id)
-      end
+      return Role.new(
+        name: r.partner.membership_class&.to_sym,
+        partner_id: r.partner.id,
+      )
     end
   end
 end

@@ -5,6 +5,7 @@ require "minitest/mock"
 require "minitest/pride"
 require "config/vcr"
 require "config/sidekiq"
+require "support/failures"
 require "support/asserts"
 require "support/io"
 require "support/services"
@@ -29,7 +30,7 @@ class ActiveSupport::TestCase
     FileUtils.cp_r("./test/fixtures/files/storage", "./tmp")
   end
 
-  parallelize(workers: :number_of_processors)
+  parallelize(workers: ENV["PRY_RESCUE"] ? 1 : :number_of_processors)
 
   # load all fixtures
   fixtures(:all)

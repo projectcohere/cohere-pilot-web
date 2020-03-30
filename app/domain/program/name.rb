@@ -8,8 +8,12 @@ class Program
     def self.all
       @all ||= [
         Meap,
-        Wrap
+        Wrap,
       ]
+    end
+
+    def self.index(option)
+      return all.find_index(option)
     end
   end
 end

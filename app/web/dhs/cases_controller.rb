@@ -1,36 +1,38 @@
 module Dhs
-  class CasesController < ApplicationController
-    # -- helpers --
-    helper_method(:policy)
-
+  class CasesController < Cases::BaseController
     # -- actions --
     def index
       if policy.forbid?(:list)
         return deny_access
       end
 
-      @cases = Case::Repo.get.find_all_for_dhs
+      @scope = Cases::Scope.from_key(params[:scope])
+      @page, @cases = case @scope
+      when Cases::Scope::Queued
+        case_repo.find_all_queued_for_dhs(partner_id, page: params[:page])
+      when Cases::Scope::Assigned
+        case_repo.find_all_assigned_by_user(user.id, page: params[:page])
+      when Cases::Scope::Open
+        case_repo.find_all_opened_for_dhs(partner_id, page: params[:page])
+      end
     end
 
     def edit
-      @case = Case::Repo.get.find_opened_with_documents(params[:id])
+      @case = case_repo.find_with_documents_for_dhs(params[:id])
       if policy.forbid?(:edit)
         return deny_access
       end
 
-      @view = Cases::View.new(@case)
       @form = CaseForm.new(@case)
-
       events.add(Cases::Events::DidViewDhsForm.from_entity(@case))
     end
 
     def update
-      @case = Case::Repo.get.find_opened_with_documents(params[:id])
+      @case = case_repo.find_with_documents_for_dhs(params[:id])
       if policy.forbid?(:edit)
         return deny_access
       end
 
-      @view = Cases::View.new(@case)
       @form = CaseForm.new(@case,
         params
           .require(:case)
@@ -44,11 +46,6 @@ module Dhs
       end
 
       redirect_to(cases_path, notice: "Case updated!")
-    end
-
-    # -- queries --
-    private def policy
-      Case::Policy.new(User::Repo.get.find_current, @case)
     end
   end
 end

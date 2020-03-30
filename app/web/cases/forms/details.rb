@@ -3,7 +3,10 @@ module Cases
     class Details < ApplicationForm
       # -- fields --
       field(:contract_variant, :integer,
-        on: { submitted: { presence: true } }
+        on: {
+          submitted: { presence: true },
+          completed: { presence: true },
+        },
       )
 
       # -- lifecycle --
@@ -19,6 +22,7 @@ module Cases
       end
 
       # -- queries --
+      # -- queries/contract
       def selected_contract
         if not contract_variant.nil?
           contracts[contract_variant]
@@ -35,7 +39,7 @@ module Cases
         end
       end
 
-      # -- queries/helpers
+      # -- queries/contract/helpers
       private def name_from_contract_variant(variant)
         case variant
         when Program::Contract::Meap
