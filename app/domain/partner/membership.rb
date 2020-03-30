@@ -1,5 +1,5 @@
 class Partner
-  module MembershipClass
+  module Membership
     # -- options --
     Cohere = :cohere
     Governor = :governor

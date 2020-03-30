@@ -6,19 +6,19 @@ class User
 
     # -- queries --
     def dhs?
-      return @name == Partner::MembershipClass::Governor
+      return @name == Partner::Membership::Governor
     end
 
     def cohere?
-      return @name == Partner::MembershipClass::Cohere
+      return @name == Partner::Membership::Cohere
     end
 
     def supplier?
-      return @name == Partner::MembershipClass::Supplier
+      return @name == Partner::Membership::Supplier
     end
 
     def enroller?
-      return @name == Partner::MembershipClass::Enroller
+      return @name == Partner::Membership::Enroller
     end
   end
 end

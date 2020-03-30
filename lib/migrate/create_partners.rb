@@ -4,14 +4,14 @@ end
 
 # -- constants --
 P = Program::Name
-M = Partner::MembershipClass
+M = Partner::Membership
 
 # -- migrations --
 execute <<-SQL
   BEGIN;
 
   -- migrations/cohere
-  INSERT INTO partners (name, membership_class)
+  INSERT INTO partners (name, membership)
   SELECT 'Cohere', #{M.index(M::Cohere)};
 
   UPDATE users AS u
@@ -20,7 +20,7 @@ execute <<-SQL
   WHERE u.organization_type = 'cohere' AND p.name = 'Cohere';
 
   -- migrations/governors
-  INSERT INTO partners (name, membership_class)
+  INSERT INTO partners (name, membership)
   SELECT 'MDHHS', #{M.index(M::Governor)};
 
   UPDATE users AS u
@@ -29,7 +29,7 @@ execute <<-SQL
   WHERE u.organization_type = 'dhs' AND p.name = 'MDHHS';
 
   -- migrations/suppliers
-  INSERT INTO partners (name, membership_class, programs)
+  INSERT INTO partners (name, membership, programs)
   SELECT name, #{M.index(M::Supplier)}, Array[program]
   FROM suppliers;
 
@@ -44,7 +44,7 @@ execute <<-SQL
   WHERE s.id = c.supplier_id AND s.name = p.name;
 
   -- migrations/enrollers
-  INSERT INTO partners (name, membership_class, programs)
+  INSERT INTO partners (name, membership, programs)
   SELECT name, #{M.index(M::Enroller)}, Array[#{P.index(P::Meap)}, #{P.index(P::Wrap)}]
   FROM enrollers;
 

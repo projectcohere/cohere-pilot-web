@@ -32,7 +32,7 @@ class User
     # -- queries/many
     def find_all_for_opened_case
       user_recs = User::Record
-        .where(organization_type: [:cohere, :dhs])
+        .by_membership(Partner::Membership::Cohere, Partner::Membership::Governor)
 
       user_recs.map { |r| entity_from(r) }
     end
@@ -46,7 +46,7 @@ class User
 
     def find_all_for_completed_case
       user_recs = User::Record
-        .where(organization_type: :cohere)
+        .by_membership(Partner::Membership::Cohere)
 
       user_recs.map { |r| entity_from(r) }
     end
@@ -65,10 +65,8 @@ class User
         password: SecureRandom.uuid
       )
 
-      # TODO: remove
       r = user.role
       user_rec.assign_attributes(
-        organization_type: r.name.to_s, # TODO: delete this
         partner_id: r.partner_id,
       )
 
@@ -96,9 +94,21 @@ class User
 
     def self.map_role(r)
       return Role.new(
-        name: r.partner.membership_class&.to_sym,
+        name: r.partner.membership&.to_sym,
         partner_id: r.partner.id,
       )
+    end
+  end
+
+  class Record
+    # -- scopes --
+    def self.by_membership(*membership)
+      scope = self
+        .includes(:partner)
+        .references(:partners)
+        .where(partners: { membership: membership })
+
+      return scope
     end
   end
 end
