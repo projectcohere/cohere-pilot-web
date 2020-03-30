@@ -1,10 +1,17 @@
 <%= tag.li(case_cell_options(cell)) do %>
-  <div class="CaseCell-header">
-    <%= link_to(cell.recipient_name, cell.show_path, class: "CaseCell-name") %>
+  <div class="CaseCell-title">
+    <%=
+      link_to(
+        cell.recipient_name,
+        cell.show_path,
+        class: "CaseCell-name"
+      )
+    %>
 
     <% if cell.shows_assign? %>
       <%=
-        button_to("Assign to Me",
+        button_to(
+          cell.assign_label,
           cell.assign_path,
           class: "CaseCell-assign ButtonSm Button--secondary"
         )
@@ -16,7 +23,7 @@
     <% end %>
   </div>
 
-  <div class="CaseCell-row">
+  <div class="CaseCell-details">
     <p class="CaseCell-organizations">
       <%= cell.program_name %>, <%= cell.supplier_name %>
     </p>
@@ -28,7 +35,7 @@
     </p>
 
     <p class="CaseCell-date">
-      Updated <%= time_ago_in_words(cell.updated_at) %> ago
+      <%= cell.updated_label %>
     </p>
   </div>
 <%- end %>

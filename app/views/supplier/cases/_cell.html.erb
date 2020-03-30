@@ -1,5 +1,5 @@
-<li class="CaseCell">
-  <div class="CaseCell-header">
+<%= tag.li(case_cell_options(cell, shows_status: Case::Status::Approved)) do %>
+  <div class="CaseCell-title">
     <p class="CaseCell-name">
       <%= cell.recipient_name %>
     </p>
@@ -13,17 +13,11 @@
 
   <div class="CaseCell-footer">
     <p class="CaseCell-status">
-      <% if cell.approved? %>
-        Approved
-        <img class="CaseCell-checkmark" alt="Checkmark" />
-      <% else %>
-        Opened
-      <% end %>
+      <%= cell.approved? ? cell.status : "Opened" %>
     </p>
 
     <p class="CaseCell-date">
-      Added
-      <%= cell.created_at.to_date %>
+      <%= cell.created_label %>
     </p>
   </div>
-</li>
+<%- end %>

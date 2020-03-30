@@ -1,68 +1,110 @@
 .CaseCell {
-  @extend .u-panel-cozy;
+  @extend .u-panel;
 
   position: relative;
+  overflow: hidden;
+  background-color: $white;
 
   // -- row --
-  &-row {
+  $padding: $spacing3;
+
+  %row {
     display: flex;
-
-    > * + * {
-      margin-left: $spacing5;
-    }
+    justify-content: space-between;
+    padding-left: $padding;
+    padding-right: $padding;
   }
 
-  &-header {
-    @extend .CaseCell-row;
-    justify-content: space-between;
+  // -- row/title
+  &-title {
+    @extend %row;
+
     align-items: center;
+    margin-top: $padding;
   }
 
-  &-header + &-row {
-    margin-top: $spacing6;
-  }
-
-  &-footer {
-    @extend .CaseCell-row;
-    justify-content: space-between;
-    align-items: baseline;
-  }
-
-  // -- elements --
   &-name {
     display: flex;
     align-items: center;
     font-size: $font-size3;
   }
 
+  &-activity {
+    $size: 8px;
+
+    display: none;
+    width: $size;
+    height: $size;
+    margin-left: $spacing5;
+    background-color: $brand-secondary1;
+    border-radius: $size / 2;
+  }
+
+  // -- row/details
+  &-details {
+    @extend %row;
+
+    align-items: baseline;
+    margin-top: $spacing6;
+  }
+
   &-organizations {
-    color: $gray1;
+    color: $brand-black;
+    font-size: $font-size6;
+  }
+
+  // -- row/footer
+  &-footer {
+    @extend %row;
+
+    align-items: center;
+    height: $height4;
+    margin-top: $spacing4;
+    background-color: $gray2;
   }
 
   &-status {
-    display: flex;
-  }
+    @extend .u-label-bold;
 
-  &-checkmark {
-    @include u-checkmark($offset-x: 2px, $offset-y: 10px);
-
-    width: $height4;
-    height: $height4;
-    margin-left: $spacing5;
-    color: transparent;
+    color: $brand-black;
+    opacity: 0.85;
   }
 
   &-date {
-    color: $gray1;
+    @extend .u-label;
+
+    color: $brand-black;
+    opacity: 0.85;
   }
 
   // -- variants --
+  @mixin progress($percent) {
+    --progress-color: #f0fbf3;
+    background: linear-gradient(to right, var(--progress-color) 0%, var(--progress-color) $percent, transparent $percent), $gray2;
+  }
+
+  &-opened &-footer, &-removed &-footer {
+    background-color: $gray2;
+  }
+
+  &-pending &-footer {
+    @include progress(33%);
+  }
+
+  &-submitted &-footer {
+    @include progress(66%);
+  }
+
+  &-approved &-footer {
+    background-color: #f0fbf3;
+  }
+
+  &-denied &-footer {
+    background-color: #fbf0f0;
+  }
+
+  // -- states --
   &.is-active &-activity {
-    $size: 8px;
-    width: $size;
-    height: $size;
-    background-color: $brand-secondary1;
-    border-radius: $size / 2;
-    margin-left: $spacing5;
+    display: block;
   }
 }

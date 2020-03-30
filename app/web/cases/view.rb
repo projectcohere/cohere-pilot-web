@@ -1,5 +1,7 @@
 module Cases
   class View
+    include ActionView::Helpers::DateHelper
+
     # -- props --
     attr(:case)
     attr(:scope)
@@ -17,7 +19,11 @@ module Cases
 
     # -- queries --
     def id
-      @case.id
+      return @case.id
+    end
+
+    def status_key
+      return @case.status
     end
 
     # -- queries/routing
@@ -41,6 +47,19 @@ module Cases
       return Rails.application.routes.url_helpers
     end
 
+    # -- queries/labels
+    def assign_label
+      return "Assign to Me"
+    end
+
+    def created_label
+      return "Opened #{created_at.to_date}"
+    end
+
+    def updated_label
+      return "Updated #{time_ago_in_words(updated_at)} ago"
+    end
+
     # -- queries/activity
     def has_new_activity
       return @case.has_new_activity
@@ -48,7 +67,7 @@ module Cases
 
     # -- queries/details
     def status
-      return @case.status.to_s.camelize
+      return @case.status.to_s.capitalize
     end
 
     def program_name
