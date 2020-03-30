@@ -20,7 +20,7 @@ module Cohere
     end
 
     def edit
-      @case = case_repo.find_with_documents_and_referral(params[:id])
+      @case = case_repo.find_with_associations(params[:id])
       if policy.forbid?(:edit)
         return deny_access
       end
@@ -30,7 +30,7 @@ module Cohere
     end
 
     def update
-      @case = case_repo.find_with_documents_and_referral(params[:id])
+      @case = case_repo.find_with_associations(params[:id])
       if policy.forbid?(:edit)
         return deny_access
       end
@@ -64,7 +64,7 @@ module Cohere
     end
 
     def show
-      @case = case_repo.find_with_documents_and_referral(params[:id])
+      @case = case_repo.find_with_associations(params[:id])
       @chat = chat_repo.find_by_recipient_with_messages(@case.recipient.id.val)
 
       if policy.forbid?(:view)

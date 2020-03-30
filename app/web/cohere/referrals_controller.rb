@@ -5,7 +5,7 @@ module Cohere
 
     # -- actions --
     def new
-      @case = Case::Repo.get.find_with_documents_and_referral(params[:case_id])
+      @case = Case::Repo.get.find_with_associations(params[:case_id])
       if policy.forbid?(:referral)
         return deny_access
       end
@@ -20,7 +20,7 @@ module Cohere
     end
 
     def create
-      @case = Case::Repo.get.find_with_documents_and_referral(params[:case_id])
+      @case = Case::Repo.get.find_with_associations(params[:case_id])
       if policy.forbid?(:referral)
         return deny_access
       end

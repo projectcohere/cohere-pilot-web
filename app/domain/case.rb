@@ -172,6 +172,11 @@ class Case < ::Entity
     end
   end
 
+  def destroy_selected_assignment
+    @assignments.delete(@selected_assignment)
+    @events.add(Events::DidUnassignUser.from_entity(self))
+  end
+
   # -- commands/messages
   def add_mms_message(message)
     sent_by_recipient = message.sent_by?(@recipient.profile.phone.number)

@@ -158,7 +158,9 @@ Rails.application.routes.draw do
 
         resources(:assignments, only: %i[
           create
-        ])
+        ]) do
+          delete("/:partner_id", on: :collection, action: :destroy, as: :destroy)
+        end
 
         resources(:referrals, only: %i[
           new

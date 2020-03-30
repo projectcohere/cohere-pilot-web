@@ -111,6 +111,23 @@
   }
 }
 
+.CaseFormAssignments {
+  &-list {
+    > * + * {
+      margin-top: $spacing4;
+    }
+  }
+
+  &-entry {
+    display: flex;
+    align-items: center;
+  }
+
+  &-unassign {
+    margin-right: $spacing5;
+  }
+}
+
 .CaseFormDanger {
   &-warning {
     grid-column: 1 / 10;

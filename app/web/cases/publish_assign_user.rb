@@ -1,5 +1,5 @@
 module Cases
-  class PublishAssignment < ApplicationWorker
+  class PublishAssignUser < ApplicationWorker
     # -- command --
     def call(case_id, partner_id)
       Cases::ActivityChannel.broadcast_to(

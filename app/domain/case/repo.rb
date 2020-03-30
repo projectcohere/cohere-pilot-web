@@ -38,11 +38,27 @@ class Case
           case_id: case_id
         )
 
-      return entity_from(document_rec.case, documents: [document_rec])
+      return entity_from(document_rec.case, documents: [document_rec]).tap do |c|
+        c.select_document(0)
+      end
     end
 
-    def find_with_documents_and_referral(case_id)
+    def find_with_assignment(case_id, partner_id)
+      assignment_rec = Assignment::Record
+        .includes(:case)
+        .find_by!(
+          case_id: case_id,
+          partner_id: partner_id,
+        )
+
+      return entity_from(assignment_rec.case, assignments: [assignment_rec]).tap do |c|
+        c.select_assignment(partner_id.to_i)
+      end
+    end
+
+    def find_with_associations(case_id)
       case_rec = Case::Record
+        .join_assignments
         .find(case_id)
 
       document_recs = Document::Record
@@ -52,7 +68,7 @@ class Case
       is_referrer = Case::Record
         .exists?(referrer_id: case_id)
 
-      return entity_from(case_rec, documents: document_recs, is_referrer: is_referrer)
+      return entity_from(case_rec, assignments: case_rec.assignments, documents: document_recs, is_referrer: is_referrer)
     end
 
     def find_for_dhs(case_id)
@@ -442,7 +458,25 @@ class Case
     end
 
     def save_destroyed(kase)
-      kase.record.destroy
+      kase.record.destroy!
+    end
+
+    def save_destroyed_assignment(kase)
+      case_rec = kase.record
+      if case_rec == nil
+        raise "case must be fetched from the db!"
+      end
+
+      # find record
+      assignment_rec = case_rec.assignments.find do |a|
+        a.partner_id == kase.selected_assignment.partner_id
+      end
+
+      # save record
+      assignment_rec.destroy!
+
+      # consume all entity events
+      @domain_events.consume(kase.events)
     end
 
     # -- commands/helpers

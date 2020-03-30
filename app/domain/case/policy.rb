@@ -47,6 +47,8 @@ class Case
       # destroy
       when :destroy
         cohere?
+      when :destroy_assignment
+        cohere?
       else
         super
       end

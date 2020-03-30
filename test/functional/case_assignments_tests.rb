@@ -3,17 +3,16 @@ require "test_helper"
 class CaseAssignmentsTests < ActionDispatch::IntegrationTest
   include ActionCable::Channel::TestCase::Behavior
 
-  test "can't self-assign a case if signed-out" do
-    assert_raises(ActionController::RoutingError) do
-      post("/cases/3/assignments")
-    end
-  end
-
+  # -- create --
   test "can't self-assign a case without permission" do
     user_rec = users(:supplier_1)
 
     assert_raises(ActionController::RoutingError) do
       post("/cases/3/assignments")
+    end
+
+    assert_raises(ActionController::RoutingError) do
+      post(auth("/cases/3/assignments", as: user_rec))
     end
   end
 
@@ -89,6 +88,42 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
 
     assert_matching_broadcast_on(case_activity_for(:enroller_1)) do |msg|
       assert_equal(msg["name"], "DID_ASSIGN_USER")
+      assert_entry(msg["data"], "case_id")
+    end
+  end
+
+  # -- destroy --
+  test "can't unassign a user without permission" do
+    user_rec = users(:supplier_1)
+
+    assert_raises(ActionController::RoutingError) do
+      delete("/cases/3/assignments/1")
+    end
+
+    assert_raises(ActionController::RoutingError) do
+      delete(auth("/cases/3/assignments/1", as: user_rec))
+    end
+  end
+
+  test "unassign a user as a cohere user" do
+    user_rec = users(:cohere_1)
+    case_rec = cases(:opened_1)
+    case_assignment_rec = case_rec.assignments.first
+
+    act = -> do
+      delete(auth("/cases/#{case_rec.id}/assignments/#{case_assignment_rec.partner_id}", as: user_rec))
+    end
+
+    assert_difference(
+      -> { Case::Assignment::Record.count } => -1,
+      &act
+    )
+
+    assert_redirected_to("/cases/#{case_rec.id}/edit")
+    assert_present(flash[:notice])
+
+    assert_matching_broadcast_on(case_activity_for(:cohere_1)) do |msg|
+      assert_equal(msg["name"], "DID_UNASSIGN_USER")
       assert_entry(msg["data"], "case_id")
     end
   end

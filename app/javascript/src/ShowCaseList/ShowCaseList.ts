@@ -12,19 +12,16 @@ const kClassIsActive = "is-active"
 // -- types --
 type ActivityEvent
   = { name: "HAS_NEW_ACTIVITY", data: IHasNewActivity }
-  | { name: "DID_ADD_QUEUED_CASE", data: IDidAddQueuedCase }
-  | { name: "DID_ASSIGN_USER", data: IDidAssignUser }
+  | { name: "DID_ADD_QUEUED_CASE", data: IHasQueueChange }
+  | { name: "DID_ASSIGN_USER", data: IHasQueueChange }
+  | { name: "DID_UNASSIGN_USER", data: IHasQueueChange }
 
 interface IHasNewActivity {
   case_id: string
   case_has_new_activity: boolean
 }
 
-interface IDidAddQueuedCase {
-  case_id: string
-}
-
-interface IDidAssignUser {
+interface IHasQueueChange {
   case_id: string
 }
 
@@ -74,7 +71,7 @@ export class ShowCaseList implements IComponent {
     }
   }
 
-  private showQueuedCase(data: IDidAddQueuedCase) {
+  private showQueuedCase(data: IHasQueueChange) {
     const scope = document.location.pathname.split("/").pop()
 
     if (scope == kScopeQueued) {
@@ -84,7 +81,7 @@ export class ShowCaseList implements IComponent {
     }
   }
 
-  private hideQueuedCase(data: IDidAssignUser) {
+  private hideQueuedCase(data: IHasQueueChange) {
     const scope = document.location.pathname.split("/").pop()
 
     if (scope == kScopeQueued) {
@@ -94,7 +91,7 @@ export class ShowCaseList implements IComponent {
     }
   }
 
-  private addCaseToQueue(data: IDidAddQueuedCase) {
+  private addCaseToQueue(data: IHasQueueChange) {
     const $case = document.getElementById(`case-${data.case_id}`)
 
     if ($case == null) {
@@ -102,7 +99,7 @@ export class ShowCaseList implements IComponent {
     }
   }
 
-  private removeCaseFromQueue(data: IDidAssignUser) {
+  private removeCaseFromQueue(data: IHasQueueChange) {
     const $case = document.getElementById(`case-${data.case_id}`)
 
     if ($case != null) {
@@ -126,6 +123,8 @@ export class ShowCaseList implements IComponent {
         this.showQueuedCase(event.data); break
       case "DID_ASSIGN_USER":
         this.hideQueuedCase(event.data); break
+      case "DID_UNASSIGN_USER":
+        this.showQueuedCase(event.data); break
     }
   }
 }

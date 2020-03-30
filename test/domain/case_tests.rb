@@ -196,6 +196,23 @@ class CaseTests < ActiveSupport::TestCase
   end
 
   # -- commands/assignments
+  test "doesn't assign a user if an assignment for that partner exists" do
+    kase = Case.stub(
+      assignments: [
+        Case::Assignment.stub(partner_id: 3)
+      ]
+    )
+
+    user = User.stub(
+      id: Id.new(3),
+      role: User::Role.stub(partner_id: 3),
+    )
+
+    kase.assign_user(user)
+    assert_nil(kase.new_assignment)
+    assert_empty(kase.events)
+  end
+
   test "assigns a user" do
     kase = Case.stub
     user = User.stub(
@@ -218,23 +235,6 @@ class CaseTests < ActiveSupport::TestCase
     assert_instances_of(kase.events, [Case::Events::DidAssignUser])
   end
 
-  test "doesn't assign a user if an assignment for that partner exists" do
-    kase = Case.stub(
-      assignments: [
-        Case::Assignment.stub(partner_id: 3)
-      ]
-    )
-
-    user = User.stub(
-      id: Id.new(3),
-      role: User::Role.stub(partner_id: 3),
-    )
-
-    kase.assign_user(user)
-    assert_nil(kase.new_assignment)
-    assert_empty(kase.events)
-  end
-
   test "selects an assignment" do
     kase = Case.stub(
       assignments: [
@@ -244,6 +244,20 @@ class CaseTests < ActiveSupport::TestCase
 
     kase.select_assignment(3)
     assert_same(kase.selected_assignment, kase.assignments[0])
+  end
+
+  test "destroys a selected assignment" do
+    kase = Case.stub(
+      assignments: [
+        Case::Assignment.stub(partner_id: 3)
+      ]
+    )
+
+    kase.select_assignment(3)
+
+    kase.destroy_selected_assignment
+    assert_empty(kase.assignments)
+    assert_instances_of(kase.events, [Case::Events::DidUnassignUser])
   end
 
   # -- commands/messages

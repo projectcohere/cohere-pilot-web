@@ -42,7 +42,12 @@ module Events
           event.case_id.val,
         )
       when Case::Events::DidAssignUser
-        Cases::PublishAssignment.perform_async(
+        Cases::PublishAssignUser.perform_async(
+          event.case_id.val,
+          event.partner_id,
+        )
+      when Case::Events::DidUnassignUser
+        Cases::PublishUnassignUser.perform_async(
           event.case_id.val,
           event.partner_id,
         )

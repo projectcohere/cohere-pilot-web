@@ -27,6 +27,10 @@ module Cases
     end
 
     # -- queries/routing
+    def list_path
+      return urls.cases_path
+    end
+
     def details_path
       return @scope&.completed? ? show_path : edit_path
     end
@@ -48,6 +52,10 @@ module Cases
     end
 
     # -- queries/labels
+    def back_label
+      return "Back to Cases"
+    end
+
     def assign_label
       return "Assign to Me"
     end
@@ -79,7 +87,7 @@ module Cases
     end
 
     def approved?
-      return @case.status == :approved
+      return @case.status == Case::Status::Approved
     end
 
     # -- queries/profile
@@ -177,6 +185,10 @@ module Cases
     def assignee
       email = @case.selected_assignment&.user_email
       return email&.split("@")&.first
+    end
+
+    def assignments
+      return @case.assignments
     end
 
     # -- queries/timestamps

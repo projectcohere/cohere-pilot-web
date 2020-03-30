@@ -32,5 +32,14 @@ module Cases
         },
       )
     end
+
+    def self.did_unassign_user(case_id)
+      return ActivityEvent.new(
+        name: "DID_UNASSIGN_USER",
+        data: {
+          case_id: case_id,
+        },
+      )
+    end
   end
 end

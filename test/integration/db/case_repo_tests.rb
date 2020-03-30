@@ -34,8 +34,22 @@ module Db
 
       kase = case_repo.find_with_document(case_rec.id, document_rec.id)
       assert_equal(kase.id.val, case_rec.id)
+
+      document = kase.selected_document
       assert_length(kase.documents, 1)
-      assert_equal(kase.documents[0].id.val, document_rec.id)
+      assert_equal(document.id.val, document_rec.id)
+    end
+
+    test "finds a case and assignment by id" do
+      case_repo = Case::Repo.new
+      case_rec = cases(:opened_1)
+      case_assignment_rec = case_assignments(:cohere_1)
+
+      kase = case_repo.find_with_assignment(case_rec.id, case_assignment_rec.id)
+      assert_equal(kase.id.val, case_rec.id)
+
+      assignment = kase.selected_assignment
+      assert_length(kase.assignments, 1)
     end
 
     test "can't find a case and document if the case id does not match" do
@@ -52,7 +66,7 @@ module Db
       case_repo = Case::Repo.new
       case_rec = cases(:approved_2)
 
-      kase = case_repo.find_with_documents_and_referral(case_rec.id)
+      kase = case_repo.find_with_associations(case_rec.id)
       assert_equal(kase.id.val, case_rec.id)
       assert_length(kase.documents, 2)
       assert(kase.is_referrer)
@@ -430,6 +444,33 @@ module Db
       assert_equal(assignment_rec.case_id, case_rec.id)
       assert_equal(assignment_rec.user_id, user_rec.id)
       assert_equal(assignment_rec.partner_id, user_rec.partner_id)
+
+      assert_length(kase.events, 0)
+      assert_length(domain_events, 1)
+    end
+
+    test "saves a destroyed assignment" do
+      domain_events = ArrayQueue.new
+
+      case_rec = cases(:opened_1)
+      case_assignment_rec = case_rec.assignments.first
+
+      kase = Case::Repo.map_record(case_rec, assignments: [case_assignment_rec])
+      kase.select_assignment(case_assignment_rec.partner_id)
+      kase.destroy_selected_assignment
+
+      case_repo = Case::Repo.new(domain_events: domain_events)
+      act = -> do
+        case_repo.save_destroyed_assignment(kase)
+      end
+
+      assert_difference(
+        -> { Case::Assignment::Record.count } => -1,
+        &act
+      )
+
+      assignment_recs = case_rec.reload.assignments
+      assert(assignment_recs.none? { |a| a.id == case_assignment_rec.id })
 
       assert_length(kase.events, 0)
       assert_length(domain_events, 1)
