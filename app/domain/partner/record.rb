@@ -6,6 +6,6 @@ class Partner
     has_many(:users, class_name: "User::Record", foreign_key: "partner_id")
 
     # -- membership class --
-    enum(membership_class: MembershipClass.all)
+    enum(membership: Membership.all)
   end
 end

@@ -18,7 +18,7 @@ module Db
 
       partner = partner_repo.find_default_enroller
       assert_not_nil(partner)
-      assert_equal(partner.membership_class, Partner::MembershipClass::Enroller)
+      assert_equal(partner.membership, Partner::Membership::Enroller)
       assert_equal(partner, partner_repo.find_default_enroller)
     end
 

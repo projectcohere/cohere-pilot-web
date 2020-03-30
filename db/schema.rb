@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_23_203527) do
+ActiveRecord::Schema.define(version: 2020_03_30_212123) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -98,17 +98,11 @@ ActiveRecord::Schema.define(version: 2020_03_23_203527) do
     t.index ["classification"], name: "index_documents_on_classification"
   end
 
-  create_table "enrollers", force: :cascade do |t|
-    t.string "name", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
-
   create_table "partners", force: :cascade do |t|
     t.string "name", null: false
-    t.integer "membership_class", null: false
+    t.integer "membership", null: false
     t.integer "programs", array: true
-    t.index ["membership_class"], name: "index_partners_on_membership_class"
+    t.index ["membership"], name: "index_partners_on_membership"
   end
 
   create_table "recipients", force: :cascade do |t|
@@ -130,14 +124,6 @@ ActiveRecord::Schema.define(version: 2020_03_23_203527) do
     t.index ["phone_number"], name: "index_recipients_on_phone_number", unique: true
   end
 
-  create_table "suppliers", force: :cascade do |t|
-    t.string "name", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.integer "program", default: 0
-    t.index ["program"], name: "index_suppliers_on_program"
-  end
-
   create_table "users", force: :cascade do |t|
     t.string "email", null: false
     t.string "encrypted_password", limit: 128, null: false
@@ -145,11 +131,8 @@ ActiveRecord::Schema.define(version: 2020_03_23_203527) do
     t.string "remember_token", limit: 128, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.string "organization_type", null: false
-    t.bigint "organization_id"
-    t.bigint "partner_id"
+    t.bigint "partner_id", null: false
     t.index ["email"], name: "index_users_on_email"
-    t.index ["organization_type", "organization_id"], name: "index_users_on_organization_type_and_organization_id"
     t.index ["partner_id"], name: "index_users_on_partner_id"
     t.index ["remember_token"], name: "index_users_on_remember_token"
   end

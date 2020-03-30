@@ -25,7 +25,7 @@ class Stats
         .where("created_at >= ?", StartDate)
 
       supplier_recs = ::Partner::Record
-        .where(membership_class: Partner::MembershipClass::Supplier)
+        .where(membership: Partner::Membership::Supplier)
         .where("programs @> '{?}'", ::Program::Name.index(::Program::Name::Meap))
 
       quotes_recs = (ENV["STATS_QUOTES"] || "")
