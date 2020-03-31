@@ -35,14 +35,5 @@ module Ws
       assert_equal(connection.user.id.val, user_rec.id)
       assert_equal(connection.chat_user_id, "test-id")
     end
-
-    test "connect by a chat session token" do
-      chat_rec = chats(:session_1)
-      cookies.encrypted.signed[:chat_session_token] = chat_rec.session_token
-
-      connect
-      assert_not_nil(connection.chat)
-      assert_equal(connection.chat.id.val, chat_rec.id)
-    end
   end
 end

@@ -36,23 +36,6 @@ Rails.application.routes.draw do
       post(:front, constraints: { format: :json })
     end
 
-    # chats
-    resource(:chat, only: [:show]) do
-      match("/files", via: :post, action: :files, constraints: ->(req) {
-        req.content_type == "multipart/form-data"
-      })
-
-      # sessions
-      resources(:invites, module: :chats, only: [
-        :new,
-        :create,
-      ]) do
-        match("/verify", via: :get, on: :collection, action: :verify)
-        match("/verify-code", via: :get, on: :collection, action: :edit)
-        match("/", via: :patch, on: :collection, action: :update)
-      end
-    end
-
     # fallback
     get("*path", to: redirect(root_path), constraints: ->(req) {
       # unclear why we have to constrain to signed out again here, since it
