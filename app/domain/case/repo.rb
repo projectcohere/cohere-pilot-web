@@ -639,7 +639,8 @@ class Case
       return Assignment.new(
         user_id: r.user.id,
         user_email: r.user.email,
-        partner_id: r.partner_id
+        partner_id: r.partner_id,
+        partner_membership: r.partner.membership.to_sym,
       )
     end
 

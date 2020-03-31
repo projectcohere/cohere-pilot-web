@@ -1,0 +1,10 @@
+.Link {
+  @extend .u-link;
+}
+
+.Link--destructive {
+  &:hover {
+    color: $color-error;
+    text-decoration-color: $color-error;
+  }
+}

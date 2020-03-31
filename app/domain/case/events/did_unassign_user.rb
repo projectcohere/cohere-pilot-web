@@ -4,6 +4,7 @@ class Case
       # -- props --
       prop(:case_id)
       prop(:partner_id)
+      prop(:partner_membership)
 
       # -- factories --
       def self.from_entity(kase)
@@ -12,6 +13,7 @@ class Case
         DidUnassignUser.new(
           case_id: kase.id,
           partner_id: assignment.partner_id,
+          partner_membership: assignment.partner_membership,
         )
       end
     end

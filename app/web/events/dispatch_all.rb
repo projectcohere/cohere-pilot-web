@@ -42,15 +42,19 @@ module Events
           event.case_id.val,
         )
       when Case::Events::DidAssignUser
-        Cases::PublishAssignUser.perform_async(
-          event.case_id.val,
-          event.partner_id,
-        )
+        if event.partner_membership != Partner::Membership::Supplier
+          Cases::PublishAssignUser.perform_async(
+            event.case_id.val,
+            event.partner_id,
+          )
+        end
       when Case::Events::DidUnassignUser
-        Cases::PublishUnassignUser.perform_async(
-          event.case_id.val,
-          event.partner_id,
-        )
+        if event.partner_membership != Partner::Membership::Supplier
+          Cases::PublishUnassignUser.perform_async(
+            event.case_id.val,
+            event.partner_id,
+          )
+        end
       when Case::Events::DidSubmit
         deliver(CasesMailer.did_submit(
           event.case_id.val,
