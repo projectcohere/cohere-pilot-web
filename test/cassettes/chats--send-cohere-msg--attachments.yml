@@ -1,0 +1,74 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.twilio.com/2010-04-01/Accounts/<TWILIO_API_ACCOUNT_SID>/Messages.json
+    body:
+      encoding: US-ASCII
+      string: To=%2B12027854733&From=%2B15005550006&Body=Hi+there%2C+this+is+Gaby+from+Cohere.+We%E2%80%99re+here+to+help+you+apply+for+energy+assistance.+Before+we+can+get+started+we+need+your+permission+to+interact+over+text+messages.+Here%E2%80%99s+the+agreement%3A&
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - api.twilio.com
+      Authorization:
+      - Basic <TWILIO_API_BASIC_AUTH>
+  response:
+    status:
+      code: 201
+      message: CREATED
+    headers:
+      Date:
+      - Tue, 31 Mar 2020 15:11:47 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '965'
+      Connection:
+      - keep-alive
+      Twilio-Concurrent-Requests:
+      - '1'
+      Twilio-Request-Id:
+      - RQ1766ee2fc8274b1c96b58479af776519
+      Twilio-Request-Duration:
+      - '0.057'
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Accept, Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match,
+        If-Unmodified-Since
+      Access-Control-Allow-Methods:
+      - GET, POST, DELETE, OPTIONS
+      Access-Control-Expose-Headers:
+      - ETag
+      Access-Control-Allow-Credentials:
+      - 'true'
+      X-Powered-By:
+      - AT-5000
+      X-Shenanigans:
+      - none
+      X-Home-Region:
+      - us1
+      X-Api-Domain:
+      - api.twilio.com
+      Strict-Transport-Security:
+      - max-age=31536000
+    body:
+      encoding: UTF-8
+      string: '{"sid": "SM9a74f3f24538495ead78f97f0bccc869", "date_created": "Tue,
+        31 Mar 2020 15:11:47 +0000", "date_updated": "Tue, 31 Mar 2020 15:11:47 +0000",
+        "date_sent": null, "account_sid": "<TWILIO_API_ACCOUNT_SID>", "to": "+12027854733",
+        "from": "+15005550006", "messaging_service_sid": null, "body": "Hi there,
+        this is Gaby from Cohere. We\u2019re here to help you apply for energy assistance.
+        Before we can get started we need your permission to interact over text messages.
+        Here\u2019s the agreement:", "status": "queued", "num_segments": "1", "num_media":
+        "0", "direction": "outbound-api", "api_version": "2010-04-01", "price": null,
+        "price_unit": "USD", "error_code": null, "error_message": null, "uri": "/2010-04-01/Accounts/<TWILIO_API_ACCOUNT_SID>/Messages/SM9a74f3f24538495ead78f97f0bccc869.json",
+        "subresource_uris": {"media": "/2010-04-01/Accounts/<TWILIO_API_ACCOUNT_SID>/Messages/SM9a74f3f24538495ead78f97f0bccc869/Media.json"}}'
+    http_version: 
+  recorded_at: Tue, 31 Mar 2020 15:11:47 GMT
+recorded_with: VCR 5.0.0

@@ -8,7 +8,7 @@ Rails.application.configure do
   config.force_ssl = true
 
   # -- root/logging
-  config.log_level = :debug
+  config.log_level = :warn
   config.log_tags = [ :request_id ]
   config.log_formatter = ::Logger::Formatter.new
 
@@ -16,6 +16,12 @@ Rails.application.configure do
     logger = ActiveSupport::Logger.new(STDOUT)
     logger.formatter = config.log_formatter
     config.logger = ActiveSupport::TaggedLogging.new(logger)
+  end
+
+  s = Sidekiq
+  s.logger.level = Logger::FATAL
+  s.configure_server do |c|
+    c.logger.level = Logger::WARN
   end
 
   # -- assets --

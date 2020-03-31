@@ -17,6 +17,15 @@ Rails.application.configure do
     config.cache_store = :memory_store
   end
 
+  # -- root/logging --
+  config.log_level = :debug
+
+  s = Sidekiq
+  s.logger.level = Logger::FATAL
+  s.configure_server do |c|
+    c.logger.level = Logger::DEBUG
+  end
+
   # -- assets --
   config.assets.debug = true
   config.assets.quiet = true

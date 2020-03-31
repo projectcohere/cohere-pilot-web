@@ -89,13 +89,20 @@ module Events
           event.user_id.val,
         ))
       when Chat::Events::DidAddMessage
+        # TODO: should this be async again?
+        Cases::AddChatMessage.(
+          event.chat_message_id.val,
+        )
+
         Chats::PublishMessage.perform_async(
           event.chat_message_id.val,
         )
 
-        Cases::AddChatMessage.(
-          event.chat_message_id.val,
-        )
+        if not event.chat_message_sent_by_recipient
+          Chats::SendCohereMessage.perform_async(
+            event.chat_message_id.val,
+          )
+        end
       end
     end
 

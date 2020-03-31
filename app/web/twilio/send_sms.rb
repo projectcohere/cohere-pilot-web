@@ -1,0 +1,26 @@
+module Twilio
+  class SendSms < ::Command
+    include Logging
+
+    # -- lifetime --
+    def self.get
+      SendSms.new
+    end
+
+    def initialize(twilio: Client.get)
+      @twilio = twilio
+    end
+
+    # -- command --
+    def call(phone_number, body:, media_urls:)
+      @twilio.post("/Messages.json", {
+        "To" => "+1#{phone_number}",
+        "From" => ENV["TWILIO_API_PHONE_NUMBER"],
+        "Body" => body,
+        "MediaUrl" => media_urls,
+      })
+
+      return nil
+    end
+  end
+end

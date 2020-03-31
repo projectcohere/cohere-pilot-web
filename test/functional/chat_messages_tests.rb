@@ -1,6 +1,6 @@
 require "test_helper"
 
-class MessagesTests < ActionDispatch::IntegrationTest
+class ChatMessagesTests < ActionDispatch::IntegrationTest
   def setup
     # if you change the json, the signature below will also change. you'll need
     # to copy the `evaluated` signature from MessagesController#is_signed?...

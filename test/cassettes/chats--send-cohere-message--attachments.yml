@@ -1,0 +1,72 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.twilio.com/2010-04-01/Accounts/<TWILIO_API_ACCOUNT_SID>/Messages.json
+    body:
+      encoding: US-ASCII
+      string: To=%2B15005550006&From=%2B15005550006&Body=Test+with+attachments.&MediaUrl=http%3A%2F%2Flocalhost%3A3000%2Frails%2Factive_storage%2Fdisk%2FeyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDRG9JYTJWNVNTSWRZV0ZpWWxkT1IxY3hWbko0V2poRmRUUjZiWGwzTVROQkJqb0dSVlE2RUdScGMzQnZjMmwwYVc5dVNTSTdhVzVzYVc1bE95Qm1hV3hsYm1GdFpUMGlkR1Z6ZEM1d2JtY2lPeUJtYVd4bGJtRnRaU285VlZSR0xUZ25KM1JsYzNRdWNHNW5CanNHVkRvUlkyOXVkR1Z1ZEY5MGVYQmxTU0lPYVcxaFoyVXZjRzVuQmpzR1ZBPT0iLCJleHAiOiIyMDIwLTAzLTMxVDE1OjA3OjE3LjIxNloiLCJwdXIiOiJibG9iX2tleSJ9fQ%3D%3D--e985e0c710ae574d5b8d01bbd589faa7946b5819%2Ftest.png%3Fcontent_type%3Dimage%252Fpng%26disposition%3Dinline%253B%2Bfilename%253D%2522test.png%2522%253B%2Bfilename%252A%253DUTF-8%2527%2527test.png
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - api.twilio.com
+      Authorization:
+      - Basic <TWILIO_API_BASIC_AUTH>
+  response:
+    status:
+      code: 201
+      message: CREATED
+    headers:
+      Date:
+      - Tue, 31 Mar 2020 15:02:17 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '728'
+      Connection:
+      - keep-alive
+      Twilio-Concurrent-Requests:
+      - '1'
+      Twilio-Request-Id:
+      - RQ63be2cf0b96640258d07ba124b0ccd50
+      Twilio-Request-Duration:
+      - '0.054'
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Accept, Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match,
+        If-Unmodified-Since
+      Access-Control-Allow-Methods:
+      - GET, POST, DELETE, OPTIONS
+      Access-Control-Expose-Headers:
+      - ETag
+      Access-Control-Allow-Credentials:
+      - 'true'
+      X-Powered-By:
+      - AT-5000
+      X-Shenanigans:
+      - none
+      X-Home-Region:
+      - us1
+      X-Api-Domain:
+      - api.twilio.com
+      Strict-Transport-Security:
+      - max-age=31536000
+    body:
+      encoding: UTF-8
+      string: '{"sid": "MM8337533f9dcb441787bee8f6fd933f3c", "date_created": null,
+        "date_updated": null, "date_sent": null, "account_sid": "<TWILIO_API_ACCOUNT_SID>",
+        "to": "+15005550006", "from": "+15005550006", "messaging_service_sid": null,
+        "body": "Test with attachments.", "status": "queued", "num_segments": "1",
+        "num_media": "0", "direction": "outbound-api", "api_version": "2010-04-01",
+        "price": null, "price_unit": "USD", "error_code": null, "error_message": null,
+        "uri": "/2010-04-01/Accounts/<TWILIO_API_ACCOUNT_SID>/Messages/MM8337533f9dcb441787bee8f6fd933f3c.json",
+        "subresource_uris": {"media": "/2010-04-01/Accounts/<TWILIO_API_ACCOUNT_SID>/Messages/MM8337533f9dcb441787bee8f6fd933f3c/Media.json"}}'
+    http_version: 
+  recorded_at: Tue, 31 Mar 2020 15:02:17 GMT
+recorded_with: VCR 5.0.0

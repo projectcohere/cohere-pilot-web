@@ -1,5 +1,5 @@
 module Chats
-  class AddMessage < ::Command
+  class AddCohereMessage < ::Command
     # -- lifetime --
     def initialize(
       chat_repo: Chat::Repo.get,
