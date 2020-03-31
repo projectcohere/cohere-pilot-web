@@ -100,7 +100,7 @@ class ChatsTests < ActionDispatch::IntegrationTest
 end
 
 class ChatsChannelTests < ActionCable::Channel::TestCase
-  tests(Chats::Channel)
+  tests(Chats::MessageChannel)
 
   # -- tests --
   test "subscribe a cohere user" do

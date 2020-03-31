@@ -1,5 +1,5 @@
 module Chats
-  class Channel < ApplicationCable::Channel
+  class MessageChannel < ApplicationCable::Channel
     # -- ActionCable::Channel::Base
     def subscribed
       chat = find_current_chat(params[:chat])
@@ -9,17 +9,16 @@ module Chats
     def receive(data)
       chat = find_current_chat(data["chat"])
 
-      # determine sender based on auth method
-      sender = if connection.chat_user_id != nil
-        Chat::Sender.cohere(connection.chat_user_id)
-      else
-        Chat::Sender.recipient
+      # TODO: only cohere users should be sending messages now
+      if connection.chat_user_id == nil
+        raise ""
       end
 
       # add incoming message to chat
-      AddMessage.(chat, sender, Incoming.new(
+      sender = Chat::Sender.cohere(connection.chat_user_id)
+      AddCohereMessage.(chat, sender, Incoming.new(
         body: data["message"]["body"],
-        attachment_ids: data["message"]["attachmentIds"],
+        attachment_ids: data["message"]["attachment_ids"],
       ))
 
       # handle events
@@ -28,9 +27,7 @@ module Chats
 
     # -- queries --
     private def find_current_chat(chat_id)
-      if connection.chat != nil
-        return connection.chat
-      elsif chat_id != nil
+      if chat_id != nil
         return Chat::Repo.get.find(chat_id)
       end
     end

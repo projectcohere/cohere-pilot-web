@@ -5,7 +5,7 @@ import { IComponent, kConsumer } from "../Core"
 import { getReadableTimeSince } from "../Shared/Time"
 
 // -- constants --
-const kChannelChat = "Chats::Channel"
+const kChannelChat = "Chats::MessageChannel"
 
 const kIdChat = "chat"
 const kIdChatJson = "chat-json"
@@ -34,7 +34,7 @@ interface Outgoing {
   chat: string | null,
   message: {
     body: string
-    attachmentIds?: number[]
+    attachment_ids?: number[]
   }
 }
 
@@ -192,7 +192,7 @@ export class ShowChat implements IComponent {
       chat: this.id,
       message: {
         body,
-        attachmentIds: fileIds
+        attachment_ids: fileIds
       }
     }
 
