@@ -69,13 +69,13 @@ module Events
             event.case_id.val,
           ))
         end
-      when Case::Events::DidUploadMessageAttachment
-        Cases::AttachFrontFileWorker.perform_async(
+      when Case::Events::DidAddMessageAttachment
+        Cases::AttachTwilioMedia.perform_async(
           event.case_id.val,
           event.document_id.val,
         )
       when Case::Events::DidSignContract
-        Cases::AttachContractWorker.perform_async(
+        Cases::AttachContract.perform_async(
           event.case_id.val,
           event.document_id.val,
         )

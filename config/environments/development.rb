@@ -5,6 +5,7 @@ Rails.application.configure do
   should_cache = Rails.root.join('tmp', 'caching-dev.txt').exist?
 
   # -- root --
+  config.hosts << /[a-z0-9]+\.ngrok\.io/
   config.eager_load = false
   config.consider_all_requests_local = true
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker

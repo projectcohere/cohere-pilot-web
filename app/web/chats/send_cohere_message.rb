@@ -9,7 +9,7 @@ module Chats
       @chat_repo = chat_repo
     end
 
-    ## -- command --
+    # -- command --
     def call(chat_message_id)
       Files::Host.set_current!
 

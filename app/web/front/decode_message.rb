@@ -5,8 +5,7 @@ module Front
       json = ActiveSupport::JSON.decode(json_string)
       json["target"]["data"].then { |json|
         Mms::Message.new(
-          sender_phone_number: decode_phone_number(json, "from"),
-          receiver_phone_number: decode_phone_number(json, "to"),
+          phone_number: decode_phone_number(json, "from"),
           attachments: decode_attachments(json),
         )
       }

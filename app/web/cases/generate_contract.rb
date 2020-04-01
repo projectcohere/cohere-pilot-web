@@ -1,5 +1,6 @@
 module Cases
-  class GenerateContractPdf
+  class GenerateContract < ::Command
+    # -- lifetime --
     def initialize(
       render_html: RenderHtml.new,
       render_pdf: RenderPdf.new
@@ -8,6 +9,7 @@ module Cases
       @render_pdf = render_pdf
     end
 
+    # -- command --
     def call(kase)
       document = kase.selected_document
       if document.nil?
@@ -32,16 +34,14 @@ module Cases
         kase: kase
       })
 
-      pdf_file = @render_pdf.(pdf_html, kase.id.to_s)
-
-      FileData.new(
-        data: pdf_file,
+      return FileData.new(
+        data: @render_pdf.(pdf_html, kase.id.to_s),
         name: "contract.pdf",
         mime_type: "application/pdf"
       )
     end
 
-    # -- child services --
+    # -- children --
     class RenderHtml
       # -- command --
       def call(name, locals)

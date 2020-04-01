@@ -481,7 +481,7 @@ module Db
 
       kase = Case::Repo.map_record(case_rec)
       kase.add_mms_message(Mms::Message.stub(
-        sender_phone_number: kase.recipient.profile.phone.number,
+        phone_number: kase.recipient.profile.phone.number,
         attachments: [
           Mms::Attachment.stub(
             url: Faker::Internet.url
@@ -521,11 +521,8 @@ module Db
       case_rec = cases(:pending_2)
 
       kase = Case::Repo.map_record(case_rec)
-      kase.add_chat_message(Chat::Message.stub(
-        sender: Chat::Sender.recipient,
-        attachments: [
-          active_storage_blobs(:blob_1)
-        ]
+      kase.add_mms_message(Mms::Message.stub(
+        attachments: [Mms::Attachment.stub(url: :test_url)],
       ))
 
       domain_events = ArrayQueue.new
@@ -553,7 +550,7 @@ module Db
       assert_not_nil(document_rec.case_id)
 
       assert_length(kase.events, 0)
-      assert_length(domain_events, 2)
+      assert_length(domain_events, 3)
     end
 
     test "saves the selected attachment" do

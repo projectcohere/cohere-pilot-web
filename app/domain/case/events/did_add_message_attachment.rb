@@ -1,13 +1,13 @@
 class Case
   module Events
-    class DidUploadMessageAttachment < ::Value
+    class DidAddMessageAttachment < ::Value
       # -- props --
       prop(:case_id)
       prop(:document_id)
 
       # -- factories --
       def self.from_entity(kase, document)
-        DidUploadMessageAttachment.new(
+        DidAddMessageAttachment.new(
           case_id: kase.id,
           document_id: document.id
         )

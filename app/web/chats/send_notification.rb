@@ -15,7 +15,7 @@ module Chats
       @send_initial_sms = send_initial_sms
     end
 
-    ## -- command --
+    # -- command --
     def call(chat_id)
       chat = @chat_repo.find(chat_id)
 

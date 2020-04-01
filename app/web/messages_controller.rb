@@ -1,29 +1,16 @@
 class MessagesController < ApplicationController
   protect_from_forgery(
-    except: [:messages]
+    except: :twilio
   )
 
   # -- actions --
-  def front
-    if not is_signed?
-      return render(json: "", status: :unauthorized)
+  def twilio
+    signature = Twilio::Signature.new(request.url, request.POST)
+    if not signature.match?(request.headers["X-Twilio-Signature"])
+      return head(:forbidden)
     end
 
-    message = Front::DecodeMessage.new.(request.raw_post)
-    Cases::AddMmsMessage.new.(message)
-  end
-
-  # -- queries --
-  private def is_signed?
-    algorithm = "sha1"
-
-    signature = request.headers["X-Front-Signature"]
-    evaluated = Base64.strict_encode64(OpenSSL::HMAC.digest(
-      algorithm,
-      ENV["FRONT_API_SECRET"],
-      request.raw_post
-    ))
-
-    return signature == evaluated
+    sms = Twilio::DecodeSms.(request.POST)
+    Cases::AddMmsMessage.(sms)
   end
 end

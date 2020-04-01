@@ -33,7 +33,7 @@ Rails.application.routes.draw do
 
     # messages
     namespace(:messages) do
-      post(:front, constraints: { format: :json })
+      post(:twilio)
     end
 
     # fallback
