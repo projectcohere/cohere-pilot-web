@@ -78,14 +78,6 @@ module Db
       assert_present(chat.selected_message.attachments)
     end
 
-    test "finds ids of chats needing a reminder" do
-      chat_repo = Chat::Repo.new
-
-      chat_ids = chat_repo.find_all_ids_for_reminder1
-      assert_length(chat_ids, 1)
-      assert_equal(chat_ids, [chats(:idle_2).id])
-    end
-
     # -- commands --
     test "saves an opened chat" do
       recipient_rec = recipients(:recipient_3)
@@ -143,7 +135,6 @@ module Db
 
       chat_rec = chat_rec
       assert_not(chat_rec.saved_change_to_attribute?(:updated_at))
-      assert_equal(chat_rec.notification, "clear")
 
       message_rec = chat_rec.messages
         .find { |r| r.id == message_id.val }
@@ -159,19 +150,6 @@ module Db
       assert_nil(chat.new_message)
       assert_length(chat.events, 0)
       assert_length(domain_events, 1)
-    end
-
-    test "save notifications" do
-      domain_events = ArrayQueue.new
-
-      chat_rec = chats(:idle_1)
-      chat = Chat::Repo.map_record(chat_rec)
-      chat.send_notification { "test_sms_conversation_id" }
-
-      chat_repo = Chat::Repo.new(domain_events: domain_events)
-      chat_repo.save_notification(chat)
-      assert_equal(chat_rec.sms_conversation_id, "test_sms_conversation_id")
-      assert_equal(chat_rec.notification, "clear")
     end
   end
 end

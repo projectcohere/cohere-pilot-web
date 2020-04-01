@@ -7,19 +7,10 @@ class Chat < Entity
   prop(:recipient)
   prop(:session, default: nil)
   prop(:messages, default: [])
-  prop(:notification, default: nil)
-  prop(:sms_conversation_id, default: nil)
 
   # -- props/temporary
   attr(:new_message)
   attr(:selected_message)
-
-  # -- queries --
-  def sms_conversation_url
-    if @sms_conversation_id != nil
-      return "https://app.frontapp.com/open/#{@sms_conversation_id}"
-    end
-  end
 
   # -- factories --
   def self.open(recipient, macro_repo: Macro::Repo.get)
@@ -72,22 +63,6 @@ class Chat < Entity
     end
 
     @selected_message = @messages[i]
-  end
-
-  # -- commands/notifcations
-  def send_notification
-    if not block_given?
-      raise "can't send notification without a service to invoke"
-    elsif @notification == nil
-      raise "can't send notification if there is not one to send"
-    end
-
-    sms_conversation_id = yield
-    if sms_conversation_id != nil
-      @sms_conversation_id = sms_conversation_id
-    end
-
-    @notification = nil
   end
 
   # -- callbacks --

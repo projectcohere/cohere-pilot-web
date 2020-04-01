@@ -12,15 +12,5 @@
 
   <div class="Chat-cohere">
     <%= render(partial: "chats/macros") %>
-
-    <%- if chat.sms_conversation_url != nil %>
-      <%=
-        link_to("View Conversation on Front >", chat.sms_conversation_url,
-          class: "Chat-frontLink",
-          target: "_blank",
-          rel: "noopener noreferrer"
-        )
-      %>
-    <%- end %>
   </div>
 </div>

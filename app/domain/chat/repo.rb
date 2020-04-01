@@ -99,16 +99,6 @@ class Chat
       return chat
     end
 
-    # -- queries/many
-    def find_all_ids_for_reminder1
-      chat_recs = Chat::Record
-        .reminder_1
-        .where("updated_at <= ?", 15.minutes.ago)
-        .select(:id)
-
-      return chat_recs.pluck(:id)
-    end
-
     # -- commands --
     def save_opened(chat)
       chat_message = chat.new_message
@@ -117,8 +107,6 @@ class Chat
       chat_rec = Chat::Record.new({
         recipient_id: chat.recipient.id,
       })
-
-      assign_notification(chat, chat_rec)
 
       chat_message_rec = Chat::Message::Record.new({
         chat_id: nil,
@@ -171,7 +159,6 @@ class Chat
         chat_id: chat_message.chat_id,
       })
 
-      assign_notification(chat, chat_rec)
       assign_message(chat_message, chat_message_rec)
 
       # save the records
@@ -188,34 +175,7 @@ class Chat
       @domain_events.consume(chat.events)
     end
 
-    def save_notification(chat)
-      chat_rec = chat.record
-      if chat_rec == nil
-        raise "chat must be fetched from the db!"
-      end
-
-      # update the records
-      chat_rec.assign_attributes({
-        sms_conversation_id: chat.sms_conversation_id
-      })
-
-      assign_notification(chat, chat_rec)
-
-      # save the records
-      chat_rec.save!
-
-      # consume all entity events
-      @domain_events.consume(chat.events)
-    end
-
     # -- commands/helpers --
-    def assign_notification(chat, chat_rec)
-      c = chat
-      chat_rec.assign_attributes({
-        notification: c.notification != nil ? "reminder_1" : "clear",
-      })
-    end
-
     def assign_message(chat_message, chat_message_rec)
       m = chat_message
       chat_message_rec.assign_attributes({
@@ -241,8 +201,6 @@ class Chat
         recipient: recipient,
         session: r.session_token,
         messages: messages,
-        notification: map_notification(r, recipient),
-        sms_conversation_id: r.sms_conversation_id,
       )
     end
 
@@ -250,17 +208,6 @@ class Chat
       return Recipient.new(
         id: r.id,
         profile: ::Recipient::Repo.map_profile(r),
-      )
-    end
-
-    def self.map_notification(r, recipient)
-      if r.notification == "clear"
-        return nil
-      end
-
-      return Notification.new(
-        recipient_name: recipient.profile.name,
-        is_new_conversation: r.sms_conversation_id == nil,
       )
     end
   end

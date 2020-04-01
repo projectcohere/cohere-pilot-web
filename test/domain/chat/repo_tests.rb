@@ -11,8 +11,6 @@ class Chat
       assert_not_nil(chat.id&.val)
       assert_not_nil(chat.recipient.id)
       assert_not_nil(chat.session)
-      assert_not_nil(chat.sms_conversation_id)
-      assert_nil(chat.notification)
 
       message = chat.messages[0]
       assert_not_nil(message)

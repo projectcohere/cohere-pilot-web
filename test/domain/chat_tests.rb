@@ -71,26 +71,4 @@ class ChatTests < ActiveSupport::TestCase
     chat.select_message(0)
     assert_equal(chat.selected_message, :test_message)
   end
-
-  # -- commands/notifications
-  test "sends a notification" do
-    chat = Chat.stub(
-      notification: Chat::Notification.stub,
-      sms_conversation_id: :test_id,
-    )
-
-    chat.send_notification { nil }
-    assert_nil(chat.notification)
-    assert_equal(chat.sms_conversation_id, :test_id)
-  end
-
-  test "sends a notification and starts a new conversation" do
-    chat = Chat.stub(
-      notification: Chat::Notification.stub,
-    )
-
-    chat.send_notification { :test_id }
-    assert_nil(chat.notification)
-    assert_equal(chat.sms_conversation_id, :test_id)
-  end
 end
