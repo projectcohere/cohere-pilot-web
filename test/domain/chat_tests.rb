@@ -23,13 +23,6 @@ class ChatTests < ActiveSupport::TestCase
     # assert_length(message.attachments, 1)
   end
 
-  # -- commands --
-  test "starts a session" do
-    chat = Chat.stub
-    chat.start_session
-    assert_not_nil(chat.session)
-  end
-
   # -- commands/messages
   test "adds a message" do
     chat = Chat.stub(

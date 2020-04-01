@@ -48,29 +48,9 @@ module Db
       assert_equal(chat.id.val, chat_rec.id)
     end
 
-    test "finds a chat by session with messages" do
-      chat_repo = Chat::Repo.new
-      chat_rec = chats(:session_1)
-      chat_session = chat_rec.session_token
-
-      chat = chat_repo.find_by_session_with_messages(chat_session)
-      assert_not_nil(chat)
-      assert_equal(chat.id.val, chat_rec.id)
-      assert_length(chat.messages, 1)
-    end
-
-    test "does not find a chat with no session" do
-      chat_repo = Chat::Repo.new
-      chat_rec = chats(:idle_1)
-      chat_session = chat_rec.session_token
-
-      chat = chat_repo.find_by_session_with_messages(chat_session)
-      assert_nil(chat)
-    end
-
     test "finds a chat by selected message" do
       chat_repo = Chat::Repo.new
-      chat_message_rec = chat_messages(:message_s1_1)
+      chat_message_rec = chat_messages(:message_i1_1)
 
       chat = chat_repo.find_by_selected_message(chat_message_rec.id)
       assert_not_nil(chat)
@@ -98,21 +78,11 @@ module Db
       assert_not_nil(chat.record)
     end
 
-    test "saves a new session" do
-      chat_rec = chats(:idle_1)
-      chat = Chat::Repo.map_record(chat_rec)
-      chat.start_session
-
-      chat_repo = Chat::Repo.new
-      chat_repo.save_new_session(chat)
-      assert_not_nil(chat_rec.session_token)
-    end
-
     test "saves a new message" do
       domain_events = ArrayQueue.new
 
       blob_rec = active_storage_blobs(:blob_1)
-      chat_rec = chats(:session_1)
+      chat_rec = chats(:idle_1)
       chat = Chat::Repo.map_record(chat_rec)
       chat.add_message(
         sender: Chat::Sender.automated,

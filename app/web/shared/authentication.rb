@@ -29,8 +29,7 @@ module Authentication
     end
   end
 
-  # store chat id used to disambiguate concurrent sessions for
-  # same user
+  # store chat id used to disambiguate concurrent cohere users
   def create_chat_user_id
     user = User::Repo.get.find_current
 
@@ -40,8 +39,7 @@ module Authentication
     end
   end
 
-  # destroy chat id used to disambiguate concurrent sessions for
-  # same user
+  # destroy chat id used to disambiguate concurrent cohere users
   def destroy_chat_user_id
     cookies.delete(:chat_user_id)
   end

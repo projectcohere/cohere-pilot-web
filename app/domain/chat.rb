@@ -5,7 +5,6 @@ class Chat < Entity
   # -- props --
   prop(:id, default: Id::None)
   prop(:recipient)
-  prop(:session, default: nil)
   prop(:messages, default: [])
 
   # -- props/temporary
@@ -32,11 +31,6 @@ class Chat < Entity
   # -- queries --
   def sms_phone_number
     @recipient.profile.phone.number
-  end
-
-  # -- commands --
-  def start_session
-    @session = SecureRandom.base58
   end
 
   # -- commands/messages

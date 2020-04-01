@@ -5,7 +5,3 @@ idle_1:
 idle_2:
   recipient: recipient_2
   updated_at: <%= Time.zone.now - 15.minutes %>
-
-session_1:
-  recipient: recipient_4
-  session_token: "5930FJP"

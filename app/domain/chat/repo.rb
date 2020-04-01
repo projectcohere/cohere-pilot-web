@@ -54,27 +54,6 @@ class Chat
       return entity_from(chat_rec)
     end
 
-    def find_by_session(session_token)
-      chat_rec = Chat::Record
-        .with_any_session
-        .find_by(session_token: session_token)
-
-      return entity_from(chat_rec)
-    end
-
-    def find_by_session_with_messages(session_token)
-      chat_rec = Chat::Record
-        .with_any_session
-        .find_by(session_token: session_token)
-
-      chat_messages = if chat_rec != nil
-        @chat_message_repo
-          .find_many_by_chat_with_attachments(chat_rec.id)
-      end
-
-      return entity_from(chat_rec, chat_messages)
-    end
-
     def find_by_recipient_with_messages(recipient_id)
       chat_rec = Chat::Record
         .by_recipient(recipient_id)
@@ -128,19 +107,6 @@ class Chat
 
       # consume all entity events
       @domain_events.consume(chat.events)
-    end
-
-    def save_new_session(chat)
-      chat_rec = chat.record
-      if chat_rec.nil?
-        raise "chat must be fetched from the db!"
-      end
-
-      chat_rec.assign_attributes(
-        session_token: chat.session,
-      )
-
-      chat_rec.save!
     end
 
     def save_new_message(chat)
@@ -199,7 +165,6 @@ class Chat
         record: r,
         id: Id.new(r.id),
         recipient: recipient,
-        session: r.session_token,
         messages: messages,
       )
     end
@@ -214,10 +179,6 @@ class Chat
 
   class Record
     # -- scopes --
-    def self.with_any_session
-      return where.not(session_token: nil)
-    end
-
     def self.by_recipient(recipient_id)
       return where(recipient_id: recipient_id)
     end

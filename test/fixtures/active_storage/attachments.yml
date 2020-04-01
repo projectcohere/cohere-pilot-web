@@ -8,7 +8,7 @@ document_a1_2:
   record: document_a1_2 (Document::Record)
   blob: blob_1
 
-chat_message_s1_1:
+chat_message_i1_1:
   name: files
-  record: message_s1_1 (Chat::Message::Record)
+  record: message_i1_1 (Chat::Message::Record)
   blob: blob_1

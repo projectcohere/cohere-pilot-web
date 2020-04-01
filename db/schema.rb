@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_01_154237) do
+ActiveRecord::Schema.define(version: 2020_04_01_155533) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -81,9 +81,7 @@ ActiveRecord::Schema.define(version: 2020_04_01_154237) do
     t.bigint "recipient_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.string "session_token"
     t.index ["recipient_id"], name: "index_chats_on_recipient_id", unique: true
-    t.index ["session_token"], name: "index_chats_on_session_token", unique: true
     t.index ["updated_at"], name: "index_chats_on_updated_at"
   end
 

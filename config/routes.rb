@@ -182,9 +182,4 @@ Rails.application.routes.draw do
     require "sidekiq/web"
     mount(Sidekiq::Web => "/sidekiq")
   end
-
-  # -- test --
-  if Rails.env.test?
-    post("/tests/chat-session", to: "tests#chat_session")
-  end
 end
