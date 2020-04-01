@@ -476,14 +476,14 @@ module Db
       assert_length(domain_events, 1)
     end
 
-    test "saves a new mms message" do
+    test "saves a new sms message" do
       case_rec = cases(:pending_1)
 
       kase = Case::Repo.map_record(case_rec)
-      kase.add_mms_message(Mms::Message.stub(
+      kase.add_sms_message(Sms::Message.stub(
         phone_number: kase.recipient.profile.phone.number,
         attachments: [
-          Mms::Attachment.stub(
+          Sms::Attachment.stub(
             url: Faker::Internet.url
           )
         ],
@@ -521,8 +521,8 @@ module Db
       case_rec = cases(:pending_2)
 
       kase = Case::Repo.map_record(case_rec)
-      kase.add_mms_message(Mms::Message.stub(
-        attachments: [Mms::Attachment.stub(url: :test_url)],
+      kase.add_sms_message(Sms::Message.stub(
+        attachments: [Sms::Attachment.stub(url: :test_url)],
       ))
 
       domain_events = ArrayQueue.new

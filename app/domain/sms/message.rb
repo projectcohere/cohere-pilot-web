@@ -1,4 +1,4 @@
-module Mms
+module Sms
   class Message < ::Value
     # -- props --
     prop(:phone_number)

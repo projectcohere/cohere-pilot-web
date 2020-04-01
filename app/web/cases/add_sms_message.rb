@@ -1,5 +1,5 @@
 module Cases
-  class AddMmsMessage < ::Command
+  class AddSmsMessage < ::Command
     # -- lifetime --
     def initialize(case_repo: Case::Repo.get)
       @case_repo = case_repo
@@ -12,7 +12,7 @@ module Cases
         raise "No case found for phone number #{message.phone_number}"
       end
 
-      kase.add_mms_message(message)
+      kase.add_sms_message(message)
       @case_repo.save_new_message(kase)
     end
   end

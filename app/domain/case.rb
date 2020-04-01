@@ -183,7 +183,7 @@ class Case < ::Entity
     track_new_activity(false)
   end
 
-  def add_mms_message(message)
+  def add_sms_message(message)
     # add attachments as documents
     message.attachments&.each do |attachment|
       new_document = Document.download(attachment.url)

@@ -276,7 +276,7 @@ class CaseTests < ActiveSupport::TestCase
       status: Case::Status::Opened,
     )
 
-    kase.add_mms_message(Mms::Message.stub)
+    kase.add_sms_message(Sms::Message.stub)
     assert_not_nil(kase.received_message_at)
     assert(kase.has_new_activity)
 
@@ -294,11 +294,11 @@ class CaseTests < ActiveSupport::TestCase
       received_message_at: Time.now,
     )
 
-    mms = Mms::Message.stub(
-      attachments: [Mms::Attachment.stub(url: :test_url)],
+    sms = Sms::Message.stub(
+      attachments: [Sms::Attachment.stub(url: :test_url)],
     )
 
-    kase.add_mms_message(mms)
+    kase.add_sms_message(sms)
     assert(kase.has_new_activity)
 
     new_document = kase.new_documents[0]
@@ -411,7 +411,7 @@ class CaseTests < ActiveSupport::TestCase
       has_new_activity: false,
     )
 
-    kase.add_mms_message(Mms::Message.stub)
+    kase.add_sms_message(Sms::Message.stub)
     kase.add_chat_message(Chat::Message.stub)
 
     assert_instances_of(kase.events, [

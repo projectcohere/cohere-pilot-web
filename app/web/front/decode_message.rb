@@ -4,7 +4,7 @@ module Front
     def call(json_string)
       json = ActiveSupport::JSON.decode(json_string)
       json["target"]["data"].then { |json|
-        Mms::Message.new(
+        Sms::Message.new(
           phone_number: decode_phone_number(json, "from"),
           attachments: decode_attachments(json),
         )
@@ -23,7 +23,7 @@ module Front
     private def decode_attachments(json)
       json = json["attachments"]
       json.map do |j|
-        Mms::Attachment.new(url: j["url"])
+        Sms::Attachment.new(url: j["url"])
       end
     end
   end

@@ -46,7 +46,7 @@ class ChatMessagesTests < ActionDispatch::IntegrationTest
     signature = Twilio::Signature.new("http://#{host}/messages/twilio", @params)
 
     act = -> do
-      VCR.use_cassette("chats--recv-recipient-mms") do
+      VCR.use_cassette("chats--recv-recipient-sms") do
         post("/messages/twilio", params: @params,
           headers: {
             "X-Twilio-Signature" => signature.computed

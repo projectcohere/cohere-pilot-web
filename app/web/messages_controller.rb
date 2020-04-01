@@ -11,6 +11,6 @@ class MessagesController < ApplicationController
     end
 
     sms = Twilio::DecodeSms.(request.POST)
-    Cases::AddMmsMessage.(sms)
+    Cases::AddSmsMessage.(sms)
   end
 end

@@ -1,7 +1,7 @@
 module Twilio
   class DecodeSms < ::Command
     def call(params)
-      message = Mms::Message.new(
+      message = Sms::Message.new(
         phone_number: decode_phone_number(params),
         attachments: decode_attachments(params),
       )
@@ -22,12 +22,12 @@ module Twilio
 
       if count == 1
         return [
-          Mms::Attachment.new(url: params["MediaUrl"])
+          Sms::Attachment.new(url: params["MediaUrl"])
         ]
       end
 
       return (0...count).map do |i|
-        Mms::Attachment.new(url: params["MediaUrl#{i}"])
+        Sms::Attachment.new(url: params["MediaUrl#{i}"])
       end
     end
   end
