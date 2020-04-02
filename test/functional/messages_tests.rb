@@ -1,6 +1,8 @@
 require "test_helper"
 
 class ChatMessagesTests < ActionDispatch::IntegrationTest
+  include ActionCable::Channel::TestCase::Behavior
+
   # -- messages --
   test "rejects improperly signed requests" do
     post("/messages/twilio",
@@ -24,7 +26,7 @@ class ChatMessagesTests < ActionDispatch::IntegrationTest
       "FromState" => "IL",
       "SmsStatus" => "received",
       "FromCity" => "WHEELING",
-      "Body" => "hello",
+      "Body" => "Test from recipient.",
       "FromCountry" => "US",
       "To" => "+13132142937",
       "ToZip" => "",
@@ -55,22 +57,15 @@ class ChatMessagesTests < ActionDispatch::IntegrationTest
       &act
     )
 
-    assert_broadcast_on(chat, {
-      sender: Chat::Sender.recipient,
-      message: {
-        body: "Test from recipient.",
-        timestamp: chat_message_timestamp,
-        attachments: [],
-      },
-    })
+    assert_matching_broadcast_on(chat_messages_for(:idle_2)) do |msg|
+      assert_equal(msg["sender"], Chat::Sender.recipient)
+      assert_equal(msg["message"]["body"], "Test from recipient.")
+    end
 
-    assert_broadcast_on(case_activity_for(:cohere_1), {
-      name: "HAS_NEW_ACTIVITY",
-      data: {
-        case_id: case_rec.id,
-        case_has_new_activity: true,
-      }
-    })
+    assert_matching_broadcast_on(case_activity_for(:cohere_1)) do |msg|
+      assert_equal(msg["name"], "HAS_NEW_ACTIVITY")
+      assert(msg["data"]["case_has_new_activity"])
+    end
   end
 
   test "adds a message with attachments" do
@@ -86,7 +81,7 @@ class ChatMessagesTests < ActionDispatch::IntegrationTest
       "FromState" => "IL",
       "SmsStatus" => "received",
       "FromCity" => "WHEELING",
-      "Body" => "hello test",
+      "Body" => "Test from recipient.",
       "FromCountry" => "US",
       "To" => "+13132142937",
       "ToZip" => "",

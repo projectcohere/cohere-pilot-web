@@ -1,5 +1,3 @@
-require "open-uri"
-
 module Twilio
   class DeleteMedia < ::Command
     # -- lifetime --

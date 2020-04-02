@@ -6,6 +6,11 @@ module Support
       return Cases::ActivityChannel::broadcasting_for(partner_rec.id)
     end
 
+    def chat_messages_for(chat_name)
+      chat_rec = chats(chat_name)
+      return Chats::MessageChannel::broadcasting_for(chat_rec.id)
+    end
+
     # -- asserts --
     def assert_matching_broadcast_on(stream)
       assert(block_given?, "expected a matching block for `assert_matching_broadcast_on")
