@@ -2,34 +2,35 @@ module Chats
   class MessageChannel < ApplicationCable::Channel
     # -- ActionCable::Channel::Base
     def subscribed
-      chat = find_current_chat(params[:chat])
+      chat = find_current_chat!(params[:chat])
       stream_for(chat.id)
     end
 
     def receive(data)
-      chat = find_current_chat(data["chat"])
+      assert(sender != nil, "must be a cohere user to send messages")
 
-      # TODO: only cohere users should be sending messages now
-      if connection.chat_user_id == nil
-        raise ""
-      end
+      chat = find_current_chat!(data["chat"])
+      assert(chat != nil, "must have a chat to send messages")
 
       # add incoming message to chat
-      sender = Chat::Sender.cohere(connection.chat_user_id)
-      AddCohereMessage.(chat, sender, Incoming.new(
+      AddWebMessage.(chat, sender, Incoming.new(
         body: data["message"]["body"],
         attachment_ids: data["message"]["attachment_ids"],
       ))
 
-      # handle events
-      Events::DispatchAll.get.()
+      # dispatch events
+      Events::DispatchAll.()
     end
 
     # -- queries --
-    private def find_current_chat(chat_id)
-      if chat_id != nil
-        return Chat::Repo.get.find(chat_id)
-      end
+    private def sender
+      return Chat::Sender.cohere(connection.chat_user_id)
     end
+
+    private def find_current_chat!(chat_id)
+      chat = Chat::Repo.get.find(chat_id)
+      assert(chat != nil, "could not find chat with id #{chat_id}")
+      return chat
+   end
   end
 end

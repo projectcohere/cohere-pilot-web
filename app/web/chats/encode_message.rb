@@ -42,10 +42,11 @@ module Chats
           m.body,
           m.timestamp,
           m.attachments.map { |a|
+            f = a.file
             Attachment.new(
-              a.filename,
-              a.service_url,
-              a.representable? ? a.representation(resize: "400x400>").processed.service_url : nil
+              f.filename,
+              f.service_url,
+              f.representable? ? f.representation(resize: "400x400>").processed.service_url : nil
             )
           }
         )

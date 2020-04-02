@@ -295,7 +295,7 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     sms = Sms::Message.stub(
-      attachments: [Sms::Attachment.stub(url: :test_url)],
+      attachments: [Sms::Media.stub(url: :test_url)],
     )
 
     kase.add_sms_message(sms)

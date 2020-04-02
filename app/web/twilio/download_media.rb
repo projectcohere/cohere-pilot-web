@@ -3,21 +3,17 @@ require "open-uri"
 module Twilio
   class DownloadMedia < ::Command
     # -- lifetime --
+    def self.get
+      return DownloadMedia.new
+    end
+
     def initialize(client: Twilio::Client.get)
       @client = client
     end
 
     # -- command --
-    def call(kase)
-      document = kase.selected_document
-      if document.nil?
-        raise "can't download media without a selected document"
-      end
-
-      source_url = document.source_url
-      if source_url.nil?
-        raise "can't download media without source url: #{document}"
-      end
+    def call(source_url)
+      assert(source_url != nil, "source_url must not be nil!")
 
       res = @client.get(source_url)
 

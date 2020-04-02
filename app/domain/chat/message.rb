@@ -1,29 +1,47 @@
 class Chat
   class Message < ::Entity
+    # -- props --
     prop(:id, default: Id::None)
     prop(:sender)
     prop(:body)
     prop(:timestamp)
-    prop(:attachments, default: [])
+    prop(:attachments, default: []) # IO | Sms::Media | ActiveStorage::Blob
     prop(:chat_id)
 
+    # -- props/temporary
+    attr(:selected_attachment)
+
+    # -- commands --
+    def select_attachment(attachment_id)
+      @selected_attachment = @attachments.find do |m|
+        m.id.val == attachment_id
+      end
+    end
+
     # -- queries --
+    def prepared?
+      return @attachments.none?(&:remote?)
+    end
+
     def sent_by?(other)
       case @sender
       when Chat::Sender::Recipient
-        other == Chat::Sender::Recipient
+        return other == Chat::Sender::Recipient
       else
-        other != Chat::Sender::Recipient
+        return other != Chat::Sender::Recipient
       end
     end
 
     def sent_by_recipient?
-      sent_by?(Chat::Sender::Recipient)
+      return sent_by?(Chat::Sender::Recipient)
     end
 
     # -- callbacks --
     def did_save(record)
       @id.set(record.id)
+      @attachments.each_with_index do |a, i|
+        a.did_save(record.attachments[i])
+      end
     end
   end
 end

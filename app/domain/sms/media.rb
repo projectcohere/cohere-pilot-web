@@ -1,5 +1,5 @@
 module Sms
-  class Attachment < ::Value
+  class Media < ::Value
     prop(:url)
   end
 end

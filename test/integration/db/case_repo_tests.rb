@@ -483,7 +483,7 @@ module Db
       kase.add_sms_message(Sms::Message.stub(
         phone_number: kase.recipient.profile.phone.number,
         attachments: [
-          Sms::Attachment.stub(
+          Sms::Media.stub(
             url: Faker::Internet.url
           )
         ],
@@ -522,7 +522,7 @@ module Db
 
       kase = Case::Repo.map_record(case_rec)
       kase.add_sms_message(Sms::Message.stub(
-        attachments: [Sms::Attachment.stub(url: :test_url)],
+        attachments: [Sms::Media.stub(url: :test_url)],
       ))
 
       domain_events = ArrayQueue.new

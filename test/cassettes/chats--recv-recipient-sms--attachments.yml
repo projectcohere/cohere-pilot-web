@@ -1,0 +1,224 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.twilio.com/2010-04-01/Accounts/<TWILIO_API_ACCOUNT_SID>/Messages/MM598fb0ea354c2dca4fac7e148758f8e8/Media/MEbd4edd60eaca15bf1f5bd8be641d11ef
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - api.twilio.com
+      Authorization:
+      - Basic <TWILIO_API_BASIC_AUTH>
+  response:
+    status:
+      code: 307
+      message: TEMPORARY REDIRECT
+    headers:
+      Date:
+      - Thu, 02 Apr 2020 20:13:17 GMT
+      Content-Type:
+      - application/xml
+      Content-Length:
+      - '445'
+      Connection:
+      - keep-alive
+      Twilio-Concurrent-Requests:
+      - '1'
+      Location:
+      - https://media.twiliocdn.com/<TWILIO_API_ACCOUNT_SID>/9ee350daf96296df25e8cba9acf25f84?x-amz-security-token=IQoJb3JpZ2luX2VjEEMaCXVzLWVhc3QtMSJHMEUCIHs6vT0tTqWpFyEhn3B3bKIIc9GKn9mkgu3FhzGknOkWAiEA%2BirFm8k7vkH0x70TLSKQ0vFF5Y2xjPbvA3%2FrjF0mG4YqtAMISxAAGgwyMDExNjQ5MjE0MDgiDN6SIIxXogJSZoDHkiqRA5uo%2FPE9SjRcE9hbyeAGCiX%2Bd84CaegCz37VqijBddVMuO8Mmd9qfofb4G3Dn0wSVOKr3Uk17ru02PdEQyMbhfb%2BHgcQbKtus4tWjzVWw4jxxiqbSQzdvrmRzV3M4%2FWxvgQC4Nw7tEd5f0jcr%2FQCL%2FYvmrQWryVctN3n7rpTzsaNkvVribzR%2B6SS3zQc3mAoh9GPx2dOHyYoU8OcQsB1jGZKiKsPcKrMu9i7Fe7bLAulkizivzs%2FYEqQOShA%2FveHwnF882qhZiXW4IUgukSmYGR8AC%2F7QNR07zoq07pgE%2ByLAQ%2FytuV2I%2BW2J%2BkNHjrkzkVMEWmUlnuM80CB3qc0%2F1hLdDCb60x0noPdEwFFOmyn%2BaeLaWtD5YoQrAqEE2hRo7ESeGWh%2B8DkCunWKkJponS1HAQKPkWXguORcxxF1Y%2B%2FTFLbrNknAOMIdd4O9QUwFrK0b5jPMOSzYxY1VdqDl%2BXMmavuPNFce1nOB%2F47y3VdEStOhhVoEN8CdmOyOw1ZUKxrL%2BerTUWJxeE%2FyWdd%2FiyUMOXrmPQFOusBfzl39cGMl2N83vxg4tPyKovqepY8JPTfl3m8L%2B1AJCqc9s%2FzUZ%2F4aKsbH80V6nvYR8aEHBLEAHAn6c0ETRcIxxZScwbYFtAeZZAgL%2FWWPigRM%2BPdk3j945M3ZEy5VHZfDbXQ2IFqwohH55oREF%2F1489PPzlslYNWFepG%2Bz8yPX6Lxh37jgVGEiUUh%2Bpe%2BCMzCfiOk3ZzES5UbRAuR0bSPkozj3Wl7NimswSkEUo4eSZcmkDQJPuHqa3rZXwOCm%2ByletcPG1ghrm3v0CI%2B3z7EiVT4aeKEIIy2SMu%2FmkCrRzsm7tEsYs1APtwjA%3D%3D&AWSAccessKeyId=ASIAS5VS5DJAO42N7GF2&Expires=1585858996&Signature=NXl6R3lSibqAaWOBoMKdAdRo3uk%3D
+      Twilio-Request-Id:
+      - RQf5c30942c1324e239b0b38c2ba425289
+      Twilio-Request-Duration:
+      - '0.037'
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Accept, Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match,
+        If-Unmodified-Since
+      Access-Control-Allow-Methods:
+      - GET, POST, DELETE, OPTIONS
+      Access-Control-Expose-Headers:
+      - ETag
+      Access-Control-Allow-Credentials:
+      - 'true'
+      X-Powered-By:
+      - AT-5000
+      X-Shenanigans:
+      - none
+      X-Home-Region:
+      - us1
+      X-Api-Domain:
+      - api.twilio.com
+      Strict-Transport-Security:
+      - max-age=31536000
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version='1.0' encoding='UTF-8'?>
+        <TwilioResponse><Media><Sid/><AccountSid><TWILIO_API_ACCOUNT_SID></AccountSid><ParentSid/><ContentType/><DateCreated>Thu, 02 Apr 2020 20:10:32 +0000</DateCreated><DateUpdated>Thu, 02 Apr 2020 20:10:32 +0000</DateUpdated><Uri>/2010-04-01/Accounts/<TWILIO_API_ACCOUNT_SID>/Messages/MM598fb0ea354c2dca4fac7e148758f8e8/Media/MEbd4edd60eaca15bf1f5bd8be641d11ef</Uri></Media></TwilioResponse>
+    http_version: 
+  recorded_at: Thu, 02 Apr 2020 20:13:17 GMT
+- request:
+    method: get
+    uri: https://media.twiliocdn.com/<TWILIO_API_ACCOUNT_SID>/9ee350daf96296df25e8cba9acf25f84?AWSAccessKeyId=ASIAS5VS5DJAO42N7GF2&Expires=1585858996&Signature=NXl6R3lSibqAaWOBoMKdAdRo3uk=&x-amz-security-token=IQoJb3JpZ2luX2VjEEMaCXVzLWVhc3QtMSJHMEUCIHs6vT0tTqWpFyEhn3B3bKIIc9GKn9mkgu3FhzGknOkWAiEA%2BirFm8k7vkH0x70TLSKQ0vFF5Y2xjPbvA3/rjF0mG4YqtAMISxAAGgwyMDExNjQ5MjE0MDgiDN6SIIxXogJSZoDHkiqRA5uo/PE9SjRcE9hbyeAGCiX%2Bd84CaegCz37VqijBddVMuO8Mmd9qfofb4G3Dn0wSVOKr3Uk17ru02PdEQyMbhfb%2BHgcQbKtus4tWjzVWw4jxxiqbSQzdvrmRzV3M4/WxvgQC4Nw7tEd5f0jcr/QCL/YvmrQWryVctN3n7rpTzsaNkvVribzR%2B6SS3zQc3mAoh9GPx2dOHyYoU8OcQsB1jGZKiKsPcKrMu9i7Fe7bLAulkizivzs/YEqQOShA/veHwnF882qhZiXW4IUgukSmYGR8AC/7QNR07zoq07pgE%2ByLAQ/ytuV2I%2BW2J%2BkNHjrkzkVMEWmUlnuM80CB3qc0/1hLdDCb60x0noPdEwFFOmyn%2BaeLaWtD5YoQrAqEE2hRo7ESeGWh%2B8DkCunWKkJponS1HAQKPkWXguORcxxF1Y%2B/TFLbrNknAOMIdd4O9QUwFrK0b5jPMOSzYxY1VdqDl%2BXMmavuPNFce1nOB/47y3VdEStOhhVoEN8CdmOyOw1ZUKxrL%2BerTUWJxeE/yWdd/iyUMOXrmPQFOusBfzl39cGMl2N83vxg4tPyKovqepY8JPTfl3m8L%2B1AJCqc9s/zUZ/4aKsbH80V6nvYR8aEHBLEAHAn6c0ETRcIxxZScwbYFtAeZZAgL/WWPigRM%2BPdk3j945M3ZEy5VHZfDbXQ2IFqwohH55oREF/1489PPzlslYNWFepG%2Bz8yPX6Lxh37jgVGEiUUh%2Bpe%2BCMzCfiOk3ZzES5UbRAuR0bSPkozj3Wl7NimswSkEUo4eSZcmkDQJPuHqa3rZXwOCm%2ByletcPG1ghrm3v0CI%2B3z7EiVT4aeKEIIy2SMu/mkCrRzsm7tEsYs1APtwjA==
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - media.twiliocdn.com
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Date:
+      - Thu, 02 Apr 2020 20:13:17 GMT
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - max-age=3600
+      Expires:
+      - Thu, 02 Apr 2020 21:13:17 GMT
+      Location:
+      - https://s3-external-1.amazonaws.com/media.twiliocdn.com/<TWILIO_API_ACCOUNT_SID>/9ee350daf96296df25e8cba9acf25f84
+      Expect-Ct:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Vary:
+      - Accept-Encoding
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - 57dd35a64f11e1ea-ORD
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Thu, 02 Apr 2020 20:13:17 GMT
+- request:
+    method: get
+    uri: https://s3-external-1.amazonaws.com/media.twiliocdn.com/<TWILIO_API_ACCOUNT_SID>/9ee350daf96296df25e8cba9acf25f84
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - s3-external-1.amazonaws.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amz-Id-2:
+      - y1aCH9nldfx+1rJXYqt1bWnAbJhHffa6FEZn1EDbWYRWfRi5Krf+mOrW1sUXdZlQDoVWjb+zG7o=
+      X-Amz-Request-Id:
+      - ADF9E6E62B94AA4B
+      Date:
+      - Thu, 02 Apr 2020 20:13:18 GMT
+      Last-Modified:
+      - Thu, 02 Apr 2020 20:10:33 GMT
+      Etag:
+      - '"9ee350daf96296df25e8cba9acf25f84"'
+      X-Amz-Server-Side-Encryption:
+      - AES256
+      Content-Disposition:
+      - inline; filename="px.jpg"
+      X-Amz-Version-Id:
+      - SOpinotgr55ioNOHqlXR_dOFhB1VYrTi
+      Accept-Ranges:
+      - bytes
+      Content-Type:
+      - image/jpeg
+      Content-Length:
+      - '285'
+      Server:
+      - AmazonS3
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        /9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAj/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/ALKAB//Z
+    http_version: 
+  recorded_at: Thu, 02 Apr 2020 20:13:17 GMT
+- request:
+    method: delete
+    uri: https://api.twilio.com/2010-04-01/Accounts/<TWILIO_API_ACCOUNT_SID>/Messages/MM598fb0ea354c2dca4fac7e148758f8e8/Media/MEbd4edd60eaca15bf1f5bd8be641d11ef.json
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - api.twilio.com
+      Authorization:
+      - Basic <TWILIO_API_BASIC_AUTH>
+  response:
+    status:
+      code: 204
+      message: NO CONTENT
+    headers:
+      Date:
+      - Thu, 02 Apr 2020 20:13:18 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '0'
+      Connection:
+      - keep-alive
+      Twilio-Request-Id:
+      - RQdf36eb22f9034e579921b31556c98e4d
+      Twilio-Request-Duration:
+      - '0.347'
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Accept, Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match,
+        If-Unmodified-Since
+      Access-Control-Allow-Methods:
+      - GET, POST, DELETE, OPTIONS
+      Access-Control-Expose-Headers:
+      - ETag
+      Access-Control-Allow-Credentials:
+      - 'true'
+      X-Powered-By:
+      - AT-5000
+      X-Shenanigans:
+      - none
+      X-Home-Region:
+      - us1
+      X-Api-Domain:
+      - api.twilio.com
+      Strict-Transport-Security:
+      - max-age=31536000
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Thu, 02 Apr 2020 20:13:18 GMT
+recorded_with: VCR 5.0.0

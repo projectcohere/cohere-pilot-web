@@ -33,7 +33,7 @@ class ApplicationController < ActionController::Base
   end
 
   protected def dispatch_events
-    Events::DispatchAll.get.()
+    Events::DispatchAll.()
   end
 
   # -- Clearance::Authentication --

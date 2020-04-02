@@ -1,3 +1,4 @@
+# TODO: rename to SmsController
 class MessagesController < ApplicationController
   protect_from_forgery(
     except: :twilio
@@ -11,6 +12,6 @@ class MessagesController < ApplicationController
     end
 
     sms = Twilio::DecodeSms.(request.POST)
-    Cases::AddSmsMessage.(sms)
+    Chats::AddSmsMessage.(sms)
   end
 end

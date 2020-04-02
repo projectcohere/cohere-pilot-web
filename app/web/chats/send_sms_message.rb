@@ -1,5 +1,5 @@
 module Chats
-  class SendCohereMessage < ApplicationWorker
+  class SendSmsMessage < ApplicationWorker
     # -- lifetime --
     def initialize(
       send_sms: Twilio::SendSms.get,
@@ -10,10 +10,10 @@ module Chats
     end
 
     # -- command --
-    def call(chat_message_id)
+    def call(message_id)
       Files::Host.set_current!
 
-      chat = @chat_repo.find_by_selected_message(chat_message_id)
+      chat = @chat_repo.find_by_selected_message(message_id)
 
       m = chat.selected_message
       p = chat.recipient.profile.phone

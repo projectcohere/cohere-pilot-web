@@ -58,6 +58,17 @@ module Db
       assert_present(chat.selected_message.attachments)
     end
 
+    test "finds a chat by selected media" do
+      chat_repo = Chat::Repo.new
+      chat_message_rec = chat_messages(:message_i1_1)
+      chat_media_rec = chat_message_rec.files.blobs.first
+
+      chat = chat_repo.find_by_selected_media(chat_message_rec.id, chat_media_rec.id)
+      assert_not_nil(chat)
+      assert_not_nil(chat.selected_message)
+      assert_not_nil(chat.selected_media)
+    end
+
     # -- commands --
     test "saves an opened chat" do
       recipient_rec = recipients(:recipient_3)

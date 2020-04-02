@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_01_155533) do
+ActiveRecord::Schema.define(version: 2020_04_02_144109) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -66,6 +66,16 @@ ActiveRecord::Schema.define(version: 2020_04_01_155533) do
     t.index ["referrer_id"], name: "index_cases_on_referrer_id"
     t.index ["status"], name: "index_cases_on_status"
     t.index ["supplier_id"], name: "index_cases_on_supplier_id"
+  end
+
+  create_table "chat_attachments", force: :cascade do |t|
+    t.string "remote_url"
+    t.bigint "file_id"
+    t.bigint "message_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["file_id"], name: "index_chat_attachments_on_file_id"
+    t.index ["message_id"], name: "index_chat_attachments_on_message_id"
   end
 
   create_table "chat_messages", force: :cascade do |t|

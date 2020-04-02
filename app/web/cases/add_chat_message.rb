@@ -1,5 +1,5 @@
 module Cases
-  class AddChatMessage < ::Command
+  class AddChatMessage < ApplicationWorker
     # -- lifetime --
     def initialize(
       case_repo: Case::Repo.get,
@@ -16,5 +16,7 @@ module Cases
       kase.add_chat_message(chat.selected_message)
       @case_repo.save_new_message(kase)
     end
+
+    alias :perform :call
   end
 end

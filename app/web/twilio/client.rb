@@ -32,6 +32,11 @@ module Twilio
       return start(auth(req))
     end
 
+    def delete(path_or_url)
+      req = Net::HTTP::Delete.new(uri(path_or_url))
+      return start(auth(req))
+    end
+
     # -- commands/helpers
     private def uri(path_or_url)
       if path_or_url.start_with?(@host)
@@ -83,6 +88,10 @@ module Twilio
     end
 
     # -- queries/status
+    def status
+      return @res.code.to_i
+    end
+
     def success?
       return @res.kind_of?(Net::HTTPSuccess)
     end

@@ -180,24 +180,21 @@ class Case < ::Entity
 
   # -- commands/messages
   def add_chat_message(message)
-    track_new_activity(false)
-  end
+    if message.sent_by_recipient?
+      # add attachments as documents
+      message.attachments&.each do |attachment|
+        new_document = Document.attach_file(attachment.file)
+        add_document(new_document)
+      end
 
-  def add_sms_message(message)
-    # add attachments as documents
-    message.attachments&.each do |attachment|
-      new_document = Document.download(attachment.url)
-      add_document(new_document)
-      @events.add(Events::DidAddMessageAttachment.from_entity(self, new_document))
+      # track recipient message receipt
+      is_first = @received_message_at == nil
+      @received_message_at = Time.zone.now
+      @events.add(Events::DidReceiveMessage.from_entity(self, is_first: is_first))
     end
 
-    # track recipient message receipt
-    is_first = @received_message_at == nil
-    @received_message_at = Time.zone.now
-    @events.add(Events::DidReceiveMessage.from_entity(self, is_first: is_first))
-
     # track activity
-    track_new_activity(true)
+    track_new_activity(message.sent_by_recipient?)
   end
 
   # -- commands/documents

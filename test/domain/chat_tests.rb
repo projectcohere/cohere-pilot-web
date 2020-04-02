@@ -34,10 +34,14 @@ class ChatTests < ActiveSupport::TestCase
     chat.add_message(
       sender: Chat::Sender.cohere(:test_sender),
       body: "This is a test.",
-      attachments: %i[test_attachment]
+      files: [
+        :test_io,
+        Sms::Media.stub(url: :test_url),
+      ]
     )
 
-    assert_length(chat.messages, 2)
+    messages = chat.messages
+    assert_length(messages, 2)
 
     message = chat.new_message
     assert_not_nil(message)
@@ -46,14 +50,21 @@ class ChatTests < ActiveSupport::TestCase
     assert_equal(message.body, "This is a test.")
     assert_equal(message.chat_id, 42)
 
-    attachment = message.attachments[0]
-    assert_length(message.attachments, 1)
-    assert_equal(attachment, :test_attachment)
+    attachments = message.attachments
+    assert_length(attachments, 2)
 
-    event = chat.events[0]
-    assert_length(chat.events, 1)
-    assert_instance_of(Chat::Events::DidAddMessage, event)
-    assert_equal(event.chat_message_id, message.id)
+    attachment = attachments[0]
+    assert_equal(attachment.file, :test_io)
+
+    attachment = attachments[1]
+    assert(attachment.remote?)
+    assert_equal(attachment.remote_url, :test_url)
+
+    events = chat.events
+    assert_instances_of(events, [
+      Chat::Events::DidPrepareMessage,
+      Chat::Events::DidAddRemoteAttachment,
+    ])
   end
 
   test "selects a message" do
@@ -63,5 +74,37 @@ class ChatTests < ActiveSupport::TestCase
 
     chat.select_message(0)
     assert_equal(chat.selected_message, :test_message)
+  end
+
+  # -- commands/attachments
+  test "selects an attachment" do
+    chat = Chat.stub(
+      messages: [
+        Chat::Message.stub(
+          attachments: [Chat::Attachment.stub(id: Id.new(3))],
+        ),
+      ],
+    )
+
+    chat.select_message(0)
+    chat.selected_message.select_attachment(3)
+    assert_equal(chat.selected_attachment.id.val, 3)
+  end
+
+  test "uploads an attachment" do
+    chat = Chat.stub(
+      messages: [
+        Chat::Message.stub(
+          attachments: [Chat::Attachment.stub(id: Id.new(3))],
+        ),
+      ],
+    )
+
+    chat.select_message(0)
+    chat.selected_message.select_attachment(3)
+
+    chat.upload_selected_attachment(:test_file)
+    assert_not(chat.selected_attachment.remote?)
+    assert_instances_of(chat.events, [Chat::Events::DidUploadAttachment])
   end
 end

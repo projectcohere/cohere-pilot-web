@@ -23,7 +23,7 @@ module Front
     private def decode_attachments(json)
       json = json["attachments"]
       json.map do |j|
-        Sms::Attachment.new(url: j["url"])
+        Sms::Media.new(url: j["url"])
       end
     end
   end

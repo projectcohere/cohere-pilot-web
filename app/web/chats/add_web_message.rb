@@ -1,5 +1,5 @@
 module Chats
-  class AddCohereMessage < ::Command
+  class AddWebMessage < ::Command
     # -- lifetime --
     def initialize(
       chat_repo: Chat::Repo.get,
@@ -20,7 +20,7 @@ module Chats
       chat.add_message(
         sender: sender,
         body: incoming.body,
-        attachments: attachments || [],
+        files: attachments || [],
       )
 
       # save aggregate

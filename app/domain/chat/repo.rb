@@ -78,6 +78,19 @@ class Chat
       return chat
     end
 
+    def find_by_selected_attachment(attachment_id)
+      chat_message = @chat_message_repo
+        .find_by_selected_attachment(attachment_id)
+
+      chat_rec = Chat::Record
+        .find(chat_message.chat_id)
+
+      chat = entity_from(chat_rec, [chat_message])
+        .tap { |chat| chat.select_message(0) }
+
+      return chat
+    end
+
     # -- commands --
     def save_opened(chat)
       chat_message = chat.new_message
@@ -110,48 +123,91 @@ class Chat
     end
 
     def save_new_message(chat)
-      chat_rec = chat.record
-      if chat_rec == nil
-        raise "chat must be fetched from the db!"
-      end
+      assert(chat.record != nil, "chat must be persisted")
 
-      chat_message = chat.new_message
-      if chat_message == nil
-        raise "chat must have a new chat_message!"
-      end
+      message = chat.new_message
+      assert(message != nil, "chat must have a new message")
 
-      # build/update the records
-      chat_message_rec = Chat::Message::Record.new({
-        chat_id: chat_message.chat_id,
-      })
-
-      assign_message(chat_message, chat_message_rec)
+      # build the records
+      message_rec = chat.record.messages.build
+      assign_message(message, message_rec)
 
       # save the records
       transaction do
-        chat_rec.save!
-        chat_message_rec.save!
+        message_rec.save!
+        create_attachments!(message, message_rec)
       end
 
       # send callbacks to entities
-      chat_message.did_save(chat_message_rec)
-      chat.did_save_new_message
+      message.did_save(message_rec)
 
       # consume all entity events
       @domain_events.consume(chat.events)
     end
 
+    def save_uploaded_attachment(chat)
+      attachment = chat.selected_attachment
+      assert(attachment.record != nil, "selected attachment must be persisted")
+
+      # update the records
+      attachment_rec = attachment.record
+
+      a = attachment
+      attachment_rec.assign_attributes(
+        remote_url: a.remote_url,
+      )
+
+      # save the records
+      transaction do
+        attachment_rec.file = create_file!(a.file)
+        attachment_rec.save!
+      end
+
+      # consume all entity events
+      @domain_events.consume(chat.events)
+    end
+
+    def save_prepared_message(chat)
+      # consume all entity events
+      @domain_events.consume(chat.events)
+    end
+
     # -- commands/helpers --
-    def assign_message(chat_message, chat_message_rec)
-      m = chat_message
-      chat_message_rec.assign_attributes({
+    private def assign_message(message, message_rec)
+      m = message
+      message_rec.assign_attributes({
         sender: m.sender,
         body: m.body,
-        files: m.attachments,
       })
     end
 
-    def transaction
+    private def create_attachments!(message, message_rec)
+      attachments = message.attachments
+      if attachments.blank?
+        return
+      end
+
+      attachments.each do |a|
+        if a.remote?
+          message_rec.attachments.build({
+            remote_url: a.remote_url,
+          })
+        end
+      end
+
+      message_rec.save!
+    end
+
+    private def create_file!(f)
+      return ActiveStorage::Blob.create_after_upload!(
+        io: f.data,
+        filename: f.name,
+        content_type: f.mime_type,
+        identify: false,
+      )
+    end
+
+    private def transaction
       Chat::Record.transaction do
         yield
       end

@@ -22,22 +22,19 @@ class Chat < Entity
     chat.add_message(
       sender: Sender.automated,
       body: macro.body,
-      attachments: macro.attachment == nil ? [] : [macro.attachment]
+      files: macro.attachment == nil ? [] : [macro.attachment],
     )
 
     return chat
   end
 
-  # -- queries --
-  def sms_phone_number
-    @recipient.profile.phone.number
-  end
+  # -- messages --
+  # -- messages/commands
+  def add_message(sender:, body:, files:)
+    attachments = files.map do |f|
+      Attachment.from_source(f)
+    end
 
-  # -- commands/messages
-  def add_message(sender:, body:, attachments:)
-    # add message to list
-    # TODO: does the discrepancy between this timestamp and the ultimate created_at
-    # date matter?
     message = Message.new(
       sender: sender,
       body: body,
@@ -46,26 +43,59 @@ class Chat < Entity
       chat_id: @id.val,
     )
 
-    @new_message = message
+    # update state
     @messages << message
-    @events.add(Events::DidAddMessage.from_entity(self))
+    @new_message = message
+
+    # add events
+    if message.prepared?
+      @events.add(Events::DidPrepareMessage.from_entity(message))
+    end
+
+    attachments.filter(&:remote?).each do |a|
+      @events.add(Events::DidAddRemoteAttachment.from_entity(a))
+    end
   end
 
   def select_message(i)
-    if i >= @messages.count
-      raise "can't select a message that does not exist"
-    end
-
+    assert(i < @messages.count, "a message must exist to select it")
     @selected_message = @messages[i]
+  end
+
+  def prepare_selected_message
+    assert(@selected_message != nil, "a message must be selected")
+
+    if @selected_message.prepared?
+      @events.add(Events::DidPrepareMessage.from_entity(@selected_message))
+    end
+  end
+
+  # -- attachments --
+  # -- attachments/commands
+  def upload_selected_attachment(file)
+    assert(selected_attachment != nil, "an attachment must be selected")
+    selected_attachment.upload(file)
+
+    @events.add(Events::DidUploadAttachment.from_entity(self))
+  end
+
+  # -- attachments/queries
+  def selected_attachment
+    return selected_message&.selected_attachment
+  end
+
+  def selected_attachment_url
+    return selected_attachment&.remote_url
+  end
+
+  # -- queries --
+  def sms_phone_number
+    @recipient.profile.phone.number
   end
 
   # -- callbacks --
   def did_save(record)
     @id.set(record.id)
     @record = record
-  end
-
-  def did_save_new_message
-    @new_message = nil
   end
 end
