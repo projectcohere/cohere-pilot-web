@@ -476,16 +476,17 @@ module Db
       assert_length(domain_events, 1)
     end
 
-    test "saves a new sms message" do
+    test "saves a new message" do
       case_rec = cases(:pending_1)
 
       kase = Case::Repo.map_record(case_rec)
-      kase.add_sms_message(Sms::Message.stub(
-        phone_number: kase.recipient.profile.phone.number,
+      kase.add_chat_message(Chat::Message.stub(
+        sender: Chat::Sender.recipient,
         attachments: [
-          Sms::Media.stub(
-            url: Faker::Internet.url
-          )
+          Chat::Attachment.stub(file: {
+            io: StringIO.new("test"),
+            filename: "test.txt",
+          }),
         ],
       ))
 
@@ -511,46 +512,9 @@ module Db
       document_rec = document.record
       assert_not_nil(document_rec)
       assert_not_nil(document_rec.case_id)
-      assert_not_nil(document_rec.source_url)
 
       assert_length(kase.events, 0)
-      assert_length(domain_events, 2)
-    end
-
-    test "saves a new chat message" do
-      case_rec = cases(:pending_2)
-
-      kase = Case::Repo.map_record(case_rec)
-      kase.add_sms_message(Sms::Message.stub(
-        attachments: [Sms::Media.stub(url: :test_url)],
-      ))
-
-      domain_events = ArrayQueue.new
-      case_repo = Case::Repo.new(domain_events: domain_events)
-
-      act = -> do
-        case_repo.save_new_message(kase)
-      end
-
-      assert_difference(
-        -> { Document::Record.count } => 1,
-        &act
-      )
-
-      case_rec = kase.record
-      assert_not_nil(case_rec.received_message_at)
-      assert(case_rec.has_new_activity)
-
-      document = kase.new_documents[0]
-      assert_not_nil(document.record)
-      assert_not_nil(document.id.val)
-
-      document_rec = document.record
-      assert_not_nil(document_rec)
-      assert_not_nil(document_rec.case_id)
-
-      assert_length(kase.events, 0)
-      assert_length(domain_events, 3)
+      assert_length(domain_events, 1)
     end
 
     test "saves the selected attachment" do
@@ -566,7 +530,7 @@ module Db
 
       case_repo = Case::Repo.new
       act = -> do
-        case_repo.save_selected_attachment(kase)
+        case_repo.save_selected_document(kase)
       end
 
       assert_difference(

@@ -93,29 +93,29 @@ class Chat
 
     # -- commands --
     def save_opened(chat)
-      chat_message = chat.new_message
+      message = chat.new_message
 
       # start the new records
       chat_rec = Chat::Record.new({
         recipient_id: chat.recipient.id,
       })
 
-      chat_message_rec = Chat::Message::Record.new({
+      message_rec = Message::Record.new({
         chat_id: nil,
       })
 
-      assign_message(chat_message, chat_message_rec)
+      assign_message(message, message_rec)
 
       # save the records
       transaction do
         chat_rec.save!
-        chat_message_rec.chat_id = chat_rec.id
-        chat_message_rec.save!
+        message_rec.chat_id = chat_rec.id
+        message_rec.save!
+        create_attachments!(message, message_rec)
       end
 
       # send callbacks to entities
-      chat_message.did_save(chat_message_rec)
-      chat.did_save_new_message
+      message.did_save(message_rec)
       chat.did_save(chat_rec)
 
       # consume all entity events
@@ -188,17 +188,20 @@ class Chat
       end
 
       attachments.each do |a|
+        attachment_rec = message_rec.attachments.build
+
         if a.remote?
-          message_rec.attachments.build({
-            remote_url: a.remote_url,
-          })
+          attachment_rec.remote_url = a.remote_url
+        elsif # a.is_a?(ActiveStorage::Blob)
+          attachment_rec.file = a.file
         end
       end
 
       message_rec.save!
     end
 
-    private def create_file!(f)
+    private def create_file!(file)
+      f = file
       return ActiveStorage::Blob.create_after_upload!(
         io: f.data,
         filename: f.name,
@@ -207,10 +210,8 @@ class Chat
       )
     end
 
-    private def transaction
-      Chat::Record.transaction do
-        yield
-      end
+    private def transaction(&block)
+      Chat::Record.transaction(&block)
     end
 
     # -- factories --

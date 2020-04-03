@@ -20,7 +20,7 @@ module Chats
 
       @send_sms.(p.number,
         body: m.body,
-        media_urls: m.attachments.map { |a| a.service_url },
+        media_urls: m.attachments.map { |a| a.file.service_url },
       )
     end
 

@@ -41,15 +41,15 @@ class Chat
 
         # build entities
         macros = data_list.map do |data|
-          filename = data["filename"]
-
           Macro.new(
             name: data["name"],
             body: data["body"],
-            attachment: Attachment.new(
-              id: Id.new(filename),
-              file: files[filename],
-            ),
+            attachment: files[data["filename"]]&.then { |f|
+              Attachment.new(
+                id: Id.new(f.id),
+                file: f,
+              )
+            },
           )
         end
 

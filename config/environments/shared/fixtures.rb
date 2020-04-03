@@ -14,6 +14,7 @@ module Environment
       documents: "Document::Record",
       chats: "Chat::Record",
       chat_messages: "Chat::Message::Record",
+      chat_attachments: "Chat::Attachment::Record",
     }
 
     # we have to monkey patch the fixture class cache to namespace our fixture

@@ -376,7 +376,7 @@ class Case
       @domain_events.consume(kase.events)
     end
 
-    def save_selected_attachment(kase)
+    def save_selected_document(kase)
       document = kase.selected_document
       if document.nil?
         raise "no document was selected"

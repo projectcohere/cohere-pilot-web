@@ -137,8 +137,8 @@ class ChatsChannelTests < ActionCable::Channel::TestCase
 
     assert_difference(
       -> { Chat::Message::Record.count } => 1,
+      -> { Chat::Attachment::Record.count } => 1,
       -> { Document::Record.count } => 0,
-      -> { ActiveStorage::Attachment.count } => 1,
       &act
     )
 

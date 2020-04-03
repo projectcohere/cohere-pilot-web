@@ -271,59 +271,75 @@ class CaseTests < ActiveSupport::TestCase
     )
   end
 
-  test "adds the first text message" do
+  test "adds the first recipient message" do
     kase = Case.stub(
       status: Case::Status::Opened,
     )
 
-    kase.add_sms_message(Sms::Message.stub)
-    assert_not_nil(kase.received_message_at)
-    assert(kase.has_new_activity)
+    message = Chat::Message.stub(
+      sender: Chat::Sender.recipient,
+    )
 
-    assert_instances_of(kase.events, [
+    kase.add_chat_message(message)
+    assert(kase.has_new_activity)
+    assert_not_nil(kase.received_message_at)
+
+    events = kase.events
+    assert_instances_of(events, [
       Case::Events::DidReceiveMessage,
       Case::Events::DidChangeActivity,
     ])
 
-    assert(kase.events[0].is_first)
+    event = kase.events[0]
+    assert(event.is_first)
   end
 
-  test "adds a text message with attachments" do
+  test "adds a recipient message with attachments" do
     kase = Case.stub(
       status: Case::Status::Opened,
       received_message_at: Time.now,
     )
 
-    sms = Sms::Message.stub(
-      attachments: [Sms::Media.stub(url: :test_url)],
+    message = Chat::Message.stub(
+      sender: Chat::Sender.recipient,
+      attachments: [Chat::Attachment.stub(file: :test_file)]
     )
 
-    kase.add_sms_message(sms)
+    kase.add_chat_message(message)
     assert(kase.has_new_activity)
 
-    new_document = kase.new_documents[0]
-    assert_length(kase.new_documents, 1)
-    assert_equal(new_document.source_url, :test_url)
-    assert_equal(new_document.classification, :unknown)
+    documents = kase.new_documents
+    assert_length(documents, 1)
 
-    assert_instances_of(kase.events, [
-      Case::Events::DidAddMessageAttachment,
+    document = documents[0]
+    assert_equal(document.new_file, :test_file)
+    assert_equal(document.classification, :unknown)
+
+    events = kase.events
+    assert_instances_of(events, [
       Case::Events::DidReceiveMessage,
       Case::Events::DidChangeActivity,
     ])
 
-    assert_not(kase.events[1].is_first)
+    event = kase.events[0]
+    assert_not(event.is_first)
   end
 
-  test "adds a chat message" do
+  test "adds a cohere message" do
     kase = Case.stub(
       status: Case::Status::Opened,
       has_new_activity: true,
     )
 
-    kase.add_chat_message(Chat::Message.stub)
+    message = Chat::Message.stub(
+      sender: Chat::Sender.automated
+    )
+
+    kase.add_chat_message(message)
     assert_not(kase.has_new_activity)
-    assert_instances_of(kase.events, [Case::Events::DidChangeActivity])
+
+    events = kase.events
+    assert_instances_of(events, [Case::Events::DidChangeActivity])
   end
 
   test "signs a contract" do
@@ -337,12 +353,13 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     kase.sign_contract(contract)
-    assert_length(kase.new_documents, 1)
 
-    new_contract = kase.new_documents[0]
-    assert_equal(new_contract.classification, :contract)
+    documents = kase.new_documents
+    assert_length(documents, 1)
+    assert_equal(documents[0].classification, :contract)
 
-    assert_instances_of(kase.events, [Case::Events::DidSignContract])
+    events = kase.events
+    assert_instances_of(events, [Case::Events::DidSignContract])
   end
 
   test "doesn't sign a contract when one already exists" do
@@ -411,10 +428,12 @@ class CaseTests < ActiveSupport::TestCase
       has_new_activity: false,
     )
 
-    kase.add_sms_message(Sms::Message.stub)
-    kase.add_chat_message(Chat::Message.stub)
+    s = Chat::Sender
+    kase.add_chat_message(Chat::Message.stub(sender: s.recipient))
+    kase.add_chat_message(Chat::Message.stub(sender: s.automated))
 
-    assert_instances_of(kase.events, [
+    events = kase.events
+    assert_instances_of(events, [
       Case::Events::DidReceiveMessage,
       Case::Events::DidChangeActivity,
     ])

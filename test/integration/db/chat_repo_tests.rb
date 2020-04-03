@@ -58,17 +58,6 @@ module Db
       assert_present(chat.selected_message.attachments)
     end
 
-    test "finds a chat by selected media" do
-      chat_repo = Chat::Repo.new
-      chat_message_rec = chat_messages(:message_i1_1)
-      chat_media_rec = chat_message_rec.files.blobs.first
-
-      chat = chat_repo.find_by_selected_media(chat_message_rec.id, chat_media_rec.id)
-      assert_not_nil(chat)
-      assert_not_nil(chat.selected_message)
-      assert_not_nil(chat.selected_media)
-    end
-
     # -- commands --
     test "saves an opened chat" do
       recipient_rec = recipients(:recipient_3)
@@ -92,16 +81,15 @@ module Db
     test "saves a new message" do
       domain_events = ArrayQueue.new
 
-      blob_rec = active_storage_blobs(:blob_1)
       chat_rec = chats(:idle_1)
+      blob_rec = active_storage_blobs(:blob_1)
+
       chat = Chat::Repo.map_record(chat_rec)
       chat.add_message(
         sender: Chat::Sender.automated,
         body: "Test.",
-        attachments: [blob_rec]
+        files: [blob_rec]
       )
-
-      message_id = chat.new_message.id
 
       chat_repo = Chat::Repo.new(domain_events: domain_events)
       act = -> do
@@ -110,27 +98,52 @@ module Db
 
       assert_difference(
         -> { Chat::Message::Record.count } => 1,
-        -> { ActiveStorage::Attachment.count } => 1,
+        -> { Chat::Attachment::Record.count } => 1,
         &act
       )
 
       chat_rec = chat_rec
       assert_not(chat_rec.saved_change_to_attribute?(:updated_at))
 
-      message_rec = chat_rec.messages
-        .find { |r| r.id == message_id.val }
-
-      assert_not_nil(message_rec.id)
+      message_rec = chat_rec.messages.find { |r| r.id == chat.new_message.id.val }
       assert_equal(message_rec.sender, Chat::Sender.automated)
       assert_equal(message_rec.body, "Test.")
 
-      attachment_rec = message_rec.files[0]
-      assert_not_nil(attachment_rec, 1)
-      assert_equal(attachment_rec.blob, blob_rec)
+      attachment_rec = message_rec.attachments[0]
+      assert_not_nil(attachment_rec)
+      assert_equal(attachment_rec.file, blob_rec)
 
-      assert_nil(chat.new_message)
       assert_length(chat.events, 0)
       assert_length(domain_events, 1)
+    end
+
+    test "saves a new message with a remote attachment" do
+      chat_repo = Chat::Repo.new
+      chat_rec = chats(:idle_1)
+      chat = Chat::Repo.map_record(chat_rec)
+      chat.add_message(
+        sender: Chat::Sender.recipient,
+        body: "Test.",
+        files: [Sms::Media.new(url: "http://website.com/image.jpg")]
+      )
+
+      act = -> do
+        chat_repo.save_new_message(chat)
+      end
+
+      assert_difference(
+        -> { Chat::Attachment::Record.count } => 1,
+        -> { ActiveStorage::Blob.count } => 0,
+        &act
+      )
+
+      message_rec = chat_rec.messages.find { |r| r.id == chat.new_message.id.val }
+      assert_equal(message_rec.sender, Chat::Sender.recipient)
+
+      attachment_rec = message_rec.attachments[0]
+      assert_not_nil(attachment_rec)
+      assert_nil(attachment_rec.file)
+      assert_equal(attachment_rec.remote_url, "http://website.com/image.jpg")
     end
   end
 end

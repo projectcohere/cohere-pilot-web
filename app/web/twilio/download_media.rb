@@ -1,12 +1,6 @@
-require "open-uri"
-
 module Twilio
   class DownloadMedia < ::Command
     # -- lifetime --
-    def self.get
-      return DownloadMedia.new
-    end
-
     def initialize(client: Twilio::Client.get)
       @client = client
     end

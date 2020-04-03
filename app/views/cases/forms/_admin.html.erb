@@ -14,6 +14,7 @@
           <p class="CaseFormAssignments-name">
             <%= assignment.user_email %>
           </p>
+
           <% if assignment.partner_membership != Partner::Membership::Supplier %>
             <%=
               link_to("Unassign", destroy_case_assignments_path(form.model, assignment.partner_id),

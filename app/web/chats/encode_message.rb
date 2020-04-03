@@ -18,11 +18,6 @@ module Chats
       :previewUrl
     )
 
-    # -- lifetime --
-    def self.get
-      EncodeMessage.new
-    end
-
     # -- command --
     def call(message_or_messages)
       data = if message_or_messages.is_a?(Array)
