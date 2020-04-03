@@ -200,6 +200,8 @@ class Chat
 
     private def create_file!(file)
       f = file
+
+      # TODO: change to create_and_upload! after upgrade to Rails 6.0.2
       return ActiveStorage::Blob.create_after_upload!(
         io: f.data,
         filename: f.name,
