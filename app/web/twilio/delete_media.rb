@@ -1,10 +1,6 @@
 module Twilio
   class DeleteMedia < ::Command
     # -- lifetime --
-    def self.get
-      return DeleteMedia.new
-    end
-
     def initialize(client: Twilio::Client.get)
       @client = client
     end

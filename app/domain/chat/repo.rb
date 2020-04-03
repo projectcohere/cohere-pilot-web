@@ -1,16 +1,14 @@
 class Chat
   class Repo < ::Repo
-    # -- lifetime --
-    def self.get
-      Repo.new
-    end
+    include Service
 
+    # -- lifetime --
     def initialize(
-      chat_message_repo: Chat::Message::Repo.get,
-      domain_events: Services.domain_events
+      domain_events: Service::Container.domain_events,
+      chat_message_repo: Chat::Message::Repo.get
     )
-      @chat_message_repo = chat_message_repo
       @domain_events = domain_events
+      @chat_message_repo = chat_message_repo
     end
 
     # -- queries --

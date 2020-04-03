@@ -1,9 +1,6 @@
 class Program
   class Repo
-    # -- lifetime --
-    def self.get
-      Repo.new
-    end
+    include Service
 
     # -- queries --
     def find_by_name(name)

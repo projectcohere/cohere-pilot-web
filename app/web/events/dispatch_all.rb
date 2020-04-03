@@ -1,12 +1,10 @@
 module Events
   class DispatchAll < ::Command
-    # -- lifetime --
-    def self.get
-      Events::DispatchAll.new
-    end
+    include Service
 
+    # -- lifetime --
     def initialize(
-      domain_events: Services.domain_events,
+      domain_events: Service::Container.domain_events,
       dispatch_analytics: DispatchAnalytics.get
     )
       @domain_events = domain_events

@@ -1,10 +1,7 @@
 class Chat
   class Message
     class Repo < ::Repo
-      # -- lifetime --
-      def self.get
-        Repo.new
-      end
+      include Service
 
       # -- queries --
       # -- queries/one

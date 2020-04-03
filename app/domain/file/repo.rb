@@ -1,8 +1,6 @@
 class File
   class Repo < ::Repo
-    def self.get
-      Repo.new
-    end
+    include Service
 
     # -- queries --
     # -- queries/many

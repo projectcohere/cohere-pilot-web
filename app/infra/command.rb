@@ -1,8 +1,8 @@
 class Command
-  def self.get
-    return new
-  end
+  # -- includes --
+  include Service
 
+  # -- command --
   def self.call(*args)
     return get.(*args)
   end

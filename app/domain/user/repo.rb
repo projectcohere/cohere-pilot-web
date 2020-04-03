@@ -1,11 +1,9 @@
 class User
   class Repo < ::Repo
-    # -- lifetime --
-    def self.get
-      Services.user_repo ||= Repo.new
-    end
+    include Service::Singleton
 
-    def initialize(domain_events: Services.domain_events)
+    # -- lifetime --
+    def initialize(domain_events: Service::Container.domain_events)
       @domain_events = domain_events
     end
 

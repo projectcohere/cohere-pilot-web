@@ -1,10 +1,8 @@
 class Partner
   class Repo < ::Repo
-    # -- lifetime --
-    def self.get
-      Services.partner_repo ||= Repo.new
-    end
+    include Service::Singleton
 
+    # -- lifetime --
     def initialize(user_repo: User::Repo.get)
       @user_repo = user_repo
     end

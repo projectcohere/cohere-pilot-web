@@ -1,12 +1,8 @@
 module Twilio
   class SendSms < ::Command
-    include Logging
+    include ::Logging
 
     # -- lifetime --
-    def self.get
-      SendSms.new
-    end
-
     def initialize(twilio: Client.get)
       @twilio = twilio
     end

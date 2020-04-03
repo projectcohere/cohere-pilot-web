@@ -1,12 +1,10 @@
 class Case
   class Repo < ::Repo
-    # -- lifetime --
-    def self.get
-      Repo.new
-    end
+    include Service
 
+    # -- lifetime --
     def initialize(
-      domain_events: Services.domain_events,
+      domain_events: Service::Container.domain_events,
       partner_repo: ::Partner::Repo.get
     )
       @domain_events = domain_events

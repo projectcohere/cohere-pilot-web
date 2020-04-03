@@ -1,11 +1,9 @@
 class Chat
   class Macro
     class Repo < ::Repo
-      # -- lifetime --
-      def self.get
-        Repo.new
-      end
+      include Service
 
+      # -- lifetime --
       def initialize(file_repo: File::Repo.get)
         @file_repo = file_repo
       end

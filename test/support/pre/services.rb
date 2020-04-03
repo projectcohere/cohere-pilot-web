@@ -3,13 +3,13 @@ module Support
     # -- lifecycle --
     def before_setup
       super
-      ::Services.reset
+      Service::Container.reset
     end
 
     # -- mocking --
     def self.mock
-      ::Services.resets do
-        yield(::Services)
+      Service::Container.resets do
+        yield(Service::Container)
       end
     end
   end

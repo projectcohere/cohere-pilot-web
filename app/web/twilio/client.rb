@@ -2,14 +2,11 @@ require "net/http"
 
 module Twilio
   class Client
+    include ::Service
     include ::Logging
 
     # -- lifetime --
-    def self.get
-      return Client.new("https://api.twilio.com/2010-04-01/Accounts/#{ENV["TWILIO_API_ACCOUNT_SID"]}")
-    end
-
-    def initialize(host)
+    def initialize(host = "https://api.twilio.com/2010-04-01/Accounts/#{ENV["TWILIO_API_ACCOUNT_SID"]}")
       @host = host
     end
 

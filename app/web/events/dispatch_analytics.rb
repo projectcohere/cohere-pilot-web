@@ -1,16 +1,14 @@
 module Events
   class DispatchAnalytics
+    include Service
+
     # -- constants --
     Unsaved = "Unsaved".freeze
 
     # -- lifetime --
-    def self.get
-      DispatchAnalytics.new
-    end
-
     def initialize(
       user_repo: User::Repo.get,
-      analytics_events: Services.analytics_events
+      analytics_events: Service::Container.analytics_events
     )
       @user_repo = user_repo
       @analytics_events = analytics_events
