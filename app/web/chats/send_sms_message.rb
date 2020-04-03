@@ -23,7 +23,5 @@ module Chats
         media_urls: m.attachments.map { |a| a.file.service_url },
       )
     end
-
-    alias :perform :call
   end
 end

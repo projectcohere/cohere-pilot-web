@@ -1,6 +1,6 @@
 module Events
   class DispatchAll < ::Command
-    include Service
+    include Service::Singleton
 
     # -- lifetime --
     def initialize(
@@ -13,10 +13,18 @@ module Events
 
     # -- command --
     def call
+      # if events are already being drained, we don't want to do accidentally execute
+      # duplicate work (this really only happens in tests when workers run inline)
+      if @draining
+        return
+      end
+
+      @draining = true
       @domain_events.drain do |event|
         dispatch(event)
         @dispatch_analytics.(event)
       end
+      @draining = false
     end
 
     private def dispatch(event)

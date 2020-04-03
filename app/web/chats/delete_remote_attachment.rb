@@ -9,7 +9,5 @@ module Chats
     def call(attachment_url)
       @delete_media.(attachment_url)
     end
-
-    alias :perform :call
   end
 end

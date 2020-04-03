@@ -12,12 +12,6 @@ module Chats
       chat = @chat_repo.find_by_selected_message(message_id)
       chat.prepare_selected_message
       @chat_repo.save_prepared_message(chat)
-
-      # TODO: extract into ApplicationWorker
-      # TODO: since events run synchronously in tests, this tries to re-run events
-      # Events::DispatchAll.()
     end
-
-    alias :perform :call
   end
 end

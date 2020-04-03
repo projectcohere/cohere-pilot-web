@@ -15,12 +15,6 @@ module Chats
       file = @download_media.(chat.selected_attachment_url)
       chat.upload_selected_attachment(file)
       @chat_repo.save_uploaded_attachment(chat)
-
-      # TODO: extract into ApplicationWorker
-      # TODO: since events run synchronously in tests, this tries to re-run events
-      # Events::DispatchAll.()
     end
-
-    alias :perform :call
   end
 end

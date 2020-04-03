@@ -16,7 +16,5 @@ module Cases
       kase.add_chat_message(chat.selected_message)
       @case_repo.save_new_message(kase)
     end
-
-    alias :perform :call
   end
 end

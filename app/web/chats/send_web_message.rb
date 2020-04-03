@@ -15,7 +15,5 @@ module Chats
       Files::Host.set_current!
       Chats::MessageChannel.broadcast_to(message.chat_id, @encode.(message))
     end
-
-    alias :perform :call
   end
 end

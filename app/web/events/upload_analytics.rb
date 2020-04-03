@@ -18,7 +18,5 @@ module Events
         event_consumer.send!(*JSON.load(event))
       end
     end
-
-    alias :perform :call
   end
 end

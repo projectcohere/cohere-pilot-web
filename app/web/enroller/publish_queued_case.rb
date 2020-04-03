@@ -11,7 +11,5 @@ module Enroller
         ),
       )
     end
-
-    alias :perform :call
   end
 end

@@ -11,7 +11,5 @@ module Cases
       @case.attach_file_to_selected_document(GenerateContract.(@case))
       @case_repo.save_selected_document(@case)
     end
-
-    alias :perform :call
   end
 end
