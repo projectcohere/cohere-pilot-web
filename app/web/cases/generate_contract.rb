@@ -18,11 +18,11 @@ module Cases
 
       variant_path = case document.source_url&.to_sym
       when Program::Contract::Meap
-        "cases/pdfs/meap"
+        "programs/contracts/meap"
       when Program::Contract::Wrap3h
-        "cases/pdfs/wrap_3h"
+        "programs/contracts/wrap_3h"
       when Program::Contract::Wrap1k
-        "cases/pdfs/wrap_1k"
+        "programs/contracts/wrap_1k"
       end
 
       if variant_path.nil?
@@ -45,7 +45,7 @@ module Cases
     class RenderHtml
       # -- command --
       def call(name, locals)
-        ContractsController.renderer.render(name,
+        Programs::ContractsController.renderer.render(name,
           layout: nil,
           locals: locals
         )
