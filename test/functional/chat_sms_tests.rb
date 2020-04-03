@@ -1,11 +1,11 @@
 require "test_helper"
 
-class ChatMessagesTests < ActionDispatch::IntegrationTest
+class ChatSmsTests < ActionDispatch::IntegrationTest
   include ActionCable::Channel::TestCase::Behavior
 
   # -- messages --
   test "rejects improperly signed requests" do
-    post("/messages/twilio",
+    post("/chats/sms/twilio",
       headers: {
         "X-Twilio-Signature" => "invalid-signature"
       },
@@ -38,13 +38,13 @@ class ChatMessagesTests < ActionDispatch::IntegrationTest
     }
 
     signature = Twilio::Signature.new(
-      "http://#{host}/messages/twilio",
+      "http://#{host}/chats/sms/twilio",
       params
     )
 
     act = -> do
       VCR.use_cassette("chats--recv-recipient-sms") do
-        post("/messages/twilio", params: params,
+        post("/chats/sms/twilio", params: params,
           headers: {
             "X-Twilio-Signature" => signature.computed
           }
@@ -94,13 +94,13 @@ class ChatMessagesTests < ActionDispatch::IntegrationTest
     }
 
     signature = Twilio::Signature.new(
-      "http://#{host}/messages/twilio",
+      "http://#{host}/chats/sms/twilio",
       params
     )
 
     act = -> do
       VCR.use_cassette("chats--recv-recipient-sms--attachments") do
-        post("/messages/twilio", params: params,
+        post("/chats/sms/twilio", params: params,
           headers: {
             "X-Twilio-Signature" => signature.computed
           }

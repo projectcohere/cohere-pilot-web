@@ -32,8 +32,10 @@ Rails.application.routes.draw do
     end
 
     # messages
-    namespace(:messages) do
-      post(:twilio)
+    namespace(:chats) do
+      namespace(:sms) do
+        post(:twilio)
+      end
     end
 
     # fallback
