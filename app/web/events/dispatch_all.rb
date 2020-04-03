@@ -30,7 +30,7 @@ module Events
     private def dispatch(event)
       case event
       when User::Events::DidInvite
-        deliver(UsersMailer.did_invite(
+        deliver(Users::Mailer.did_invite(
           event.user_id.val,
         ))
       when Case::Events::DidOpen
@@ -39,7 +39,7 @@ module Events
             event.case_recipient_id.val,
           )
 
-          deliver(CasesMailer.did_open(
+          deliver(Cases::Mailer.did_open(
             event.case_id.val,
           ))
         end
@@ -66,7 +66,7 @@ module Events
           )
         end
       when Case::Events::DidSubmit
-        deliver(CasesMailer.did_submit(
+        deliver(Cases::Mailer.did_submit(
           event.case_id.val,
         ))
 
@@ -75,7 +75,7 @@ module Events
         )
       when Case::Events::DidComplete
         if event.case_status != Case::Status::Removed
-          deliver(CasesMailer.did_complete(
+          deliver(Cases::Mailer.did_complete(
             event.case_id.val,
           ))
         end
