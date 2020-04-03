@@ -26,12 +26,14 @@ module Twilio
     def post(path_or_url, params)
       req = Net::HTTP::Post.new(uri(path_or_url))
       req.body = URI.encode_www_form(params)
-      return start(auth(req))
+      res = start(auth(req))
+      return res
     end
 
     def delete(path_or_url)
       req = Net::HTTP::Delete.new(uri(path_or_url))
-      return start(auth(req))
+      res = start(auth(req))
+      return res
     end
 
     # -- commands/helpers
