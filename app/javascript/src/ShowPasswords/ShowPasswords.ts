@@ -1,6 +1,5 @@
 import { IComponent } from "../Core"
 
-// -- impls --
 export class ShowPasswords implements IComponent {
   isOnLoad = true
 

@@ -1,12 +1,10 @@
 class Case
   class Repo < ::Repo
-    # -- lifetime --
-    def self.get
-      Repo.new
-    end
+    include Service
 
+    # -- lifetime --
     def initialize(
-      domain_events: Services.domain_events,
+      domain_events: Service::Container.domain_events,
       partner_repo: ::Partner::Repo.get
     )
       @domain_events = domain_events
@@ -376,7 +374,7 @@ class Case
       @domain_events.consume(kase.events)
     end
 
-    def save_selected_attachment(kase)
+    def save_selected_document(kase)
       document = kase.selected_document
       if document.nil?
         raise "no document was selected"
@@ -639,7 +637,8 @@ class Case
       return Assignment.new(
         user_id: r.user.id,
         user_email: r.user.email,
-        partner_id: r.partner_id
+        partner_id: r.partner_id,
+        partner_membership: r.partner.membership.to_sym,
       )
     end
 

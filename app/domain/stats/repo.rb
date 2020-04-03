@@ -1,5 +1,7 @@
 class Stats
   class Repo < ::Repo
+    include Service
+
     # -- constants --
     StartDate = Date.new(2020, 1, 21)
 
@@ -7,11 +9,7 @@ class Stats
     DurationsKey = "cohere--stats/durations".freeze
 
     # -- lifetime --
-    def self.get
-      Repo.new
-    end
-
-    def initialize(redis: Services.redis)
+    def initialize(redis: Service::Container.redis)
       @redis = redis
     end
 

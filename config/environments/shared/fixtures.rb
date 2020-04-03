@@ -2,29 +2,25 @@ require "active_record/fixtures"
 
 module Environment
   module Fixtures
-    # provide the namespaced paths to our active record models
-    # TODO: generate this from a list of descendants of ApplicationRecord
-    # named Record.
-    K_ClassMap = {
-      users: "User::Record",
-      partners: "Partner::Record",
-      cases: "Case::Record",
-      case_assignments: "Case::Assignment::Record",
-      recipients: "Recipient::Record",
-      documents: "Document::Record",
-      chats: "Chat::Record",
-      chat_messages: "Chat::Message::Record",
-    }
-
     # we have to monkey patch the fixture class cache to namespace our fixture
     # classes.
     #
-    # in the test environment, set_fixture_class works just fine, however in dev
-    # the db:fixtures:load rake task does not provide any mechanism for specifying
-    # the class map.
+    # in the test environment, set_fixture_class works just fine, however we want to
+    # load fixues in dev, and the db:fixtures:load rake task does not provide any mechanism
+    # for specifying a class map.
     module ClassCacheExt
       def initialize(class_names, *args, **kwargs, &block)
-        class_names.merge!(K_ClassMap.transform_values(&:constantize))
+        @@class_map ||= begin
+          require_many("**/record.rb", scope: "app/domain")
+
+          record_types = ApplicationRecord.subclasses
+          record_types.each_with_object({}) do |record_type, memo|
+            name = record_type.module_parent.name.underscore.gsub("/", "_").pluralize
+            memo[name] = record_type
+          end
+        end
+
+        class_names.merge!(@@class_map)
         super(class_names, *args, **kwargs, &block)
       end
     end

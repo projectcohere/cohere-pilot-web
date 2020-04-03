@@ -5,12 +5,13 @@
 <%-   next { %>
 <%-     body: macro.body, %>
 <%-     attachment: macro.attachment&.then { |a| %>
+<%-       f = a.file %>
 <%-       next { %>
-<%-         id: a.id, %>
+<%-         id: f.id, %>
 <%-         preview: { %>
-<%-           name: a.filename.to_s, %>
-<%-           url: url_for(a.representation(resize: "400x400>")), %>
-<%-           previewUrl: url_for(a.representation(resize: "400x400>")), %>
+<%-           name: f.filename.to_s, %>
+<%-           url: url_for(f.representation(resize: "400x400>")), %>
+<%-           previewUrl: url_for(f.representation(resize: "400x400>")), %>
 <%-         }, %>
 <%-       } %>
 <%-     }, %>

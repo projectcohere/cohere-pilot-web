@@ -1,16 +1,14 @@
 class Chat
   class Repo < ::Repo
-    # -- lifetime --
-    def self.get
-      Repo.new
-    end
+    include Service
 
+    # -- lifetime --
     def initialize(
-      chat_message_repo: Chat::Message::Repo.get,
-      domain_events: Services.domain_events
+      domain_events: Service::Container.domain_events,
+      chat_message_repo: Chat::Message::Repo.get
     )
-      @chat_message_repo = chat_message_repo
       @domain_events = domain_events
+      @chat_message_repo = chat_message_repo
     end
 
     # -- queries --
@@ -54,27 +52,6 @@ class Chat
       return entity_from(chat_rec)
     end
 
-    def find_by_session(session_token)
-      chat_rec = Chat::Record
-        .with_any_session
-        .find_by(session_token: session_token)
-
-      return entity_from(chat_rec)
-    end
-
-    def find_by_session_with_messages(session_token)
-      chat_rec = Chat::Record
-        .with_any_session
-        .find_by(session_token: session_token)
-
-      chat_messages = if chat_rec != nil
-        @chat_message_repo
-          .find_many_by_chat_with_attachments(chat_rec.id)
-      end
-
-      return entity_from(chat_rec, chat_messages)
-    end
-
     def find_by_recipient_with_messages(recipient_id)
       chat_rec = Chat::Record
         .by_recipient(recipient_id)
@@ -99,136 +76,142 @@ class Chat
       return chat
     end
 
-    # -- queries/many
-    def find_all_ids_for_reminder1
-      chat_recs = Chat::Record
-        .reminder_1
-        .where("updated_at <= ?", 15.minutes.ago)
-        .select(:id)
+    def find_by_selected_attachment(attachment_id)
+      chat_message = @chat_message_repo
+        .find_by_selected_attachment(attachment_id)
 
-      return chat_recs.pluck(:id)
+      chat_rec = Chat::Record
+        .find(chat_message.chat_id)
+
+      chat = entity_from(chat_rec, [chat_message])
+        .tap { |chat| chat.select_message(0) }
+
+      return chat
     end
 
     # -- commands --
     def save_opened(chat)
-      chat_message = chat.new_message
+      message = chat.new_message
 
       # start the new records
       chat_rec = Chat::Record.new({
         recipient_id: chat.recipient.id,
       })
 
-      assign_notification(chat, chat_rec)
-
-      chat_message_rec = Chat::Message::Record.new({
+      message_rec = Message::Record.new({
         chat_id: nil,
       })
 
-      assign_message(chat_message, chat_message_rec)
+      assign_message(message, message_rec)
 
       # save the records
       transaction do
         chat_rec.save!
-        chat_message_rec.chat_id = chat_rec.id
-        chat_message_rec.save!
+        message_rec.chat_id = chat_rec.id
+        message_rec.save!
+        create_attachments!(message, message_rec)
       end
 
       # send callbacks to entities
-      chat_message.did_save(chat_message_rec)
-      chat.did_save_new_message
+      message.did_save(message_rec)
       chat.did_save(chat_rec)
 
       # consume all entity events
       @domain_events.consume(chat.events)
     end
 
-    def save_new_session(chat)
-      chat_rec = chat.record
-      if chat_rec.nil?
-        raise "chat must be fetched from the db!"
-      end
-
-      chat_rec.assign_attributes(
-        session_token: chat.session,
-      )
-
-      chat_rec.save!
-    end
-
     def save_new_message(chat)
-      chat_rec = chat.record
-      if chat_rec == nil
-        raise "chat must be fetched from the db!"
-      end
+      assert(chat.record != nil, "chat must be persisted")
 
-      chat_message = chat.new_message
-      if chat_message == nil
-        raise "chat must have a new chat_message!"
-      end
+      message = chat.new_message
+      assert(message != nil, "chat must have a new message")
 
-      # build/update the records
-      chat_message_rec = Chat::Message::Record.new({
-        chat_id: chat_message.chat_id,
-      })
-
-      assign_notification(chat, chat_rec)
-      assign_message(chat_message, chat_message_rec)
+      # build the records
+      message_rec = chat.record.messages.build
+      assign_message(message, message_rec)
 
       # save the records
       transaction do
-        chat_rec.save!
-        chat_message_rec.save!
+        message_rec.save!
+        create_attachments!(message, message_rec)
       end
 
       # send callbacks to entities
-      chat_message.did_save(chat_message_rec)
-      chat.did_save_new_message
+      message.did_save(message_rec)
 
       # consume all entity events
       @domain_events.consume(chat.events)
     end
 
-    def save_notification(chat)
-      chat_rec = chat.record
-      if chat_rec == nil
-        raise "chat must be fetched from the db!"
-      end
+    def save_uploaded_attachment(chat)
+      attachment = chat.selected_attachment
+      assert(attachment.record != nil, "selected attachment must be persisted")
 
       # update the records
-      chat_rec.assign_attributes({
-        sms_conversation_id: chat.sms_conversation_id
-      })
+      attachment_rec = attachment.record
 
-      assign_notification(chat, chat_rec)
+      a = attachment
+      attachment_rec.assign_attributes(
+        remote_url: a.remote_url,
+      )
 
       # save the records
-      chat_rec.save!
+      transaction do
+        attachment_rec.file = create_file!(a.file)
+        attachment_rec.save!
+      end
 
+      # consume all entity events
+      @domain_events.consume(chat.events)
+    end
+
+    def save_prepared_message(chat)
       # consume all entity events
       @domain_events.consume(chat.events)
     end
 
     # -- commands/helpers --
-    def assign_notification(chat, chat_rec)
-      c = chat
-      chat_rec.assign_attributes({
-        notification: c.notification != nil ? "reminder_1" : "clear",
-      })
-    end
-
-    def assign_message(chat_message, chat_message_rec)
-      m = chat_message
-      chat_message_rec.assign_attributes({
+    private def assign_message(message, message_rec)
+      m = message
+      message_rec.assign_attributes({
         sender: m.sender,
         body: m.body,
-        files: m.attachments,
       })
     end
 
-    def transaction
-      Chat::Record.transaction do
-        yield
+    private def create_attachments!(message, message_rec)
+      attachments = message.attachments
+      if attachments.blank?
+        return
       end
+
+      attachments.each do |a|
+        attachment_rec = message_rec.attachments.build
+
+        if a.remote?
+          attachment_rec.remote_url = a.remote_url
+        elsif # a.is_a?(ActiveStorage::Blob)
+          attachment_rec.file = a.file
+        end
+      end
+
+      message_rec.save!
+    end
+
+    private def create_file!(file)
+      f = file
+
+      # TODO: change to create_and_upload! after upgrade to Rails 6.0.2
+      return ActiveStorage::Blob.create_after_upload!(
+        io: f.data,
+        filename: f.name,
+        content_type: f.mime_type,
+        identify: false,
+      )
+    end
+
+    private def transaction(&block)
+      Chat::Record.transaction(&block)
     end
 
     # -- factories --
@@ -239,10 +222,7 @@ class Chat
         record: r,
         id: Id.new(r.id),
         recipient: recipient,
-        session: r.session_token,
         messages: messages,
-        notification: map_notification(r, recipient),
-        sms_conversation_id: r.sms_conversation_id,
       )
     end
 
@@ -252,25 +232,10 @@ class Chat
         profile: ::Recipient::Repo.map_profile(r),
       )
     end
-
-    def self.map_notification(r, recipient)
-      if r.notification == "clear"
-        return nil
-      end
-
-      return Notification.new(
-        recipient_name: recipient.profile.name,
-        is_new_conversation: r.sms_conversation_id == nil,
-      )
-    end
   end
 
   class Record
     # -- scopes --
-    def self.with_any_session
-      return where.not(session_token: nil)
-    end
-
     def self.by_recipient(recipient_id)
       return where(recipient_id: recipient_id)
     end

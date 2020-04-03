@@ -9,9 +9,9 @@ module CoherePilotWeb
     config.load_defaults(6.0)
 
     # autoload
-    config.eager_load_paths += %w[
-      app/domain/shared
-      app/web/shared
+    config.eager_load_paths += [
+      Rails.root.join("app", "domain", "shared"),
+      Rails.root.join("app", "web", "shared"),
     ]
   end
 end

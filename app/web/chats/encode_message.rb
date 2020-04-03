@@ -18,11 +18,6 @@ module Chats
       :previewUrl
     )
 
-    # -- lifetime --
-    def self.get
-      EncodeMessage.new
-    end
-
     # -- command --
     def call(message_or_messages)
       data = if message_or_messages.is_a?(Array)
@@ -42,11 +37,14 @@ module Chats
           m.body,
           m.timestamp,
           m.attachments.map { |a|
-            Attachment.new(
-              a.filename,
-              a.service_url,
-              a.representable? ? a.representation(resize: "400x400>").processed.service_url : nil
-            )
+            # TODO: include an error fallback if file is nil for some reason
+            a.file&.then { |f|
+              Attachment.new(
+                f.filename,
+                f.service_url,
+                f.representable? ? f.representation(resize: "400x400>").processed.service_url : nil
+              )
+            }
           }
         )
       )

@@ -5,21 +5,11 @@ class Chat < Entity
   # -- props --
   prop(:id, default: Id::None)
   prop(:recipient)
-  prop(:session, default: nil)
   prop(:messages, default: [])
-  prop(:notification, default: nil)
-  prop(:sms_conversation_id, default: nil)
 
   # -- props/temporary
   attr(:new_message)
   attr(:selected_message)
-
-  # -- queries --
-  def sms_conversation_url
-    if @sms_conversation_id != nil
-      return "https://app.frontapp.com/open/#{@sms_conversation_id}"
-    end
-  end
 
   # -- factories --
   def self.open(recipient, macro_repo: Macro::Repo.get)
@@ -32,27 +22,19 @@ class Chat < Entity
     chat.add_message(
       sender: Sender.automated,
       body: macro.body,
-      attachments: macro.attachment == nil ? [] : [macro.attachment]
+      files: macro.attachment == nil ? [] : [macro.attachment],
     )
 
     return chat
   end
 
-  # -- queries --
-  def sms_phone_number
-    @recipient.profile.phone.number
-  end
+  # -- messages --
+  # -- messages/commands
+  def add_message(sender:, body:, files:)
+    attachments = files.map do |f|
+      Attachment.from_source(f)
+    end
 
-  # -- commands --
-  def start_session
-    @session = SecureRandom.base58
-  end
-
-  # -- commands/messages
-  def add_message(sender:, body:, attachments:)
-    # add message to list
-    # TODO: does the discrepancy between this timestamp and the ultimate created_at
-    # date matter?
     message = Message.new(
       sender: sender,
       body: body,
@@ -61,42 +43,59 @@ class Chat < Entity
       chat_id: @id.val,
     )
 
-    @new_message = message
+    # update state
     @messages << message
-    @events.add(Events::DidAddMessage.from_entity(self))
+    @new_message = message
+
+    # add events
+    if message.prepared?
+      @events.add(Events::DidPrepareMessage.from_entity(message))
+    end
+
+    attachments.filter(&:remote?).each do |a|
+      @events.add(Events::DidAddRemoteAttachment.from_entity(a))
+    end
   end
 
   def select_message(i)
-    if i >= @messages.count
-      raise "can't select a message that does not exist"
-    end
-
+    assert(i < @messages.count, "a message must exist to select it")
     @selected_message = @messages[i]
   end
 
-  # -- commands/notifcations
-  def send_notification
-    if not block_given?
-      raise "can't send notification without a service to invoke"
-    elsif @notification == nil
-      raise "can't send notification if there is not one to send"
-    end
+  def prepare_selected_message
+    assert(@selected_message != nil, "a message must be selected")
 
-    sms_conversation_id = yield
-    if sms_conversation_id != nil
-      @sms_conversation_id = sms_conversation_id
+    if @selected_message.prepared?
+      @events.add(Events::DidPrepareMessage.from_entity(@selected_message))
     end
+  end
 
-    @notification = nil
+  # -- attachments --
+  # -- attachments/commands
+  def upload_selected_attachment(file)
+    assert(selected_attachment != nil, "an attachment must be selected")
+    selected_attachment.upload(file)
+
+    @events.add(Events::DidUploadAttachment.from_entity(self))
+  end
+
+  # -- attachments/queries
+  def selected_attachment
+    return selected_message&.selected_attachment
+  end
+
+  def selected_attachment_url
+    return selected_attachment&.remote_url
+  end
+
+  # -- queries --
+  def sms_phone_number
+    @recipient.profile.phone.number
   end
 
   # -- callbacks --
   def did_save(record)
     @id.set(record.id)
     @record = record
-  end
-
-  def did_save_new_message
-    @new_message = nil
   end
 end

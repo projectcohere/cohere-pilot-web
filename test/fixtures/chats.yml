@@ -1,15 +1,7 @@
 idle_1:
   recipient: recipient_1
   updated_at: <%= Time.zone.now %>
-  notification: reminder_1
 
 idle_2:
   recipient: recipient_2
   updated_at: <%= Time.zone.now - 15.minutes %>
-  notification: reminder_1
-
-session_1:
-  recipient: recipient_4
-  session_token: "5930FJP"
-  notification: clear
-  sms_conversation_id: 1A20FA

@@ -48,42 +48,14 @@ module Db
       assert_equal(chat.id.val, chat_rec.id)
     end
 
-    test "finds a chat by session with messages" do
-      chat_repo = Chat::Repo.new
-      chat_rec = chats(:session_1)
-      chat_session = chat_rec.session_token
-
-      chat = chat_repo.find_by_session_with_messages(chat_session)
-      assert_not_nil(chat)
-      assert_equal(chat.id.val, chat_rec.id)
-      assert_length(chat.messages, 1)
-    end
-
-    test "does not find a chat with no session" do
-      chat_repo = Chat::Repo.new
-      chat_rec = chats(:idle_1)
-      chat_session = chat_rec.session_token
-
-      chat = chat_repo.find_by_session_with_messages(chat_session)
-      assert_nil(chat)
-    end
-
     test "finds a chat by selected message" do
       chat_repo = Chat::Repo.new
-      chat_message_rec = chat_messages(:message_s1_1)
+      chat_message_rec = chat_messages(:message_i1_1)
 
       chat = chat_repo.find_by_selected_message(chat_message_rec.id)
       assert_not_nil(chat)
       assert_not_nil(chat.selected_message)
       assert_present(chat.selected_message.attachments)
-    end
-
-    test "finds ids of chats needing a reminder" do
-      chat_repo = Chat::Repo.new
-
-      chat_ids = chat_repo.find_all_ids_for_reminder1
-      assert_length(chat_ids, 1)
-      assert_equal(chat_ids, [chats(:idle_2).id])
     end
 
     # -- commands --
@@ -106,72 +78,71 @@ module Db
       assert_not_nil(chat.record)
     end
 
-    test "saves a new session" do
-      chat_rec = chats(:idle_1)
-      chat = Chat::Repo.map_record(chat_rec)
-      chat.start_session
-
-      chat_repo = Chat::Repo.new
-      chat_repo.save_new_session(chat)
-      assert_not_nil(chat_rec.session_token)
-    end
-
     test "saves a new message" do
-      domain_events = ArrayQueue.new
-
+      chat_repo = Chat::Repo.new
+      chat_rec = chats(:idle_1)
       blob_rec = active_storage_blobs(:blob_1)
-      chat_rec = chats(:session_1)
+
       chat = Chat::Repo.map_record(chat_rec)
       chat.add_message(
         sender: Chat::Sender.automated,
         body: "Test.",
-        attachments: [blob_rec]
+        files: [blob_rec]
       )
 
-      message_id = chat.new_message.id
-
-      chat_repo = Chat::Repo.new(domain_events: domain_events)
       act = -> do
         chat_repo.save_new_message(chat)
       end
 
       assert_difference(
         -> { Chat::Message::Record.count } => 1,
-        -> { ActiveStorage::Attachment.count } => 1,
+        -> { Chat::Attachment::Record.count } => 1,
         &act
       )
 
       chat_rec = chat_rec
       assert_not(chat_rec.saved_change_to_attribute?(:updated_at))
-      assert_equal(chat_rec.notification, "clear")
 
-      message_rec = chat_rec.messages
-        .find { |r| r.id == message_id.val }
-
-      assert_not_nil(message_rec.id)
+      message_rec = chat_rec.messages.find { |r| r.id == chat.new_message.id.val }
       assert_equal(message_rec.sender, Chat::Sender.automated)
       assert_equal(message_rec.body, "Test.")
 
-      attachment_rec = message_rec.files[0]
-      assert_not_nil(attachment_rec, 1)
-      assert_equal(attachment_rec.blob, blob_rec)
+      attachment_rec = message_rec.attachments[0]
+      assert_not_nil(attachment_rec)
+      assert_equal(attachment_rec.file, blob_rec)
 
-      assert_nil(chat.new_message)
-      assert_length(chat.events, 0)
-      assert_length(domain_events, 1)
+      events = chat.events
+      assert_length(events, 0)
+      assert_length(Service::Container.domain_events, 1)
     end
 
-    test "save notifications" do
-      domain_events = ArrayQueue.new
-
+    test "saves a new message with a remote attachment" do
+      chat_repo = Chat::Repo.new
       chat_rec = chats(:idle_1)
       chat = Chat::Repo.map_record(chat_rec)
-      chat.send_notification { "test_sms_conversation_id" }
+      chat.add_message(
+        sender: Chat::Sender.recipient,
+        body: "Test.",
+        files: [Sms::Media.new(url: "http://website.com/image.jpg")]
+      )
 
-      chat_repo = Chat::Repo.new(domain_events: domain_events)
-      chat_repo.save_notification(chat)
-      assert_equal(chat_rec.sms_conversation_id, "test_sms_conversation_id")
-      assert_equal(chat_rec.notification, "clear")
+      act = -> do
+        chat_repo.save_new_message(chat)
+      end
+
+      assert_difference(
+        -> { Chat::Attachment::Record.count } => 1,
+        -> { ActiveStorage::Blob.count } => 0,
+        &act
+      )
+
+      message_rec = chat_rec.messages.find { |r| r.id == chat.new_message.id.val }
+      assert_equal(message_rec.sender, Chat::Sender.recipient)
+
+      attachment_rec = message_rec.attachments[0]
+      assert_not_nil(attachment_rec)
+      assert_nil(attachment_rec.file)
+      assert_equal(attachment_rec.remote_url, "http://website.com/image.jpg")
     end
   end
 end

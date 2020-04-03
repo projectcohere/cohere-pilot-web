@@ -174,9 +174,11 @@ class CasesTests < ActionDispatch::IntegrationTest
     }
 
     act = -> do
-      post(auth("/cases", as: user_rec), params: {
-        case: case_params
-      })
+      VCR.use_cassette("chats--send-cohere-msg--attachments") do
+        post(auth("/cases", as: user_rec), params: {
+          case: case_params
+        })
+      end
     end
 
     assert_difference(

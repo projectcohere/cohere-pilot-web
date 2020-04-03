@@ -24,6 +24,11 @@ class ApplicationForm
   protected def initialize_attrs(attrs)
   end
 
+  # -- queries --
+  def self.subform_map
+    return @subform_map.freeze
+  end
+
   # -- definition --
   def self.field(name, type, **validations)
     attribute(name, type)
@@ -43,10 +48,6 @@ class ApplicationForm
     end
   end
 
-  def self.subform_map
-    @subform_map.freeze
-  end
-
   def self.subform(form_name, form_class)
     # add to list of subforms
     @subform_map ||= {}
@@ -59,41 +60,8 @@ class ApplicationForm
     validates(form_name, child: true)
   end
 
-  def self.fields_from(form_name, form_class)
-    # add to list of subforms
-    @subform_classes ||= []
-    @subform_classes << form_class
-
-    # declare attr
-    attr(form_name)
-
-    # delegate attributes to the child form
-    field_getters = form_class.attribute_names
-    field_setters = field_getters.map { |name| "#{name}=" }
-
-    delegate(*field_getters, to: form_name)
-    delegate(*field_setters, to: form_name)
-
-    # validate the child form
-    validates(form_name, child: true)
-  end
-
+  # -- forms --
   # -- forms/types
-  class ListField < ActiveModel::Type::Value
-    attr(:form_type)
-
-    def initialize(form_type)
-      @form_type = form_type
-    end
-
-    def cast_value(value)
-      values = value.respond_to?(:values) ? value.values : value
-      values.map do |value|
-        value.is_a?(@form_type) ? value : @form_type.new(value)
-      end
-    end
-  end
-
   class SymbolType < ActiveModel::Type::Value
     def cast_value(value)
       return value.to_sym
@@ -104,14 +72,6 @@ class ApplicationForm
   ActiveModel::Type.register(:object, ActiveModel::Type::Value)
 
   # -- forms/validators
-  class ListValidator < ActiveModel::EachValidator
-    def validate_each(record, attribute, list)
-      if not list.all? { |v| v.valid?(record.validation_context) }
-        record.errors.add(attribute, :invalid, list: list)
-      end
-    end
-  end
-
   class ChildValidator < ActiveModel::EachValidator
     def validate_each(record, attribute, value)
       if not value.valid?(record.validation_context)
@@ -122,43 +82,19 @@ class ApplicationForm
 
   # -- queries --
   def self.params_shape
-    params = []
-    nested_params = {}
-
     # find local form params
-    f_nested_param_names, f_params = attribute_names.partition do |name|
-      attribute_types[name].is_a?(ListField)
-    end
-
-    f_nested_params = f_nested_param_names.each_with_object({}) do |name, memo|
-      memo[name.to_sym] = attribute_types[name].form_type.params_shape
-    end
-
-    # join local form params
-    params += f_params.map(&:to_sym)
-    nested_params.merge!(f_nested_params)
+    params = attribute_names.map(&:to_sym)
 
     # join subform params
-    @subform_map&.each do |sf_name, sf_class|
-      nested_params[sf_name] = sf_class.params_shape
+    nested_params = @subform_map&.each_with_object({}) do |(sf_name, sf_class), memo|
+      memo[sf_name] = sf_class.params_shape
     end
 
-    @subform_classes&.each do |sf_class|
-      sf_params = sf_class.params_shape
-
-      # merge any nested params from the subforms
-      if sf_params.present? && sf_params.last.is_a?(Hash)
-        sf_nested_params = sf_params.pop
-        nested_params.merge!(sf_nested_params)
-      end
-
-      # append its leaf params
-      params += sf_params
+    if nested_params != nil
+      params.push(nested_params)
     end
 
-    # finally, add nested params if there are any
-    params << nested_params if nested_params.present?
-    params
+    return params
   end
 
   # -- ActiveModel --

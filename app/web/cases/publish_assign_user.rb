@@ -9,7 +9,5 @@ module Cases
         ),
       )
     end
-
-    alias :perform :call
   end
 end

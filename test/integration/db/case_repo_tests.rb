@@ -215,7 +215,7 @@ module Db
 
     # -- test/save
     test "saves an opened case" do
-      domain_events = ArrayQueue.new
+      case_repo = Case::Repo.new
 
       recipient_profile = Recipient::Profile.stub(
         phone: Recipient::Phone.stub(
@@ -245,7 +245,6 @@ module Db
         supplier_account: supplier_account,
       )
 
-      case_repo = Case::Repo.new(domain_events: domain_events)
       act = -> do
         case_repo.save_opened(kase)
       end
@@ -262,12 +261,13 @@ module Db
       assert_not_nil(kase.recipient.record)
       assert_not_nil(kase.recipient.id.val)
 
-      assert_length(kase.events, 0)
-      assert_length(domain_events, 2)
+      events = kase.events
+      assert_length(events, 0)
+      assert_length(Service::Container.domain_events, 2)
     end
 
     test "saves an opened case for an existing recipient" do
-      domain_events = ArrayQueue.new
+      case_repo = Case::Repo.new
 
       recipient_profile = Recipient::Profile.new(
         phone: Recipient::Phone.new(
@@ -297,7 +297,6 @@ module Db
         supplier_account: supplier_account,
       )
 
-      case_repo = Case::Repo.new(domain_events: domain_events)
       act = -> do
         case_repo.save_opened(kase)
       end
@@ -314,8 +313,9 @@ module Db
       assert_not_nil(kase.recipient.record)
       assert_not_nil(kase.recipient.id.val)
 
-      assert_length(kase.events, 0)
-      assert_length(domain_events, 2)
+      events = kase.events
+      assert_length(events, 0)
+      assert_length(Service::Container.domain_events, 2)
     end
 
     test "saves a dhs contribution" do
@@ -346,8 +346,7 @@ module Db
     end
 
     test "saves a cohere contribution" do
-      domain_events = ArrayQueue.new
-
+      case_repo = Case::Repo.new
       case_rec = cases(:opened_2)
 
       supplier_account = Case::Account.new(
@@ -390,7 +389,6 @@ module Db
       kase.submit_to_enroller
       kase.complete(Case::Status::Approved)
 
-      case_repo = Case::Repo.new(domain_events: domain_events)
       case_repo.save_cohere_contribution(kase)
 
       c = kase.record
@@ -415,13 +413,13 @@ module Db
       assert_not_nil(d)
       assert_equal(d.classification, "contract")
 
-      assert_length(kase.events, 0)
-      assert_length(domain_events, 4)
+      events = kase.events
+      assert_length(events, 0)
+      assert_length(Service::Container.domain_events, 4)
     end
 
     test "saves a new assignment" do
-      domain_events = ArrayQueue.new
-
+      case_repo = Case::Repo.new
       case_rec = cases(:opened_2)
       user_rec = users(:cohere_1)
 
@@ -429,7 +427,6 @@ module Db
       user = User::Repo.map_record(user_rec)
       kase.assign_user(user)
 
-      case_repo = Case::Repo.new(domain_events: domain_events)
       act = -> do
         case_repo.save_new_assignment(kase)
       end
@@ -445,13 +442,13 @@ module Db
       assert_equal(assignment_rec.user_id, user_rec.id)
       assert_equal(assignment_rec.partner_id, user_rec.partner_id)
 
-      assert_length(kase.events, 0)
-      assert_length(domain_events, 1)
+      events = kase.events
+      assert_length(events, 0)
+      assert_length(Service::Container.domain_events, 1)
     end
 
     test "saves a destroyed assignment" do
-      domain_events = ArrayQueue.new
-
+      case_repo = Case::Repo.new
       case_rec = cases(:opened_1)
       case_assignment_rec = case_rec.assignments.first
 
@@ -459,7 +456,6 @@ module Db
       kase.select_assignment(case_assignment_rec.partner_id)
       kase.destroy_selected_assignment
 
-      case_repo = Case::Repo.new(domain_events: domain_events)
       act = -> do
         case_repo.save_destroyed_assignment(kase)
       end
@@ -472,64 +468,25 @@ module Db
       assignment_recs = case_rec.reload.assignments
       assert(assignment_recs.none? { |a| a.id == case_assignment_rec.id })
 
-      assert_length(kase.events, 0)
-      assert_length(domain_events, 1)
+      events = kase.events
+      assert_length(events, 0)
+      assert_length(Service::Container.domain_events, 1)
     end
 
-    test "saves a new mms message" do
+    test "saves a new message" do
+      case_repo = Case::Repo.new
       case_rec = cases(:pending_1)
-
-      kase = Case::Repo.map_record(case_rec)
-      kase.add_mms_message(Mms::Message.stub(
-        sender_phone_number: kase.recipient.profile.phone.number,
-        attachments: [
-          Mms::Attachment.stub(
-            url: Faker::Internet.url
-          )
-        ],
-      ))
-
-      domain_events = ArrayQueue.new
-      case_repo = Case::Repo.new(domain_events: domain_events)
-
-      act = -> do
-        case_repo.save_new_message(kase)
-      end
-
-      assert_difference(
-        -> { Document::Record.count } => 1,
-        &act
-      )
-
-      case_rec = kase.record
-      assert_not_nil(case_rec.received_message_at)
-
-      document = kase.new_documents[0]
-      assert_not_nil(document.record)
-      assert_not_nil(document.id.val)
-
-      document_rec = document.record
-      assert_not_nil(document_rec)
-      assert_not_nil(document_rec.case_id)
-      assert_not_nil(document_rec.source_url)
-
-      assert_length(kase.events, 0)
-      assert_length(domain_events, 2)
-    end
-
-    test "saves a new chat message" do
-      case_rec = cases(:pending_2)
 
       kase = Case::Repo.map_record(case_rec)
       kase.add_chat_message(Chat::Message.stub(
         sender: Chat::Sender.recipient,
         attachments: [
-          active_storage_blobs(:blob_1)
-        ]
+          Chat::Attachment.stub(file: {
+            io: StringIO.new("test"),
+            filename: "test.txt",
+          }),
+        ],
       ))
-
-      domain_events = ArrayQueue.new
-      case_repo = Case::Repo.new(domain_events: domain_events)
 
       act = -> do
         case_repo.save_new_message(kase)
@@ -542,7 +499,6 @@ module Db
 
       case_rec = kase.record
       assert_not_nil(case_rec.received_message_at)
-      assert(case_rec.has_new_activity)
 
       document = kase.new_documents[0]
       assert_not_nil(document.record)
@@ -552,14 +508,16 @@ module Db
       assert_not_nil(document_rec)
       assert_not_nil(document_rec.case_id)
 
-      assert_length(kase.events, 0)
-      assert_length(domain_events, 2)
+      events = kase.events
+      assert_length(events, 0)
+      assert_length(Service::Container.domain_events, 1)
     end
 
     test "saves the selected attachment" do
+      case_repo = Case::Repo.new
       case_rec = cases(:submitted_1)
-      kase = Case::Repo.map_record(case_rec, documents: case_rec.documents)
 
+      kase = Case::Repo.map_record(case_rec, documents: case_rec.documents)
       kase.select_document(1)
       kase.attach_file_to_selected_document(FileData.new(
         data: StringIO.new("test-data"),
@@ -567,9 +525,8 @@ module Db
         mime_type: "text/plain"
       ))
 
-      case_repo = Case::Repo.new
       act = -> do
-        case_repo.save_selected_attachment(kase)
+        case_repo.save_selected_document(kase)
       end
 
       assert_difference(
@@ -583,10 +540,11 @@ module Db
     end
 
     test "saves completed" do
+      case_repo = Case::Repo.new
       case_rec = cases(:submitted_1)
+
       kase = Case::Repo.map_record(case_rec, documents: case_rec.documents)
       kase.complete(Case::Status::Approved)
-      case_repo = Case::Repo.new
 
       case_repo.save_completed(kase)
       assert_equal(case_rec.status, "approved")
@@ -594,8 +552,9 @@ module Db
     end
 
     test "saves a referral" do
-      supplier_rec = partners(:supplier_3)
+      case_repo = Case::Repo.new
       case_rec = cases(:approved_1)
+      supplier_rec = partners(:supplier_3)
 
       referrer = Case::Repo.map_record(case_rec, documents: case_rec.documents)
       referral = referrer.make_referral_to_program(
@@ -608,9 +567,6 @@ module Db
         program: Program::Name::Wrap,
         variant: Program::Contract::Wrap3h
       ))
-
-      domain_events = ArrayQueue.new
-      case_repo = Case::Repo.new(domain_events: domain_events)
 
       act = -> do
         case_repo.save_referral(referral)
@@ -637,7 +593,7 @@ module Db
 
       assert_length(referrer.events, 0)
       assert_length(referred.events, 0)
-      assert_length(domain_events, 3)
+      assert_length(Service::Container.domain_events, 3)
     end
   end
 end

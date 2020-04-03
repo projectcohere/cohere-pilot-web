@@ -47,16 +47,11 @@ module Db
     end
 
     test "save an invited user" do
-      domain_events = ArrayQueue.new
-      partner_rec = partners(:cohere_1)
-
-      user_repo = User::Repo.new(
-        domain_events: domain_events
-      )
-
+      user_repo = User::Repo.new
+      user_partner_rec = partners(:cohere_1)
       user = User.invite(User::Invitation.new(
         email: "test@website.com",
-        partner_id: partner_rec.id,
+        partner_id: user_partner_rec.id,
       ))
 
       act = -> do
@@ -72,8 +67,9 @@ module Db
       assert_not_nil(user.confirmation_token)
       assert_not_nil(user.record)
 
-      assert_length(user.events, 0)
-      assert_length(domain_events, 1)
+      events = user.events
+      assert_length(events, 0)
+      assert_length(Service::Container.domain_events, 1)
     end
   end
 end

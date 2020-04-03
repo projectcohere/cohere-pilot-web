@@ -11,7 +11,5 @@ module Dhs
         ),
       )
     end
-
-    alias :perform :call
   end
 end

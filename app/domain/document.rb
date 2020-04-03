@@ -11,14 +11,7 @@ class Document < ::Entity
   attr(:new_file)
 
   # -- lifetime
-  def self.upload(source_url)
-    return Document.new(
-      classification: :unknown,
-      source_url: source_url
-    )
-  end
-
-  def self.attach(new_file)
+  def self.attach_file(new_file)
     document = Document.new(classification: :unknown)
     document.attach_file(new_file)
     return document

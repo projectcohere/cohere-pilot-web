@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_30_212123) do
+ActiveRecord::Schema.define(version: 2020_04_02_144109) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -68,6 +68,16 @@ ActiveRecord::Schema.define(version: 2020_03_30_212123) do
     t.index ["supplier_id"], name: "index_cases_on_supplier_id"
   end
 
+  create_table "chat_attachments", force: :cascade do |t|
+    t.string "remote_url"
+    t.bigint "file_id"
+    t.bigint "message_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["file_id"], name: "index_chat_attachments_on_file_id"
+    t.index ["message_id"], name: "index_chat_attachments_on_message_id"
+  end
+
   create_table "chat_messages", force: :cascade do |t|
     t.string "body"
     t.string "sender", null: false
@@ -81,12 +91,7 @@ ActiveRecord::Schema.define(version: 2020_03_30_212123) do
     t.bigint "recipient_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.string "session_token"
-    t.string "sms_conversation_id"
-    t.integer "notification", default: 0, null: false
-    t.index ["notification"], name: "index_chats_on_notification"
     t.index ["recipient_id"], name: "index_chats_on_recipient_id", unique: true
-    t.index ["session_token"], name: "index_chats_on_session_token", unique: true
     t.index ["updated_at"], name: "index_chats_on_updated_at"
   end
 

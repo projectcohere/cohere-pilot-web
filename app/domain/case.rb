@@ -159,6 +159,7 @@ class Case < ::Entity
       user_id: user.id,
       user_email: user.email,
       partner_id: user.role.partner_id,
+      partner_membership: user.role.name,
     )
 
     @assignments.push(@new_assignment)
@@ -178,46 +179,22 @@ class Case < ::Entity
   end
 
   # -- commands/messages
-  def add_mms_message(message)
-    sent_by_recipient = message.sent_by?(@recipient.profile.phone.number)
-
-    if sent_by_recipient
-      # upload mms message attachments
-      message.attachments&.each do |attachment|
-        new_document = Document.upload(attachment.url)
-        add_document(new_document)
-        @events.add(Events::DidUploadMessageAttachment.from_entity(self, new_document))
-      end
-
-      # track messages
-      track_message_receipt
-    end
-
-    track_new_activity(sent_by_recipient)
-  end
-
   def add_chat_message(message)
-    sent_by_recipient = message.sent_by_recipient?
-
-    if sent_by_recipient
-      # attach chat message attachments
-      message.attachments.each do |attachment|
-        add_document(Document.attach(attachment))
+    if message.sent_by_recipient?
+      # add attachments as documents
+      message.attachments&.each do |attachment|
+        new_document = Document.attach_file(attachment.file)
+        add_document(new_document)
       end
 
-      # track messages
-      track_message_receipt
+      # track recipient message receipt
+      is_first = @received_message_at == nil
+      @received_message_at = Time.zone.now
+      @events.add(Events::DidReceiveMessage.from_entity(self, is_first: is_first))
     end
 
     # track activity
-    track_new_activity(sent_by_recipient)
-  end
-
-  # -- commands/messages/helpers
-  private def track_message_receipt
-    is_first = @received_message_at == nil
-    @received_message_at = Time.zone.now
-    @events.add(Events::DidReceiveMessage.from_entity(self, is_first: is_first))
+    track_new_activity(message.sent_by_recipient?)
   end
 
   # -- commands/documents

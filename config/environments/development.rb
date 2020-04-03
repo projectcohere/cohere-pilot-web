@@ -5,6 +5,7 @@ Rails.application.configure do
   should_cache = Rails.root.join('tmp', 'caching-dev.txt').exist?
 
   # -- root --
+  config.hosts << /[a-z0-9]+\.ngrok\.io/
   config.eager_load = false
   config.consider_all_requests_local = true
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
@@ -15,6 +16,15 @@ Rails.application.configure do
 
   if should_cache
     config.cache_store = :memory_store
+  end
+
+  # -- root/logging --
+  config.log_level = ENV["LOG_LEVEL"]&.to_sym || :debug
+
+  s = Sidekiq
+  s.logger.level = Logger::FATAL
+  s.configure_server do |c|
+    c.logger.level = config.log_level
   end
 
   # -- assets --

@@ -11,16 +11,21 @@
     <ul class="CaseFormAssignments-list">
       <% view.assignments.each do |assignment| %>
         <li class="CaseFormAssignments-entry">
-          <%=
-            link_to("Unassign", destroy_case_assignments_path(form.model, assignment.partner_id),
-              method: :delete,
-              class: "CaseFormAssignments-unassign Button Button--destructive",
-              data: {
-                confirm: "Are you sure you want to unassign this user?"
-              },
-            )
-          %>
-          <%= assignment.user_email %>
+          <p class="CaseFormAssignments-name">
+            <%= assignment.user_email %>
+          </p>
+
+          <% if assignment.partner_membership != Partner::Membership::Supplier %>
+            <%=
+              link_to("Unassign", destroy_case_assignments_path(form.model, assignment.partner_id),
+                method: :delete,
+                class: "CaseFormAssignments-unassign Link--destructive",
+                data: {
+                  confirm: "Are you sure you want to unassign this user?"
+                },
+              )
+            %>
+          <% end %>
         </li>
       <% end %>
     </ul>

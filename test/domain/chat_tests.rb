@@ -19,19 +19,17 @@ class ChatTests < ActiveSupport::TestCase
     assert_match(/Hi there/, message.body)
 
     # TODO: how can we stub out repos so that we can return mock
-    # attachments in unit tests?
+    # macros in unit tests?
     # assert_length(message.attachments, 1)
-  end
 
-  # -- commands --
-  test "starts a session" do
-    chat = Chat.stub
-    chat.start_session
-    assert_not_nil(chat.session)
+    events = chat.events
+    assert_instances_of(events, [
+      Chat::Events::DidPrepareMessage
+    ])
   end
 
   # -- commands/messages
-  test "adds a message" do
+  test "adds a prepared message" do
     chat = Chat.stub(
       id: Id.new(42),
       recipient: stub_recipient,
@@ -41,26 +39,59 @@ class ChatTests < ActiveSupport::TestCase
     chat.add_message(
       sender: Chat::Sender.cohere(:test_sender),
       body: "This is a test.",
-      attachments: %i[test_attachment]
+      files: %i[test_io],
     )
 
-    assert_length(chat.messages, 2)
+    messages = chat.messages
+    assert_length(messages, 2)
 
     message = chat.new_message
     assert_not_nil(message)
+    assert(message.prepared?)
     assert_equal(message.id, Id::None)
     assert_equal(message.sender, :test_sender)
     assert_equal(message.body, "This is a test.")
     assert_equal(message.chat_id, 42)
 
-    attachment = message.attachments[0]
-    assert_length(message.attachments, 1)
-    assert_equal(attachment, :test_attachment)
+    attachments = message.attachments
+    assert_length(attachments, 1)
 
-    event = chat.events[0]
-    assert_length(chat.events, 1)
-    assert_instance_of(Chat::Events::DidAddMessage, event)
-    assert_equal(event.chat_message_id, message.id)
+    attachment = attachments[0]
+    assert_equal(attachment.file, :test_io)
+
+    events = chat.events
+    assert_instances_of(events, [
+      Chat::Events::DidPrepareMessage,
+    ])
+  end
+
+  test "adds a message with remote attachments" do
+    chat = Chat.stub(
+      id: Id.new(42),
+      recipient: stub_recipient,
+    )
+
+    chat.add_message(
+      sender: Chat::Sender.cohere(:test_sender),
+      body: "This is a test.",
+      files: [Sms::Media.stub(url: :test_url)],
+    )
+
+    message = chat.new_message
+    assert_not_nil(message)
+    assert_not(message.prepared?)
+
+    attachments = message.attachments
+    assert_length(attachments, 1)
+
+    attachment = attachments[0]
+    assert(attachment.remote?)
+    assert_equal(attachment.remote_url, :test_url)
+
+    events = chat.events
+    assert_instances_of(events, [
+      Chat::Events::DidAddRemoteAttachment,
+    ])
   end
 
   test "selects a message" do
@@ -72,25 +103,35 @@ class ChatTests < ActiveSupport::TestCase
     assert_equal(chat.selected_message, :test_message)
   end
 
-  # -- commands/notifications
-  test "sends a notification" do
+  # -- commands/attachments
+  test "selects an attachment" do
     chat = Chat.stub(
-      notification: Chat::Notification.stub,
-      sms_conversation_id: :test_id,
+      messages: [
+        Chat::Message.stub(
+          attachments: [Chat::Attachment.stub(id: Id.new(3))],
+        ),
+      ],
     )
 
-    chat.send_notification { nil }
-    assert_nil(chat.notification)
-    assert_equal(chat.sms_conversation_id, :test_id)
+    chat.select_message(0)
+    chat.selected_message.select_attachment(3)
+    assert_equal(chat.selected_attachment.id.val, 3)
   end
 
-  test "sends a notification and starts a new conversation" do
+  test "uploads an attachment" do
     chat = Chat.stub(
-      notification: Chat::Notification.stub,
+      messages: [
+        Chat::Message.stub(
+          attachments: [Chat::Attachment.stub(id: Id.new(3))],
+        ),
+      ],
     )
 
-    chat.send_notification { :test_id }
-    assert_nil(chat.notification)
-    assert_equal(chat.sms_conversation_id, :test_id)
+    chat.select_message(0)
+    chat.selected_message.select_attachment(3)
+
+    chat.upload_selected_attachment(:test_file)
+    assert_not(chat.selected_attachment.remote?)
+    assert_instances_of(chat.events, [Chat::Events::DidUploadAttachment])
   end
 end

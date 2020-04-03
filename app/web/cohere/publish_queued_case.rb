@@ -11,7 +11,5 @@ module Cohere
         ),
       )
     end
-
-    alias :perform :call
   end
 end

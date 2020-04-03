@@ -40,6 +40,11 @@ ifeq ("$(shell command -v brew)", "")
 	$(info - https://brew.sh)
 	$(error 1)
 endif
+ifeq ("$(shell command -v yarn)", "")
+	$(info ✘ yarn is not installed, please run:)
+	$(info - brew install yarn)
+	$(error 1)
+endif
 .PHONY: i/pre
 
 i/base:

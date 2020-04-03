@@ -6,15 +6,20 @@ class Chat
 
     # -- options --
     def self.cohere(chat_token)
-      chat_token
+      return chat_token
     end
 
     def self.recipient
-      Recipient
+      return Recipient
     end
 
     def self.automated
-      Automated
+      return Automated
+    end
+
+    # -- queries --
+    def self.recipient?(sender)
+      return sender == Recipient
     end
   end
 end

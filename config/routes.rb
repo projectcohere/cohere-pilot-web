@@ -32,24 +32,9 @@ Rails.application.routes.draw do
     end
 
     # messages
-    namespace(:messages) do
-      post(:front, constraints: { format: :json })
-    end
-
-    # chats
-    resource(:chat, only: [:show]) do
-      match("/files", via: :post, action: :files, constraints: ->(req) {
-        req.content_type == "multipart/form-data"
-      })
-
-      # sessions
-      resources(:invites, module: :chats, only: [
-        :new,
-        :create,
-      ]) do
-        match("/verify", via: :get, on: :collection, action: :verify)
-        match("/verify-code", via: :get, on: :collection, action: :edit)
-        match("/", via: :patch, on: :collection, action: :update)
+    namespace(:chats) do
+      namespace(:sms) do
+        post(:twilio)
       end
     end
 
@@ -198,10 +183,5 @@ Rails.application.routes.draw do
   if Rails.env.development?
     require "sidekiq/web"
     mount(Sidekiq::Web => "/sidekiq")
-  end
-
-  # -- test --
-  if Rails.env.test?
-    post("/tests/chat-session", to: "tests#chat_session")
   end
 end
