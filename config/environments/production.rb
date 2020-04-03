@@ -8,20 +8,20 @@ Rails.application.configure do
   config.force_ssl = true
 
   # -- root/logging
-  config.log_level = :warn
-  config.log_tags = [ :request_id ]
+  config.log_level = ENV["LOG_LEVEL"]&.to_sym || :warn
+  config.log_tags = %i[request_id]
   config.log_formatter = ::Logger::Formatter.new
+
+  s = Sidekiq
+  s.logger.level = Logger::FATAL
+  s.configure_server do |c|
+    c.logger.level = config.log_level
+  end
 
   if ENV["RAILS_LOG_TO_STDOUT"].present?
     logger = ActiveSupport::Logger.new(STDOUT)
     logger.formatter = config.log_formatter
     config.logger = ActiveSupport::TaggedLogging.new(logger)
-  end
-
-  s = Sidekiq
-  s.logger.level = Logger::FATAL
-  s.configure_server do |c|
-    c.logger.level = Logger::WARN
   end
 
   # -- assets --

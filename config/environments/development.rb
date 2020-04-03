@@ -19,12 +19,12 @@ Rails.application.configure do
   end
 
   # -- root/logging --
-  config.log_level = :debug
+  config.log_level = ENV["LOG_LEVEL"]&.to_sym || :debug
 
   s = Sidekiq
   s.logger.level = Logger::FATAL
   s.configure_server do |c|
-    c.logger.level = Logger::DEBUG
+    c.logger.level = config.log_level
   end
 
   # -- assets --
