@@ -79,8 +79,7 @@ module Db
     end
 
     test "saves a new message" do
-      domain_events = ArrayQueue.new
-
+      chat_repo = Chat::Repo.new
       chat_rec = chats(:idle_1)
       blob_rec = active_storage_blobs(:blob_1)
 
@@ -91,7 +90,6 @@ module Db
         files: [blob_rec]
       )
 
-      chat_repo = Chat::Repo.new(domain_events: domain_events)
       act = -> do
         chat_repo.save_new_message(chat)
       end
@@ -113,8 +111,9 @@ module Db
       assert_not_nil(attachment_rec)
       assert_equal(attachment_rec.file, blob_rec)
 
-      assert_length(chat.events, 0)
-      assert_length(domain_events, 1)
+      events = chat.events
+      assert_length(events, 0)
+      assert_length(Service::Container.domain_events, 1)
     end
 
     test "saves a new message with a remote attachment" do
