@@ -1,7 +1,5 @@
 module Events
-  class DispatchAnalytics
-    include Service
-
+  class DispatchAnalytics < ::Command
     # -- constants --
     Unsaved = "Unsaved".freeze
 
