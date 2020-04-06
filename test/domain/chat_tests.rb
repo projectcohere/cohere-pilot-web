@@ -16,6 +16,7 @@ class ChatTests < ActiveSupport::TestCase
 
     message = chat.messages[0]
     assert_length(chat.messages, 1)
+    assert(message.status.queued?)
     assert_match(/Hi there/, message.body)
 
     # TODO: how can we stub out repos so that we can return mock
@@ -29,17 +30,18 @@ class ChatTests < ActiveSupport::TestCase
   end
 
   # -- commands/messages
-  test "adds a prepared message" do
+  test "adds a cohere message" do
     chat = Chat.stub(
       id: Id.new(42),
       recipient: stub_recipient,
-      messages: [Chat::Message.stub]
+      messages: [Chat::Message.stub],
     )
 
     chat.add_message(
       sender: Chat::Sender.cohere(:test_sender),
       body: "This is a test.",
       files: %i[test_io],
+      status: Chat::Message::Status::Queued,
     )
 
     messages = chat.messages
@@ -65,7 +67,7 @@ class ChatTests < ActiveSupport::TestCase
     ])
   end
 
-  test "adds a message with remote attachments" do
+  test "adds a recipient message with remote attachments" do
     chat = Chat.stub(
       id: Id.new(42),
       recipient: stub_recipient,
@@ -75,11 +77,15 @@ class ChatTests < ActiveSupport::TestCase
       sender: Chat::Sender.cohere(:test_sender),
       body: "This is a test.",
       files: [Sms::Media.stub(url: :test_url)],
+      status: Chat::Message::Status::Received,
+      remote_id: "1234"
     )
 
     message = chat.new_message
     assert_not_nil(message)
     assert_not(message.prepared?)
+    assert(message.status.received?)
+    assert_equal(message.remote_id, "1234")
 
     attachments = message.attachments
     assert_length(attachments, 1)

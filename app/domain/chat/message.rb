@@ -4,9 +4,11 @@ class Chat
     prop(:id, default: Id::None)
     prop(:sender)
     prop(:body)
+    prop(:status)
     prop(:timestamp)
     prop(:attachments, default: []) # IO | Sms::Media | ActiveStorage::Blob
     prop(:chat_id)
+    prop(:remote_id, default: nil)
 
     # -- props/temporary
     attr(:selected_attachment)

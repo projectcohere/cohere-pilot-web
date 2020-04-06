@@ -87,7 +87,8 @@ module Db
       chat.add_message(
         sender: Chat::Sender.automated,
         body: "Test.",
-        files: [blob_rec]
+        files: [blob_rec],
+        status: Chat::Message::Status::Queued,
       )
 
       act = -> do
@@ -106,6 +107,7 @@ module Db
       message_rec = chat_rec.messages.find { |r| r.id == chat.new_message.id.val }
       assert_equal(message_rec.sender, Chat::Sender.automated)
       assert_equal(message_rec.body, "Test.")
+      assert_equal(message_rec.status, "queued")
 
       attachment_rec = message_rec.attachments[0]
       assert_not_nil(attachment_rec)
@@ -116,14 +118,16 @@ module Db
       assert_length(Service::Container.domain_events, 1)
     end
 
-    test "saves a new message with a remote attachment" do
+    test "saves a new message with remote attachments" do
       chat_repo = Chat::Repo.new
       chat_rec = chats(:idle_1)
       chat = Chat::Repo.map_record(chat_rec)
       chat.add_message(
         sender: Chat::Sender.recipient,
         body: "Test.",
-        files: [Sms::Media.new(url: "http://website.com/image.jpg")]
+        files: [Sms::Media.new(url: "http://website.com/image.jpg")],
+        status: Chat::Message::Status::Received,
+        remote_id: "SM1239",
       )
 
       act = -> do
@@ -138,6 +142,8 @@ module Db
 
       message_rec = chat_rec.messages.find { |r| r.id == chat.new_message.id.val }
       assert_equal(message_rec.sender, Chat::Sender.recipient)
+      assert_equal(message_rec.status, "received")
+      assert_equal(message_rec.remote_id, "SM1239")
 
       attachment_rec = message_rec.attachments[0]
       assert_not_nil(attachment_rec)

@@ -23,6 +23,7 @@ class Chat < Entity
       sender: Sender.automated,
       body: macro.body,
       files: macro.attachment == nil ? [] : [macro.attachment],
+      status: Message::Status::Queued,
     )
 
     return chat
@@ -30,7 +31,7 @@ class Chat < Entity
 
   # -- messages --
   # -- messages/commands
-  def add_message(sender:, body:, files:)
+  def add_message(sender:, body:, files:, status:, remote_id: nil)
     attachments = files.map do |f|
       Attachment.from_source(f)
     end
@@ -39,8 +40,10 @@ class Chat < Entity
       sender: sender,
       body: body,
       timestamp: Time.zone.now.to_i,
+      status: status,
       attachments: attachments,
       chat_id: @id.val,
+      remote_id: remote_id,
     )
 
     # update state

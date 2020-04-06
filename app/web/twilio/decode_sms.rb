@@ -2,9 +2,11 @@ module Twilio
   class DecodeSms < ::Command
     def call(params)
       message = Sms::Message.new(
+        id: params["SmsSid"],
         phone_number: params["From"]&.delete_prefix("+1"),
         body: params["Body"],
         media: decode_media(params),
+        status: params["SmsStatus"],
       )
 
       return message

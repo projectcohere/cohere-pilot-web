@@ -176,6 +176,8 @@ class Chat
       message_rec.assign_attributes({
         sender: m.sender,
         body: m.body,
+        status: m.status.key,
+        remote_id: m.remote_id,
       })
     end
 

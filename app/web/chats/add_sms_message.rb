@@ -10,17 +10,19 @@ module Chats
     end
 
     # -- command --
-    def call(incoming)
-      chat = @chat_repo.find_by_phone_number(incoming.phone_number)
+    def call(inbound)
+      chat = @chat_repo.find_by_phone_number(inbound.phone_number)
       if chat.nil?
-        raise "No case found for phone number #{incoming.phone_number}"
+        raise "No case found for phone number #{inbound.phone_number}"
       end
 
       # add the message to the chat
       chat.add_message(
         sender: Chat::Sender::Recipient,
-        body: incoming.body,
-        files: incoming.media || [],
+        body: inbound.body,
+        files: inbound.media || [],
+        status: Chat::Message::Status::Received,
+        remote_id: inbound.id,
       )
 
       # save aggregate

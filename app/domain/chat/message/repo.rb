@@ -49,9 +49,11 @@ class Chat
           id: Id.new(r.id),
           sender: r.sender,
           body: r.body,
+          status: Status.from_key(r.status),
           timestamp: r.created_at.to_i,
           attachments: attachments.to_a.map { |r| self.map_attachment(r) },
           chat_id: r.chat_id,
+          remote_id: r.remote_id,
         )
       end
 

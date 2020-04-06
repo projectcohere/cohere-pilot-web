@@ -13,7 +13,11 @@ module Options
   class_methods do
     def option(key)
       # define constant
-      const_set(key.capitalize, new(key).freeze)
+      value = const_set(key.capitalize, new(key).freeze)
+
+      # store key -> value map
+      @all ||= {}
+      @all[key] = value
 
       # define predicate method: e.g. `def red?`
       define_method("#{key}?") do
@@ -22,7 +26,15 @@ module Options
     end
 
     def from_key(key)
-      return const_get(key.capitalize)
+      return @all[key]
+    end
+
+    def keys
+      return @all.keys
+    end
+
+    def values
+      return @all.values
     end
   end
 end
