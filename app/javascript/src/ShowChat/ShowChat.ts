@@ -5,7 +5,7 @@ import { IComponent, kConsumer } from "../Core"
 import { getReadableTimeSince } from "../Shared/Time"
 
 // -- constants --
-const kChannelChat = "Chats::MessageChannel"
+const kChannelChat = "Chats::MessagesChannel"
 
 const kIdChat = "chat"
 const kIdChatJson = "chat-json"

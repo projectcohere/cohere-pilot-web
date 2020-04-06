@@ -8,7 +8,7 @@ module Support
 
     def chat_messages_for(chat_name)
       chat_rec = chats(chat_name)
-      return Chats::MessageChannel::broadcasting_for(chat_rec.id)
+      return Chats::MessagesChannel::broadcasting_for(chat_rec.id)
     end
 
     # -- asserts --

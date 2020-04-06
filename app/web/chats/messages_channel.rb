@@ -1,5 +1,5 @@
 module Chats
-  class MessageChannel < ApplicationCable::Channel
+  class MessagesChannel < ApplicationCable::Channel
     # -- ActionCable::Channel::Base
     def subscribed
       chat = find_current_chat!(params[:chat])

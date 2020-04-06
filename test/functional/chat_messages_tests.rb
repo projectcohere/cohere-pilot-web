@@ -1,7 +1,7 @@
 require "test_helper"
 
 class ChatMessagesTests < ActionCable::Channel::TestCase
-  tests(Chats::MessageChannel)
+  tests(Chats::MessagesChannel)
 
   # -- tests --
   test "subscribe a cohere user" do

@@ -13,7 +13,7 @@ module Chats
     def call(message_id)
       message = @message_repo.find_with_attachments(message_id)
       Files::Host.set_current!
-      Chats::MessageChannel.broadcast_to(message.chat_id, @encode.(message))
+      Chats::MessagesChannel.broadcast_to(message.chat_id, @encode.(message))
     end
   end
 end
