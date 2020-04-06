@@ -12,17 +12,14 @@ tools-wds         = $(tools-rb)/webpack-dev-server
 tools-bundle      = $(tools-rb)/bundle
 tools-yarn        = yarn
 tools-pg-up       = $(shell pg_isready 1>/dev/null 2>&1; echo $$?)
-tools-pg-start    = brew services start postgresql
+tools-pg-start    = brew services start postgresql@11
 tools-redis-up    = $(shell redis-cli ping 1>/dev/null 2>&1; echo $$?)
 tools-redis-start = brew services start redis
 
 # -- init --
 ## initializes the dev environment
-init: i
+init: .env i/pre i/base i/deps i/services d/r/all i/hooks
 .PHONY: init
-
-i: .env i/pre i/base i/deps i/services i/db i/hooks
-.PHONY: i
 
 ## installs the ruby/js deps
 i/deps:
@@ -60,15 +57,11 @@ ifneq ($(tools-redis-up), 0)
 endif
 .PHONY: i/services
 
-i/db:
-	$(tools-rails) db:drop
-	$(tools-rails) db:create
-	$(tools-rails) db:seed
-.PHONY: i/db
-
-i/hooks:
-	cd .git/hooks && ln -s ../../hooks/pre-push
+i/hooks: .git/hooks/pre-push
 .PHONY: i/hooks
+
+.git/hooks/pre-push:
+	cd .git/hooks && ln -s ../../hooks/pre-push
 
 # -- start --
 ## alias for s/dev
@@ -180,7 +173,7 @@ d/seed:
 .PHONY: d/seed
 
 ## loads dev seeds
-d/s/dev:
+d/s/dev: d/fixtures
 	$(tools-rails) db:seed:dev
 .PHONY: d/s/dev
 
@@ -195,7 +188,7 @@ d/reset:
 .PHONY: d/reset
 
 ## resets the db and loads fixtures
-d/r/all: d/reset d/fixtures d/s/dev
+d/r/all: d/reset d/s/dev
 .PHONY: d/r/all
 
 ## runs any pending migrations
