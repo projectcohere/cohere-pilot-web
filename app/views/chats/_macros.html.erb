@@ -4,8 +4,7 @@
 <%- macros_json = macros.map do |macro| %>
 <%-   next { %>
 <%-     body: macro.body, %>
-<%-     attachment: macro.attachment&.then { |a| %>
-<%-       f = a.file %>
+<%-     attachment: macro.file&.then { |f| %>
 <%-       next { %>
 <%-         id: f.id, %>
 <%-         preview: { %>

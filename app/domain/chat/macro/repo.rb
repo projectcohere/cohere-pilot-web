@@ -42,12 +42,7 @@ class Chat
           Macro.new(
             name: data["name"],
             body: data["body"],
-            attachment: files[data["filename"]]&.then { |f|
-              Attachment.new(
-                id: Id.new(f.id),
-                file: f,
-              )
-            },
+            file: files[data["filename"]],
           )
         end
 

@@ -22,7 +22,7 @@ class Chat < Entity
     chat.add_message(
       sender: Sender.automated,
       body: macro.body,
-      files: macro.attachment == nil ? [] : [macro.attachment],
+      files: macro.file == nil ? [] : [macro.file],
       status: Message::Status::Queued,
     )
 
