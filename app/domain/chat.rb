@@ -60,17 +60,24 @@ class Chat < Entity
     end
   end
 
+  # -- messages/commands/selection
   def select_message(i)
     assert(i < @messages.count, "a message must exist to select it")
     @selected_message = @messages[i]
   end
 
-  def prepare_selected_message
+  def prepare_message
     assert(@selected_message != nil, "a message must be selected")
 
     if @selected_message.prepared?
       @events.add(Events::DidPrepareMessage.from_entity(@selected_message))
     end
+  end
+
+  def change_message_status(status)
+    assert(@selected_message != nil, "a message must be selected")
+    @selected_message.change_status(status)
+    @events.add(Events::DidChangeMessageStatus.from_entity(@selected_message))
   end
 
   # -- attachments --

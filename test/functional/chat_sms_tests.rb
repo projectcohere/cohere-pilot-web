@@ -3,9 +3,9 @@ require "test_helper"
 class ChatSmsTests < ActionDispatch::IntegrationTest
   include ActionCable::Channel::TestCase::Behavior
 
-  # -- messages --
-  test "rejects improperly signed requests" do
-    post("/chats/sms/twilio",
+  # -- inbound --
+  test "rejects an improperly signed inbound request" do
+    post("/chats/sms/inbound",
       headers: {
         "X-Twilio-Signature" => "invalid-signature"
       },
@@ -38,13 +38,13 @@ class ChatSmsTests < ActionDispatch::IntegrationTest
     }
 
     signature = Twilio::Signature.new(
-      "http://#{host}/chats/sms/twilio",
+      "http://#{host}/chats/sms/inbound",
       params
     )
 
     act = -> do
       VCR.use_cassette("chats--recv-recipient-sms") do
-        post("/chats/sms/twilio", params: params,
+        post("/chats/sms/inbound", params: params,
           headers: {
             "X-Twilio-Signature" => signature.computed
           }
@@ -94,13 +94,13 @@ class ChatSmsTests < ActionDispatch::IntegrationTest
     }
 
     signature = Twilio::Signature.new(
-      "http://#{host}/chats/sms/twilio",
+      "http://#{host}/chats/sms/inbound",
       params
     )
 
     act = -> do
       VCR.use_cassette("chats--recv-recipient-sms--attachments") do
-        post("/chats/sms/twilio", params: params,
+        post("/chats/sms/inbound", params: params,
           headers: {
             "X-Twilio-Signature" => signature.computed
           }
@@ -120,5 +120,56 @@ class ChatSmsTests < ActionDispatch::IntegrationTest
     assert_analytics_events(1) do |events|
       assert_match(/Did Receive Message/, events[0])
     end
+  end
+
+  # -- status --
+  test "rejects an improperly signed status request" do
+    post("/chats/sms/status",
+      headers: {
+        "X-Twilio-Signature" => "invalid-signature"
+      },
+    )
+
+    assert_response(:forbidden)
+  end
+
+  test "updates a message's status" do
+    message_rec = chat_messages(:message_i1_2)
+
+    params = {
+      "SmsSid" => "#{message_rec.remote_id}",
+      "SmsStatus" => "delivered",
+      "MessageStatus" => "delivered",
+      "To" => "+12245882478",
+      "MessageSid" => "#{message_rec.remote_id}",
+      "AccountSid" => ENV["TWILIO_API_ACCOUNT_SID"],
+      "From" => "+12223334444",
+      "ApiVersion" => "2010-04-01"
+    }
+
+    signature = Twilio::Signature.new(
+      "http://#{host}/chats/sms/status",
+      params
+    )
+
+    act = -> do
+      post("/chats/sms/status", params: params,
+        headers: {
+          "X-Twilio-Signature" => signature.computed
+        }
+      )
+    end
+
+    assert_changes(
+      -> { message_rec.reload.status },
+      &act
+    )
+
+    # TODO: implement socket message
+    # assert_matching_broadcast_on(chat_messages_for(:idle_2)) do |msg|
+    #   assert_equal(msg["name"], "HAS_NEW_STATUS")
+    #   assert_equal(msg["data"]["id"], message_rec.id)
+    #   assert_equal(msg["data"]["status"], "delivered")
+    # end
   end
 end

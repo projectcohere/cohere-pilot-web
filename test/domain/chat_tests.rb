@@ -101,12 +101,26 @@ class ChatTests < ActiveSupport::TestCase
   end
 
   test "selects a message" do
-    chat = Chat.stub(
-      messages: [:test_message]
-    )
-
+    chat = Chat.stub(messages: [:test_message])
     chat.select_message(0)
     assert_equal(chat.selected_message, :test_message)
+  end
+
+  test "prepares a message" do
+    chat = Chat.stub(messages: [Chat::Message.stub])
+    chat.select_message(0)
+
+    chat.prepare_message
+    assert_instances_of(chat.events, [Chat::Events::DidPrepareMessage])
+  end
+
+  test "changes a message's status" do
+    chat = Chat.stub(messages: [Chat::Message.stub])
+    chat.select_message(0)
+
+    chat.change_message_status(Chat::Message::Status::Delivered)
+    assert(chat.selected_message.status.delivered?)
+    assert_instances_of(chat.events, [Chat::Events::DidChangeMessageStatus])
   end
 
   # -- commands/attachments

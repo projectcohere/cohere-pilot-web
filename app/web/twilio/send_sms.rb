@@ -14,6 +14,7 @@ module Twilio
         "From" => ENV["TWILIO_API_PHONE_NUMBER"],
         "Body" => body,
         "MediaUrl" => media_urls,
+        "StatusCallback" => "#{ENV["HOST"]}/chats/sms/status",
       })
 
       return nil

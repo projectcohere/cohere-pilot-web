@@ -1,5 +1,7 @@
 class Chat
   class Message < ::Entity
+    prop(:record, default: nil)
+
     # -- props --
     prop(:id, default: Id::None)
     prop(:sender)
@@ -14,6 +16,10 @@ class Chat
     attr(:selected_attachment)
 
     # -- commands --
+    def change_status(status)
+      @status = status
+    end
+
     def select_attachment(attachment_id)
       @selected_attachment = @attachments.find do |m|
         m.id.val == attachment_id
@@ -41,6 +47,8 @@ class Chat
     # -- callbacks --
     def did_save(record)
       @id.set(record.id)
+      @record = record
+
       @attachments.each_with_index do |a, i|
         a.did_save(record.attachments[i])
       end

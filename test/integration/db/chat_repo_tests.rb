@@ -52,7 +52,7 @@ module Db
       chat_repo = Chat::Repo.new
       chat_message_rec = chat_messages(:message_i1_1)
 
-      chat = chat_repo.find_by_selected_message(chat_message_rec.id)
+      chat = chat_repo.find_by_message_with_attachments(chat_message_rec.id)
       assert_not_nil(chat)
       assert_not_nil(chat.selected_message)
       assert_present(chat.selected_message.attachments)

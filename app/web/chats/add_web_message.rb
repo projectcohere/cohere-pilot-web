@@ -21,6 +21,7 @@ module Chats
         sender: sender,
         body: incoming.body,
         files: attachments || [],
+        status: Chat::Message::Status::Queued,
       )
 
       # save aggregate

@@ -9,10 +9,8 @@ module Chats
     def receive(data)
       assert(sender != nil, "must be a cohere user to send messages")
 
-      chat = find_current_chat!(data["chat"])
-      assert(chat != nil, "must have a chat to send messages")
-
       # add incoming message to chat
+      chat = find_current_chat!(data["chat"])
       AddWebMessage.(chat, sender, Incoming.new(
         body: data["message"]["body"],
         attachment_ids: data["message"]["attachment_ids"],

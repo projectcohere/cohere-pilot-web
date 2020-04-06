@@ -13,7 +13,7 @@ module Chats
     def call(message_id)
       Files::Host.set_current!
 
-      chat = @chat_repo.find_by_selected_message(message_id)
+      chat = @chat_repo.find_by_message_with_attachments(message_id)
 
       m = chat.selected_message
       p = chat.recipient.profile.phone

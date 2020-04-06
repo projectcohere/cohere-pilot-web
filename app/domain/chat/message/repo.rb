@@ -12,6 +12,13 @@ class Chat
         return entity_from(message_rec)
       end
 
+      def find_by_remote_id(remote_id)
+        message_rec = Message::Record
+          .find_by!(remote_id: remote_id)
+
+        return entity_from(message_rec)
+      end
+
       def find_with_attachments(id)
         message_rec = Message::Record
           .joins_attachments
@@ -20,7 +27,7 @@ class Chat
         return entity_from(message_rec, attachments: message_rec.attachments)
       end
 
-      def find_by_selected_attachment(attachment_id)
+      def find_by_attachment(attachment_id)
         message_rec = Message::Record
           .joins_attachments
           .references(:chat_attachments)
@@ -34,7 +41,7 @@ class Chat
       end
 
       # -- queries/many
-      def find_many_by_chat_with_attachments(chat_id)
+      def find_all_by_chat_with_attachments(chat_id)
         message_recs = Message::Record
           .joins_attachments
           .order(created_at: :asc)
@@ -46,6 +53,7 @@ class Chat
       # -- factories --
       def self.map_record(r, attachments: [])
         return Message.new(
+          record: r,
           id: Id.new(r.id),
           sender: r.sender,
           body: r.body,

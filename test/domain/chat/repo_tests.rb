@@ -19,12 +19,12 @@ class Chat
       assert_not_nil(message.id.val)
       assert_not_nil(message.sender)
       assert_not_nil(message.body)
-      assert(message.status.queued?)
+      assert(message.status.delivered?)
 
       message = chat.messages[1]
       assert_not_nil(message)
       assert_not_nil(message.remote_id)
-      assert(message.status.delivered?)
+      assert(message.status.queued?)
     end
   end
 end

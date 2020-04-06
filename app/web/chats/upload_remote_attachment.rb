@@ -11,7 +11,7 @@ module Chats
 
     # -- command --
     def call(attachment_id)
-      chat = @chat_repo.find_by_selected_attachment(attachment_id)
+      chat = @chat_repo.find_by_attachment(attachment_id)
       file = @download_media.(chat.selected_attachment_url)
       chat.upload_selected_attachment(file)
       @chat_repo.save_uploaded_attachment(chat)

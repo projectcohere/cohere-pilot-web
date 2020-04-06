@@ -34,7 +34,8 @@ Rails.application.routes.draw do
     # messages
     namespace(:chats) do
       namespace(:sms) do
-        post(:twilio)
+        post(:inbound)
+        post(:status)
       end
     end
 
