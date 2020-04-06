@@ -3,12 +3,8 @@ require "csv"
 module Users
   class SendInvitations < ::Command
     # -- lifetime --
-    def initialize(
-      user_repo: User::Repo.get,
-      dispatch_events: Events::DispatchAll.get
-    )
+    def initialize(user_repo: User::Repo.get)
       @user_repo = user_repo
-      @dispatch_events = dispatch_events
     end
 
     # -- command --
@@ -21,7 +17,8 @@ module Users
       invitations.each do |invitation|
         user = User.invite(invitation)
         @user_repo.save_invited(user)
-        @dispatch_events.()
+
+        Events::DispatchAll.()
       end
     end
 
