@@ -71,6 +71,9 @@ module Db
 
       assert_difference(
         -> { Chat::Record.count } => 1,
+        -> { Chat::Message::Record.count } => 1,
+        -> { Chat::Attachment::Record.count } => 1,
+        -> { ActiveStorage::Blob.count } => 0,
         &act
       )
 

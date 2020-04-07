@@ -5,3 +5,11 @@ blob_1:
   metadata: '{"identified":true,"analyzed":true}'
   byte_size: 1047
   checksum: OUT/Y4YGuimmBmvUFYIN4Q==
+
+blob_2:
+  key: aabbXNGW1VrxZ8Eu4zmyw13A
+  filename: 1a-release.png
+  content_type: image/png
+  metadata: '{"identified":true,"analyzed":true}'
+  byte_size: 1047
+  checksum: OUT/Y4YGuimmBmvUFYIN4Q==
