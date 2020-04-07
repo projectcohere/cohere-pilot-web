@@ -64,7 +64,7 @@ class ChatSmsTests < ActionDispatch::IntegrationTest
       assert_not_nil(msg["id"])
       assert_equal(msg["sender"], Chat::Sender.recipient)
       assert_equal(msg["body"], "Test from recipient.")
-      assert_not_nil(msg["status"])
+      assert_equal(msg["status"], Chat::Message::Status::Received.index)
       assert_not_nil(msg["timestamp"])
       assert_length(msg["attachments"], 0)
     end

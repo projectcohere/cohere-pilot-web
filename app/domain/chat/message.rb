@@ -10,14 +10,21 @@ class Chat
     prop(:timestamp)
     prop(:attachments, default: []) # IO | Sms::Media | ActiveStorage::Blob
     prop(:chat_id)
+    prop(:client_id, default: nil)
     prop(:remote_id, default: nil)
 
     # -- props/temporary
     attr(:selected_attachment)
 
     # -- commands --
+    def attach_sms(sms)
+      @remote_id = sms.id
+    end
+
     def change_status(status)
-      @status = status
+      if status != nil && @status != status
+        @status = status
+      end
     end
 
     def select_attachment(attachment_id)

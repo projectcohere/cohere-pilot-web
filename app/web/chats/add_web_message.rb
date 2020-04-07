@@ -22,6 +22,7 @@ module Chats
         body: incoming.body,
         files: attachments || [],
         status: Chat::Message::Status::Queued,
+        client_id: incoming.id,
       )
 
       # save aggregate

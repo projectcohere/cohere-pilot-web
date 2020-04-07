@@ -30,11 +30,11 @@ module Chats
     # -- command/helpers
     private def transform_message(m)
       return Message.new(
-        m.id.val,
+        m.client_id,
         m.sender,
         m.body,
-        m.timestamp,
         m.status.index,
+        m.timestamp,
         m.attachments.map { |a|
           if a.file == nil
             next nil

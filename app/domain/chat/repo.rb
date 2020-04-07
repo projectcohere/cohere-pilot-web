@@ -146,13 +146,13 @@ class Chat
       @domain_events.consume(chat.events)
     end
 
-    def save_message_status(chat)
+    def save_message_sms(chat)
       message = chat&.selected_message
       assert(message.record != nil, "chat and message must be persisted")
 
       # update the record
       message_rec = message.record
-      message_rec.status = message.status.key
+      assign_message_sms(message, message_rec)
 
       # save the record
       message_rec.save!
@@ -194,6 +194,15 @@ class Chat
       message_rec.assign_attributes({
         sender: m.sender,
         body: m.body,
+        client_id: m.client_id,
+      })
+
+      assign_message_sms(message, message_rec)
+    end
+
+    private def assign_message_sms(message, message_rec)
+      m = message
+      message_rec.assign_attributes({
         status: m.status.key,
         remote_id: m.remote_id,
       })

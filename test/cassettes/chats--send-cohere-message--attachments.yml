@@ -67,6 +67,6 @@ http_interactions:
         "price": null, "price_unit": "USD", "error_code": null, "error_message": null,
         "uri": "/2010-04-01/Accounts/<TWILIO_API_ACCOUNT_SID>/Messages/MM8337533f9dcb441787bee8f6fd933f3c.json",
         "subresource_uris": {"media": "/2010-04-01/Accounts/<TWILIO_API_ACCOUNT_SID>/Messages/MM8337533f9dcb441787bee8f6fd933f3c/Media.json"}}'
-    http_version: 
+    http_version:
   recorded_at: Tue, 31 Mar 2020 15:02:17 GMT
 recorded_with: VCR 5.0.0

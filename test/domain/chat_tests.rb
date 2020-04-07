@@ -17,6 +17,7 @@ class ChatTests < ActiveSupport::TestCase
     message = chat.messages[0]
     assert_length(chat.messages, 1)
     assert(message.status.queued?)
+    assert_not_nil(message.client_id)
     assert_match(/Hi there/, message.body)
 
     # TODO: how can we stub out repos so that we can return mock
@@ -42,6 +43,7 @@ class ChatTests < ActiveSupport::TestCase
       body: "This is a test.",
       files: %i[test_io],
       status: Chat::Message::Status::Queued,
+      client_id: :test_id,
     )
 
     messages = chat.messages
@@ -53,6 +55,8 @@ class ChatTests < ActiveSupport::TestCase
     assert_equal(message.id, Id::None)
     assert_equal(message.sender, :test_sender)
     assert_equal(message.body, "This is a test.")
+    assert_equal(message.client_id, :test_id)
+    assert_nil(message.remote_id)
     assert_equal(message.chat_id, 42)
 
     attachments = message.attachments
@@ -78,14 +82,15 @@ class ChatTests < ActiveSupport::TestCase
       body: "This is a test.",
       files: [Sms::Media.stub(url: :test_url)],
       status: Chat::Message::Status::Received,
-      remote_id: "1234"
+      remote_id: :test_id
     )
 
     message = chat.new_message
     assert_not_nil(message)
     assert_not(message.prepared?)
     assert(message.status.received?)
-    assert_equal(message.remote_id, "1234")
+    assert_not_nil(message.client_id)
+    assert_equal(message.remote_id, :test_id)
 
     attachments = message.attachments
     assert_length(attachments, 1)

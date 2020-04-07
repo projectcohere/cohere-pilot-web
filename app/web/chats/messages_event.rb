@@ -4,7 +4,7 @@ module Chats
     prop(:name)
     prop(:data)
 
-    # -- names --
+    # -- events --
     def self.did_add_message(message)
       return MessagesEvent.new(
         name: "DID_ADD_MESSAGE",

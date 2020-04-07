@@ -111,6 +111,7 @@ module Db
       assert_equal(message_rec.sender, Chat::Sender.automated)
       assert_equal(message_rec.body, "Test.")
       assert_equal(message_rec.status, "queued")
+      assert_not_nil(message_rec.client_id)
 
       attachment_rec = message_rec.attachments[0]
       assert_not_nil(attachment_rec)
@@ -124,6 +125,7 @@ module Db
     test "saves a new message with remote attachments" do
       chat_repo = Chat::Repo.new
       chat_rec = chats(:idle_1)
+
       chat = Chat::Repo.map_record(chat_rec)
       chat.add_message(
         sender: Chat::Sender.recipient,
@@ -146,6 +148,7 @@ module Db
       message_rec = chat_rec.messages.find { |r| r.id == chat.new_message.id.val }
       assert_equal(message_rec.sender, Chat::Sender.recipient)
       assert_equal(message_rec.status, "received")
+      assert_not_nil(message_rec.client_id)
       assert_equal(message_rec.remote_id, "SM1239")
 
       attachment_rec = message_rec.attachments[0]

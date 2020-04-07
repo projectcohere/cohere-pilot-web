@@ -6,15 +6,19 @@ module Chats
       stream_for(chat.id)
     end
 
-    def receive(data)
+    def receive(event)
       assert(sender != nil, "must be a cohere user to send messages")
 
-      # add incoming message to chat
-      chat = find_current_chat!(data["chat"])
-      AddWebMessage.(chat, sender, Incoming.new(
-        body: data["message"]["body"],
-        attachment_ids: data["message"]["attachment_ids"],
-      ))
+      if event["name"] != "ADD_MESSAGE"
+        return
+      end
+
+      data = event["data"]
+      AddWebMessage.(
+        find_current_chat!(data["chat"]),
+        sender,
+        Incoming.new(**data["message"]&.symbolize_keys),
+      )
 
       # dispatch events
       Events::DispatchAll.()

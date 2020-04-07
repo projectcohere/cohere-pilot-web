@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_06_172738) do
+ActiveRecord::Schema.define(version: 2020_04_07_192631) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -86,6 +86,7 @@ ActiveRecord::Schema.define(version: 2020_04_06_172738) do
     t.datetime "updated_at", precision: 6, null: false
     t.integer "status", default: 0, null: false
     t.string "remote_id"
+    t.string "client_id"
     t.index ["chat_id"], name: "index_chat_messages_on_chat_id"
     t.index ["remote_id"], name: "index_chat_messages_on_remote_id"
   end

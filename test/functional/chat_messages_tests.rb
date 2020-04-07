@@ -23,15 +23,19 @@ class ChatMessagesTests < ActionCable::Channel::TestCase
     case_rec.save!
 
     chat = Chat::Repo.map_record(chat_rec)
-    stub_connection(chat_user_id: "test-id")
+    stub_connection(chat_user_id: "test-sender")
     subscribe(chat: chat_rec.id)
 
     act = -> do
       VCR.use_cassette("chats--send-cohere-message") do
         perform(:receive, {
-          "chat" => chat_rec.id,
-          "message" => {
-            "body" => "Test from Cohere.",
+          "name" => "ADD_MESSAGE",
+          "data" => {
+            "chat" => chat_rec.id,
+            "message" => {
+              "id" => "test-id",
+              "body" => "Test from Cohere.",
+            },
           },
         })
       end
@@ -42,12 +46,17 @@ class ChatMessagesTests < ActionCable::Channel::TestCase
       &act
     )
 
+    assert(
+      chat_rec.messages
+        .where.not(remote_id: nil).exists?(client_id: "test-id")
+    )
+
     assert_matching_broadcast_on(chat) do |msg|
       assert_equal(msg["name"], "DID_ADD_MESSAGE")
 
       msg = msg["data"]
       assert_not_nil(msg["id"])
-      assert_equal(msg["sender"], Chat::Sender.cohere("test-id"))
+      assert_equal(msg["sender"], "test-sender")
       assert_equal(msg["body"], "Test from Cohere.")
       assert_not_nil(msg["status"])
       assert_not_nil(msg["timestamp"])
@@ -68,16 +77,20 @@ class ChatMessagesTests < ActionCable::Channel::TestCase
     blob_rec = active_storage_blobs(:blob_1)
 
     chat = Chat::Repo.map_record(chat_rec)
-    stub_connection(chat_user_id: "test-id")
+    stub_connection(chat_user_id: "test-sender")
     subscribe(chat: chat_rec.id)
 
     act = -> do
       VCR.use_cassette("chats--send-cohere-message--attachments") do
         perform(:receive, {
-          "chat" => chat_rec.id,
-          "message" => {
-            "body" => "Test with attachments.",
-            "attachment_ids" => [blob_rec.id]
+          "name" => "ADD_MESSAGE",
+          "data" => {
+            "chat" => chat_rec.id,
+            "message" => {
+              "id" => "test-id",
+              "body" => "Test with attachments.",
+              "attachment_ids" => [blob_rec.id]
+            },
           },
         })
       end

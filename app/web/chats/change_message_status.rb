@@ -16,7 +16,7 @@ module Chats
 
       chat = @chat_repo.find_by_message_remote_id(sms.id)
       chat.change_message_status(status)
-      @chat_repo.save_message_status(chat)
+      @chat_repo.save_message_sms(chat)
     end
   end
 end

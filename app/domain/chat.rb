@@ -31,7 +31,9 @@ class Chat < Entity
 
   # -- messages --
   # -- messages/commands
-  def add_message(sender:, body:, files:, status:, remote_id: nil)
+  def add_message(sender:, body:, files:, status:, client_id: nil, remote_id: nil)
+    timestamp = Time.zone.now.to_i
+
     attachments = files.map do |f|
       Attachment.from_source(f)
     end
@@ -39,11 +41,12 @@ class Chat < Entity
     message = Message.new(
       sender: sender,
       body: body,
-      timestamp: Time.zone.now.to_i,
+      timestamp: timestamp,
       status: status,
       attachments: attachments,
-      chat_id: @id.val,
+      client_id: client_id || "#{sender}#{timestamp}".hash.to_s(16),
       remote_id: remote_id,
+      chat_id: @id.val,
     )
 
     # update state
@@ -66,6 +69,17 @@ class Chat < Entity
     @selected_message = @messages[i]
   end
 
+  def attach_sms_to_message(sms)
+    assert(@selected_message != nil, "a message must be selected")
+
+    @selected_message.attach_sms(sms)
+
+    new_status = Message::Status.from_key(sms.status)
+    if new_status != nil
+      change_message_status(new_status)
+    end
+  end
+
   def prepare_message
     assert(@selected_message != nil, "a message must be selected")
 
@@ -74,10 +88,12 @@ class Chat < Entity
     end
   end
 
-  def change_message_status(status)
+  def change_message_status(new_status)
     assert(@selected_message != nil, "a message must be selected")
-    @selected_message.change_status(status)
-    @events.add(Events::DidChangeMessageStatus.from_entity(@selected_message))
+
+    if @selected_message.change_status(new_status)
+      @events.add(Events::DidChangeMessageStatus.from_entity(@selected_message))
+    end
   end
 
   # -- attachments --
