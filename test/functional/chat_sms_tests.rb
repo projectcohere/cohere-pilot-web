@@ -58,8 +58,15 @@ class ChatSmsTests < ActionDispatch::IntegrationTest
     )
 
     assert_matching_broadcast_on(chat_messages_for(:idle_2)) do |msg|
+      assert_equal(msg["name"], "DID_ADD_MESSAGE")
+
+      msg = msg["data"]
+      assert_not_nil(msg["id"])
       assert_equal(msg["sender"], Chat::Sender.recipient)
-      assert_equal(msg["message"]["body"], "Test from recipient.")
+      assert_equal(msg["body"], "Test from recipient.")
+      assert_not_nil(msg["status"])
+      assert_not_nil(msg["timestamp"])
+      assert_length(msg["attachments"], 0)
     end
 
     assert_matching_broadcast_on(case_activity_for(:cohere_1)) do |msg|
@@ -165,11 +172,10 @@ class ChatSmsTests < ActionDispatch::IntegrationTest
       &act
     )
 
-    # TODO: implement socket message
-    # assert_matching_broadcast_on(chat_messages_for(:idle_2)) do |msg|
-    #   assert_equal(msg["name"], "HAS_NEW_STATUS")
-    #   assert_equal(msg["data"]["id"], message_rec.id)
-    #   assert_equal(msg["data"]["status"], "delivered")
-    # end
+    assert_matching_broadcast_on(chat_messages_for(:idle_1)) do |msg|
+      assert_equal(msg["name"], "HAS_NEW_STATUS")
+      assert_equal(msg["data"]["id"], message_rec.id)
+      assert_equal(msg["data"]["status"], Chat::Message::Status::Delivered.index)
+    end
   end
 end

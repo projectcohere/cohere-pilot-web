@@ -1,8 +1,13 @@
 module Dhs
   class PublishQueuedCase < ApplicationWorker
+    # -- lifetime --
+    def initialize(partner_repo: Partner::Repo.get)
+      @partner_repo = partner_repo
+    end
+
     # -- command --
     def call(case_id)
-      dhs = Partner::Repo.get.find_dhs
+      dhs = @partner_repo.find_dhs
 
       Cases::ActivityChannel.broadcast_to(
         dhs.id,

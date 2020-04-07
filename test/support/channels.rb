@@ -15,7 +15,7 @@ module Support
     def assert_matching_broadcast_on(stream)
       assert(block_given?, "expected a matching block for `assert_matching_broadcast_on")
 
-      messages = broadcasts(stream)
+      messages = broadcasts(broadcasting_for(stream))
       assert(messages.length > 0, "expected at least one broadcast")
 
       has_match = messages.any? do |msg|

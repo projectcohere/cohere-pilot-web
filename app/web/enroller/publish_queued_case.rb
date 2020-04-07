@@ -1,8 +1,13 @@
 module Enroller
   class PublishQueuedCase < ApplicationWorker
+    # -- lifetime --
+    def initialize(partner_repo: Partner::Repo.get)
+      @partner_repo = partner_repo
+    end
+
     # -- command --
     def call(case_id)
-      enroller = Partner::Repo.get.find_default_enroller
+      enroller = @partner_repo.find_default_enroller
 
       Cases::ActivityChannel.broadcast_to(
         enroller.id,

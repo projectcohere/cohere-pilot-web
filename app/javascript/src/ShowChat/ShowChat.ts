@@ -288,17 +288,10 @@ export class ShowChat implements IComponent {
       classes
     }
 
-    if (sender == kSenderRecipient) {
-      return `
-        ${this.renderAttachments(attachments, metadata)}
-        ${this.renderBody(body, metadata)}
-      `
-    } else {
-      return `
-        ${this.renderBody(body, metadata)}
-        ${this.renderAttachments(attachments, metadata)}
-      `
-    }
+    return `
+      ${this.renderAttachments(attachments, metadata)}
+      ${this.renderBody(body, metadata)}
+    `
   }
 
   private renderBody(body: string | null, metadata: Metadata): string {

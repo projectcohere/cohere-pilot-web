@@ -76,7 +76,7 @@ module Events
           event.attachment_url,
         )
       when Chat::Events::DidPrepareMessage
-        Chats::SendWebMessage.perform_async(
+        Chats::PublishMessage.perform_async(
           event.message_id.val,
         )
 
@@ -88,6 +88,10 @@ module Events
 
         Cases::AddChatMessage.perform_async(
           event.message_id.val,
+        )
+      when Chat::Events::DidChangeMessageStatus
+        Chats::PublishMessageStatus.perform_async(
+          event.message_id.val
         )
       end
     end

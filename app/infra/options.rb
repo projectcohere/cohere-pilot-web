@@ -3,21 +3,25 @@ module Options
 
   # -- props --
   attr(:key)
+  attr(:index)
 
-  # -- liftime --
-  def initialize(key)
+  # -- lifetime --
+  def initialize(key, index)
     @key = key
+    @index = index
   end
 
-  # -- definition --
+  # -- statics --
   class_methods do
+    # -- definition --
     def option(key)
-      # define constant
-      value = const_set(key.capitalize, new(key).freeze)
-
-      # store key -> value map
       @all ||= {}
-      @all[key] = value
+
+      # build option
+      option = @all[key] = new(key, @all.length).freeze
+
+      # define constant: e.g. `Color::Red`
+      const_set(key.capitalize, option)
 
       # define predicate method: e.g. `def red?`
       define_method("#{key}?") do
@@ -25,16 +29,18 @@ module Options
       end
     end
 
-    def from_key(key)
-      return @all[key]
-    end
-
+    # -- queries --
     def keys
       return @all.keys
     end
 
     def values
       return @all.values
+    end
+
+    # -- factories --
+    def from_key(key)
+      return @all[key]
     end
   end
 end

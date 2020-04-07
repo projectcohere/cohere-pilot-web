@@ -16,8 +16,6 @@ class ChatMessagesTests < ActionCable::Channel::TestCase
   end
 
   test "receive and publish a message from a cohere user" do
-    chat_message_timestamp = 7
-
     chat_rec = chats(:idle_1)
 
     case_rec = chat_rec.recipient.cases.order(updated_at: :desc).first
@@ -29,15 +27,13 @@ class ChatMessagesTests < ActionCable::Channel::TestCase
     subscribe(chat: chat_rec.id)
 
     act = -> do
-      Time.stub(:now, Time.at(chat_message_timestamp)) do
-        VCR.use_cassette("chats--send-cohere-message") do
-          perform(:receive, {
-            "chat" => chat_rec.id,
-            "message" => {
-              "body" => "Test from Cohere.",
-            },
-          })
-        end
+      VCR.use_cassette("chats--send-cohere-message") do
+        perform(:receive, {
+          "chat" => chat_rec.id,
+          "message" => {
+            "body" => "Test from Cohere.",
+          },
+        })
       end
     end
 
@@ -46,14 +42,17 @@ class ChatMessagesTests < ActionCable::Channel::TestCase
       &act
     )
 
-    assert_broadcast_on(chat, {
-      sender: Chat::Sender.cohere("test-id"),
-      message: {
-        body: "Test from Cohere.",
-        timestamp: chat_message_timestamp,
-        attachments: [],
-      },
-    })
+    assert_matching_broadcast_on(chat) do |msg|
+      assert_equal(msg["name"], "DID_ADD_MESSAGE")
+
+      msg = msg["data"]
+      assert_not_nil(msg["id"])
+      assert_equal(msg["sender"], Chat::Sender.cohere("test-id"))
+      assert_equal(msg["body"], "Test from Cohere.")
+      assert_not_nil(msg["status"])
+      assert_not_nil(msg["timestamp"])
+      assert_length(msg["attachments"], 0)
+    end
 
     assert_broadcast_on(case_activity_for(:cohere_1), {
       name: "HAS_NEW_ACTIVITY",
@@ -91,11 +90,14 @@ class ChatMessagesTests < ActionCable::Channel::TestCase
       &act
     )
 
-    assert_broadcasts_on(chat, 1) do |broadcasts|
-      attachments = broadcasts[0]["message"]["attachments"]
+    assert_matching_broadcast_on(chat) do |msg|
+      attachments = msg["data"]["attachments"]
       assert_length(attachments, 1)
-      assert_not_nil(attachments[0]["name"])
-      assert_not_nil(attachments[0]["url"])
+
+      attachment = attachments[0]
+      assert_not_nil(attachment["name"])
+      assert_not_nil(attachment["url"])
+      assert_not_nil(attachment["preview_url"])
     end
 
     assert_analytics_events(0)
