@@ -22,7 +22,7 @@ export interface IAttachment {
 export interface IPreview {
   name: string
   url: string,
-  previewUrl: string | null
+  preview_url: string | null
 }
 
 // -- impls --
@@ -71,7 +71,7 @@ export class Files implements IComponent {
         preview: {
           name: file.name,
           url,
-          previewUrl: file.type.startsWith("image") ? url : null
+          preview_url: file.type.startsWith("image") ? url : null
         }
       }
     })

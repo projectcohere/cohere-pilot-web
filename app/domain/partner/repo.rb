@@ -21,7 +21,7 @@ class Partner
     def find_cohere
       find_cached(:cohere) do
         record = Partner::Record
-          .find_by!(membership: Membership::Cohere)
+          .find_by!(membership: Partner::Membership::Cohere)
 
         entity_from(record)
       end
@@ -30,7 +30,7 @@ class Partner
     def find_dhs
       find_cached(:dhs) do
         record = Partner::Record
-          .find_by!(membership: Membership::Governor)
+          .find_by!(membership: Partner::Membership::Governor)
 
         entity_from(record)
       end
@@ -69,8 +69,8 @@ class Partner
 
     def find_all_suppliers_by_program(program)
       partner_recs = Partner::Record
-        .where(membership: Membership::Supplier)
-        .where("programs @> '{?}'", ::Program::Name.index(program))
+        .where(membership: Partner::Membership::Supplier)
+        .where("programs @> '{?}'", Program::Name.index(program))
 
       partner_recs.map { |r| entity_from(r) }
     end

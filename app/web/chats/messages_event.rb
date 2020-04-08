@@ -16,7 +16,7 @@ module Chats
       return MessagesEvent.new(
         name: "HAS_NEW_STATUS",
         data: {
-          id: message.id.val,
+          id: message.client_id,
           status: message.status.index,
         },
       )

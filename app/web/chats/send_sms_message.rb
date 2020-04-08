@@ -25,8 +25,10 @@ module Chats
       )
 
       # update message with the sms
-      chat.attach_sms_to_message(sms)
-      @chat_repo.save_message_sms(chat)
+      if sms != nil
+        chat.attach_sms_to_message(sms)
+        @chat_repo.save_message_sms(chat)
+      end
     end
   end
 end

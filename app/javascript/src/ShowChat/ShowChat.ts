@@ -1,7 +1,7 @@
 import { Files, IPreview } from "./Files"
 import { Macros, IMacro } from "./Macros"
 import { UploadFiles } from "./UploadFiles"
-import { IComponent, kConsumer } from "../Core"
+import { IComponent, kConsumer, SipHash } from "../Core"
 import { getReadableTimeSince } from "../Shared/Time"
 
 // -- constants --
@@ -12,7 +12,11 @@ const kIdChatJson = "chat-json"
 const kIdChatMessages = "chat-messages"
 const kIdChatForm = "chat-form"
 const kIdChatInput = "chat-input"
+const kClassInfo = "ChatMessageInfo"
+const kClassStatus = `${kClassInfo}-status`
 const kClassIsLoaded = "is-loaded"
+const kClassIsSent = "is-sent"
+const kClassIsRecieved = "is-received"
 
 const kSenderRecipient = "recipient"
 const kFieldAuthenticityToken = "authenticity_token"
@@ -21,27 +25,49 @@ const kQueryAuthenticityToken = `input[name=${kFieldAuthenticityToken}]`
 // -- types --
 type Sender = string | "recipient"
 
-interface Incoming {
-  sender: Sender,
-  message: {
-    body: string | null,
-    timestamp: number,
-    attachments: IPreview[]
-  }
+type MessagesEventIn
+  = { name: "DID_ADD_MESSAGE", data: IMessageIn }
+  | { name: "HAS_NEW_STATUS", data: IHasNewStatus }
+
+type MessagesEventOut
+  = { name: "ADD_MESSAGE", data: IMessageOut }
+
+interface IHasNewStatus {
+  id: string,
+  status: Status
 }
 
-interface Outgoing {
+interface IMessageIn {
+  id: string,
+  sender: Sender,
+  body: string | null,
+  status: Status,
+  timestamp: number,
+  attachments: IPreview[]
+}
+
+interface IMessageOut {
   chat: string | null,
   message: {
+    id: string,
     body: string
     attachment_ids?: number[]
   }
 }
 
+enum Status {
+  Queued = 0,
+  Failed,
+  Delivered,
+  Undelivered,
+  Received,
+}
+
 interface Metadata {
   name: string,
   time: Date,
-  classes: string,
+  class: string,
+  status: Status,
 }
 
 // -- impls --
@@ -90,7 +116,7 @@ export class ShowChat implements IComponent {
     // render initial messages
     const $chatJson = document.getElementById(kIdChatJson)
     if ($chatJson != null) {
-      const initial: Incoming[] = JSON.parse($chatJson.textContent || "")
+      const initial: IMessageIn[] = JSON.parse($chatJson.textContent || "")
       this.appendMessages(initial)
       $chatJson.remove()
     }
@@ -167,14 +193,19 @@ export class ShowChat implements IComponent {
       return
     }
 
+    // build outoing message
+    const sender = this.sender
+    const timestamp = new Date().getTime()
+    const id = SipHash.hex(`${sender}${timestamp}`)
+
     // display message optimistically
     this.appendMessage({
-      sender: this.sender,
-      message: {
-        body,
-        timestamp: new Date().getTime(),
-        attachments: files.map((f) => f.preview)
-      }
+      id,
+      body,
+      sender,
+      timestamp,
+      status: Status.Queued,
+      attachments: files.map((f) => f.preview)
     })
 
     this.clearInput()
@@ -188,29 +219,33 @@ export class ShowChat implements IComponent {
     })
 
     // send the message over the channel
-    const outgoing: Outgoing = {
-      chat: this.id,
-      message: {
-        body,
-        attachment_ids: fileIds
+    const event: MessagesEventOut = {
+      name: "ADD_MESSAGE",
+      data: {
+        chat: this.id,
+        message: {
+          id,
+          body,
+          attachment_ids: fileIds
+        }
       }
     }
 
-    this.channel.send(outgoing)
+    this.channel.send(event)
   }
 
-  private showMessage(incoming: Incoming) {
+  private showMessage(incoming: IMessageIn) {
     if (incoming.sender !== this.sender) {
       this.appendMessage(incoming)
     }
   }
 
-  private appendMessages(incoming: Incoming[]) {
+  private appendMessages(incoming: IMessageIn[]) {
     this.insertMessages(this.renderList(incoming, this.render.bind(this)))
     this.scrollToLastMessage()
   }
 
-  private appendMessage(incoming: Incoming) {
+  private appendMessage(incoming: IMessageIn) {
     this.insertMessages(this.render(incoming))
     this.scrollToLastMessage()
   }
@@ -224,6 +259,15 @@ export class ShowChat implements IComponent {
     $chat.scrollTo(0, $chat.scrollHeight)
   }
 
+  private showMessageStatus({ status, id }: IHasNewStatus) {
+    const $status = document.querySelector(`.${kClassInfo}[data-id="${id}"] .${kClassStatus}`)
+
+    if ($status != null) {
+      const html = this.renderStatus(status)
+      $status.replaceWith(document.createRange().createContextualFragment(html))
+    }
+  }
+
   // -- queries --
   isSent(sender: Sender): boolean {
     switch (this.sender) {
@@ -235,9 +279,15 @@ export class ShowChat implements IComponent {
   }
 
   // -- events --
-  private didReceiveData(data: any) {
-    console.debug("ShowChat - received:", data)
-    this.showMessage(data)
+  private didReceiveData(event: MessagesEventIn) {
+    console.debug("ShowChat - received:", event)
+
+    switch (event.name) {
+      case "DID_ADD_MESSAGE":
+        this.showMessage(event.data); break;
+      case "HAS_NEW_STATUS":
+        this.showMessageStatus(event.data); break;
+    }
   }
 
   private didSubmitMessage(event: Event) {
@@ -272,25 +322,20 @@ export class ShowChat implements IComponent {
   }
 
   // -- view --
-  private render({ sender, message: { body, timestamp, attachments } }: Incoming): string {
+  private render({ id, sender, body, attachments, timestamp, status }: IMessageIn): string {
     const isSent = this.isSent(sender)
-
-    let classes = "ChatMessage"
-    if (isSent) {
-      classes += " ChatMessage--sent"
-    } else {
-      classes += " ChatMessage--received"
-    }
 
     const metadata: Metadata = {
       name: isSent ? "Me" : this.receiver,
       time: new Date(timestamp * 1000),
-      classes
+      status,
+      class: isSent ? kClassIsSent : kClassIsRecieved,
     }
 
     return `
       ${this.renderAttachments(attachments, metadata)}
       ${this.renderBody(body, metadata)}
+      ${this.renderInfo(id, metadata)}
     `
   }
 
@@ -299,7 +344,7 @@ export class ShowChat implements IComponent {
       return ""
     }
 
-    return this.renderBubble(metadata, `
+    return this.renderMessage(metadata, `
       <p class="ChatMessage-body">
         ${body}
       </p>
@@ -309,33 +354,89 @@ export class ShowChat implements IComponent {
   private renderAttachments(attachments: IPreview[], m: Metadata): string {
     const metadata = {
       ...m,
-      classes: `${m.classes} ChatMessage--image`
+      class: `ChatMessage--image ${m.class}`
     }
 
     return (
-      this.renderList(attachments, (a) => this.renderBubble(metadata, `
+      this.renderList(attachments, (a) => this.renderMessage(metadata, `
         <a href=${a.url} target="_blank" rel="noopener">
           <img
             class="ChatMessage-attachment"
             alt="${a.name}"
-            src=${a.previewUrl}
+            src=${a.preview_url}
           />
         </a>
       `))
     )
   }
 
-  private renderBubble(metadata: Metadata, children: string): string {
+  private renderMessage({ class: c, name }: Metadata, children: string): string {
     return `
-      <li class="${metadata.classes}">
+      <li class="ChatMessage ${c}">
         <label class="ChatMessage-sender">
-          ${metadata.name}
+          ${name}
         </label>
         ${children}
-        <time class="ChatMessage-timestamp" datetime=${metadata.time.toISOString()}>
-          ${getReadableTimeSince(metadata.time)}
+      </li>
+    `
+  }
+
+  private renderInfo(id: string, { class: c, status, time }: Metadata): string {
+    return `
+      <li class="ChatMessageInfo ${c}" data-id=${id} data-status=${status}>
+        ${this.renderStatus(status)}
+        <time class="ChatMessageInfo-timestamp" datetime=${time.toISOString()}>
+          ${getReadableTimeSince(time)}
         </time>
       </li>
+    `
+  }
+
+  private renderStatus(status: Status): string {
+    switch (status) {
+      case Status.Queued:
+        return this.renderQueued();
+      case Status.Delivered:
+      case Status.Received:
+        return this.renderSuccess()
+      case Status.Failed:
+      case Status.Undelivered:
+        return this.renderFailure();
+    }
+  }
+
+  private renderQueued(): string {
+    return this.renderGlyph(`
+      <circle r="3.5" cx="5" cy="5" />
+    `)
+  }
+
+  private renderSuccess(): string {
+    return this.renderGlyph(`
+      <path d="
+        M 1.5 5.5
+        L 4 8
+        L 9 2"
+      />
+    `)
+  }
+
+  private renderFailure(): string {
+    return this.renderGlyph(`
+      <path d="
+        M 2 2
+        L 8 8
+        M 8 2
+        L 2 8"
+      />
+    `)
+  }
+
+  private renderGlyph(children: string): string {
+    return `
+      <svg class="${kClassStatus}" viewBox="0 0 10 10">
+        ${children}
+      </svg>
     `
   }
 
