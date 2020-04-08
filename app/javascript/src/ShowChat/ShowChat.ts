@@ -383,7 +383,7 @@ export class ShowChat implements IComponent {
 
   private renderInfo(id: string, { class: c, status, time }: Metadata): string {
     return `
-      <li class="ChatMessageInfo ${c}" data-id=${id} data-status=${status}>
+      <li class="ChatMessageInfo ${c}" data-id=${id}>
         ${this.renderStatus(status)}
         <time class="ChatMessageInfo-timestamp" datetime=${time.toISOString()}>
           ${getReadableTimeSince(time)}
@@ -395,46 +395,34 @@ export class ShowChat implements IComponent {
   private renderStatus(status: Status): string {
     switch (status) {
       case Status.Queued:
-        return this.renderQueued();
+        return this.renderGlyph(`${kClassInfo}-queued`, `
+          <circle r="3.5" cx="5" cy="5" />
+        `)
       case Status.Delivered:
       case Status.Received:
-        return this.renderSuccess()
+        return this.renderGlyph(`${kClassInfo}-success`, `
+          <path d="
+            M 1.5 5.5
+            L 4 8
+            L 9 2"
+          />
+        `)
       case Status.Failed:
       case Status.Undelivered:
-        return this.renderFailure();
+        return this.renderGlyph(`${kClassInfo}-failed`, `
+          <path d="
+            M 2 2
+            L 8 8
+            M 8 2
+            L 2 8"
+          />
+        `)
     }
   }
 
-  private renderQueued(): string {
-    return this.renderGlyph(`
-      <circle r="3.5" cx="5" cy="5" />
-    `)
-  }
-
-  private renderSuccess(): string {
-    return this.renderGlyph(`
-      <path d="
-        M 1.5 5.5
-        L 4 8
-        L 9 2"
-      />
-    `)
-  }
-
-  private renderFailure(): string {
-    return this.renderGlyph(`
-      <path d="
-        M 2 2
-        L 8 8
-        M 8 2
-        L 2 8"
-      />
-    `)
-  }
-
-  private renderGlyph(children: string): string {
+  private renderGlyph(c: string, children: string): string {
     return `
-      <svg class="${kClassStatus}" viewBox="0 0 10 10">
+      <svg class="${kClassStatus} ${c}" viewBox="0 0 10 10">
         ${children}
       </svg>
     `

@@ -73,15 +73,34 @@ $chat-message-margin: 12px;
   padding-right: $spacing6;
 
   // -- elements --
+  &-timestamp {
+    font-size: $font-size7;
+  }
+
   &-status {
     width: 14px;
     height: 14px;
     fill: none;
-    stroke: black;
   }
 
-  &-timestamp {
-    font-size: $font-size7;
+  &-queued {
+    stroke: $gray0;
+    stroke-dasharray: 30 30;
+    animation: is-queued 2s linear forwards infinite;
+
+    @keyframes is-queued {
+      to {
+        stroke-dashoffset: 60;
+      }
+    }
+  }
+
+  &-success {
+    stroke: $black;
+  }
+
+  &-failure {
+    stroke: $color-error;
   }
 
   // -- states --
@@ -100,13 +119,5 @@ $chat-message-margin: 12px;
 
   &.is-received &-timestamp {
     margin-left: $spacing6;
-  }
-
-  &[data-status="0"] &-status {
-    stroke: $gray0;
-  }
-
-  &[data-status="1"] &-status, &[data-status="3"] &-status {
-    stroke: $color-error;
   }
 }
