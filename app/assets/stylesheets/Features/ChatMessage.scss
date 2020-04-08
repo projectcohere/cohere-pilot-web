@@ -86,7 +86,8 @@ $chat-message-margin: 12px;
   &-queued {
     stroke: $gray0;
     stroke-dasharray: 30 30;
-    animation: is-queued 2s linear forwards infinite;
+    animation: is-queued 2s linear forwards;
+    animation-iteration-count: 5; // spin for 10 seconds, then give up
 
     @keyframes is-queued {
       to {

@@ -174,7 +174,7 @@ class ChatSmsTests < ActionDispatch::IntegrationTest
 
     assert_matching_broadcast_on(chat_messages_for(:idle_1)) do |msg|
       assert_equal(msg["name"], "HAS_NEW_STATUS")
-      assert_equal(msg["data"]["id"], message_rec.client_id)
+      assert_equal(msg["data"]["id"], message_rec.id)
       assert_equal(msg["data"]["status"], Chat::Message::Status::Delivered.index)
     end
   end

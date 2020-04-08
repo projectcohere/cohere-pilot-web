@@ -19,7 +19,6 @@ class Chat
       assert_not_nil(message.id.val)
       assert_not_nil(message.sender)
       assert_not_nil(message.body)
-      assert_not_nil(message.client_id)
       assert(message.status.delivered?)
 
       message = chat.messages[1]

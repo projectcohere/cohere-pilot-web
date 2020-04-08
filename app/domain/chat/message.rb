@@ -10,7 +10,6 @@ class Chat
     prop(:timestamp)
     prop(:attachments, default: []) # IO | Sms::Media | ActiveStorage::Blob
     prop(:chat_id)
-    prop(:client_id, default: nil)
     prop(:remote_id, default: nil)
 
     # -- props/temporary

@@ -31,7 +31,7 @@ class Chat < Entity
 
   # -- messages --
   # -- messages/commands
-  def add_message(sender:, body:, files:, status:, client_id: nil, remote_id: nil)
+  def add_message(sender:, body:, files:, status:, remote_id: nil)
     timestamp = Time.zone.now.to_i
 
     attachments = files.map do |f|
@@ -44,7 +44,6 @@ class Chat < Entity
       timestamp: timestamp,
       status: status,
       attachments: attachments,
-      client_id: client_id || "#{sender}#{timestamp}".hash.to_s(16),
       remote_id: remote_id,
       chat_id: @id.val,
     )

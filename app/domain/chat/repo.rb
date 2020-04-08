@@ -194,7 +194,6 @@ class Chat
       message_rec.assign_attributes({
         sender: m.sender,
         body: m.body,
-        client_id: m.client_id,
       })
 
       assign_message_sms(message, message_rec)

@@ -5,6 +5,16 @@ module Chats
     prop(:data)
 
     # -- events --
+    def self.did_save_message(inbound, message)
+      return MessagesEvent.new(
+        name: "DID_SAVE_MESSAGE",
+        data: {
+          client_id: inbound.client_id,
+          id: message.id.val,
+        }
+      )
+    end
+
     def self.did_add_message(message)
       return MessagesEvent.new(
         name: "DID_ADD_MESSAGE",
@@ -16,7 +26,7 @@ module Chats
       return MessagesEvent.new(
         name: "HAS_NEW_STATUS",
         data: {
-          id: message.client_id,
+          id: message.id.val,
           status: message.status.index,
         },
       )

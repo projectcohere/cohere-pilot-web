@@ -9,19 +9,27 @@ module Chats
     def receive(event)
       assert(sender != nil, "must be a cohere user to send messages")
 
-      if event["name"] != "ADD_MESSAGE"
-        return
+      if event["name"] == "ADD_MESSAGE"
+        add_web_message(event["data"])
       end
-
-      data = event["data"]
-      AddWebMessage.(
-        find_current_chat!(data["chat"]),
-        sender,
-        Incoming.new(**data["message"]&.symbolize_keys),
-      )
 
       # dispatch events
       Events::DispatchAll.()
+    end
+
+    # -- commands --
+    private def add_web_message(data)
+      chat = find_current_chat!(data["chat"])
+
+      # add inbound message
+      inbound = InboundMessage.new(**data["message"]&.symbolize_keys)
+      AddWebMessage.(chat, sender, inbound)
+
+      # send save event back to client
+      message = chat.new_message
+      if message.id.val != nil
+        transmit(MessagesEvent.did_save_message(inbound, message))
+      end
     end
 
     # -- queries --

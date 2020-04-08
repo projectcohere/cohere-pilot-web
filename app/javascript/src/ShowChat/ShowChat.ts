@@ -1,7 +1,7 @@
 import { Files, IPreview } from "./Files"
 import { Macros, IMacro } from "./Macros"
 import { UploadFiles } from "./UploadFiles"
-import { IComponent, kConsumer, SipHash } from "../Core"
+import { IComponent, kConsumer, Id } from "../Core"
 import { getReadableTimeSince } from "../Shared/Time"
 
 // -- constants --
@@ -25,12 +25,21 @@ const kQueryAuthenticityToken = `input[name=${kFieldAuthenticityToken}]`
 // -- types --
 type Sender = string | "recipient"
 
-type MessagesEventIn
-  = { name: "DID_ADD_MESSAGE", data: IMessageIn }
+type MessagesEventIn =
+  | { name: "DID_SAVE_MESSAGE", data: IDidSaveMessage }
+  | { name: "DID_ADD_MESSAGE", data: IDidAddMessage }
   | { name: "HAS_NEW_STATUS", data: IHasNewStatus }
 
 type MessagesEventOut
   = { name: "ADD_MESSAGE", data: IMessageOut }
+
+interface IDidSaveMessage {
+  id: string,
+  client_id: string
+}
+
+interface IDidAddMessage extends IMessageIn {
+}
 
 interface IHasNewStatus {
   id: string,
@@ -49,7 +58,7 @@ interface IMessageIn {
 interface IMessageOut {
   chat: string | null,
   message: {
-    id: string,
+    client_id: string,
     body: string
     attachment_ids?: number[]
   }
@@ -196,11 +205,11 @@ export class ShowChat implements IComponent {
     // build outoing message
     const sender = this.sender
     const timestamp = new Date().getTime()
-    const id = SipHash.hex(`${sender}${timestamp}`)
+    const clientId = Id.generate()
 
     // display message optimistically
     this.appendMessage({
-      id,
+      id: clientId,
       body,
       sender,
       timestamp,
@@ -224,7 +233,7 @@ export class ShowChat implements IComponent {
       data: {
         chat: this.id,
         message: {
-          id,
+          client_id: clientId,
           body,
           attachment_ids: fileIds
         }
@@ -232,6 +241,14 @@ export class ShowChat implements IComponent {
     }
 
     this.channel.send(event)
+  }
+
+  private setMessageId({ id, client_id }: IDidSaveMessage) {
+    const $info = document.querySelector<HTMLElement>(`.${kClassInfo}[data-id="${client_id}"]`)
+
+    if ($info != null) {
+      $info.dataset["id"] = id
+    }
   }
 
   private showMessage(incoming: IMessageIn) {
@@ -283,6 +300,8 @@ export class ShowChat implements IComponent {
     console.debug("ShowChat - received:", event)
 
     switch (event.name) {
+      case "DID_SAVE_MESSAGE":
+        this.setMessageId(event.data); break;
       case "DID_ADD_MESSAGE":
         this.showMessage(event.data); break;
       case "HAS_NEW_STATUS":

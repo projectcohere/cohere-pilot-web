@@ -33,7 +33,7 @@ class ChatMessagesTests < ActionCable::Channel::TestCase
           "data" => {
             "chat" => chat_rec.id,
             "message" => {
-              "id" => "test-id",
+              "client_id" => "test-id",
               "body" => "Test from Cohere.",
             },
           },
@@ -46,10 +46,12 @@ class ChatMessagesTests < ActionCable::Channel::TestCase
       &act
     )
 
-    assert(
-      chat_rec.messages
-        .where.not(remote_id: nil).exists?(client_id: "test-id")
-    )
+    transmissions[0].tap do |msg|
+      assert_not_nil(msg)
+      assert_equal(msg.name, "DID_SAVE_MESSAGE")
+      assert_equal(msg.data[:client_id], "test-id")
+      assert_not_nil(msg.data[:id])
+    end
 
     assert_matching_broadcast_on(chat) do |msg|
       assert_equal(msg["name"], "DID_ADD_MESSAGE")
@@ -87,7 +89,7 @@ class ChatMessagesTests < ActionCable::Channel::TestCase
           "data" => {
             "chat" => chat_rec.id,
             "message" => {
-              "id" => "test-id",
+              "client_id" => "test-id",
               "body" => "Test with attachments.",
               "attachment_ids" => [blob_rec.id]
             },

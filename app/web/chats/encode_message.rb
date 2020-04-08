@@ -30,7 +30,7 @@ module Chats
     # -- command/helpers
     private def transform_message(m)
       return Message.new(
-        m.client_id,
+        m.id.val,
         m.sender,
         m.body,
         m.status.index,

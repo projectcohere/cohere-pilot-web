@@ -3,7 +3,6 @@ message_i1_1:
   sender: "FO19FJE"
   status: delivered
   body: Test Invited Second.
-  client_id: "CM1010"
   created_at: <%= Time.zone.now %>
 
 message_i1_2:
@@ -11,6 +10,5 @@ message_i1_2:
   sender: "FO19FJE"
   body: Test Invited First.
   status: queued
-  client_id: "CM4049"
   remote_id: "SM1013"
   created_at: <%= Time.zone.now - 1.days %>
