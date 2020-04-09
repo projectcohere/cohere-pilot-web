@@ -1,4 +1,4 @@
-module Dhs
+module Governor
   class CaseForm < ApplicationForm
     # -- fields --
     subform(:mdhhs, Cases::Forms::Mdhhs)

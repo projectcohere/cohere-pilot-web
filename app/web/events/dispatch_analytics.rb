@@ -20,7 +20,7 @@ module Events
         Unsaved
       when Case::Events::DidOpen
         event.case_id.val
-      when Cases::Events::DidViewDhsForm
+      when Cases::Events::DidViewGovernorForm
         event.case_id.val
       when Case::Events::DidBecomePending
         event.case_id.val

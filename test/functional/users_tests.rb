@@ -47,7 +47,7 @@ class UsersTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases")
   end
 
-  test "signs in as a dhs user" do
+  test "signs in as a governor user" do
     session_params = {
       session: {
         email: "me@michigan.gov",

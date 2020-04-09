@@ -21,8 +21,8 @@ class Policy
     return @user.role.cohere?
   end
 
-  protected def dhs?
-    return @user.role.dhs?
+  protected def governor?
+    return @user.role.governor?
   end
 
   protected def supplier?

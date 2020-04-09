@@ -16,7 +16,7 @@ class Case
       assert(policy.permit?(:list))
     end
 
-    test "permits dhs users to list cases" do
+    test "permits governor users to list cases" do
       user = User.new(id: nil, email: nil, role: User::Role.stub(name: :mddhs))
       policy = Case::Policy.new(user)
       assert(policy.permit?(:list))
@@ -43,7 +43,7 @@ class Case
       assert(policy.permit?(:view))
     end
 
-    test "forbids dhs users from viewing a case" do
+    test "forbids governor users from viewing a case" do
       user = User.new(id: nil, email: nil, role: User::Role.stub(name: :governor))
       kase = cases(:opened_1)
       policy = Case::Policy.new(user, kase)
@@ -65,7 +65,7 @@ class Case
       assert(policy.permit?(:edit))
     end
 
-    test "permits dhs users to edit a case" do
+    test "permits governor users to edit a case" do
       user = User.new(id: nil, email: nil, role: User::Role.stub(name: :governor))
       kase = cases(:opened_1)
       policy = Case::Policy.new(user, kase)

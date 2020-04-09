@@ -1,6 +1,6 @@
 module Cases
   module Events
-    class DidViewDhsForm < ::Value
+    class DidViewGovernorForm < ::Value
       # -- props --
       prop(:case_id)
       prop(:case_program)
@@ -8,7 +8,7 @@ module Cases
 
       # -- factories --
       def self.from_entity(kase)
-        DidViewDhsForm.new(
+        DidViewGovernorForm.new(
           case_id: kase.id,
           case_program: kase.program,
           case_is_referred: kase.referral?

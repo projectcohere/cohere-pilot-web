@@ -100,21 +100,21 @@ module Db
       end
     end
 
-    test "finds an opened case by id for a dhs user" do
+    test "finds an opened case by id for a governor user" do
       case_repo = Case::Repo.new
       case_rec = cases(:opened_1)
 
-      kase = case_repo.find_with_documents_for_dhs(case_rec.id)
+      kase = case_repo.find_with_documents_for_governor(case_rec.id)
       assert_not_nil(kase)
       assert_equal(kase.status, Case::Status::Opened)
     end
 
-    test "can't find an submitted case by id for a dhs user" do
+    test "can't find an submitted case by id for a governor user" do
       case_repo = Case::Repo.new
       case_rec = cases(:submitted_1)
 
       assert_raises(ActiveRecord::RecordNotFound) do
-        case_repo.find_with_documents_for_dhs(case_rec.id)
+        case_repo.find_with_documents_for_governor(case_rec.id)
       end
     end
 
@@ -175,20 +175,20 @@ module Db
       assert(cases.any? { |c| c.selected_assignment != nil })
     end
 
-    test "finds a page of queued cases for a dhs partner" do
+    test "finds a page of queued cases for a governor user" do
       case_repo = Case::Repo.new
       partner_rec = partners(:governor_1)
 
-      case_page, cases = case_repo.find_all_queued_for_dhs(partner_rec.id, page: 1)
+      case_page, cases = case_repo.find_all_queued_for_governor(partner_rec.id, page: 1)
       assert_length(cases, 4)
       assert_equal(case_page.count, 4)
     end
 
-    test "finds a page of opened cases for a dhs partner" do
+    test "finds a page of opened cases for a governor user" do
       case_repo = Case::Repo.new
       partner_rec = partners(:governor_1)
 
-      case_page, cases = case_repo.find_all_opened_for_dhs(partner_rec.id, page: 1)
+      case_page, cases = case_repo.find_all_opened_for_governor(partner_rec.id, page: 1)
       assert_length(cases, 5)
       assert_equal(case_page.count, 5)
       assert(cases.any? { |c| c.selected_assignment != nil })

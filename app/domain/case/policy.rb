@@ -16,10 +16,10 @@ class Case
       when :create
         supplier?
       when :create_assignment
-        cohere? || enroller? || dhs?
+        cohere? || enroller? || governor?
       # edit
       when :edit
-        cohere? || dhs?
+        cohere? || governor?
       when :edit_supplier
         cohere?
       when :edit_ownership

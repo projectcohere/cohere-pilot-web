@@ -1,4 +1,4 @@
-module Dhs
+module Governor
   class SaveCaseForm
     def initialize(kase, form, case_repo: Case::Repo.get)
       @case_repo = case_repo

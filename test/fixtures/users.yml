@@ -4,7 +4,7 @@ cohere_1:
   partner: cohere_1
   remember_token: <%= SecureRandom.uuid %>
 
-dhs_1:
+governor_1:
   email: me@michigan.gov
   encrypted_password: <%= password("password123$") %>
   partner: governor_1

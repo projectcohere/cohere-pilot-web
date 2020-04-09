@@ -61,15 +61,15 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 2)
   end
 
-  test "can list cases as a dhs user" do
-    user_rec = users(:dhs_1)
+  test "can list cases as a governor user" do
+    user_rec = users(:governor_1)
 
     get(auth("/cases", as: user_rec))
     assert_redirected_to("/cases/queued")
   end
 
-  test "can list queued cases as a dhs user" do
-    user_rec = users(:dhs_1)
+  test "can list queued cases as a governor user" do
+    user_rec = users(:governor_1)
 
     get(auth("/cases/queued", as: user_rec))
     assert_response(:success)
@@ -77,8 +77,8 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 4)
   end
 
-  test "can list assigned cases as a dhs user" do
-    user_rec = users(:dhs_1)
+  test "can list assigned cases as a governor user" do
+    user_rec = users(:governor_1)
 
     get(auth("/cases/assigned", as: user_rec))
     assert_response(:success)
@@ -86,8 +86,8 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 1)
   end
 
-  test "can list open cases as a dhs user" do
-    user_rec = users(:dhs_1)
+  test "can list open cases as a governor user" do
+    user_rec = users(:governor_1)
 
     get(auth("/cases/open", as: user_rec))
     assert_response(:success)
@@ -292,8 +292,8 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases")
   end
 
-  test "edit a case as a dhs user" do
-    user_rec = users(:dhs_1)
+  test "edit a case as a governor user" do
+    user_rec = users(:governor_1)
     case_rec = cases(:pending_1)
 
     get(auth("/cases/#{case_rec.id}/edit", as: user_rec))
@@ -301,12 +301,12 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".Main-title", text: /\w's case/)
 
     assert_analytics_events(1) do |events|
-      assert_match(/Did View Dhs Form/, events[0])
+      assert_match(/Did View Governor Form/, events[0])
     end
   end
 
-  test "save an edited case as a dhs user" do
-    user_rec = users(:dhs_1)
+  test "save an edited case as a governor user" do
+    user_rec = users(:governor_1)
     case_rec = cases(:opened_1)
 
     patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {

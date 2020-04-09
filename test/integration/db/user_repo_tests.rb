@@ -11,7 +11,7 @@ module Db
       assert_equal(user.id.val, user_rec.id)
     end
 
-    test "find cohere and dhs users for an opened case" do
+    test "find cohere and governor users for an opened case" do
       user_repo = User::Repo.new
 
       users = user_repo.find_all_for_opened_case

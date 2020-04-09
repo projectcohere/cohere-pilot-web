@@ -71,7 +71,7 @@ Rails.application.routes.draw do
   end
 
   constraints(signed_in(role: :governor)) do
-    scope(module: :dhs) do
+    scope(module: :governor) do
       resources(:cases, only: %i[
         edit
         update

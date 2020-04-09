@@ -38,8 +38,8 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "self-assign a case a dhs user" do
-    user_rec = users(:dhs_1)
+  test "self-assign a case a governor user" do
+    user_rec = users(:governor_1)
     case_rec = cases(:opened_2)
 
     act = -> do

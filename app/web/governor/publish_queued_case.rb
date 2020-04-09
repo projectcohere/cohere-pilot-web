@@ -1,4 +1,4 @@
-module Dhs
+module Governor
   class PublishQueuedCase < ApplicationWorker
     # -- lifetime --
     def initialize(partner_repo: Partner::Repo.get)

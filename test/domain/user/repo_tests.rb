@@ -34,8 +34,8 @@ class User
       assert_not_nil(user.role.partner_id)
     end
 
-    test "maps a dhs user record" do
-      user_rec = users(:dhs_1)
+    test "maps a governor user record" do
+      user_rec = users(:governor_1)
 
       user = User::Repo.map_record(user_rec)
       assert_not_nil(user.id.val)

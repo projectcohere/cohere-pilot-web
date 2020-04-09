@@ -22,7 +22,7 @@ module Events
           event.case_id.val,
         )
 
-        Dhs::PublishQueuedCase.perform_async(
+        Governor::PublishQueuedCase.perform_async(
           event.case_id.val,
         )
       when Case::Events::DidAssignUser

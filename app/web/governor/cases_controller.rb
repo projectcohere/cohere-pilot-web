@@ -1,4 +1,4 @@
-module Dhs
+module Governor
   class CasesController < Cases::BaseController
     # -- actions --
     def index
@@ -9,26 +9,26 @@ module Dhs
       @scope = Cases::Scope.from_key(params[:scope])
       @page, @cases = case @scope
       when Cases::Scope::Queued
-        case_repo.find_all_queued_for_dhs(partner_id, page: params[:page])
+        case_repo.find_all_queued_for_governor(partner_id, page: params[:page])
       when Cases::Scope::Assigned
         case_repo.find_all_assigned_by_user(user.id, page: params[:page])
       when Cases::Scope::Open
-        case_repo.find_all_opened_for_dhs(partner_id, page: params[:page])
+        case_repo.find_all_opened_for_governor(partner_id, page: params[:page])
       end
     end
 
     def edit
-      @case = case_repo.find_with_documents_for_dhs(params[:id])
+      @case = case_repo.find_with_documents_for_governor(params[:id])
       if policy.forbid?(:edit)
         return deny_access
       end
 
       @form = CaseForm.new(@case)
-      events.add(Cases::Events::DidViewDhsForm.from_entity(@case))
+      events.add(Cases::Events::DidViewGovernorForm.from_entity(@case))
     end
 
     def update
-      @case = case_repo.find_with_documents_for_dhs(params[:id])
+      @case = case_repo.find_with_documents_for_governor(params[:id])
       if policy.forbid?(:edit)
         return deny_access
       end

@@ -5,7 +5,7 @@ class User
     prop(:partner_id)
 
     # -- queries --
-    def dhs?
+    def governor?
       return @name == Partner::Membership::Governor
     end
 

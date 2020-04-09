@@ -3,7 +3,7 @@ require "test_helper"
 class ChatsTests < ActionDispatch::IntegrationTest
   # -- files --
   test "can't upload without permission" do
-    user_rec = users(:dhs_1)
+    user_rec = users(:governor_1)
     chat_rec = chats(:idle_1)
 
     params = {

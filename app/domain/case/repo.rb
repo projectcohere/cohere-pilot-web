@@ -69,7 +69,7 @@ class Case
       return entity_from(case_rec, assignments: case_rec.assignments, documents: document_recs, is_referrer: is_referrer)
     end
 
-    def find_for_dhs(case_id)
+    def find_for_governor(case_id)
       case_rec = Case::Record
         .for_governor
         .find(case_id)
@@ -77,7 +77,7 @@ class Case
       return entity_from(case_rec)
     end
 
-    def find_with_documents_for_dhs(case_id)
+    def find_with_documents_for_governor(case_id)
       case_rec = Case::Record
         .for_governor
         .find(case_id)
@@ -165,7 +165,7 @@ class Case
       return paged_entities_from(case_query, page, selected_assignment: partner_id)
     end
 
-    def find_all_queued_for_dhs(governor_id, page:)
+    def find_all_queued_for_governor(governor_id, page:)
       case_query = Case::Record
         .join_recipient
         .for_governor
@@ -175,7 +175,7 @@ class Case
       return paged_entities_from(case_query, page, partners: false)
     end
 
-    def find_all_opened_for_dhs(governor_id, page:)
+    def find_all_opened_for_governor(governor_id, page:)
       case_query = Case::Record
         .join_recipient
         .for_governor
