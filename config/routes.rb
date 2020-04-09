@@ -1,19 +1,18 @@
-require_relative "routes/authentication"
+require_relative "routes/auth"
+require_relative "routes/constraints"
+require_relative "routes/fallback"
 
 Rails.application.routes.draw do
-  extend Routes::Authentication
+  extend Routes::Auth
+  extend Routes::Constraints
+  extend Routes::Fallback
 
   # -- signed-out --
-  signed_out do
-    root_path = "/sign-in"
-
-    # root
-    root(to: redirect(root_path), as: :root_signed_out)
-
-    # users
-    get("/partner", to: redirect("/sign-in"))
+  signed_out do |constraints|
+    # stats
     get("/partner/stats", to: "partners/stats#show")
 
+    # users
     scope(module: :users) do
       get("/sign-in", to: "sessions#new")
 
@@ -44,33 +43,40 @@ Rails.application.routes.draw do
     end
 
     # fallback
-    get("*path", to: redirect(root_path), constraints: ->(req) {
-      # unclear why we have to constrain to signed out again here, since it
-      # is enforced by the enclosing `constraints`. if we don't all urls
-      # for signed-in users infinitely redirect to sign_in_path.
-      constraint = Clearance::Constraints::SignedOut.new
-      constraint.matches?(req) && req.path.exclude?("rails/active_storage")
-    })
+    fallback(:signed_out, to: "/sign-in", constraints: constraints)
   end
 
   # -- signed-in --
-  signed_in(role: :supplier) do
+  signed_in do |_|
+    scope(module: :users) do
+      delete("/sign-out", to: "sessions#destroy")
+    end
+  end
+
+  signed_in(role: :supplier) do |constraints|
     resources(:cases, only: %i[
       index
       new
       create
     ])
+
+    fallback(:supplier, to: "/cases", constraints: constraints)
   end
 
-  signed_in(role: :governor) do
+  signed_in(role: :governor) do |constraints|
     resources(:cases, only: %i[
       edit
       update
     ]) do
-      get("/:scope",
+      get("/",
         on: :collection,
         action: :index,
-        constraints: { scope: /queued|assigned|open/ }
+      )
+
+      get("/queue",
+        on: :collection,
+        action: :queue,
+        constraints: merge(constraints, query(scope: /^(assigned|queued)?$/)),
       )
 
       get("/",
@@ -82,16 +88,23 @@ Rails.application.routes.draw do
         create
       ])
     end
+
+    fallback(:governor, to: "/cases/queued", constraints: constraints)
   end
 
-  signed_in(role: :enroller) do
+  signed_in(role: :enroller) do |constraints|
     resources(:cases, only: %i[
       show
     ]) do
-      get("/:scope",
+      get("/",
         on: :collection,
         action: :index,
-        constraints: { scope: /queued|assigned|submitted/ }
+      )
+
+      get("/queue",
+        on: :collection,
+        action: :queue,
+        constraints: merge(constraints, query(scope: /^(assigned|queued)?$/)),
       )
 
       get("/",
@@ -102,31 +115,34 @@ Rails.application.routes.draw do
       patch("/:complete_action",
         as: :complete,
         action: :complete,
-        constraints: { complete_action: /approve|deny/ }
+        constraints: { complete_action: /approve|deny/ } # TODO: how to merge this constraint?
       )
 
       resources(:assignments, only: %i[
         create
       ])
     end
+
+    fallback(:enroller, to: "/cases/queued", constraints: constraints)
   end
 
-  signed_in(role: :cohere) do
-    resources(:cases, constraints: { id: /\d+/ }, only: %i[
+  signed_in(role: :cohere) do |constraints|
+    resources(:cases, only: %i[
       edit
       update
       show
       destroy
     ]) do
-      get("/:scope",
-        on: :collection,
-        action: :index,
-        constraints: { scope: /queued|assigned|open|completed/ }
-      )
-
       get("/",
         on: :collection,
-        to: redirect("/cases/queued")
+        action: :index,
+        constraints: merge(constraints, query(scope: /^(all|open|completed)?$/)),
+      )
+
+      get("/queue",
+        on: :collection,
+        action: :queue,
+        constraints: merge(constraints, query(scope: /^(assigned|queued)?$/)),
       )
 
       resources(:assignments, only: %i[
@@ -143,27 +159,14 @@ Rails.application.routes.draw do
 
     # chats
     resources(:chats, only: []) do
-      post("/files", action: :files, constraints: ->(req) {
-        req.content_type == "multipart/form-data"
-      })
-    end
-  end
-
-  signed_in do
-    cases_path = "/cases"
-
-    # root
-    root(to: redirect(cases_path))
-
-    # users
-    scope(module: :users) do
-      delete("/sign-out", to: "sessions#destroy")
+      post("/files",
+        action: :files,
+        constraints: merge(constraints, content_type("multipart/form-data")),
+      )
     end
 
     # fallback
-    get("*path", to: redirect(cases_path), constraints: ->(req) {
-      req.path.exclude?("rails/active_storage")
-    })
+    fallback(:cohere, to: "/cases/queued", constraints: constraints)
   end
 
   # -- development --
