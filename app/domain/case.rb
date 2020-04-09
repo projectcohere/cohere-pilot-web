@@ -28,20 +28,18 @@ class Case < ::Entity
   attr(:selected_document)
 
   # -- factory --
-  def self.open(recipient_profile:, enroller:, supplier_user:, supplier_account:)
+  def self.open(recipient_profile:, enroller:, supplier:, supplier_account:)
     kase = Case.new(
       status: Status::Opened,
-      program: Program::Name::Meap,
+      program: supplier.primary_program,
       recipient: Recipient.new(profile: recipient_profile),
       enroller_id: enroller.id,
-      supplier_id: supplier_user.role.partner_id,
+      supplier_id: supplier.id,
       supplier_account: supplier_account,
       has_new_activity: true,
     )
 
     kase.events.add(Events::DidOpen.from_entity(kase))
-    kase.assign_user(supplier_user)
-
     kase
   end
 

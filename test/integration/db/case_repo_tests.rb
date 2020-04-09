@@ -238,12 +238,16 @@ module Db
         arrears_cents: 1000_00
       )
 
+      user_rec = users(:supplier_1)
+
       kase = Case.open(
         recipient_profile: recipient_profile,
         enroller: Partner::Repo.map_record(partners(:enroller_1)),
-        supplier_user: User::Repo.map_record(users(:supplier_1)),
+        supplier: Partner::Repo.map_record(user_rec.partner),
         supplier_account: supplier_account,
       )
+
+      kase.assign_user(User::Repo.map_record(user_rec))
 
       act = -> do
         case_repo.save_opened(kase)
@@ -290,12 +294,16 @@ module Db
         arrears_cents: 1000_00
       )
 
+      user_rec = users(:supplier_1)
+
       kase = Case.open(
         recipient_profile: recipient_profile,
         enroller: Partner::Repo.map_record(partners(:enroller_1)),
-        supplier_user: User::Repo.map_record(users(:supplier_1)),
+        supplier: Partner::Repo.map_record(user_rec.partner),
         supplier_account: supplier_account,
       )
+
+      kase.assign_user(User::Repo.map_record(user_rec))
 
       act = -> do
         case_repo.save_opened(kase)

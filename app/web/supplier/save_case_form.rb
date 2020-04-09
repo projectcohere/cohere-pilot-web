@@ -23,12 +23,16 @@ module Supplier
       opened_case = Case.open(
         recipient_profile: @form.map_to_recipient_profile,
         enroller: @partner_repo.find_default_enroller,
-        supplier_user: @user_repo.find_current,
+        supplier: @partner_repo.find_current_supplier,
         supplier_account: @form.map_to_case_supplier_account,
       )
 
+      opened_case.assign_user(@user_repo.find_current)
+
+      # save the new case
       @case_repo.save_opened(opened_case)
-      true
+
+      return true
     end
   end
 end

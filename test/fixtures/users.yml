@@ -27,3 +27,9 @@ supplier_1:
   encrypted_password: <%= password("password123$") %>
   partner: supplier_1
   remember_token: <%= SecureRandom.uuid %>
+
+supplier_2:
+  email: me@testwater.com
+  encrypted_password: <%= password("password123$") %>
+  partner: supplier_3
+  remember_token: <%= SecureRandom.uuid %>

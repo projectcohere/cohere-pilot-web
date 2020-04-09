@@ -80,7 +80,8 @@ class Partner
       Partner.new(
         id: r.id,
         name: r.name,
-        membership: r.membership&.to_sym
+        membership: r.membership&.to_sym,
+        programs: r.programs&.map { |p| Program::Name.all[p] },
       )
     end
   end
