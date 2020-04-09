@@ -4,9 +4,9 @@ module Cases
       @scope == Cases::Scope::Open
     end
 
-    def cases_filter_link_to(scope)
-      return link_to(scope.name, "#{cases_path}/#{scope.path}",
-        id: "filter-#{scope.path}",
+    def cases_scope_link_to(scope)
+      return link_to(scope.name, "#{request.path}?scope=#{scope.key}",
+        id: "filter-#{scope.key}",
         class: cx(
           "Filter",
           "is-selected": @scope == scope,

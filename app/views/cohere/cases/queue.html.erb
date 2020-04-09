@@ -10,9 +10,8 @@
 
     <div class="Main-filters">
       <nav class="Filters">
-        <%= cases_scope_link_to(s::All) %>
-        <%= cases_scope_link_to(s::Open) %>
-        <%= cases_scope_link_to(s::Completed) %>
+        <%= cases_scope_link_to(s::Assigned) %>
+        <%= cases_scope_link_to(s::Queued) %>
       </nav>
     </div>
   </header>

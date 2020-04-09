@@ -12,6 +12,8 @@ class Case
       case action
       when :list
         true
+      when :list_queue
+        cohere? || enroller? || governor?
       # create
       when :create
         supplier?

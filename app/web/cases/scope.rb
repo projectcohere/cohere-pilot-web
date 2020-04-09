@@ -3,19 +3,38 @@ module Cases
     include ::Options
 
     # -- options --
-    option("queued")
     option("assigned")
+    option("queued")
+    option("all")
     option("open")
     option("submitted")
     option("completed")
 
     # -- queries --
-    def path
-      return @key
+    def title
+      return case self
+      when Assigned
+        "My Cases"
+      when Queued
+        "Available Cases"
+      else
+        "#{@key.capitalize} Cases"
+      end
     end
 
     def name
-      return @key.capitalize
+      return case self
+      when Assigned
+        "My Cases"
+      when Queued
+        "Queue"
+      else
+        "#{@key.capitalize}"
+      end
+    end
+
+    def adjective
+      return @key
     end
   end
 end
