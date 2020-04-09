@@ -1,6 +1,10 @@
+require_relative "routes/authentication"
+
 Rails.application.routes.draw do
+  extend Routes::Authentication
+
   # -- signed-out --
-  constraints(Clearance::Constraints::SignedOut.new) do
+  signed_out do
     root_path = "/sign-in"
 
     # root
@@ -44,126 +48,108 @@ Rails.application.routes.draw do
       # unclear why we have to constrain to signed out again here, since it
       # is enforced by the enclosing `constraints`. if we don't all urls
       # for signed-in users infinitely redirect to sign_in_path.
-      signed_out = Clearance::Constraints::SignedOut.new
-      signed_out.matches?(req) && req.path.exclude?("rails/active_storage")
+      constraint = Clearance::Constraints::SignedOut.new
+      constraint.matches?(req) && req.path.exclude?("rails/active_storage")
     })
   end
 
   # -- signed-in --
-  def signed_in(role: nil)
-    if role.nil?
-      Clearance::Constraints::SignedIn.new
-    else
-      Clearance::Constraints::SignedIn.new do |user_rec|
-        User::Repo.map_role(user_rec).name == role
-      end
-    end
+  signed_in(role: :supplier) do
+    resources(:cases, only: %i[
+      index
+      new
+      create
+    ])
   end
 
-  constraints(signed_in(role: :supplier)) do
-    scope(module: :supplier) do
-      resources(:cases, only: %i[
-        index
-        new
+  signed_in(role: :governor) do
+    resources(:cases, only: %i[
+      edit
+      update
+    ]) do
+      get("/:scope",
+        on: :collection,
+        action: :index,
+        constraints: { scope: /queued|assigned|open/ }
+      )
+
+      get("/",
+        on: :collection,
+        to: redirect("/cases/queued")
+      )
+
+      resources(:assignments, only: %i[
         create
       ])
     end
   end
 
-  constraints(signed_in(role: :governor)) do
-    scope(module: :governor) do
-      resources(:cases, only: %i[
-        edit
-        update
-      ]) do
-        get("/:scope",
-          on: :collection,
-          action: :index,
-          constraints: { scope: /queued|assigned|open/ }
-        )
+  signed_in(role: :enroller) do
+    resources(:cases, only: %i[
+      show
+    ]) do
+      get("/:scope",
+        on: :collection,
+        action: :index,
+        constraints: { scope: /queued|assigned|submitted/ }
+      )
 
-        get("/",
-          on: :collection,
-          to: redirect("/cases/queued")
-        )
+      get("/",
+        on: :collection,
+        to: redirect("/cases/queued")
+      )
 
-        resources(:assignments, only: %i[
-          create
-        ])
-      end
+      patch("/:complete_action",
+        as: :complete,
+        action: :complete,
+        constraints: { complete_action: /approve|deny/ }
+      )
+
+      resources(:assignments, only: %i[
+        create
+      ])
     end
   end
 
-  constraints(signed_in(role: :enroller)) do
-    scope(module: :enroller) do
-      resources(:cases, only: %i[
-        show
+  signed_in(role: :cohere) do
+    resources(:cases, constraints: { id: /\d+/ }, only: %i[
+      edit
+      update
+      show
+      destroy
+    ]) do
+      get("/:scope",
+        on: :collection,
+        action: :index,
+        constraints: { scope: /queued|assigned|open|completed/ }
+      )
+
+      get("/",
+        on: :collection,
+        to: redirect("/cases/queued")
+      )
+
+      resources(:assignments, only: %i[
+        create
       ]) do
-        get("/:scope",
-          on: :collection,
-          action: :index,
-          constraints: { scope: /queued|assigned|submitted/ }
-        )
-
-        get("/",
-          on: :collection,
-          to: redirect("/cases/queued")
-        )
-
-        patch("/:complete_action",
-          as: :complete,
-          action: :complete,
-          constraints: { complete_action: /approve|deny/ }
-        )
-
-        resources(:assignments, only: %i[
-          create
-        ])
+        delete("/:partner_id", on: :collection, action: :destroy, as: :destroy)
       end
+
+      resources(:referrals, only: %i[
+        new
+        create
+      ])
+    end
+
+    # chats
+    resources(:chats, only: []) do
+      post("/files", action: :files, constraints: ->(req) {
+        req.content_type == "multipart/form-data"
+      })
     end
   end
 
-  constraints(signed_in(role: :cohere)) do
-    scope(module: :cohere) do
-      resources(:cases, constraints: { id: /\d+/ }, only: %i[
-        edit
-        update
-        show
-        destroy
-      ]) do
-        get("/:scope",
-          on: :collection,
-          action: :index,
-          constraints: { scope: /queued|assigned|open|completed/ }
-        )
-
-        get("/",
-          on: :collection,
-          to: redirect("/cases/queued")
-        )
-
-        resources(:assignments, only: %i[
-          create
-        ]) do
-          delete("/:partner_id", on: :collection, action: :destroy, as: :destroy)
-        end
-
-        resources(:referrals, only: %i[
-          new
-          create
-        ])
-      end
-
-      # chats
-      resources(:chats, only: []) do
-        post("/files", action: :files, constraints: ->(req) {
-          req.content_type == "multipart/form-data"
-        })
-      end
-    end
-  end
-
-  constraints(Clearance::Constraints::SignedIn.new) do
+  signed_in do
     cases_path = "/cases"
 
     # root
