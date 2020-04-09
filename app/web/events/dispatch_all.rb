@@ -5,7 +5,7 @@ module Events
     # -- lifetime --
     def initialize(
       events: Service::Container.domain_events,
-      dispatchers: [DispatchEffects.get, DispatchAnalytics.get]
+      dispatchers: [Events::DispatchEffects.get, Events::DispatchAnalytics.get]
     )
       @events = events
       @dispatchers = dispatchers

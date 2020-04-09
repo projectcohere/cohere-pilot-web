@@ -177,6 +177,24 @@ module Cases
       return @partner_repo.find(@case.enroller_id).name
     end
 
+    # -- queries/referral
+    def can_make_referral?
+      return @case.can_make_referral?
+    end
+
+    def referral_program
+      return @case.referral_program
+    end
+
+    def referral_program_name
+      return case @case.referral_program
+      when Program::Name::Meap
+        "MEAP"
+      when Program::Name::Wrap
+        "WRAP"
+      end
+    end
+
     # -- queries/assignment
     def shows_assign?
       return @scope.queued? && assignee == nil

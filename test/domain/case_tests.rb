@@ -138,7 +138,7 @@ class CaseTests < ActiveSupport::TestCase
       ),
     )
 
-    referral = kase.make_referral_to_program(Program::Name::Wrap)
+    referral = kase.make_referral
     assert_not_nil(referral)
 
     referrer = referral.referrer
@@ -161,17 +161,6 @@ class CaseTests < ActiveSupport::TestCase
     assert(event.case_is_referred)
   end
 
-  test "does not make a referral to the same program" do
-    kase = Case.stub(
-      status: Case::Status::Approved,
-      program: Program::Name::Meap,
-      is_referrer: false
-    )
-
-    referral = kase.make_referral_to_program(Program::Name::Meap)
-    assert_nil(referral)
-  end
-
   test "does not make a second referral" do
     kase = Case.stub(
       status: Case::Status::Approved,
@@ -179,7 +168,7 @@ class CaseTests < ActiveSupport::TestCase
       is_referrer: true
     )
 
-    referral = kase.make_referral_to_program(Program::Name::Wrap)
+    referral = kase.make_referral
     assert_nil(referral)
 
     kase = Case.stub(
@@ -188,7 +177,7 @@ class CaseTests < ActiveSupport::TestCase
       is_referred: true
     )
 
-    referral = kase.make_referral_to_program(Program::Name::Meap)
+    referral = kase.make_referral
     assert_nil(referral)
   end
 
@@ -485,5 +474,22 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     assert_not_nil(kase.contract_document)
+  end
+
+  # -- queries/referral
+  test "can make a referral when approved and no referral has been issued" do
+    kase = Case.stub(status: Case::Status::Approved)
+    assert(kase.can_make_referral?)
+
+    kase = Case.stub
+    assert_not(kase.can_make_referral?)
+
+    kase = Case.stub(status: Case::Status::Approved, is_referrer: true)
+    assert_not(kase.can_make_referral?)
+  end
+
+  test "makes referrals to the other program" do
+    kase = Case.stub(program: Program::Name::Wrap)
+    assert_equal(kase.referral_program, Program::Name::Meap)
   end
 end

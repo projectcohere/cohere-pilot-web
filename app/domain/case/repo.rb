@@ -428,21 +428,25 @@ class Case
       referrer = referral.referrer
       referred = referral.referred
       referred_rec.assign_attributes(
-        program: referred.program,
         recipient_id: referred.recipient.id.val,
         referrer_id: referrer.id.val
       )
 
       assign_status(referred, referred_rec)
       assign_activity(referred, referred_rec)
+      assign_partners(referred, referred_rec)
       assign_supplier_account(referred, referred_rec)
       assign_recipient_profile(referred, recipient_rec)
       assign_dhs_account(referred, recipient_rec)
-      assign_partners(referred, referred_rec)
+
+      # initialize a new assignment
+      assignment_rec = Case::Assignment::Record.new
+      assign_new_assignment(referred, assignment_rec)
 
       # save the records
       transaction do
         referred_rec.save!
+        referred_rec.assignments << assignment_rec
         recipient_rec.save!
         create_documents!(referred_rec.id, referred.new_documents)
       end
@@ -481,6 +485,7 @@ class Case
     private def assign_partners(kase, case_rec)
       c = kase
       case_rec.assign_attributes(
+        program: c.program,
         enroller_id: c.enroller_id,
         supplier_id: c.supplier_id
       )

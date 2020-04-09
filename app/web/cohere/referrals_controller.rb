@@ -10,9 +10,7 @@ module Cohere
         return deny_access
       end
 
-      referral = @case.make_referral_to_program(
-        Program::Name::Wrap
-      )
+      referral = @case.make_referral
 
       @case = referral.referred
       @chat = Chat::Repo.get.find_by_recipient_with_messages(@case.recipient.id.val)
@@ -29,8 +27,7 @@ module Cohere
         .require(:case)
         .permit(CaseForm.params_shape)
 
-      referral = @case.make_referral_to_program(
-        Program::Name::Wrap,
+      referral = @case.make_referral(
         supplier_id: case_params.dig(:supplier_account, :supplier_id)
       )
 

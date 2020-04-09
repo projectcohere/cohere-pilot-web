@@ -238,7 +238,7 @@ module Db
         arrears_cents: 1000_00
       )
 
-      user_rec = users(:supplier_1)
+      user_rec = users(:supplier_2)
 
       kase = Case.open(
         recipient_profile: recipient_profile,
@@ -264,6 +264,9 @@ module Db
       assert_not_nil(kase.id.val)
       assert_not_nil(kase.recipient.record)
       assert_not_nil(kase.recipient.id.val)
+
+      case_rec = kase.record
+      assert_equal(case_rec.program, "wrap")
 
       events = kase.events
       assert_length(events, 0)
@@ -562,15 +565,19 @@ module Db
     test "saves a referral" do
       case_repo = Case::Repo.new
       case_rec = cases(:approved_1)
+      user_rec = users(:cohere_1)
       supplier_rec = partners(:supplier_3)
 
       referrer = Case::Repo.map_record(case_rec, documents: case_rec.documents)
-      referral = referrer.make_referral_to_program(
-        Program::Name::Wrap,
+      referral = referrer.make_referral(
         supplier_id: supplier_rec.id
       )
 
       referred = referral.referred
+      referred.assign_user(
+        User::Repo.map_record(user_rec)
+      )
+
       referred.sign_contract(Program::Contract.new(
         program: Program::Name::Wrap,
         variant: Program::Contract::Wrap3h
@@ -582,6 +589,7 @@ module Db
 
       assert_difference(
         -> { Case::Record.count } => 1,
+        -> { Case::Assignment::Record.count } => 1,
         -> { Document::Record.count } => 2,
         -> { ActiveStorage::Attachment.count } => 1,
         -> { ActiveStorage::Blob.count } => 0,
@@ -601,7 +609,7 @@ module Db
 
       assert_length(referrer.events, 0)
       assert_length(referred.events, 0)
-      assert_length(Service::Container.domain_events, 3)
+      assert_length(Service::Container.domain_events, 4)
     end
   end
 end

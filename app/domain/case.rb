@@ -100,20 +100,21 @@ class Case < ::Entity
     track_new_activity(false)
   end
 
-  def make_referral_to_program(program, supplier_id: nil)
-    if not can_make_referral?(program)
-      return nil
+  # -- commands/referral
+  def make_referral(supplier_id: nil)
+    if !can_make_referral?
+      return
     end
 
     # mark as referrer
     @is_referrer = true
     @events.add(Events::DidMakeReferral.from_entity(self,
-      program: program
+      program: referral_program
     ))
 
     # create referred case
     referred = Case.new(
-      program: program,
+      program: referral_program,
       status: Status::Opened,
       recipient: recipient,
       enroller_id: enroller_id,
@@ -295,11 +296,18 @@ class Case < ::Entity
     return opened? || pending?
   end
 
-  def can_make_referral?(program)
-    approved? &&
-    @program != program &&
-    !@is_referred &&
-    !@is_referrer
+  # -- queries/referral
+  def can_make_referral?
+    approved? && !@is_referred && !@is_referrer
+  end
+
+  def referral_program
+    return case @program
+    when Program::Name::Meap
+      Program::Name::Wrap
+    when Program::Name::Wrap
+      Program::Name::Meap
+    end
   end
 
   # -- queries/documents
