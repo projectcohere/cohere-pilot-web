@@ -110,13 +110,13 @@
 
   /* SignIn-title */
   &-logo {
-    max-width: $width4;
+    max-width: $width5;
     margin-bottom: $spacing1;
   }
 
   /* SignIn-form */
   &-form {
-    max-width: $width3;
+    max-width: $width4;
     padding: 0;
   }
 
@@ -137,7 +137,7 @@
 
   &-submit {
     grid-column: 1 / 10;
-    max-width: $width4;
+    max-width: $width5;
   }
 
   /* SignIn-title */

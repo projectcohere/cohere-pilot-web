@@ -1,10 +1,12 @@
+// TODO: rename this to Page
 .Main {
   flex: 1;
   display: flex;
   flex-direction: column;
   padding: $spacing0;
 
-  // Main-header
+  // TODO: extract this into PageHeader
+  // -- Main-header --
   &-header {
     position: relative;
     display: flex;
@@ -29,9 +31,12 @@
     margin-bottom: 4px;
   }
 
-  &-filters {
+  &-row {
     width: 100%;
-    margin-top: $spacing3;
+    margin-top: 30px;
+  }
+
+  &-filters {
     padding: 0 $spacing6;
   }
 

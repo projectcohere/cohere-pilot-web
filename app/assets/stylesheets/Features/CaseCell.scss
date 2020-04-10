@@ -24,9 +24,10 @@
   }
 
   &-name {
+    @extend .u-name;
+
     display: flex;
     align-items: center;
-    font-size: $font-size3;
   }
 
   &-activity {

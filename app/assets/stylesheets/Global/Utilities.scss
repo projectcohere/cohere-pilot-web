@@ -13,9 +13,14 @@
   line-height: 1;
 }
 
-.u-section-name {
+.u-section {
   font-size: $font-size4;
   font-weight: $font-weight-bold;
+  color: $brand-black;
+}
+
+.u-name {
+  font-size: $font-size3;
   color: $brand-black;
 }
 

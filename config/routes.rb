@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   extend Routes::Fallback
 
   # -- signed-out --
-  signed_out do |constraints|
+  signed_out do |c|
     # stats
     get("/partner/stats", to: "partners/stats#show")
 
@@ -43,7 +43,7 @@ Rails.application.routes.draw do
     end
 
     # fallback
-    fallback(:signed_out, to: "/sign-in", constraints: constraints)
+    fallback(:signed_out, to: "/sign-in", constraints: c)
   end
 
   # -- signed-in --
@@ -53,17 +53,17 @@ Rails.application.routes.draw do
     end
   end
 
-  signed_in(role: :supplier) do |constraints|
+  signed_in(role: :supplier) do |c|
     resources(:cases, only: %i[
       index
       new
       create
     ])
 
-    fallback(:supplier, to: "/cases", constraints: constraints)
+    fallback(:supplier, to: "/cases", constraints: c)
   end
 
-  signed_in(role: :governor) do |constraints|
+  signed_in(role: :governor) do |c|
     resources(:cases, only: %i[
       edit
       update
@@ -76,7 +76,7 @@ Rails.application.routes.draw do
       get("/queue",
         on: :collection,
         action: :queue,
-        constraints: merge(constraints, query(scope: /^(assigned|queued)?$/)),
+        constraints: merge(c, query(scope: /^(assigned|queued)?$/)),
       )
 
       get("/",
@@ -89,10 +89,10 @@ Rails.application.routes.draw do
       ])
     end
 
-    fallback(:governor, to: "/cases/queued", constraints: constraints)
+    fallback(:governor, to: "/cases/queued", constraints: c)
   end
 
-  signed_in(role: :enroller) do |constraints|
+  signed_in(role: :enroller) do |c|
     resources(:cases, only: %i[
       show
     ]) do
@@ -104,7 +104,7 @@ Rails.application.routes.draw do
       get("/queue",
         on: :collection,
         action: :queue,
-        constraints: merge(constraints, query(scope: /^(assigned|queued)?$/)),
+        constraints: merge(c, query(scope: /^(assigned|queued)?$/)),
       )
 
       get("/",
@@ -123,10 +123,10 @@ Rails.application.routes.draw do
       ])
     end
 
-    fallback(:enroller, to: "/cases/queued", constraints: constraints)
+    fallback(:enroller, to: "/cases/queued", constraints: c)
   end
 
-  signed_in(role: :cohere) do |constraints|
+  signed_in(role: :cohere) do |c|
     resources(:cases, only: %i[
       edit
       update
@@ -136,13 +136,13 @@ Rails.application.routes.draw do
       get("/",
         on: :collection,
         action: :index,
-        constraints: merge(constraints, query(scope: /^(all|open|completed)?$/)),
+        constraints: merge(c, query(scope: /^(all|open|completed)?$/)),
       )
 
       get("/queue",
         on: :collection,
         action: :queue,
-        constraints: merge(constraints, query(scope: /^(assigned|queued)?$/)),
+        constraints: merge(c, query(scope: /^(assigned|queued)?$/)),
       )
 
       resources(:assignments, only: %i[
@@ -161,12 +161,12 @@ Rails.application.routes.draw do
     resources(:chats, only: []) do
       post("/files",
         action: :files,
-        constraints: merge(constraints, content_type("multipart/form-data")),
+        constraints: merge(c, content_type("multipart/form-data")),
       )
     end
 
     # fallback
-    fallback(:cohere, to: "/cases/queued", constraints: constraints)
+    fallback(:cohere, to: "/cases/queued", constraints: c)
   end
 
   # -- development --

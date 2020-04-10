@@ -8,7 +8,17 @@
 
     <%= totals_for(@page, of: "cases") %>
 
-    <div class="Main-filters">
+    <div class="Main-row">
+      <div class="CaseSearch">
+        <p class="CaseSearch-title">Search for Cases</p>
+        <%= form_for(:case_filter, html: { class: "CaseSearch-field" }) do |f| %>
+          <%= f.text_field(:search, class: "CaseSearch-input") %>
+          <%= f.submit("Find Cases", class: "CaseSearch-action Button Button--action") %>
+        <%- end %>
+      </div>
+    </div>
+
+    <div class="Main-row Main-filters">
       <nav class="Filters">
         <%= cases_scope_link_to(s::All) %>
         <%= cases_scope_link_to(s::Open) %>

@@ -29,7 +29,7 @@
       <% end %>
     </div>
 
-    <div class="Main-filters">
+    <div class="Main-row Main-filters">
       <nav class="Filters">
         <%= filter_for(:profile, is_error: errors?(@form.details, @form.contact), is_selected: true) %>
         <%= filter_for(:household, is_error: errors?(@form.address, @form.household)) %>
