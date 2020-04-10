@@ -4,8 +4,23 @@ module Cases
       @scope == Cases::Scope::Open
     end
 
+    def cases_search_params
+      return request.query_parameters
+    end
+
+    def cases_search_path(params = nil)
+      if params == nil
+        return request.path
+      end
+
+      uri = URI.parse(request.fullpath)
+      uri.query = cases_search_params.merge(params).to_query
+
+      return uri.to_s
+    end
+
     def cases_scope_link_to(scope)
-      return link_to(scope.name, "#{request.path}?scope=#{scope.key}",
+      return link_to(scope.name, cases_search_path(scope: scope.key),
         id: "filter-#{scope.key}",
         class: cx(
           "Filter",
