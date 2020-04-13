@@ -137,34 +137,6 @@ class Case
       return paged_entities_from(case_query, page)
     end
 
-    def find_all_queued_for_cohere(partner_id, page:)
-      case_query = Case::Record
-        .join_recipient
-        .incomplete
-        .with_no_assignment_for_partner(partner_id)
-        .by_most_recently_updated
-
-      return paged_entities_from(case_query, page)
-    end
-
-    def find_all_opened_for_cohere(partner_id, page:)
-      case_query = Case::Record
-        .join_recipient
-        .incomplete
-        .by_most_recently_updated
-
-      return paged_entities_from(case_query, page, selected_assignment: partner_id)
-    end
-
-    def find_all_completed_for_cohere(partner_id, page:)
-      case_query = Case::Record
-        .join_recipient
-        .where.not(completed_at: nil)
-        .order(completed_at: :desc)
-
-      return paged_entities_from(case_query, page, selected_assignment: partner_id)
-    end
-
     def find_all_queued_for_governor(governor_id, page:)
       case_query = Case::Record
         .join_recipient
@@ -655,74 +627,6 @@ class Case
         file: r.file,
         source_url: r.source_url
       )
-    end
-  end
-
-  class Record
-    # -- scopes --
-    def self.join_recipient(references: false)
-      scope = includes(:recipient)
-
-      if references
-        scope = scope.references(:recipients)
-      end
-
-      return scope
-    end
-
-    def self.join_assignments
-      return includes(:assignments)
-    end
-
-    def self.incomplete
-      return where(completed_at: nil)
-    end
-
-    def self.for_governor
-      return where(
-        program: Program::Name::Meap,
-        status: [Status::Opened, Status::Pending]
-      )
-    end
-
-    def self.for_enroller(enroller_id)
-      return where(
-        enroller_id: enroller_id,
-        status: [Status::Submitted, Status::Approved, Status::Denied],
-      )
-    end
-
-    def self.with_assigned_user(user_id)
-      scope = self
-        .includes(:assignments)
-        .references(:case_assignments)
-        .where(case_assignments: { user_id: user_id })
-
-      return scope
-    end
-
-    def self.with_no_assignment_for_partner(partner_id)
-      query = <<~SQL
-        SELECT 1
-        FROM case_assignments AS ca
-        WHERE ca.case_id = cases.id AND ca.partner_id = ?
-      SQL
-
-      return where("NOT EXISTS (#{query})", partner_id)
-    end
-
-    def self.by_most_recently_updated
-      return order(updated_at: :desc)
-    end
-  end
-
-  class Assignment::Record
-    def self.join_user
-      return includes(:user)
-    end
-
-    def self.by_partner(partner_id)
-      return where(partner_id: partner_id)
     end
   end
 end

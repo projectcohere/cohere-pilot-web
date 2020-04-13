@@ -9,6 +9,10 @@ module Cases
       return Case::Repo.get
     end
 
+    protected def view_repo
+      return Cases::ViewRepo.get(@scope)
+    end
+
     protected def user
       return User::Repo.get.find_current
     end

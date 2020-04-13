@@ -27,7 +27,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases?scope=all", as: user_rec))
     assert_response(:success)
     assert_select(".Main-title", text: /All Cases/)
-    assert_select(".CaseCell", 7)
+    assert_select(".CaseCell", 10)
   end
 
   test "can list open cases as a cohere user" do
