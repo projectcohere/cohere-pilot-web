@@ -30,6 +30,14 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 10)
   end
 
+  test "can list cases with a search query as a cohere user" do
+    user_rec = users(:cohere_1)
+
+    get(auth("/cases?scope=all&search=jan", as: user_rec))
+    assert_response(:success)
+    assert_select(".CaseCell", 3)
+  end
+
   test "can list open cases as a cohere user" do
     user_rec = users(:cohere_1)
 

@@ -13,7 +13,7 @@ module Cases
       q = Case::Record
         .includes(:recipient, :enroller, :supplier, assignments: :user)
 
-      case_query = case @scope
+      q = case @scope
       when Scope::All
         q.by_most_recently_updated
       when Scope::Open
@@ -26,7 +26,11 @@ module Cases
         assert(false, "#{@scope} is not allowed for search")
       end
 
-      return paginate(case_query, page, partner_id: partner_id)
+      if search.present?
+        q = q.by_recipient_name(search)
+      end
+
+      return paginate(q, page, partner_id: partner_id)
     end
 
     def find_all_assigned_to_user(user_id, page:)

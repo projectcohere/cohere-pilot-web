@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_08_203500) do
+ActiveRecord::Schema.define(version: 2020_04_10_172714) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_trgm"
   enable_extension "plpgsql"
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -129,6 +130,7 @@ ActiveRecord::Schema.define(version: 2020_04_08_203500) do
     t.integer "household_income_cents"
     t.integer "household_ownership", default: 0, null: false
     t.boolean "household_primary_residence", default: true, null: false
+    t.index "((((first_name)::text || ' '::text) || (last_name)::text)) gin_trgm_ops", name: "recipients_by_full_name", using: :gin
     t.index ["phone_number"], name: "index_recipients_on_phone_number", unique: true
   end
 

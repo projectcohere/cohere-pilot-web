@@ -29,6 +29,14 @@ class Case
       return scope
     end
 
+    def self.by_recipient_name(name)
+      scope = self
+        .join_recipient(references: true)
+        .where("recipients.first_name || '' || recipients.last_name ILIKE ?", "%#{name}%")
+
+      return scope
+    end
+
     def self.join_assignments
       return includes(:assignments)
     end
