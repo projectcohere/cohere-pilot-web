@@ -10,9 +10,10 @@ module Cases
 
     # -- queries --
     def find_all_for_search(search, partner_id, page:)
-      q = Case::Record
+      case_query = Case::Record
         .includes(:recipient, :enroller, :supplier, assignments: :user)
 
+      q = case_query
       q = case @scope
       when Scope::All
         q.by_most_recently_updated
@@ -26,8 +27,13 @@ module Cases
         assert(false, "#{@scope} is not allowed for search")
       end
 
-      if search.present?
-        q = q.by_recipient_name(search)
+      q = case search
+      when /^(\+1)?((\s|\d|[-\(\)])+)$/
+        q.by_recipient_phone_number($2.gsub(/\s|[-\(\)]+/, ""))
+      when /^.+$/
+        q.by_recipient_name(search)
+      else
+        q
       end
 
       return paginate(q, page, partner_id: partner_id)

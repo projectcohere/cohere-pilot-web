@@ -37,6 +37,14 @@ class Case
       return scope
     end
 
+    def self.by_recipient_phone_number(phone_number)
+      scope = self
+        .join_recipient
+        .where(recipients: { phone_number: phone_number })
+
+      return scope
+    end
+
     def self.join_assignments
       return includes(:assignments)
     end

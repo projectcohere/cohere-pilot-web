@@ -29,6 +29,15 @@ module Db
       assert_equal(case_page.count, 5)
     end
 
+    test "finds a page of cases by recipient phone number" do
+      case_repo = Cases::ViewRepo.new(Cases::Scope::All)
+      user_rec = users(:cohere_1)
+
+      case_page, cases = case_repo.find_all_for_search("+1 (444) 555-6666", user_rec.partner_id, page: 1)
+      assert_length(cases, 1)
+      assert_equal(case_page.count, 1)
+    end
+
     test "finds a page of open cases for a cohere user" do
       case_repo = Cases::ViewRepo.new(Cases::Scope::Open)
       user_rec = users(:cohere_1)
