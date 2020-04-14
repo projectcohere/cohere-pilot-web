@@ -7,7 +7,6 @@ module Cases
     option(:queued)
     option(:all)
     option(:open)
-    option(:submitted)
     option(:completed)
 
     # -- queries --

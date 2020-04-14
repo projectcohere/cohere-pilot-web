@@ -33,15 +33,21 @@ class Case
       return scope
     end
 
-    def self.by_recipient_name(name)
+    def self.with_recipient_name(name)
+      name_col = <<-SQL.strip
+        (recipients.first_name || ' ' || recipients.last_name)
+      SQL
+
       scope = self
         .join_recipient(references: true)
-        .where("recipients.first_name || '' || recipients.last_name ILIKE ?", "%#{name}%")
+        .select("set_limit(0.4)")
+        .where("#{name_col} % ?", name)
+        .order(Arel.sql("similarity(#{name_col}, #{connection.quote(name)}) DESC"))
 
       return scope
     end
 
-    def self.by_recipient_phone_number(phone_number)
+    def self.with_phone_number(phone_number)
       scope = self
         .join_recipient
         .where(recipients: { phone_number: phone_number })
@@ -55,6 +61,10 @@ class Case
 
     def self.incomplete
       return where(completed_at: nil)
+    end
+
+    def self.complete
+      return where.not(completed_at: nil)
     end
 
     def self.for_supplier(supplier_id)
@@ -96,8 +106,12 @@ class Case
       return where("NOT EXISTS (#{query})", partner_id)
     end
 
-    def self.by_most_recently_updated
+    def self.by_updated_date
       return order(updated_at: :desc)
+    end
+
+    def self.by_completed_date
+      return order(completed_at: :desc)
     end
   end
 end

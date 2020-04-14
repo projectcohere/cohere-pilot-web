@@ -70,7 +70,7 @@ module Db
       stub_user(:cohere_1)
       case_repo = Cases::ViewRepo.new(Cases::Scope::All)
 
-      case_page, cases = case_repo.find_all_for_search("john", page: 1)
+      case_page, cases = case_repo.find_all_for_search("Johnice", page: 1)
       assert_length(cases, 5)
       assert_equal(case_page.count, 5)
     end
@@ -127,7 +127,7 @@ module Db
       stub_user(:enroller_1)
       case_repo = Cases::ViewRepo.new(Cases::Scope::All)
 
-      case_page, cases = case_repo.find_all_for_search("john", page: 1)
+      case_page, cases = case_repo.find_all_for_search("Johnice", page: 1)
       assert_length(cases, 2)
       assert_equal(case_page.count, 2)
     end

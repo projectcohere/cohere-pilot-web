@@ -16,24 +16,24 @@ module Cases
       q = case_query
       q = scope_to_role(q)
 
-      q = case @scope
-      when Scope::All
-        q.by_most_recently_updated
-      when Scope::Open
-        q.incomplete.by_most_recently_updated
-      when Scope::Completed
-        q.where.not(completed_at: nil).order(completed_at: :desc)
-      else
-        assert(false, "#{@scope} is not allowed for search")
-      end
-
       q = case search
       when /^(\+1)?((\s|\d|[-\(\)])+)$/ # is phone-number-like
-        q.by_recipient_phone_number($2.gsub(/\s|[-\(\)]+/, ""))
+        q.with_phone_number($2.gsub(/\s|[-\(\)]+/, ""))
       when /^.+$/ # is non-empty
-        q.by_recipient_name(search)
+        q.with_recipient_name(search)
       else
         q
+      end
+
+      q = case @scope
+      when Scope::All
+        q.by_updated_date
+      when Scope::Open
+        q.incomplete.by_updated_date
+      when Scope::Completed
+        q.complete.by_completed_date
+      else
+        assert(false, "#{@scope} is not allowed for search")
       end
 
       return paginate(q, page)
@@ -44,7 +44,7 @@ module Cases
         .join_all
         .incomplete
         .with_assigned_user(user.id.val)
-        .by_most_recently_updated
+        .by_updated_date
 
       return paginate(scope_to_role(case_query), page)
     end
@@ -54,7 +54,7 @@ module Cases
         .join_all
         .incomplete
         .with_no_assignment_for_partner(role.partner_id)
-        .by_most_recently_updated
+        .by_updated_date
 
       return paginate(scope_to_role(case_query), page)
     end
