@@ -6,8 +6,8 @@ module Enroller
         return deny_access
       end
 
-      @scope = Cases::Scope::Submitted
-      @page, @cases = case_repo.find_all_submitted_for_enroller(partner_id, page: params[:page])
+      @scope = Cases::Scope::All
+      @page, @cases = view_repo.find_all_for_search(params[:search], page: params[:page])
     end
 
     def queue
@@ -18,9 +18,9 @@ module Enroller
       @scope = Cases::Scope.from_key(params[:scope]) || Cases::Scope::Assigned
       @page, @cases = case @scope
       when Cases::Scope::Assigned
-        case_repo.find_all_assigned_by_user(user.id, page: params[:page])
+        view_repo.find_all_assigned(page: params[:page])
       when Cases::Scope::Queued
-        case_repo.find_all_queued_for_enroller(partner_id, page: params[:page])
+        view_repo.find_all_queued(page: params[:page])
       end
     end
 

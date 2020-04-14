@@ -4,23 +4,23 @@ module Cases
   class ViewRepo < ::Repo
     include Service
 
-    def initialize(scope)
+    def initialize(scope, user_repo: User::Repo.get)
       @scope = scope
+      @user_repo = user_repo
     end
 
     # -- queries --
-    def find_all_for_search(search, partner_id, page:)
-      case_query = Case::Record
-        .includes(:recipient, :enroller, :supplier, assignments: :user)
+    def find_all_for_search(search = "", page:)
+      case_query = Case::Record.join_all
 
       q = case_query
+      q = scope_to_role(q)
+
       q = case @scope
       when Scope::All
         q.by_most_recently_updated
       when Scope::Open
         q.incomplete.by_most_recently_updated
-      when Scope::Submitted
-        q.for_enroller(partner_id).by_most_recently_updated
       when Scope::Completed
         q.where.not(completed_at: nil).order(completed_at: :desc)
       else
@@ -36,43 +36,64 @@ module Cases
         q
       end
 
-      return paginate(q, page, partner_id: partner_id)
+      return paginate(q, page)
     end
 
-    def find_all_assigned_to_user(user_id, page:)
+    def find_all_assigned(page:)
       case_query = Case::Record
-        .includes(:recipient, :enroller, :supplier, assignments: :user)
+        .join_all
         .incomplete
-        .with_assigned_user(user_id.val)
+        .with_assigned_user(user.id.val)
         .by_most_recently_updated
 
-      return paginate(case_query, page)
+      return paginate(scope_to_role(case_query), page)
     end
 
-    def find_all_queued_for_cohere(partner_id, page:)
+    def find_all_queued(page:)
       case_query = Case::Record
-        .includes(:recipient, :enroller, :supplier, assignments: :user)
+        .join_all
         .incomplete
-        .with_no_assignment_for_partner(partner_id)
+        .with_no_assignment_for_partner(role.partner_id)
         .by_most_recently_updated
 
-      return paginate(case_query, page, partner_id: partner_id)
+      return paginate(scope_to_role(case_query), page)
     end
 
     # -- queries/helpers
-    private def paginate(case_query, page, partner_id: nil)
+    private def paginate(case_query, page)
       case_page = Pagy.new(count: case_query.count(:all), page: page)
       case_recs = case_query.offset(case_page.offset).limit(case_page.items)
 
       case_cells = case_recs.map do |r|
-        self.class.make_cell(r, partner_id, @scope)
+        self.class.make_cell(r, @scope, role.partner_id)
       end
 
       return case_page, case_cells
     end
 
+    private def scope_to_role(case_query)
+      return case role.membership
+      when Partner::Membership::Supplier
+        case_query.for_supplier(role.partner_id)
+      when Partner::Membership::Governor
+        case_query.for_governor
+      when Partner::Membership::Enroller
+        case_query.for_enroller(role.partner_id)
+      else
+        case_query
+      end
+    end
+
+    private def user
+      return @user_repo.find_current
+    end
+
+    private def role
+      return user.role
+    end
+
     # -- mapping --
-    def self.make_cell(r, partner_id, scope)
+    def self.make_cell(r, scope, partner_id)
       return Views::Cell.new(
         scope: scope,
         id: r.id,

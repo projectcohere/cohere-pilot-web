@@ -18,7 +18,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 7)
   end
 
-  test "can list all cases as a cohere user" do
+  test "can list cases as a cohere user" do
     user_rec = users(:cohere_1)
 
     get(auth("/cases", as: user_rec))
@@ -77,12 +77,12 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 7)
   end
 
-  test "can list open cases as a governor user" do
+  test "can list cases as a governor user" do
     user_rec = users(:governor_1)
 
     get(auth("/cases", as: user_rec))
     assert_response(:success)
-    assert_select(".Main-title", text: /Open Cases/)
+    assert_select(".Main-title", text: /All Cases/)
     assert_select(".CaseCell", 5)
   end
 
@@ -107,12 +107,12 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 4)
   end
 
-  test "can list submitted cases as an enroller" do
+  test "can list cases as an enroller" do
     user_rec = users(:enroller_1)
 
     get(auth("/cases", as: user_rec))
     assert_response(:success)
-    assert_select(".Main-title", text: /Submitted Cases/)
+    assert_select(".Main-title", text: /All Cases/)
     assert_select(".CaseCell", 3)
   end
 

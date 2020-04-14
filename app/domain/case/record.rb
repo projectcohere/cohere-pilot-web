@@ -19,6 +19,10 @@ class Case
     enum(status: Status.all)
 
     # -- scopes --
+    def self.join_all
+      return includes(:recipient, :enroller, :supplier, assignments: :user)
+    end
+
     def self.join_recipient(references: false)
       scope = includes(:recipient)
 
@@ -51,6 +55,12 @@ class Case
 
     def self.incomplete
       return where(completed_at: nil)
+    end
+
+    def self.for_supplier(supplier_id)
+      return where(
+        supplier_id: supplier_id
+      )
     end
 
     def self.for_governor

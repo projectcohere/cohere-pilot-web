@@ -7,11 +7,7 @@ module Cohere
       end
 
       @scope = Cases::Scope.from_key(params[:scope]) || Cases::Scope::All
-      @page, @cases = view_repo.find_all_for_search(
-        params[:search],
-        partner_id,
-        page: params[:page],
-      )
+      @page, @cases = view_repo.find_all_for_search(params[:search], page: params[:page])
     end
 
     def queue
@@ -22,9 +18,9 @@ module Cohere
       @scope = Cases::Scope.from_key(params[:scope]) || Cases::Scope::Assigned
       @page, @cases = case @scope
       when Cases::Scope::Assigned
-        view_repo.find_all_assigned_to_user(user.id, page: params[:page])
+        view_repo.find_all_assigned(page: params[:page])
       when Cases::Scope::Queued
-        view_repo.find_all_queued_for_cohere(partner_id, page: params[:page])
+        view_repo.find_all_queued(page: params[:page])
       end
     end
 

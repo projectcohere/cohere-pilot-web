@@ -7,6 +7,10 @@
     </h1>
 
     <%= totals_for(@page, of: "cases") %>
+
+    <div class="Main-row">
+      <%= render(partial: "cases/search") %>
+    </div>
   </header>
 
   <ul id="case-list" class="CaseList">
@@ -15,8 +19,7 @@
         No <%= @scope.name.downcase %> cases left.
       </h2>
     <% else %>
-      <%- views = @cases.map { |c| Cases::View.new(c, @scope) } %>
-      <%= render(partial: "enroller/cases/cell", collection: views) %>
+      <%= render(partial: "enroller/cases/cell", collection: @cases) %>
     <% end %>
   </ul>
 

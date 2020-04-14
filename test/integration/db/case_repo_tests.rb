@@ -127,63 +127,6 @@ module Db
       assert_equal(kase.recipient.id.val, case_recipient_rec.id)
     end
 
-    test "finds a page of assigned cases" do
-      case_repo = Case::Repo.new
-      user_rec = users(:cohere_1)
-
-      case_page, cases = case_repo.find_all_assigned_by_user(Id.new(user_rec.id), page: 1)
-      assert_length(cases, 1)
-      assert_equal(case_page.count, 1)
-    end
-
-    test "finds a page of opened cases for a supplier" do
-      case_repo = Case::Repo.new
-      partner_rec = partners(:supplier_1)
-
-      case_page, cases = case_repo.find_all_opened_for_supplier(partner_rec.id, page: 1)
-      assert_length(cases, 7)
-      assert_equal(case_page.count, 7)
-      assert(cases.any? { |c| c.selected_assignment != nil })
-    end
-
-    test "finds a page of queued cases for a governor user" do
-      case_repo = Case::Repo.new
-      partner_rec = partners(:governor_1)
-
-      case_page, cases = case_repo.find_all_queued_for_governor(partner_rec.id, page: 1)
-      assert_length(cases, 4)
-      assert_equal(case_page.count, 4)
-    end
-
-    test "finds a page of opened cases for a governor user" do
-      case_repo = Case::Repo.new
-      partner_rec = partners(:governor_1)
-
-      case_page, cases = case_repo.find_all_opened_for_governor(partner_rec.id, page: 1)
-      assert_length(cases, 5)
-      assert_equal(case_page.count, 5)
-      assert(cases.any? { |c| c.selected_assignment != nil })
-    end
-
-    test "finds a page of queued cases for an enroller" do
-      case_repo = Case::Repo.new
-      partner_rec = partners(:enroller_1)
-
-      case_page, cases = case_repo.find_all_queued_for_enroller(partner_rec.id, page: 1)
-      assert_length(cases, 0)
-      assert_equal(case_page.count, 0)
-    end
-
-    test "finds a page of submitted cases for an enroller" do
-      case_repo = Case::Repo.new
-      partner_rec = partners(:enroller_1)
-
-      case_page, cases = case_repo.find_all_submitted_for_enroller(partner_rec.id, page: 1)
-      assert_length(cases, 3)
-      assert_equal(case_page.count, 3)
-      assert(cases.any? { |c| c.selected_assignment != nil })
-    end
-
     # -- test/save
     test "saves an opened case" do
       case_repo = Case::Repo.new

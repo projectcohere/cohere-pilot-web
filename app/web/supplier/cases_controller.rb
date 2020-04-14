@@ -6,8 +6,8 @@ module Supplier
         return deny_access
       end
 
-      @scope = Cases::Scope::Open
-      @page, @cases = case_repo.find_all_opened_for_supplier(partner_id, page: params[:page])
+      @scope = Cases::Scope::All
+      @page, @cases = view_repo.find_all_for_search(page: params[:page])
     end
 
     def new

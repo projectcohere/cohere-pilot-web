@@ -17,9 +17,9 @@ class Policy
   end
 
   # -- queries --
-  delegate(:cohere?, :governor?, :supplier?, :enroller?, to: :membership)
-
-  private def membership
+  def membership
     return @user.role.membership
   end
+
+  delegate(:cohere?, :governor?, :supplier?, :enroller?, to: :membership)
 end

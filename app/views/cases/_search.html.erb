@@ -1,0 +1,16 @@
+<div class="CaseSearch">
+  <p class="CaseSearch-title">
+    Search for Cases
+  </p>
+
+  <%= form_tag(cases_search_path, method: :get, class: "CaseSearch-field") do %>
+    <%- params = cases_search_params %>
+    <%= text_field_tag(:search, params[:search], class: "CaseSearch-input") %>
+
+    <%- params.without(:search).each do |k, v| %>
+      <%= hidden_field_tag(k, v) %>
+    <%- end %>
+
+    <%= submit_tag("Find Cases", name: nil, class: "CaseSearch-action Button Button--action") %>
+  <%- end %>
+</div>

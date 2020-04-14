@@ -22,8 +22,7 @@
         No <%= @scope.adjective %> cases left.
       </h2>
     <% else %>
-      <%- views = @cases.map { |c| Cases::View.new(c, @scope) } %>
-      <%= render(partial: "governor/cases/cell", collection: views) %>
+      <%= render(partial: "governor/cases/cell", collection: @cases) %>
     <% end %>
   </ul>
 
