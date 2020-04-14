@@ -38,12 +38,12 @@ module Db
     end
 
     # -- commands --
-    test "set the current user" do
+    test "signs in the current user" do
       user_repo = User::Repo.new
-      user = User.stub(id: Id.new(42))
+      user_rec = users(:cohere_1)
 
-      user_repo.current = user
-      assert_equal(user_repo.find_current, user)
+      user_repo.sign_in(user_rec)
+      assert_equal(user_repo.find_current.id.val, user_rec.id)
     end
 
     test "save an invited user" do

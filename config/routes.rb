@@ -115,7 +115,7 @@ Rails.application.routes.draw do
       patch("/:complete_action",
         as: :complete,
         action: :complete,
-        constraints: { complete_action: /approve|deny/ } # TODO: how to merge this constraint?
+        constraints: { complete_action: /approve|deny/ }
       )
 
       resources(:assignments, only: %i[

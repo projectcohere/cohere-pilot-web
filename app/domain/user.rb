@@ -30,7 +30,11 @@ class User < ::Entity
 
   # -- queries --
   def partner_id
-    @role.partner_id
+    return @role.partner_id
+  end
+
+  def membership
+    return @role.membership
   end
 
   # -- events --

@@ -11,7 +11,7 @@ module Authentication
   def sign_in(user_rec)
     super(user_rec)
 
-    sign_in_as(user_rec)
+    user_repo.sign_in(current_user)
     create_chat_user_id
   end
 
@@ -25,13 +25,13 @@ module Authentication
   # by clearance
   def remember_user
     if current_user != nil
-      sign_in_as(current_user)
+      user_repo.sign_in(current_user)
     end
   end
 
   # store chat id used to disambiguate concurrent cohere users
   def create_chat_user_id
-    user = User::Repo.get.find_current
+    user = user_repo.find_current
 
     # TODO: scope by policy
     if user&.role&.membership&.cohere?
@@ -44,8 +44,8 @@ module Authentication
     cookies.delete(:chat_user_id)
   end
 
-  # -- commands/helpers
-  private def sign_in_as(user_rec)
-    User::Repo.get.current = user_rec == nil ? nil : User::Repo.map_record(user_rec)
+  # -- queries --
+  private def user_repo
+    return User::Repo.get
   end
 end

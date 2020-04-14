@@ -14,7 +14,7 @@ module Cases
     end
 
     protected def user
-      return User::Repo.get.find_current
+      return user_repo.find_current
     end
 
     protected def partner_id

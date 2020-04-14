@@ -50,8 +50,10 @@ class User
     end
 
     # -- commands --
-    def current=(user)
-      @current = user
+    def sign_in(user_rec)
+      if @current&.id&.val != user_rec&.id
+        @current = user_rec != nil ? entity_from(user_rec) : nil
+      end
     end
 
     def save_invited(user)
