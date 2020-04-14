@@ -42,5 +42,14 @@ module Options
     def from_key(key)
       return @all[key]
     end
+
+    # -- TODO: remove this, standardize keys
+    def from_str(key)
+      return @all[key.to_sym]
+    end
+
+    def from_index(i)
+      return values[i]
+    end
   end
 end

@@ -10,8 +10,10 @@ module Routes
         constraint = Clearance::Constraints::SignedIn.new
         scope(constraints: constraint) { routes.(constraint) }
       else
+        membership = Partner::Membership.from_key(role)
         constraint = Clearance::Constraints::SignedIn.new do |user_rec|
-          User::Repo.map_role(user_rec).name == role
+          # TODO: sign the user in here
+          User::Repo.map_role(user_rec).membership == membership
         end
 
         scope(constraints: constraint, module: role) { routes.(constraint) }

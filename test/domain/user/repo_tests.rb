@@ -10,7 +10,7 @@ class User
       assert_not_nil(user.id.val)
       assert_equal(user.email, "me@projectcohere.com")
       assert_equal(user.confirmation_token, "test-token")
-      assert_equal(user.role.name, :cohere)
+      assert_equal(user.role.membership, Partner::Membership::Cohere)
       assert_not_nil(user.role.partner_id)
     end
 
@@ -20,7 +20,7 @@ class User
       user = User::Repo.map_record(user_rec)
       assert_not_nil(user.id.val)
       assert_equal(user.email, "me@testmetro.org")
-      assert_equal(user.role.name, :enroller)
+      assert_equal(user.role.membership, Partner::Membership::Enroller)
       assert_not_nil(user.role.partner_id)
     end
 
@@ -30,7 +30,7 @@ class User
       user = User::Repo.map_record(user_rec)
       assert_not_nil(user.id.val)
       assert_equal(user.email, "me@testenergy.com")
-      assert_equal(user.role.name, :supplier)
+      assert_equal(user.role.membership, Partner::Membership::Supplier)
       assert_not_nil(user.role.partner_id)
     end
 
@@ -40,7 +40,7 @@ class User
       user = User::Repo.map_record(user_rec)
       assert_not_nil(user.id.val)
       assert_equal(user.email, "me@michigan.gov")
-      assert_equal(user.role.name, :governor)
+      assert_equal(user.role.membership, Partner::Membership::Governor)
       assert_not_nil(user.role.partner_id)
     end
   end

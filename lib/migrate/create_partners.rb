@@ -12,7 +12,7 @@ execute <<-SQL
 
   -- migrations/cohere
   INSERT INTO partners (name, membership)
-  SELECT 'Cohere', #{M.index(M::Cohere)};
+  SELECT 'Cohere', #{M::Cohere.index};
 
   UPDATE users AS u
   SET partner_id = p.id
@@ -21,7 +21,7 @@ execute <<-SQL
 
   -- migrations/governors
   INSERT INTO partners (name, membership)
-  SELECT 'MDHHS', #{M.index(M::Governor)};
+  SELECT 'MDHHS', #{M::Governor.index};
 
   UPDATE users AS u
   SET partner_id = p.id
@@ -30,7 +30,7 @@ execute <<-SQL
 
   -- migrations/suppliers
   INSERT INTO partners (name, membership, programs)
-  SELECT name, #{M.index(M::Supplier)}, Array[program]
+  SELECT name, #{M::Supplier.index}, Array[program]
   FROM suppliers;
 
   UPDATE users AS u
@@ -45,7 +45,7 @@ execute <<-SQL
 
   -- migrations/enrollers
   INSERT INTO partners (name, membership, programs)
-  SELECT name, #{M.index(M::Enroller)}, Array[#{P.index(P::Meap)}, #{P.index(P::Wrap)}]
+  SELECT name, #{M::Enroller.index}, Array[#{P::Meap.index}, #{P::Wrap.index}]
   FROM enrollers;
 
   UPDATE users AS u

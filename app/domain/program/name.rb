@@ -1,19 +1,9 @@
 class Program
-  module Name
+  class Name
+    include ::Options
+
     # -- options --
-    Meap = :meap
-    Wrap = :wrap
-
-    # -- queries --
-    def self.all
-      @all ||= [
-        Meap,
-        Wrap,
-      ]
-    end
-
-    def self.index(option)
-      return all.find_index(option)
-    end
+    option(:meap)
+    option(:wrap)
   end
 end

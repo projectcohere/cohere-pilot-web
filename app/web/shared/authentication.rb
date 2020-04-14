@@ -34,7 +34,7 @@ module Authentication
     user = User::Repo.get.find_current
 
     # TODO: scope by policy
-    if user&.role&.name == :cohere
+    if user&.role&.membership&.cohere?
       cookies.signed[:chat_user_id] = SecureRandom.base58
     end
   end

@@ -1,6 +1,6 @@
 module Cases
-  # This repo provides queries to retrieve case "read models" ("views",
-  # "projections") used to render case UI.
+  # This repo provides queries to retrieve Case "read models" ("views", "projections")
+  # used to render Case UI.
   class ViewRepo < ::Repo
     include Service
 
@@ -28,9 +28,9 @@ module Cases
       end
 
       q = case search
-      when /^(\+1)?((\s|\d|[-\(\)])+)$/
+      when /^(\+1)?((\s|\d|[-\(\)])+)$/ # is phone-number-like
         q.by_recipient_phone_number($2.gsub(/\s|[-\(\)]+/, ""))
-      when /^.+$/
+      when /^.+$/ # is non-empty
         q.by_recipient_name(search)
       else
         q
@@ -78,7 +78,7 @@ module Cases
         id: r.id,
         status: r.status,
         has_new_activity: r.has_new_activity,
-        program: r.program,
+        program: Program::Name.from_str(r.program),
         recipient_name: make_name(r.recipient),
         supplier_name: r.supplier.name,
         enroller_name: r.enroller.name,

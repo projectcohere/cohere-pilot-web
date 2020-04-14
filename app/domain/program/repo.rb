@@ -17,9 +17,9 @@ class Program
     private def find_contract_variants_by_name(name)
       case name
       when Program::Name::Meap
-        [ Program::Contract::Meap ]
+        [Program::Contract::Meap]
       when Program::Name::Wrap
-        [ Program::Contract::Wrap3h, Program::Contract::Wrap1k ]
+        [Program::Contract::Wrap3h, Program::Contract::Wrap1k]
       end
     end
   end

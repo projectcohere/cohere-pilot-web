@@ -205,8 +205,8 @@ class CaseTests < ActiveSupport::TestCase
       id: Id.new(3),
       email: :test_email,
       role: User::Role.stub(
-        name: :cohere,
         partner_id: 5,
+        membership: Partner::Membership::Cohere,
       ),
     )
 

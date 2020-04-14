@@ -21,7 +21,7 @@ class Partner
     def find_cohere
       find_cached(:cohere) do
         record = Partner::Record
-          .find_by!(membership: Partner::Membership::Cohere)
+          .find_by!(membership: Partner::Membership::Cohere.key)
 
         entity_from(record)
       end
@@ -30,7 +30,7 @@ class Partner
     def find_dhs
       find_cached(:dhs) do
         record = Partner::Record
-          .find_by!(membership: Partner::Membership::Governor)
+          .find_by!(membership: Partner::Membership::Governor.key)
 
         entity_from(record)
       end
@@ -38,7 +38,7 @@ class Partner
 
     def find_current_supplier
       current_user = @user_repo.find_current
-      if not current_user.role.supplier?
+      if not current_user.role.membership.supplier?
         return nil
       end
 
@@ -48,8 +48,7 @@ class Partner
     def find_default_enroller
       find_cached(:default_enroller) do
         record = Partner::Record
-          .where(membership: Membership::Enroller)
-          .first
+          .find_by!(membership: Membership::Enroller.key)
 
         entity_from(record)
       end
@@ -69,8 +68,8 @@ class Partner
 
     def find_all_suppliers_by_program(program)
       partner_recs = Partner::Record
-        .where(membership: Partner::Membership::Supplier)
-        .where("programs @> '{?}'", Program::Name.index(program))
+        .where(membership: Partner::Membership::Supplier.key)
+        .where("programs @> '{?}'", program.index)
 
       partner_recs.map { |r| entity_from(r) }
     end
@@ -80,8 +79,8 @@ class Partner
       Partner.new(
         id: r.id,
         name: r.name,
-        membership: r.membership&.to_sym,
-        programs: r.programs&.map { |p| Program::Name.all[p] },
+        membership: Membership.from_str(r.membership),
+        programs: r.programs&.map { |p| Program::Name.from_index(p) },
       )
     end
   end

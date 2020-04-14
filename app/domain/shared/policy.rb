@@ -17,19 +17,9 @@ class Policy
   end
 
   # -- queries --
-  protected def cohere?
-    return @user.role.cohere?
-  end
+  delegate(:cohere?, :governor?, :supplier?, :enroller?, to: :membership)
 
-  protected def governor?
-    return @user.role.governor?
-  end
-
-  protected def supplier?
-    return @user.role.supplier?
-  end
-
-  protected def enroller?
-    return @user.role.enroller?
+  private def membership
+    return @user.role.membership
   end
 end

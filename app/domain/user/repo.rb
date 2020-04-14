@@ -92,8 +92,8 @@ class User
 
     def self.map_role(r)
       return Role.new(
-        name: r.partner.membership&.to_sym,
         partner_id: r.partner.id,
+        membership: Partner::Membership.from_str(r.partner.membership),
       )
     end
   end
@@ -103,8 +103,7 @@ class User
     def self.by_membership(*membership)
       scope = self
         .includes(:partner)
-        .references(:partners)
-        .where(partners: { membership: membership })
+        .where(partners: { membership: membership.map(&:key) })
 
       return scope
     end

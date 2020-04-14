@@ -14,7 +14,7 @@ class User < ::Entity
     user = User.new(
       email: invitation.email,
       role: Role.new(
-        name: :unknown,
+        membership: :unknown,
         partner_id: invitation.partner_id
       )
     )
@@ -29,10 +29,6 @@ class User < ::Entity
   end
 
   # -- queries --
-  def role_name
-    @role.name
-  end
-
   def partner_id
     @role.partner_id
   end

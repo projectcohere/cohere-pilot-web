@@ -13,7 +13,7 @@ class Case
     has_many(:assignments, foreign_key: "case_id", class_name: "::Case::Assignment::Record", dependent: :destroy)
 
     # -- program --
-    enum(program: Program::Name.all)
+    enum(program: Program::Name.keys)
 
     # -- status --
     enum(status: Status.all)
@@ -55,7 +55,7 @@ class Case
 
     def self.for_governor
       return where(
-        program: Program::Name::Meap,
+        program: Program::Name::Meap.index,
         status: [Status::Opened, Status::Pending]
       )
     end

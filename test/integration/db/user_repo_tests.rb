@@ -16,7 +16,7 @@ module Db
 
       users = user_repo.find_all_for_opened_case
       assert_length(users, 2)
-      assert_same_elements(users.map(&:role_name), [:cohere, :governor])
+      assert_same_elements(users.map { |u| u.role.membership.key }, [:cohere, :governor])
     end
 
     test "find authorized enrollers for a submitted case" do
@@ -34,7 +34,7 @@ module Db
 
       users = user_repo.find_all_for_completed_case
       assert_length(users, 1)
-      assert_equal(users[0].role_name, :cohere)
+      assert_equal(users[0].role.membership, Partner::Membership::Cohere)
     end
 
     # -- commands --

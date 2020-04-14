@@ -158,7 +158,7 @@ class Case < ::Entity
       user_id: user.id,
       user_email: user.email,
       partner_id: user.role.partner_id,
-      partner_membership: user.role.name,
+      partner_membership: user.role.membership,
     )
 
     @assignments.push(@new_assignment)

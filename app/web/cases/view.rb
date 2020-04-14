@@ -79,7 +79,7 @@ module Cases
     end
 
     def program_name
-      return @case.program.to_s.upcase
+      return @case.program.key.to_s.upcase
     end
 
     def wrap?

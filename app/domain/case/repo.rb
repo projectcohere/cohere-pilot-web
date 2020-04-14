@@ -457,7 +457,7 @@ class Case
     private def assign_partners(kase, case_rec)
       c = kase
       case_rec.assign_attributes(
-        program: c.program,
+        program: c.program.key,
         enroller_id: c.enroller_id,
         supplier_id: c.supplier_id
       )
@@ -575,7 +575,7 @@ class Case
       Case.new(
         record: r,
         id: Id.new(r.id),
-        program: r.program.to_sym,
+        program: Program::Name.from_str(r.program),
         status: r.status.to_sym,
         recipient: map_recipient(r.recipient),
         enroller_id: r.enroller_id,

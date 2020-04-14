@@ -1,23 +1,11 @@
 class Partner
-  module Membership
+  class Membership
+    include ::Options
+
     # -- options --
-    Cohere = :cohere
-    Governor = :governor
-    Supplier = :supplier
-    Enroller = :enroller
-
-    # -- queries --
-    def self.all
-      @all ||= [
-        Cohere,
-        Governor,
-        Supplier,
-        Enroller,
-      ]
-    end
-
-    def self.index(option)
-      return all.find_index(option)
-    end
+    option(:cohere)
+    option(:governor)
+    option(:supplier)
+    option(:enroller)
   end
 end

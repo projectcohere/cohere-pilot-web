@@ -71,12 +71,10 @@ class Case
     end
 
     # -- queries --
-    private def meap?
-      @case.program == Program::Name::Meap
-    end
+    delegate(:meap?, :wrap?, to: :program, private: :true)
 
-    private def wrap?
-      @case.program == Program::Name::Wrap
+    private def program
+      return @case.program
     end
   end
 end
