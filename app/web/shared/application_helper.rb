@@ -30,11 +30,11 @@ module ApplicationHelper
     routes = []
 
     if policy.permit?(:list_queue)
-      routes.push(["Queue", queue_cases_path])
+      routes.push(["My Cases", queue_cases_path])
     end
 
     if policy.permit?(:list)
-      routes.push(["Cases", cases_path])
+      routes.push(["All Cases", cases_path])
     end
 
     active = routes.find do |(_, p)|

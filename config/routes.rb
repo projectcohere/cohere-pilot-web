@@ -81,7 +81,7 @@ Rails.application.routes.draw do
 
       get("/",
         on: :collection,
-        to: redirect("/cases/queued")
+        to: redirect("/cases/queue")
       )
 
       resources(:assignments, only: %i[
@@ -89,7 +89,7 @@ Rails.application.routes.draw do
       ])
     end
 
-    fallback(:governor, to: "/cases/queued", constraints: c)
+    fallback(:governor, to: "/cases/queue", constraints: c)
   end
 
   signed_in(role: :enroller) do |c|
@@ -109,7 +109,7 @@ Rails.application.routes.draw do
 
       get("/",
         on: :collection,
-        to: redirect("/cases/queued")
+        to: redirect("/cases/queue")
       )
 
       patch("/:complete_action",
@@ -123,7 +123,7 @@ Rails.application.routes.draw do
       ])
     end
 
-    fallback(:enroller, to: "/cases/queued", constraints: c)
+    fallback(:enroller, to: "/cases/queue", constraints: c)
   end
 
   signed_in(role: :cohere) do |c|
@@ -166,7 +166,7 @@ Rails.application.routes.draw do
     end
 
     # fallback
-    fallback(:cohere, to: "/cases/queued", constraints: c)
+    fallback(:cohere, to: "/cases/queue", constraints: c)
   end
 
   # -- development --

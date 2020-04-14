@@ -33,7 +33,12 @@ module Cases
     end
 
     def adjective
-      return @key
+      return case self
+      when All
+        nil
+      else
+        @key
+      end
     end
   end
 end
