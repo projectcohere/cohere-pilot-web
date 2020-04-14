@@ -5,9 +5,9 @@ class OptionsTests < ActiveSupport::TestCase
   class Colors
     include ::Options
 
-    option("red")
-    option("blue")
-    option("green")
+    option(:red)
+    option(:blue)
+    option(:green)
   end
 
   # -- tests --
@@ -18,7 +18,7 @@ class OptionsTests < ActiveSupport::TestCase
 
   test "gets an option's key" do
     option = Colors::Red
-    assert_equal(option.key, "red")
+    assert_equal(option.key, :red)
   end
 
   test "tests for a particular option" do

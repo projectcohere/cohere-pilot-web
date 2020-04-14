@@ -3,12 +3,12 @@ module Cases
     include ::Options
 
     # -- options --
-    option("assigned")
-    option("queued")
-    option("all")
-    option("open")
-    option("submitted")
-    option("completed")
+    option(:assigned)
+    option(:queued)
+    option(:all)
+    option(:open)
+    option(:submitted)
+    option(:completed)
 
     # -- queries --
     def title

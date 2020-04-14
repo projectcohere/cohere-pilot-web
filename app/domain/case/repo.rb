@@ -575,7 +575,7 @@ class Case
       Case.new(
         record: r,
         id: Id.new(r.id),
-        program: Program::Name.from_str(r.program),
+        program: Program::Name.from_key(r.program),
         status: r.status.to_sym,
         recipient: map_recipient(r.recipient),
         enroller_id: r.enroller_id,

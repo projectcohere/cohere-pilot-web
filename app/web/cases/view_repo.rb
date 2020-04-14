@@ -78,7 +78,7 @@ module Cases
         id: r.id,
         status: r.status,
         has_new_activity: r.has_new_activity,
-        program: Program::Name.from_str(r.program),
+        program: Program::Name.from_key(r.program),
         recipient_name: make_name(r.recipient),
         supplier_name: r.supplier.name,
         enroller_name: r.enroller.name,

@@ -79,7 +79,7 @@ class Partner
       Partner.new(
         id: r.id,
         name: r.name,
-        membership: Membership.from_str(r.membership),
+        membership: Membership.from_key(r.membership),
         programs: r.programs&.map { |p| Program::Name.from_index(p) },
       )
     end

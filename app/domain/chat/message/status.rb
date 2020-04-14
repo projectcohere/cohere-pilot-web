@@ -4,11 +4,11 @@ class Chat
       include ::Options
 
       # -- options --
-      option("queued")
-      option("failed")
-      option("delivered")
-      option("undelivered")
-      option("received")
+      option(:queued)
+      option(:failed)
+      option(:delivered)
+      option(:undelivered)
+      option(:received)
     end
   end
 end

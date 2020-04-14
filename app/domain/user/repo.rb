@@ -93,7 +93,7 @@ class User
     def self.map_role(r)
       return Role.new(
         partner_id: r.partner.id,
-        membership: Partner::Membership.from_str(r.partner.membership),
+        membership: Partner::Membership.from_key(r.partner.membership),
       )
     end
   end
