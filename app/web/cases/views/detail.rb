@@ -14,7 +14,8 @@ module Cases
       prop(:supplier_account)
       prop(:recipient_profile)
       prop(:recipient_household)
-      prop(:referral, predicate: true)
+      prop(:referrer, predicate: true)
+      prop(:referred, predicate: true)
       prop(:documents)
 
       # -- props/remove
@@ -36,7 +37,7 @@ module Cases
 
       # -- queries/contact
       def address
-        return @recipient_profile.address
+        return @recipient_profile.address.lines
       end
 
       def phone_number
@@ -81,9 +82,22 @@ module Cases
         return @household&.fpl_percent&.then { |f| "#{f}%" }
       end
 
+      # -- queries/complete
+      def can_complete?
+        return Case::Status.submitted?(@status)
+      end
+
+      def approve_path
+        return urls.case_completePath(@id, complete_action: :approve)
+      end
+
+      def deny_path
+        return urls.case_completePath(@id, complete_action: :deny)
+      end
+
       # -- queries/referral
       def can_make_referral?
-        return Case::Status.complete?(@status) && !referral?
+        return Case::Status.complete?(@status) && !@referral && !@referrer
       end
 
       def referral_label

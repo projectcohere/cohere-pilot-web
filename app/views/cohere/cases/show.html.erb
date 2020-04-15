@@ -56,7 +56,7 @@
           <%- end %>
 
           <%= field_tag("Primary Residential Address", class: "ShowCase-address") do %>
-            <% @case.address.lines.each do |line| %>
+            <% @case.address.each do |line| %>
               <%= line %>
               <br>
             <% end %>

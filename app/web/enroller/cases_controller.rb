@@ -24,6 +24,15 @@ module Enroller
       end
     end
 
+    def show
+      @case = view_repo.find_with_documents(params[:id])
+      if policy.forbid?(:view)
+        return deny_access
+      end
+
+      events.add(Cases::Events::DidViewEnrollerCase.from_entity(@case))
+    end
+
     def complete
       @case = case_repo.find_with_documents_for_enroller(params[:case_id], partner_id)
       if policy.forbid?(:complete)
@@ -36,15 +45,6 @@ module Enroller
       redirect_to(case_path(@case),
         notice: "#{@case.status.to_s.capitalize} #{@case.recipient.profile.name}'s case!"
       )
-    end
-
-    def show
-      @case = case_repo.find_with_documents_for_enroller(params[:id], partner_id)
-      if policy.forbid?(:view)
-        return deny_access
-      end
-
-      events.add(Cases::Events::DidViewEnrollerCase.from_entity(@case))
     end
   end
 end

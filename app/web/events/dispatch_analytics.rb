@@ -29,7 +29,7 @@ module Events
       when Case::Events::DidSubmit
         event.case_id.val
       when Cases::Events::DidViewEnrollerCase
-        event.case_id.val
+        event.case_id
       when Case::Events::DidComplete
         event.case_id.val
       when Case::Events::DidMakeReferral

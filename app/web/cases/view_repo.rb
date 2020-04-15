@@ -139,7 +139,8 @@ module Cases
         recipient_id: r.recipient_id,
         recipient_profile: Recipient::Repo.map_profile(r.recipient),
         recipient_household: Recipient::Repo.map_household(r.recipient),
-        referral: r.referrer_id != nil || r.referred != nil,
+        referrer: r.referred != nil,
+        referred: r.referrer_id != nil,
         documents: r.documents&.map { |r| Case::Repo.map_document(r) },
       )
     end
