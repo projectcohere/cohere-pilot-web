@@ -11,11 +11,9 @@ module Cases
 
     # -- queries --
     def find_all_for_search(search = "", page:)
-      case_query = Case::Record.join_all
+      q = make_query
 
-      q = case_query
-      q = scope_to_role(q)
-
+      # apply search
       q = case search
       when /^(\+1)?((\s|\d|[-\(\)])+)$/ # is phone-number-like
         q.with_phone_number($2.gsub(/\s|[-\(\)]+/, ""))
@@ -25,6 +23,7 @@ module Cases
         q
       end
 
+      # filter by page scope
       q = case @scope
       when Scope::All
         q.by_updated_date
@@ -40,26 +39,45 @@ module Cases
     end
 
     def find_all_assigned(page:)
-      case_query = Case::Record
-        .join_all
+      case_query = make_query
         .incomplete
         .with_assigned_user(user.id.val)
         .by_updated_date
 
-      return paginate(scope_to_role(case_query), page)
+      return paginate(case_query, page)
     end
 
     def find_all_queued(page:)
-      case_query = Case::Record
-        .join_all
+      case_query = make_query
         .incomplete
         .with_no_assignment_for_partner(role.partner_id)
         .by_updated_date
 
-      return paginate(scope_to_role(case_query), page)
+      return paginate(case_query, page)
     end
 
     # -- queries/helpers
+    private def make_query
+      q = Case::Record
+
+      # inlcude associations
+      q = q.includes(:recipient, :enroller, :supplier, assignments: :user)
+
+      # filter by role
+      q = case role.membership
+      when Partner::Membership::Supplier
+        q.for_supplier(role.partner_id)
+      when Partner::Membership::Governor
+        q.for_governor
+      when Partner::Membership::Enroller
+        q.for_enroller(role.partner_id)
+      else
+        q
+      end
+
+      return q
+    end
+
     private def paginate(case_query, page)
       case_page = Pagy.new(count: case_query.count(:all), page: page)
       case_recs = case_query.offset(case_page.offset).limit(case_page.items)
@@ -69,19 +87,6 @@ module Cases
       end
 
       return case_page, case_cells
-    end
-
-    private def scope_to_role(case_query)
-      return case role.membership
-      when Partner::Membership::Supplier
-        case_query.for_supplier(role.partner_id)
-      when Partner::Membership::Governor
-        case_query.for_governor
-      when Partner::Membership::Enroller
-        case_query.for_enroller(role.partner_id)
-      else
-        case_query
-      end
     end
 
     private def user

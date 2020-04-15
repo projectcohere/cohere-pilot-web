@@ -22,7 +22,7 @@ class Case
 
     def find_by_phone_number(phone_number)
       case_rec = Case::Record
-        .join_recipient(references: true)
+        .join_recipient
         .find_by(recipients: { phone_number: phone_number })
 
       return entity_from(case_rec)

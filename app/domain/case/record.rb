@@ -19,10 +19,6 @@ class Case
     enum(status: Status.all)
 
     # -- scopes --
-    def self.join_all
-      return includes(:recipient, :enroller, :supplier, assignments: :user)
-    end
-
     def self.join_recipient(references: false)
       scope = includes(:recipient)
 
