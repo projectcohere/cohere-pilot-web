@@ -100,7 +100,7 @@ module Cases
     end
 
     def address
-      return profile.address.to_lines
+      return profile.address.lines
     end
 
     def phone_number
@@ -130,7 +130,7 @@ module Cases
 
     # -- queries/dhs-account
     def dhs_number
-      return dhs_account&.number || "Unknown"
+      return household&.dhs_number || "Unknown"
     end
 
     def household_size

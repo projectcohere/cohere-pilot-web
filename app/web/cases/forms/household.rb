@@ -31,7 +31,7 @@ module Cases
         assign_defaults!(attrs, {
           dhs_number: h&.dhs_number,
           size: h&.size&.to_s,
-          income: h&.income_dollars&.to_s,
+          income: h&.income&.dollars&.to_s,
           ownership: h&.ownership,
           is_primary_residence: h&.is_primary_residence
         })

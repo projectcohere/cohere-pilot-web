@@ -4,7 +4,7 @@ class ChatTests < ActiveSupport::TestCase
   def stub_recipient
     return Chat::Recipient.stub(
       profile: Recipient::Profile.stub(
-        name: Recipient::Name.stub,
+        name: Name.stub,
       ),
     )
   end

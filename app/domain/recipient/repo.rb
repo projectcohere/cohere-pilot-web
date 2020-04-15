@@ -3,20 +3,9 @@ module Recipient
     # -- factories --
     def self.map_profile(r)
       return Profile.new(
-        phone: Phone.new(
-          number: r.phone_number,
-        ),
-        name: Name.new(
-          first: r.first_name,
-          last: r.last_name,
-        ),
-        address: Address.new(
-          street: r.street,
-          street2: r.street2,
-          city: r.city,
-          state: r.state,
-          zip: r.zip,
-        ),
+        phone: map_phone(r),
+        name: map_name(r),
+        address: map_address(r),
       )
     end
 

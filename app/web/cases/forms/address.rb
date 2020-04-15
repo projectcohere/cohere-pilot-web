@@ -47,7 +47,7 @@ module Cases
 
       # -- queries --
       def map_to_recipient_address
-        Recipient::Address.new(
+        return ::Address.new(
           street: street,
           street2: street2,
           city: city,

@@ -132,14 +132,14 @@ module Db
       case_repo = Case::Repo.new
 
       recipient_profile = Recipient::Profile.stub(
-        phone: Recipient::Phone.stub(
+        phone: Phone.stub(
           number: Faker::PhoneNumber.phone_number
         ),
-        name: Recipient::Name.stub(
+        name: Name.stub(
           first: "Janice",
           last: "Sample"
         ),
-        address: Recipient::Address.stub(
+        address: Address.stub(
           street: "123 Test St.",
           city: "Testburg",
           state: "Testissippi",
@@ -191,14 +191,14 @@ module Db
       case_repo = Case::Repo.new
 
       recipient_profile = Recipient::Profile.new(
-        phone: Recipient::Phone.new(
+        phone: Phone.new(
           number: "1112223333"
         ),
-        name: Recipient::Name.new(
+        name: Name.new(
           first: "Janice",
           last: "Sample"
         ),
-        address: Recipient::Address.new(
+        address: Address.new(
           street: "123 Test St.",
           city: "Testburg",
           state: "Testissippi",
@@ -247,7 +247,7 @@ module Db
       case_rec = cases(:opened_1)
 
       kase = Case::Repo.map_record(case_rec)
-      kase.add_governor_data( Recipient::Household.stub(
+      kase.add_governor_data(Recipient::Household.stub(
         dhs_number: "11111",
         size: 3,
         income: Money.cents(999_00),
@@ -272,18 +272,18 @@ module Db
 
       supplier_account = Case::Account.new(
         number: "12345",
-        arrears_cents: 1000_00
+        arrears: Money.cents(1000_00),
       )
 
       recipient_profile = Recipient::Profile.new(
-        phone: Recipient::Phone.new(
+        phone: Phone.new(
           number: "1112223333"
         ),
-        name: Recipient::Name.new(
+        name: Name.new(
           first: "Janice",
           last: "Sample"
         ),
-        address: Recipient::Address.new(
+        address: Address.new(
           street: "123 Test St.",
           city: "Testburg",
           state: "Testissippi",

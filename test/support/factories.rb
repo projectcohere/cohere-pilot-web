@@ -10,10 +10,6 @@ module Support
         Case::Recipient,
         Case::Assignment,
         Recipient::Profile,
-        Recipient::Name,
-        Recipient::Address,
-        Recipient::Phone,
-        Recipient::DhsAccount,
         Recipient::Household,
         Document,
         Chat,
@@ -28,6 +24,9 @@ module Support
         Stats::Durations,
         Stats::Duration,
         Stats::Quantity,
+        Name,
+        Address,
+        Phone,
       ]
 
       types_to_stub.each do |type_to_stub|

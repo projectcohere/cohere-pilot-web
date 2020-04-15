@@ -255,35 +255,35 @@ class Case < ::Entity
   alias :referral? :is_referred
 
   def opened?
-    return @status == Status::Opened
+    return Status.opened?(@status)
   end
 
   def pending?
-    return @status == Status::Pending
+    return Status.pending?(@status)
   end
 
   def submitted?
-    return @status == Status::Submitted
+    return Status.submitted?(@status)
   end
 
   def approved?
-    return @status == Status::Approved
+    return Status.approved?(@status)
   end
 
   def denied?
-    return @status == Status::Denied
+    return Status.denied?(@status)
   end
 
   def removed?
-    return @status == Status::Removed
+    return Status.removed?(@status)
   end
 
   def active?
-    return opened? || pending? || submitted?
+    return Status.active?(@status)
   end
 
   def complete?
-    return !active?
+    return Status.complete?(@status)
   end
 
   def wrap?

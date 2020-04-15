@@ -44,13 +44,13 @@ module Cases
 
       # -- queries --
       def map_to_recipient_phone
-        Recipient::Phone.new(
+        Phone.new(
           number: phone_number,
         )
       end
 
       def map_to_recipient_name
-        Recipient::Name.new(
+        Name.new(
           first: first_name,
           last: last_name,
         )

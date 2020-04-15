@@ -4,7 +4,7 @@ class CaseTests < ActiveSupport::TestCase
   # -- creation --
   test "opens a case for the supplier's primary program" do
     profile = Recipient::Profile.stub(
-      phone: Recipient::Phone.stub(number: "1")
+      phone: Phone.stub(number: "1")
     )
 
     kase = Case.open(
@@ -133,7 +133,7 @@ class CaseTests < ActiveSupport::TestCase
       recipient: Case::Recipient.stub(
         id: 3,
         profile: Recipient::Profile.stub(
-          phone: Recipient::Phone.stub(number: "1")
+          phone: Phone.stub(number: "1")
         )
       ),
     )
@@ -250,7 +250,7 @@ class CaseTests < ActiveSupport::TestCase
   def stub_recipient_with_phone_number(phone_number)
     return Case::Recipient.stub(
       profile: Recipient::Profile.stub(
-        phone: Recipient::Phone.stub(
+        phone: Phone.stub(
           number: phone_number,
         ),
       ),
@@ -429,45 +429,6 @@ class CaseTests < ActiveSupport::TestCase
   end
 
   # -- queries --
-  test "has an fpl percentage with a household" do
-    household = Recipient::Household.stub(
-      size: 5,
-      income_cents: 2493_33
-    )
-
-    kase = Case.stub(
-      recipient: Case::Recipient.stub(
-        dhs_account: Recipient::DhsAccount.stub(
-          household: household
-        )
-      )
-    )
-
-    assert_equal(kase.fpl_percentage, 100)
-  end
-
-  test "has no fpl percentage without a household" do
-    kase = Case.stub
-    assert_nil(kase.fpl_percentage)
-  end
-
-  test "has no fpl percentage with an incomplete household" do
-    household = Recipient::Household.stub(
-      size: nil,
-      income_cents: 2493_33
-    )
-
-    kase = Case.stub(
-      recipient: Case::Recipient.stub(
-        dhs_account: Recipient::DhsAccount.stub(
-          household: household
-        )
-      )
-    )
-
-    assert_nil(kase.fpl_percentage)
-  end
-
   test "has a contract document" do
     kase = Case.stub(
       documents: [Document.stub(classification: :contract)]
