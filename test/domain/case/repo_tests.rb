@@ -8,7 +8,6 @@ class Case
       kase = Case::Repo.map_record(case_rec,
         documents: case_rec.documents,
         assignments: case_rec.assignments,
-        is_referrer: true
       )
 
       assert_not_nil(kase.record)
@@ -21,9 +20,9 @@ class Case
       assert_not_nil(kase.received_message_at)
       assert_not_nil(kase.updated_at)
       assert_not_nil(kase.completed_at)
-      assert(kase.has_new_activity)
-      assert(kase.is_referrer)
-      assert_not(kase.is_referred)
+      assert(kase.new_activity?)
+      assert(kase.referrer?)
+      assert_not(kase.referred?)
 
       recipient = kase.recipient
       assert_not_nil(recipient.record)
@@ -48,13 +47,13 @@ class Case
       case_rec = cases(:referral_1)
 
       kase = Case::Repo.map_record(case_rec, documents: case_rec.documents)
-      assert_not(kase.is_referrer)
-      assert(kase.is_referred)
-      assert(kase.supplier_account.has_active_service)
+      assert_not(kase.referrer?)
+      assert(kase.referred?)
+      assert(kase.supplier_account.active_service?)
 
       household = kase.recipient.household
       assert_equal(household.ownership, :unknown)
-      assert(household.is_primary_residence)
+      assert(household.primary_residence?)
     end
   end
 end

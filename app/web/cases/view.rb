@@ -69,8 +69,8 @@ module Cases
     end
 
     # -- queries/activity
-    def has_new_activity
-      return @case.has_new_activity
+    def new_activity?
+      return @case.new_activity?
     end
 
     # -- queries/details
@@ -121,7 +121,7 @@ module Cases
     end
 
     def active_service?
-      return supplier_account.has_active_service
+      return supplier_account.active_service?
     end
 
     private def supplier_account
@@ -147,12 +147,12 @@ module Cases
     end
 
     def primary_residence?
-      return household&.is_primary_residence
+      return household&.primary_residence?
     end
 
-    def fpl_percentage
-      fpl_percentage = @case.fpl_percentage
-      return fpl_percentage.nil? ? nil : "#{fpl_percentage}%"
+    def fpl_percent
+      fpl_percent = @case.recipient.household&.fpl_percent
+      return fpl_percent.nil? ? nil : "#{fpl_percent}%"
     end
 
     private def household

@@ -5,12 +5,12 @@ module Cases
     prop(:data)
 
     # -- names --
-    def self.has_new_activity(case_id, case_has_new_activity)
+    def self.has_new_activity(case_id, case_new_activity)
       return ActivityEvent.new(
         name: "HAS_NEW_ACTIVITY",
         data: {
           case_id: case_id,
-          case_has_new_activity: case_has_new_activity,
+          case_new_activity: case_new_activity,
         },
       )
     end

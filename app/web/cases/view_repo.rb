@@ -117,7 +117,7 @@ module Cases
         scope: scope,
         id: r.id,
         status: r.status,
-        new_activity: r.has_new_activity,
+        new_activity: r.new_activity,
         program: Case::Repo.map_program(r),
         supplier_name: r.supplier.name,
         enroller_name: r.enroller.name,

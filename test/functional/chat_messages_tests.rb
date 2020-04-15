@@ -19,7 +19,7 @@ class ChatMessagesTests < ActionCable::Channel::TestCase
     chat_rec = chats(:idle_1)
 
     case_rec = chat_rec.recipient.cases.order(updated_at: :desc).first
-    case_rec.has_new_activity = true
+    case_rec.new_activity = true
     case_rec.save!
 
     chat = Chat::Repo.map_record(chat_rec)
@@ -69,7 +69,7 @@ class ChatMessagesTests < ActionCable::Channel::TestCase
       name: "HAS_NEW_ACTIVITY",
       data: {
         case_id: case_rec.id,
-        case_has_new_activity: false,
+        case_new_activity: false,
       }
     })
   end

@@ -69,7 +69,7 @@ module Db
       kase = case_repo.find_with_associations(case_rec.id)
       assert_equal(kase.id.val, case_rec.id)
       assert_length(kase.documents, 2)
-      assert(kase.is_referrer)
+      assert(kase.referrer?)
     end
 
     test "finds a submitted case by id for an enroller" do
@@ -257,7 +257,7 @@ module Db
       case_repo.save_dhs_contribution(kase)
 
       case_rec = kase.record
-      assert(case_rec.has_new_activity)
+      assert(case_rec.new_activity)
       assert_equal(case_rec.status, "pending")
 
       recipient_rec = case_rec.recipient

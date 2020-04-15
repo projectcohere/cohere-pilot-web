@@ -26,9 +26,9 @@ class Case
         cohere?
       when :edit_ownership
         cohere? && wrap?
-      when :edit_is_primary_residence
+      when :edit_primary_residence
         cohere? && wrap?
-      when :edit_has_active_service
+      when :edit_supplier_account_active
         cohere? && wrap?
       # view
       when :view

@@ -18,7 +18,7 @@ type ActivityEvent
 
 interface IHasNewActivity {
   case_id: string
-  case_has_new_activity: boolean
+  case_new_activity: boolean
 }
 
 interface IHasQueueChange {
@@ -67,7 +67,7 @@ export class ShowCaseList implements IComponent {
     const $case = document.getElementById(`case-${data.case_id}`)
 
     if ($case != null) {
-      $case.classList.toggle(kClassIsActive, data.case_has_new_activity)
+      $case.classList.toggle(kClassIsActive, data.case_new_activity)
     }
   }
 

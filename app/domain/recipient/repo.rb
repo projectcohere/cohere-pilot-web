@@ -42,7 +42,7 @@ module Recipient
         size: r.household_size,
         income: Money.cents(r.household_income_cents),
         ownership: r.household_ownership.to_sym,
-        is_primary_residence: r.household_primary_residence,
+        primary_residence: r.household_primary_residence,
       )
     end
   end

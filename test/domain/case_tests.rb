@@ -14,7 +14,7 @@ class CaseTests < ActiveSupport::TestCase
       supplier_account: :test_account,
     )
 
-    assert(kase.has_new_activity)
+    assert(kase.new_activity?)
     assert_equal(kase.program, Program::Name::Wrap)
     assert_equal(kase.recipient.profile, profile)
     assert_equal(kase.supplier_account, :test_account)
@@ -28,7 +28,7 @@ class CaseTests < ActiveSupport::TestCase
   test "adds cohere data" do
     kase = Case.stub(
       recipient: Case::Recipient.stub,
-      has_new_activity: true,
+      new_activity: true,
     )
 
     kase.add_cohere_data(
@@ -40,7 +40,7 @@ class CaseTests < ActiveSupport::TestCase
     assert_not_nil(kase.supplier_account)
     assert_not_nil(kase.recipient.profile)
     assert_not_nil(kase.recipient.household)
-    assert_not(kase.has_new_activity)
+    assert_not(kase.new_activity?)
   end
 
   test "adds dhs data" do
@@ -50,7 +50,7 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     kase.add_governor_data(:test_household)
-    assert(kase.has_new_activity)
+    assert(kase.new_activity?)
     assert_equal(kase.recipient.household, :test_household)
     assert_equal(kase.status, Case::Status::Pending)
 
@@ -74,11 +74,11 @@ class CaseTests < ActiveSupport::TestCase
     kase = Case.stub(
       status: Case::Status::Pending,
       recipient: Case::Recipient.stub,
-      has_new_activity: true,
+      new_activity: true,
     )
 
     kase.submit_to_enroller
-    assert_not(kase.has_new_activity)
+    assert_not(kase.new_activity?)
     assert_equal(kase.status, Case::Status::Submitted)
 
     assert_instances_of(kase.events, [
@@ -90,11 +90,11 @@ class CaseTests < ActiveSupport::TestCase
   test "completes a submitted case" do
     kase = Case.stub(
       status: Case::Status::Submitted,
-      has_new_activity: true,
+      new_activity: true,
     )
 
     kase.complete(Case::Status::Approved)
-    assert_not(kase.has_new_activity)
+    assert_not(kase.new_activity?)
     assert_equal(kase.status, Case::Status::Approved)
     assert_in_delta(Time.zone.now, kase.completed_at, 1.0)
 
@@ -107,11 +107,11 @@ class CaseTests < ActiveSupport::TestCase
   test "removes a case from the pilot" do
     kase = Case.stub(
       status: Case::Status::Pending,
-      has_new_activity: true,
+      new_activity: true,
     )
 
     kase.remove_from_pilot
-    assert_not(kase.has_new_activity)
+    assert_not(kase.new_activity?)
     assert_equal(kase.status, Case::Status::Removed)
     assert_in_delta(Time.zone.now, kase.completed_at, 1.0)
 
@@ -142,11 +142,11 @@ class CaseTests < ActiveSupport::TestCase
     assert_not_nil(referral)
 
     referrer = referral.referrer
-    assert(referral.referrer.referrer?)
+    assert(referrer.referrer?)
 
     referred = referral.referred
-    assert(referred.referral?)
-    assert(referred.has_new_activity)
+    assert(referred.referred?)
+    assert(referred.new_activity?)
     assert_equal(referred.program, Program::Name::Wrap)
 
     new_documents = referred.new_documents
@@ -165,7 +165,7 @@ class CaseTests < ActiveSupport::TestCase
     kase = Case.stub(
       status: Case::Status::Approved,
       program: Program::Name::Meap,
-      is_referrer: true
+      referrer: true
     )
 
     referral = kase.make_referral
@@ -174,7 +174,7 @@ class CaseTests < ActiveSupport::TestCase
     kase = Case.stub(
       status: Case::Status::Approved,
       program: Program::Name::Wrap,
-      is_referred: true
+      referred: true
     )
 
     referral = kase.make_referral
@@ -267,7 +267,7 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     kase.add_chat_message(message)
-    assert(kase.has_new_activity)
+    assert(kase.new_activity?)
     assert_not_nil(kase.received_message_at)
 
     events = kase.events
@@ -292,7 +292,7 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     kase.add_chat_message(message)
-    assert(kase.has_new_activity)
+    assert(kase.new_activity?)
 
     documents = kase.new_documents
     assert_length(documents, 1)
@@ -314,7 +314,7 @@ class CaseTests < ActiveSupport::TestCase
   test "adds a cohere message" do
     kase = Case.stub(
       status: Case::Status::Opened,
-      has_new_activity: true,
+      new_activity: true,
     )
 
     message = Chat::Message.stub(
@@ -322,7 +322,7 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     kase.add_chat_message(message)
-    assert_not(kase.has_new_activity)
+    assert_not(kase.new_activity?)
 
     events = kase.events
     assert_instances_of(events, [Case::Events::DidChangeActivity])
@@ -411,7 +411,7 @@ class CaseTests < ActiveSupport::TestCase
   test "doesn't add redundant activity events" do
     kase = Case.stub(
       status: Case::Status::Opened,
-      has_new_activity: false,
+      new_activity: false,
     )
 
     s = Chat::Sender
@@ -425,7 +425,7 @@ class CaseTests < ActiveSupport::TestCase
     ])
 
     event = kase.events[1]
-    assert_not(event.case_has_new_activity)
+    assert_not(event.case_new_activity?)
   end
 
   # -- queries --
@@ -445,7 +445,7 @@ class CaseTests < ActiveSupport::TestCase
     kase = Case.stub
     assert_not(kase.can_make_referral?)
 
-    kase = Case.stub(status: Case::Status::Approved, is_referrer: true)
+    kase = Case.stub(status: Case::Status::Approved, referrer: true)
     assert_not(kase.can_make_referral?)
   end
 

@@ -13,9 +13,9 @@ class Case < ::Entity
   prop(:supplier_account)
   prop(:documents, default: nil)
   prop(:assignments, default: nil)
-  prop(:is_referrer, default: false)
-  prop(:is_referred, default: false)
-  prop(:has_new_activity, default: false)
+  prop(:referrer, default: false, predicate: true)
+  prop(:referred, default: false, predicate: true)
+  prop(:new_activity, default: false, predicate: true)
   prop(:received_message_at, default: nil)
   prop(:created_at, default: nil)
   prop(:updated_at, default: nil)
@@ -36,7 +36,7 @@ class Case < ::Entity
       enroller_id: enroller.id,
       supplier_id: supplier.id,
       supplier_account: supplier_account,
-      has_new_activity: true,
+      new_activity: true,
     )
 
     kase.events.add(Events::DidOpen.from_entity(kase))
@@ -107,7 +107,7 @@ class Case < ::Entity
     end
 
     # mark as referrer
-    @is_referrer = true
+    @referrer = true
     @events.add(Events::DidMakeReferral.from_entity(self,
       program: referral_program
     ))
@@ -121,8 +121,8 @@ class Case < ::Entity
       supplier_id: supplier_id,
       supplier_account: nil,
       documents: new_documents,
-      is_referred: true,
-      has_new_activity: true,
+      referred: true,
+      new_activity: true,
     )
 
     documents&.each do |d|
@@ -238,22 +238,19 @@ class Case < ::Entity
   end
 
   # -- commands/activity
-  private def track_new_activity(has_new_activity)
-    if @has_new_activity == has_new_activity
+  private def track_new_activity(new_activity)
+    if @new_activity == new_activity
       return
-    elsif has_new_activity && complete?
+    elsif new_activity && complete?
       return
     end
 
-    @has_new_activity = has_new_activity
+    @new_activity = new_activity
     @events.add_unique(Events::DidChangeActivity.from_entity(self))
   end
 
   # -- queries --
   # -- queries/status
-  alias :referrer? :is_referrer
-  alias :referral? :is_referred
-
   def opened?
     return Status.opened?(@status)
   end
@@ -298,7 +295,7 @@ class Case < ::Entity
 
   # -- queries/referral
   def can_make_referral?
-    approved? && !@is_referred && !@is_referrer
+    approved? && !@referrer && !@referred
   end
 
   def referral_program

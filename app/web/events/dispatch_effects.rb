@@ -61,7 +61,7 @@ module Events
       when Case::Events::DidChangeActivity
         Cohere::PublishActivity.perform_async(
           event.case_id.val,
-          event.case_has_new_activity,
+          event.case_new_activity,
         )
       when Chat::Events::DidAddRemoteAttachment
         Chats::UploadRemoteAttachment.perform_async(

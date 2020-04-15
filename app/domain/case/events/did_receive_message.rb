@@ -12,7 +12,7 @@ class Case
         DidReceiveMessage.new(
           case_id: kase.id,
           case_program: kase.program,
-          case_is_referred: kase.referral?,
+          case_is_referred: kase.referred?,
           is_first: is_first,
         )
       end

@@ -5,7 +5,7 @@ module Cases
       field(:supplier_id, :integer)
       field(:account_number, :string)
       field(:arrears, :string, numericality: true, allow_blank: true)
-      field(:has_active_service, :boolean)
+      field(:active_service, :boolean)
 
       validates(:account_number, presence: true, if: :is_account_required)
       validates(:arrears, presence: true, if: :is_account_required)
@@ -29,7 +29,7 @@ module Cases
         assign_defaults!(attrs, {
           account_number: a&.number,
           arrears: a&.arrears&.dollars&.to_s,
-          has_active_service: a&.has_active_service,
+          active_service: a&.active_service?,
         })
       end
 
@@ -51,7 +51,7 @@ module Cases
         Case::Account.new(
           number: account_number,
           arrears: Money.dollars(arrears),
-          has_active_service: has_active_service.nil? ? true : has_active_service
+          active_service: active_service.nil? ? true : active_service
         )
       end
 

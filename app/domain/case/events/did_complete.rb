@@ -13,7 +13,7 @@ class Case
           case_id: kase.id,
           case_status: kase.status,
           case_program: kase.program,
-          case_is_referred: kase.referral?
+          case_is_referred: kase.referred?
         )
       end
     end

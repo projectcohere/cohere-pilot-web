@@ -71,7 +71,7 @@ class ChatSmsTests < ActionDispatch::IntegrationTest
 
     assert_matching_broadcast_on(case_activity_for(:cohere_1)) do |msg|
       assert_equal(msg["name"], "HAS_NEW_ACTIVITY")
-      assert(msg["data"]["case_has_new_activity"])
+      assert(msg["data"]["case_new_activity"])
     end
   end
 

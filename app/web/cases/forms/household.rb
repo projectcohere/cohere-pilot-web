@@ -23,7 +23,7 @@ module Cases
         on: { submitted: { presence: true } }
       )
 
-      field(:is_primary_residence, :boolean)
+      field(:primary_residence, :boolean)
 
       # -- lifecycle --
       protected def initialize_attrs(attrs)
@@ -33,7 +33,7 @@ module Cases
           size: h&.size&.to_s,
           income: h&.income&.dollars&.to_s,
           ownership: h&.ownership,
-          is_primary_residence: h&.is_primary_residence
+          primary_residence: h&.primary_residence?
         })
       end
 
@@ -55,7 +55,7 @@ module Cases
           size: size.to_i,
           income: Money.dollars(income),
           ownership: ownership.nil? ? Recipient::Ownership::Unknown : ownership,
-          is_primary_residence: is_primary_residence.nil? ? true : is_primary_residence
+          primary_residence: primary_residence.nil? ? true : primary_residence
         )
       end
     end

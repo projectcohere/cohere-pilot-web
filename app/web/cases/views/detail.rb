@@ -52,8 +52,8 @@ module Cases
         return "$#{@supplier_account.arrears.dollars}"
       end
 
-      def supplier_account_active?
-        return @supplier_account.has_active_service
+      def supplier_account_active_service?
+        return @supplier_account.active_service?
       end
 
       # -- queries/household
@@ -74,11 +74,11 @@ module Cases
       end
 
       def household_primary_residence?
-        return @household&.is_primary_residence
+        return @household&.primary_residence?
       end
 
       def household_fpl_percent
-        return @household&.fpl_percentage&.then { |f| "#{f}%" }
+        return @household&.fpl_percent&.then { |f| "#{f}%" }
       end
 
       # -- queries/referral

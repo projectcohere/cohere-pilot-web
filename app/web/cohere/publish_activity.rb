@@ -6,14 +6,14 @@ module Cohere
     end
 
     # -- command --
-    def call(case_id, case_has_new_activity)
+    def call(case_id, case_new_activity)
       cohere = @partner_repo.find_cohere
 
       Cases::ActivityChannel.broadcast_to(
         cohere.id,
         Cases::ActivityEvent.has_new_activity(
           case_id,
-          case_has_new_activity,
+          case_new_activity,
         )
       )
     end

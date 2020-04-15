@@ -333,7 +333,7 @@ class CasesTests < ActionDispatch::IntegrationTest
       name: "HAS_NEW_ACTIVITY",
       data: {
         case_id: case_rec.id,
-        case_has_new_activity: true,
+        case_new_activity: true,
       }
     })
 
@@ -371,7 +371,7 @@ class CasesTests < ActionDispatch::IntegrationTest
       name: "HAS_NEW_ACTIVITY",
       data: {
         case_id: case_rec.id,
-        case_has_new_activity: false,
+        case_new_activity: false,
       }
     })
 
@@ -467,7 +467,7 @@ class CasesTests < ActionDispatch::IntegrationTest
       name: "HAS_NEW_ACTIVITY",
       data: {
         case_id: case_rec.id,
-        case_has_new_activity: false,
+        case_new_activity: false,
       }
     })
 
@@ -544,7 +544,7 @@ class CasesTests < ActionDispatch::IntegrationTest
       name: "HAS_NEW_ACTIVITY",
       data: {
         case_id: case_rec.id,
-        case_has_new_activity: false,
+        case_new_activity: false,
       }
     })
 
@@ -576,7 +576,7 @@ class CasesTests < ActionDispatch::IntegrationTest
       name: "HAS_NEW_ACTIVITY",
       data: {
         case_id: case_rec.id,
-        case_has_new_activity: false,
+        case_new_activity: false,
       }
     })
 
@@ -608,7 +608,7 @@ class CasesTests < ActionDispatch::IntegrationTest
       name: "HAS_NEW_ACTIVITY",
       data: {
         case_id: case_rec.id,
-        case_has_new_activity: false,
+        case_new_activity: false,
       }
     })
 

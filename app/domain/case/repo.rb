@@ -63,10 +63,7 @@ class Case
         .with_attached_file
         .where(case_id: case_id)
 
-      is_referrer = Case::Record
-        .exists?(referrer_id: case_id)
-
-      return entity_from(case_rec, assignments: case_rec.assignments, documents: document_recs, is_referrer: is_referrer)
+      return entity_from(case_rec, assignments: case_rec.assignments, documents: document_recs)
     end
 
     def find_for_governor(case_id)
@@ -375,7 +372,7 @@ class Case
     private def assign_activity(kase, case_rec)
       c = kase
       case_rec.assign_attributes(
-        has_new_activity: c.has_new_activity,
+        new_activity: c.new_activity,
         received_message_at: c.received_message_at,
       )
     end
@@ -400,7 +397,7 @@ class Case
       case_rec.assign_attributes(
         supplier_account_number: a&.number,
         supplier_account_arrears_cents: a&.arrears&.cents,
-        supplier_account_active_service: a.nil? ? true : a.has_active_service
+        supplier_account_active_service: a.nil? ? true : a.active_service?
       )
     end
 
@@ -436,7 +433,7 @@ class Case
         household_size: h.size,
         household_income_cents: h.income&.cents,
         household_ownership: h.ownership,
-        household_primary_residence: h.is_primary_residence
+        household_primary_residence: h.primary_residence?
       )
     end
 
@@ -467,7 +464,7 @@ class Case
     end
 
     # -- factories --
-    def self.map_record(r, assignments: nil, documents: nil, is_referrer: false)
+    def self.map_record(r, assignments: nil, documents: nil)
       return Case.new(
         record: r,
         id: Id.new(r.id),
@@ -479,9 +476,9 @@ class Case
         supplier_account: map_supplier_account(r),
         documents: documents&.map { |r| map_document(r) },
         assignments: assignments&.map { |r| map_assignment(r) },
-        is_referrer: is_referrer,
-        is_referred: r.referrer_id.present?,
-        has_new_activity: r.has_new_activity,
+        referred: r.referrer_id != nil,
+        referrer: r.referred != nil,
+        new_activity: r.new_activity,
         received_message_at: r.received_message_at,
         created_at: r.created_at,
         updated_at: r.updated_at,
@@ -506,7 +503,7 @@ class Case
       return Account.new(
         number: r.supplier_account_number,
         arrears: Money.cents(r.supplier_account_arrears_cents),
-        has_active_service: r.supplier_account_active_service
+        active_service: r.supplier_account_active_service
       )
     end
 
