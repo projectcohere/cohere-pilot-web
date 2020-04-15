@@ -53,8 +53,8 @@ module Cases
         Recipient::Household.new(
           dhs_number: dhs_number,
           size: size.to_i,
-          income_cents: (income.to_f * 100.0).to_i,
-          ownership: ownership.nil? ? Recipient::Household::Ownership::Unknown : ownership,
+          income: Money.dollars(income),
+          ownership: ownership.nil? ? Recipient::Ownership::Unknown : ownership,
           is_primary_residence: is_primary_residence.nil? ? true : is_primary_residence
         )
       end

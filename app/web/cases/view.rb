@@ -117,7 +117,7 @@ module Cases
     end
 
     def account_arrears
-      return "$#{supplier_account.arrears_dollars}"
+      return "$#{supplier_account.arrears.dollars}"
     end
 
     def active_service?
@@ -138,7 +138,7 @@ module Cases
     end
 
     def household_income
-      income_dollars = household&.income_dollars
+      income_dollars = household&.income&.dollars
       return income_dollars.nil? ? "Unknown" : "$#{income_dollars}"
     end
 

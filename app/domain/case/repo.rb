@@ -399,7 +399,7 @@ class Case
       a = kase.supplier_account
       case_rec.assign_attributes(
         supplier_account_number: a&.number,
-        supplier_account_arrears_cents: a&.arrears_cents,
+        supplier_account_arrears_cents: a&.arrears&.cents,
         supplier_account_active_service: a.nil? ? true : a.has_active_service
       )
     end
@@ -434,7 +434,7 @@ class Case
       recipient_rec.assign_attributes(
         dhs_number: h.dhs_number,
         household_size: h.size,
-        household_income_cents: h.income_cents,
+        household_income_cents: h.income&.cents,
         household_ownership: h.ownership,
         household_primary_residence: h.is_primary_residence
       )
@@ -494,14 +494,14 @@ class Case
         record: r,
         id: Id.new(r.id),
         profile: ::Recipient::Repo.map_profile(r),
-        dhs_account: ::Recipient::Repo.map_dhs_account(r),
+        household: ::Recipient::Repo.map_household(r),
       )
     end
 
     def self.map_supplier_account(r)
       return Account.new(
         number: r.supplier_account_number,
-        arrears_cents: r.supplier_account_arrears_cents,
+        arrears: Money.cents(r.supplier_account_arrears_cents),
         has_active_service: r.supplier_account_active_service
       )
     end

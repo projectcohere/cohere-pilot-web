@@ -28,7 +28,7 @@ module Cases
         a = @model.supplier_account
         assign_defaults!(attrs, {
           account_number: a&.number,
-          arrears: a&.arrears_dollars&.to_s,
+          arrears: a&.arrears&.dollars&.to_s,
           has_active_service: a&.has_active_service,
         })
       end
@@ -47,10 +47,10 @@ module Cases
         return suppliers
       end
 
-      def map_to_case_supplier_account
+      def map_to_supplier_account
         Case::Account.new(
           number: account_number,
-          arrears_cents: (arrears.to_f * 100.0).to_i,
+          arrears: Money.dollars(arrears),
           has_active_service: has_active_service.nil? ? true : has_active_service
         )
       end

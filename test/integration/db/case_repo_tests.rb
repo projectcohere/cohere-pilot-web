@@ -149,7 +149,7 @@ module Db
 
       supplier_account = Case::Account.stub(
         number: "12345",
-        arrears_cents: 1000_00
+        arrears: Money.cents(1000_00),
       )
 
       user_rec = users(:supplier_2)
@@ -208,7 +208,7 @@ module Db
 
       supplier_account = Case::Account.new(
         number: "12345",
-        arrears_cents: 1000_00
+        arrears: Money.cents(1000_00),
       )
 
       user_rec = users(:supplier_1)

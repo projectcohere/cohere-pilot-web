@@ -25,7 +25,7 @@ module Recipient
       household = ::Recipient::Repo.map_household(recipient_rec)
       assert_not_nil(household.dhs_number)
       assert_not_nil(household.size)
-      assert_not_nil(household.income_cents)
+      assert_not_nil(household.income.cents)
       assert_not_nil(household.ownership)
       assert_not_nil(household.is_primary_residence)
     end
