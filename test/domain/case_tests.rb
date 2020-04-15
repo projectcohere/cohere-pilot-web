@@ -34,12 +34,12 @@ class CaseTests < ActiveSupport::TestCase
     kase.add_cohere_data(
       Case::Account.stub,
       Recipient::Profile.stub,
-      Recipient::DhsAccount.stub,
+      Recipient::Household.stub,
     )
 
     assert_not_nil(kase.supplier_account)
     assert_not_nil(kase.recipient.profile)
-    assert_not_nil(kase.recipient.dhs_account)
+    assert_not_nil(kase.recipient.household)
     assert_not(kase.has_new_activity)
   end
 
@@ -49,9 +49,9 @@ class CaseTests < ActiveSupport::TestCase
       recipient: Case::Recipient.stub,
     )
 
-    kase.add_dhs_data(:test_account)
+    kase.add_governor_data(:test_household)
     assert(kase.has_new_activity)
-    assert_equal(kase.recipient.dhs_account, :test_account)
+    assert_equal(kase.recipient.household, :test_household)
     assert_equal(kase.status, Case::Status::Pending)
 
     assert_instances_of(kase.events, [

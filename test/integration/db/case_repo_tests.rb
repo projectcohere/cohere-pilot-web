@@ -247,15 +247,11 @@ module Db
       case_rec = cases(:opened_1)
 
       kase = Case::Repo.map_record(case_rec)
-      kase.add_dhs_data(
-        Recipient::DhsAccount.new(
-          number: "11111",
-          household: Recipient::Household.stub(
-            size: 3,
-            income_cents: 999_00
-          )
-        )
-      )
+      kase.add_governor_data( Recipient::Household.stub(
+        dhs_number: "11111",
+        size: 3,
+        income: Money.cents(999_00),
+      ))
 
       case_repo = Case::Repo.new
       case_repo.save_dhs_contribution(kase)
@@ -295,12 +291,10 @@ module Db
         )
       )
 
-      dhs_account = Recipient::DhsAccount.new(
-        number: "11111",
-        household: Recipient::Household.stub(
-          size: 3,
-          income_cents: 999_00
-        )
+      recipient_household = Recipient::Household.new(
+        dhs_number: "11111",
+        size: 3,
+        income: Money.cents(999_00),
       )
 
       contract = Program::Contract.new(
@@ -309,7 +303,7 @@ module Db
       )
 
       kase = Case::Repo.map_record(case_rec)
-      kase.add_cohere_data(supplier_account, recipient_profile, dhs_account)
+      kase.add_cohere_data(supplier_account, recipient_profile, recipient_household)
       kase.sign_contract(contract)
       kase.submit_to_enroller
       kase.complete(Case::Status::Approved)

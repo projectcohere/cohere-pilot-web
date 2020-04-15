@@ -6,7 +6,6 @@ module Cohere
     subform(:address, Cases::Forms::Address)
     subform(:contact, Cases::Forms::Contact)
     subform(:household, Cases::Forms::Household)
-    subform(:mdhhs, Cases::Forms::Mdhhs)
     subform(:supplier_account, Cases::Forms::SupplierAccount)
     subform(:documents, Cases::Forms::Documents)
     subform(:admin, Cases::Forms::Admin)
@@ -17,8 +16,8 @@ module Cohere
       return admin.status
     end
 
-    def map_to_case_supplier_account
-      return supplier_account.map_to_case_supplier_account
+    def map_to_supplier_account
+      return supplier_account.map_to_supplier_account
     end
 
     def map_to_recipient_profile
@@ -29,11 +28,8 @@ module Cohere
       )
     end
 
-    def map_to_recipient_dhs_account
-      return Recipient::DhsAccount.new(
-        number: mdhhs.dhs_number,
-        household: household.map_to_recipient_household,
-      )
+    def map_to_recipient_household
+      return household.map_to_recipient_household
     end
 
     # -- ApplicationForm --

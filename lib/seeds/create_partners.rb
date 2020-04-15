@@ -8,7 +8,7 @@ cohere_0 = Partner::Record.create!(
   membership: M::Cohere.key,
 )
 
-mdhhs_0 = Partner::Record.create!(
+governor_0 = Partner::Record.create!(
   name: "MDHHS",
   membership: M::Governor.key,
 )

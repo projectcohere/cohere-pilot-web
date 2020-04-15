@@ -10,7 +10,7 @@
 
     <div class="Main-row Main-filters">
       <nav class="Filters">
-        <%= filter_for(:application, is_error: errors?(@form.mdhhs, @form.household), is_selected: true) %>
+        <%= filter_for(:application, is_error: errors?(@form.household), is_selected: true) %>
         <%= filter_for(:documents) %>
       </nav>
     </div>
@@ -31,7 +31,6 @@
           <%- end %>
         <%- end %>
 
-        <%= render(partial: "cases/forms/mdhhs", locals: form_locals) %>
         <%= render(partial: "cases/forms/household", locals: form_locals) %>
       </div>
 

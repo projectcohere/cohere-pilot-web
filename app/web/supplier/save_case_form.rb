@@ -24,7 +24,7 @@ module Supplier
         recipient_profile: @form.map_to_recipient_profile,
         enroller: @partner_repo.find_default_enroller,
         supplier: @partner_repo.find_current_supplier,
-        supplier_account: @form.map_to_case_supplier_account,
+        supplier_account: @form.map_to_supplier_account,
       )
 
       opened_case.assign_user(@user_repo.find_current)

@@ -155,12 +155,8 @@ module Cases
       return fpl_percentage.nil? ? nil : "#{fpl_percentage}%"
     end
 
-    private def dhs_account
-      return @case.recipient.dhs_account
-    end
-
     private def household
-      return dhs_account&.household
+      return @case.recipient.household
     end
 
     # -- queries/documents

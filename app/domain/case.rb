@@ -44,8 +44,8 @@ class Case < ::Entity
   end
 
   # -- commands --
-  def add_dhs_data(dhs_account)
-    @recipient.add_dhs_data(dhs_account)
+  def add_governor_data(household)
+    @recipient.add_governor_data(household)
 
     if @status == Status::Opened
       @status = Status::Pending
@@ -55,9 +55,9 @@ class Case < ::Entity
     track_new_activity(true)
   end
 
-  def add_cohere_data(supplier_account, profile, dhs_account)
+  def add_cohere_data(supplier_account, profile, household)
     @supplier_account = supplier_account
-    @recipient.add_cohere_data(profile, dhs_account)
+    @recipient.add_cohere_data(profile, household)
 
     track_new_activity(false)
   end

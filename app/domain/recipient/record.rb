@@ -7,6 +7,6 @@ module Recipient
     has_one(:chat, foreign_key: "recipient_id", class_name: "::Chat::Record", dependent: :destroy)
 
     # -- household ownership --
-    enum(household_ownership: Household::Ownership.all)
+    enum(household_ownership: Ownership.all)
   end
 end

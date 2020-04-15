@@ -12,7 +12,7 @@
       <nav class="Filters">
         <%= filter_for(:profile, is_error: errors?(@form.details, @form.contact), is_selected: true) %>
         <%= filter_for(:household, is_error: errors?(@form.address, @form.household)) %>
-        <%= filter_for(:accounts, is_error: errors?(@form.mdhhs, @form.supplier_account)) %>
+        <%= filter_for(:accounts, is_error: errors?(@form.supplier_account)) %>
         <%= filter_for(:documents, is_error: errors?(@form.documents)) %>
       </nav>
     </div>
@@ -34,7 +34,6 @@
       </section>
 
       <section id="accounts" class="Panel-tab">
-        <%= render(partial: "cases/forms/mdhhs", locals: form_locals) %>
         <%= render(partial: "cases/forms/supplier_account", locals: form_locals) %>
       </section>
 

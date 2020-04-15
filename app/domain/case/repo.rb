@@ -173,7 +173,7 @@ class Case
       # update records
       assign_status(kase, case_rec)
       assign_activity(kase, case_rec)
-      assign_dhs_account(kase, recipient_rec)
+      assign_household(kase, recipient_rec)
 
       # save records
       transaction do
@@ -198,7 +198,7 @@ class Case
       assign_activity(kase, case_rec)
       assign_supplier_account(kase, case_rec)
       assign_recipient_profile(kase, recipient_rec)
-      assign_dhs_account(kase, recipient_rec)
+      assign_household(kase, recipient_rec)
 
       # save records
       transaction do
@@ -310,7 +310,7 @@ class Case
       assign_partners(referred, referred_rec)
       assign_supplier_account(referred, referred_rec)
       assign_recipient_profile(referred, recipient_rec)
-      assign_dhs_account(referred, recipient_rec)
+      assign_household(referred, recipient_rec)
 
       # initialize a new assignment
       assignment_rec = Case::Assignment::Record.new
@@ -428,16 +428,11 @@ class Case
       )
     end
 
-    private def assign_dhs_account(kase, recipient_rec)
+    private def assign_household(kase, recipient_rec)
       r = kase.recipient
-
-      a = r.dhs_account
+      h = r.household
       recipient_rec.assign_attributes(
-        dhs_number: a.number,
-      )
-
-      h = a.household
-      recipient_rec.assign_attributes(
+        dhs_number: h.dhs_number,
         household_size: h.size,
         household_income_cents: h.income_cents,
         household_ownership: h.ownership,

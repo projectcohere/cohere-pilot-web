@@ -6,8 +6,8 @@ module Supplier
     subform(:supplier_account, Cases::Forms::SupplierAccount)
 
     # -- queries --
-    def map_to_case_supplier_account
-      supplier_account.map_to_case_supplier_account
+    def map_to_supplier_account
+      supplier_account.map_to_supplier_account
     end
 
     def map_to_recipient_profile

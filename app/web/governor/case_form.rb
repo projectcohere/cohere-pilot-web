@@ -1,20 +1,16 @@
 module Governor
   class CaseForm < ApplicationForm
     # -- fields --
-    subform(:mdhhs, Cases::Forms::Mdhhs)
     subform(:household, Cases::Forms::Household)
 
     # -- queries --
-    def map_to_recipient_dhs_account
-      Recipient::DhsAccount.new(
-        number: mdhhs.dhs_number,
-        household: household.map_to_recipient_household,
-      )
+    def map_to_recipient_household
+      return household.map_to_recipient_household
     end
 
     # -- ApplicationForm --
     def self.entity_type
-      Case
+      return Case
     end
   end
 end

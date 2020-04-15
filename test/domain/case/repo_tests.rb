@@ -29,7 +29,7 @@ class Case
       assert_not_nil(recipient.record)
       assert_not_nil(recipient.id.val)
       assert_not_nil(recipient.profile)
-      assert_not_nil(recipient.dhs_account)
+      assert_not_nil(recipient.household)
 
       document = kase.documents[0]
       assert_not_nil(document.record)
@@ -52,7 +52,7 @@ class Case
       assert(kase.is_referred)
       assert(kase.supplier_account.has_active_service)
 
-      household = kase.recipient.dhs_account.household
+      household = kase.recipient.household
       assert_equal(household.ownership, :unknown)
       assert(household.is_primary_residence)
     end

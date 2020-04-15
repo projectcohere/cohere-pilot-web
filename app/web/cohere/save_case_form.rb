@@ -23,9 +23,9 @@ module Cohere
       end
 
       @case.add_cohere_data(
-        @form.map_to_case_supplier_account,
+        @form.map_to_supplier_account,
         @form.map_to_recipient_profile,
-        @form.map_to_recipient_dhs_account,
+        @form.map_to_recipient_household,
       )
 
       @case.add_admin_data(

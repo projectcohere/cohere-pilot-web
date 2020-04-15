@@ -27,9 +27,9 @@ module Cohere
 
       referred = @referral.referred
       referred.add_cohere_data(
-        @form.map_to_case_supplier_account,
+        @form.map_to_supplier_account,
         @form.map_to_recipient_profile,
-        @form.map_to_recipient_dhs_account,
+        @form.map_to_recipient_household,
       )
 
       # assign the current user

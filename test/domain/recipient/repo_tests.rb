@@ -22,10 +22,8 @@ module Recipient
       assert_not_nil(address.state)
       assert_not_nil(address.zip)
 
-      dhs_account = ::Recipient::Repo.map_dhs_account(recipient_rec)
-      assert_not_nil(dhs_account.number)
-
-      household = dhs_account.household
+      household = ::Recipient::Repo.map_household(recipient_rec)
+      assert_not_nil(household.dhs_number)
       assert_not_nil(household.size)
       assert_not_nil(household.income_cents)
       assert_not_nil(household.ownership)
