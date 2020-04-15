@@ -8,7 +8,7 @@ module Cases
       prop(:scope)
       prop(:id)
       prop(:status)
-      prop(:has_new_activity)
+      prop(:new_activity, predicate: true)
       prop(:program)
       prop(:recipient_name)
       prop(:supplier_name)

@@ -10,6 +10,15 @@ module Cases
     end
 
     # -- queries --
+    # -- queries/detail
+    def find_with_documents(id)
+      case_rec = make_query(detail: true)
+        .find(id)
+
+      return self.class.map_detail(case_rec)
+    end
+
+    # -- queries/cells
     def find_all_for_search(search = "", page:)
       q = make_query
 
@@ -57,11 +66,16 @@ module Cases
     end
 
     # -- queries/helpers
-    private def make_query
+    private def make_query(detail: false)
       q = Case::Record
 
       # inlcude associations
-      q = q.includes(:recipient, :enroller, :supplier, assignments: :user)
+      q = q.includes(:recipient, :enroller, :supplier)
+      q = if detail
+        q.includes(documents: { file_attachment: :blob })
+      else
+        q.includes(assignments: :user)
+      end
 
       # filter by role
       q = case role.membership
@@ -83,7 +97,7 @@ module Cases
       case_recs = case_query.offset(case_page.offset).limit(case_page.items)
 
       case_cells = case_recs.map do |r|
-        self.class.make_cell(r, @scope, role.partner_id)
+        self.class.map_cell(r, @scope, role.partner_id)
       end
 
       return case_page, case_cells
@@ -98,26 +112,35 @@ module Cases
     end
 
     # -- mapping --
-    def self.make_cell(r, scope, partner_id)
+    def self.map_cell(r, scope, partner_id)
       return Views::Cell.new(
         scope: scope,
         id: r.id,
         status: r.status,
-        has_new_activity: r.has_new_activity,
-        program: Program::Name.from_key(r.program),
-        recipient_name: make_name(r.recipient),
+        new_activity: r.has_new_activity,
+        program: Case::Repo.map_program(r),
         supplier_name: r.supplier.name,
         enroller_name: r.enroller.name,
+        recipient_name: Recipient::Repo.map_name(r.recipient),
         assignee_email: find_assignee(r, partner_id)&.email,
         created_at: r.created_at,
         updated_at: r.updated_at,
       )
     end
 
-    def self.make_name(r)
-      return Views::Name.new(
-        first: r.first_name,
-        last: r.last_name,
+    def self.map_detail(r)
+      return Views::Detail.new(
+        id: r.id,
+        status: r.status,
+        program: Case::Repo.map_program(r),
+        supplier_name: r.supplier.name,
+        supplier_account: Case::Repo.map_supplier_account(r),
+        enroller_name: r.enroller.name,
+        recipient_id: r.recipient_id,
+        recipient_profile: Recipient::Repo.map_profile(r.recipient),
+        recipient_household: Recipient::Repo.map_household(r.recipient),
+        referral: r.referrer_id != nil || r.referred != nil,
+        documents: r.documents&.map { |r| Case::Repo.map_document(r) },
       )
     end
 

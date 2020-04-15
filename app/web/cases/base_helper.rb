@@ -35,7 +35,7 @@ module Cases
         class: cx(
           "CaseCell",
           "CaseCell-#{view.status_key}" => shows_status == true || shows_status == view.status_key,
-          "is-active" => shows_activity && view.has_new_activity
+          "is-active" => shows_activity && view.new_activity?
         )
       }
     end

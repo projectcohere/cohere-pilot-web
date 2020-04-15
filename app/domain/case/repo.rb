@@ -468,10 +468,10 @@ class Case
 
     # -- factories --
     def self.map_record(r, assignments: nil, documents: nil, is_referrer: false)
-      Case.new(
+      return Case.new(
         record: r,
         id: Id.new(r.id),
-        program: Program::Name.from_key(r.program),
+        program: map_program(r),
         status: r.status.to_sym,
         recipient: map_recipient(r.recipient),
         enroller_id: r.enroller_id,
@@ -496,6 +496,10 @@ class Case
         profile: ::Recipient::Repo.map_profile(r),
         household: ::Recipient::Repo.map_household(r),
       )
+    end
+
+    def self.map_program(r)
+      return Program::Name.from_key(r.program)
     end
 
     def self.map_supplier_account(r)

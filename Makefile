@@ -86,6 +86,11 @@ s/sk:
 	$(tools-sidekiq) -c 1 -q default -q mailers
 .PHONY: s/dev
 
+## kill the rails dev server
+s/kill:
+	cat tmp/pids/server.pid | xargs kill -9
+.PHONY: s/kill
+
 # -- test --
 ## alias for t/unit
 test: t

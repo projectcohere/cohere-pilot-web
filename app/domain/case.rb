@@ -302,12 +302,7 @@ class Case < ::Entity
   end
 
   def referral_program
-    return case @program
-    when Program::Name::Meap
-      Program::Name::Wrap
-    when Program::Name::Wrap
-      Program::Name::Meap
-    end
+    return @program.referral_program
   end
 
   # -- queries/documents
@@ -323,29 +318,6 @@ class Case < ::Entity
 
   def contract_variant
     contract_document&.source_url&.to_sym
-  end
-
-  # -- queries/household
-  def fpl_percentage
-    household = recipient&.dhs_account&.household
-    if household.nil?
-      return nil
-    end
-
-    hh_size = household.size
-    hh_month_cents = household.income_cents
-
-    if hh_size.nil? || hh_month_cents.nil?
-      return nil
-    end
-
-    hh_year_cents = hh_month_cents * 12
-
-    fpl_month_cents = 1580_00 + (hh_size - 1) * 540_00
-    fpl_year_cents = fpl_month_cents * 8
-    fpl_percentage = hh_year_cents * 100 / fpl_year_cents.to_f
-
-    fpl_percentage.round(0)
   end
 
   # -- callbacks --

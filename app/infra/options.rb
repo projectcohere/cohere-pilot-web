@@ -11,6 +11,11 @@ module Options
     @index = index
   end
 
+  # -- queries --
+  def to_s
+    return @key.to_s
+  end
+
   # -- statics --
   class_methods do
     # -- definition --

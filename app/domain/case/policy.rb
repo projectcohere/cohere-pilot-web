@@ -37,9 +37,9 @@ class Case
         cohere? || enroller?
       when :view_ownership
         cohere? && wrap?
-      when :view_is_primary_residence
+      when :view_primary_residence
         cohere? && wrap?
-      when :view_has_active_service
+      when :view_supplier_account_active
         cohere? && wrap?
       # actions
       when :referral

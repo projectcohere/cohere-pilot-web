@@ -69,8 +69,8 @@ module Cohere
     end
 
     def show
-      @case = case_repo.find_with_associations(params[:id])
-      @chat = chat_repo.find_by_recipient_with_messages(@case.recipient.id.val)
+      @case = view_repo.find_with_documents(params[:id])
+      @chat = chat_repo.find_by_recipient_with_messages(@case.recipient_id)
 
       if policy.forbid?(:view)
         return deny_access

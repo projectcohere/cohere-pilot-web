@@ -5,5 +5,10 @@ class Program
     # -- options --
     option(:meap)
     option(:wrap)
+
+    # -- queries --
+    def referral_program
+      return self == Meap ? Wrap : Meap
+    end
   end
 end

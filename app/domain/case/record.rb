@@ -6,11 +6,14 @@ class Case
     belongs_to(:recipient, class_name: "::Recipient::Record")
     belongs_to(:enroller, class_name: "::Partner::Record")
     belongs_to(:supplier, class_name: "::Partner::Record")
-    belongs_to(:referrer, class_name: "::Case::Record", optional: true)
 
     # -- associations/children
     has_many(:documents, foreign_key: "case_id", class_name: "::Document::Record", dependent: :destroy)
     has_many(:assignments, foreign_key: "case_id", class_name: "::Case::Assignment::Record", dependent: :destroy)
+
+    # -- associations/referrals
+    has_one(:referred, class_name: "::Case::Record", foreign_key: "referrer_id")
+    belongs_to(:referrer, class_name: "::Case::Record", optional: true)
 
     # -- program --
     enum(program: Program::Name.keys)

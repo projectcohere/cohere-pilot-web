@@ -74,7 +74,7 @@
             <%= view.supplier_name %>
           <%- end %>
 
-          <% if policy.permit?(:view_has_active_service) %>
+          <% if policy.permit?(:view_supplier_account_active) %>
             <%= field_tag(nil, "&nbsp".html_safe, class: "ShowCase-hasActiveService") do %>
               <span class="<%= cx("Checkbox", "is-checked" => view.active_service?) %>"></span> Active?
             <%- end %>
@@ -110,7 +110,7 @@
             <%- end %>
           <% end %>
 
-          <% if policy.permit?(:view_is_primary_residence) %>
+          <% if policy.permit?(:view_primary_residence) %>
             <%= field_tag(nil, "&nbsp".html_safe, class: "ShowCase-isPrimaryResidence") do %>
               <span class="<%= cx("Checkbox", "is-checked" => view.primary_residence?) %>"></span> Primary Residence?
             <%- end %>
