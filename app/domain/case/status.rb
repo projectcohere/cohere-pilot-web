@@ -50,7 +50,7 @@ class Case
     end
 
     def self.complete?(status)
-      return !active?(status)
+      return status != nil && !active?(status)
     end
   end
 end

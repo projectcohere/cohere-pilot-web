@@ -25,29 +25,26 @@ module Governor
     end
 
     def edit
-      @case = case_repo.find_with_documents_for_governor(params[:id])
       if policy.forbid?(:edit)
         return deny_access
       end
 
-      @form = CaseForm.new(@case)
+      @form = view_repo.edit_form(params[:id])
+      @case = @form.detail
+
       events.add(Cases::Events::DidViewGovernorForm.from_entity(@case))
     end
 
     def update
-      @case = case_repo.find_with_documents_for_governor(params[:id])
       if policy.forbid?(:edit)
         return deny_access
       end
 
-      @form = CaseForm.new(@case,
-        params
-          .require(:case)
-          .permit(CaseForm.params_shape)
-      )
+      @form = view_repo.edit_form(params[:id])
+      @case = @form.detail
 
-      save_form = SaveCaseForm.new(@case, @form)
-      if not save_form.()
+      save_form = SaveCaseForm.new
+      if not save_form.(@form)
         flash.now[:alert] = "Please check the case for errors."
         return render(:edit)
       end

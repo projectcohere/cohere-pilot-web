@@ -16,15 +16,9 @@ module Cases
       end
 
       protected def initialize_attrs(attrs)
-        if @model.is_a?(Cases::Views::Detail)
-          assign_defaults!(attrs, {
-            contract_variant: @model.documents.find { |d| d.classification == :contract }&.source_url
-          })
-        else
-          assign_defaults!(attrs, {
-            contract_variant: @model.contract_variant,
-          })
-        end
+        assign_defaults!(attrs, {
+          contract_variant: @model.documents.find { |d| d.classification == :contract }&.source_url
+        })
       end
 
       # -- queries --

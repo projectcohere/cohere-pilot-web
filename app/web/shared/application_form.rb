@@ -9,18 +9,31 @@ class ApplicationForm
   attr(:model)
 
   # -- lifetime --
-  def initialize(model = nil, attrs = {})
+  def initialize(model = nil, attrs = {}, &permit)
     @model = model
 
-    # set initial values
-    initialize_attrs(attrs)
+    # get the list of subforms
+    sf_names = self.class.subform_map&.keys
 
-    # initialize subforms
-    self.class.subform_map&.each do |sf_name, sf_class|
+    if block_given?
+      shape = self.class.params_shape(&permit)
+      sf_names &= shape.last.keys # this will fail if the shape has no nested attrs
+
+      # whitelist attrs if permittable
+      if attrs.respond_to?(:permit) && !attrs.permitted?
+        attrs = attrs.permit(shape)
+      end
+    end
+
+    # create permitted subforms
+    sf_names&.each do |sf_name|
+      sf_class = self.class.subform_map[sf_name]
       sf_attrs = attrs.delete(sf_name) || {}
       instance_variable_set("@#{sf_name}", sf_class.new(model, sf_attrs.stringify_keys))
     end
 
+    # assign local values
+    initialize_attrs(attrs)
     super(attrs)
   end
 
@@ -78,6 +91,10 @@ class ApplicationForm
   # -- forms/validators
   class ChildValidator < ActiveModel::EachValidator
     def validate_each(record, attribute, value)
+      if value == nil
+        return true
+      end
+
       if not value.valid?(record.validation_context)
         record.errors.merge!(value.errors)
       end

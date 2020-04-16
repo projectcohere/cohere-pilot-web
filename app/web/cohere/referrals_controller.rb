@@ -27,7 +27,7 @@ module Cohere
         .find_with_associations(params[:case_id])
         .make_referral(supplier_id: params.dig(:case, :supplier_account, :supplier_id))
 
-      @form = view_repo.new_form(referral.referred, params)
+      @form = view_repo.new_form(referral.referred, params: params)
       @case = @form.detail
       @chat = Chat::Repo.get.find_by_recipient_with_messages(@case.recipient_id)
 

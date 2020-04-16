@@ -15,7 +15,7 @@ module Supplier
         return deny_access
       end
 
-      @form = CaseForm::new
+      @form = view_repo.new_form
       events.add(Cases::Events::DidViewSupplierForm.new)
     end
 
@@ -24,14 +24,8 @@ module Supplier
         return deny_access
       end
 
-      @form = CaseForm.new(nil,
-        params
-          .require(:case)
-          .permit(CaseForm.params_shape)
-      )
-
-      save_form = SaveCaseForm.new(@form)
-      if not save_form.()
+      @form = view_repo.new_form(params: params)
+      if not SaveCaseForm.(@form)
         flash.now[:alert] = "Please check the case for errors."
         return render(:new)
       end

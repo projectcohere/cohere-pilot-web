@@ -54,7 +54,7 @@ module Cohere
         return deny_access
       end
 
-      @form = view_repo.edit_form(params[:id], params)
+      @form = view_repo.edit_form(params[:id], params: params)
       @case = @form.detail
       # TODO: integrate chat into detail
       @chat = chat_repo.find_by_recipient_with_messages(@case.recipient_id)

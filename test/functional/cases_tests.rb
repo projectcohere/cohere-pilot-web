@@ -228,7 +228,9 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     post(auth("/cases", as: user_rec), params: {
       case: {
-        first_name: "Janice",
+        contact: {
+          first_name: "Janice",
+        },
       }
     })
 

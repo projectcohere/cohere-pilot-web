@@ -1,18 +1,17 @@
 module Governor
   class SaveCaseForm
-    def initialize(kase, form, case_repo: Case::Repo.get)
+    def initialize(case_repo: Case::Repo.get)
       @case_repo = case_repo
-      @case = kase
-      @form = form
     end
 
     # -- command --
-    def call
-      if not @form.valid?
+    def call(form)
+      if not form.valid?
         return false
       end
 
-      @case.add_governor_data(@form.map_to_recipient_household)
+      @case = @case_repo.find_with_documents_for_governor(form.detail.id.val)
+      @case.add_governor_data(form.map_to_recipient_household)
       @case_repo.save_dhs_contribution(@case)
       true
     end

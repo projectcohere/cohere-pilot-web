@@ -19,7 +19,7 @@ module Cases
 
       # -- queries/validation
       def valid?
-        status = @admin&.status || @model.status_key
+        status = @admin&.status || @model&.status_key
 
         scopes = []
         if action == :submit || Case::Status.submitted?(status)

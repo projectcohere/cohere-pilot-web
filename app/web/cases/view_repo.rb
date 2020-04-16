@@ -20,33 +20,35 @@ module Cases
     end
 
     # -- queries/form
-    def new_form(entity, params = nil)
-      return self.class.map_form(entity, extract_attrs(params))
+    def new_form(entity = nil, params: nil)
+      return make_form(entity, params)
     end
 
-    def edit_form(id, params = nil)
+    def edit_form(id, params: nil)
       case_rec = make_query(detail: true)
         .find(id)
 
-      return self.class.map_form(case_rec, extract_attrs(params))
+      return make_form(case_rec, params)
     end
 
-    private def extract_attrs(params)
-      if params == nil
-        return {}
+    private def make_form(entity_or_record, params)
+      detail = if entity_or_record != nil
+        self.class.map_detail(entity_or_record)
       end
 
-      # get permitted form attrs
-      attrs = params.fetch(:case, {}).permit(
-        Views::Form.params_shape { |k| policy.permit?(:"edit_#{k}") }
-      )
-
-      # set action based on key, if any
-      attrs[:action] = %i[submit approve deny remove].find do |k|
-        params.key?(k)
+      # extract case params and set action, if any
+      attrs = {}
+      if params != nil
+        attrs = params.fetch(:case, {})
+        attrs[:action] = %i[submit approve deny remove].find { |k| params.key?(k) }
       end
 
-      return attrs
+      # build a form that from permitted attrs
+      form = Views::Form.new(detail, attrs) do |subform|
+        policy.permit?(:"edit_#{subform}")
+      end
+
+      return form
     end
 
     # -- queries/cells
@@ -185,7 +187,7 @@ module Cases
 
     def self.map_form(entity_or_record, attrs)
       return Views::Form.new(
-        map_detail(entity_or_record),
+        entity_or_record != nil ? map_detail(entity_or_record) : nil,
         attrs
       )
     end
