@@ -1,44 +1,40 @@
 module Cohere
-  class SaveCaseForm
-    def initialize(kase, form, action, case_repo: Case::Repo.get)
+  class SaveCaseForm < ::Command
+    attr(:case)
+
+    # -- lifetime --
+    def initialize(case_repo: Case::Repo.get)
       @case_repo = case_repo
-      @case = kase
-      @form = form
-      @action = action
     end
 
     # -- command --
-    def call
-      scopes = []
-      if @action == :submit || @case.submitted? || @form.admin.submitted?
-        scopes << :submitted
-      end
-
-      if @action == :complete || @form.admin.completed?
-        scopes << :completed
-      end
-
-      if not @form.valid?(scopes)
+    def call(form)
+      if not form.valid?
         return false
       end
 
+      # populate the case
+      @case = @case_repo.find(form.detail.id.val)
+
+      # udate
       @case.add_cohere_data(
-        @form.map_to_supplier_account,
-        @form.map_to_recipient_profile,
-        @form.map_to_recipient_household,
+        form.map_to_supplier_account,
+        form.map_to_recipient_profile,
+        form.map_to_recipient_household,
       )
 
       @case.add_admin_data(
-        @form.map_to_admin
+        form.map_to_admin
       )
 
       # sign the contract if necessary
-      selected_contract = @form.details.selected_contract
+      selected_contract = form.details.selected_contract
       if not selected_contract.nil?
         @case.sign_contract(selected_contract)
       end
 
-      case @action
+      # process actions if specified
+      case form.action
       when :submit
         @case.submit_to_enroller
       when :remove

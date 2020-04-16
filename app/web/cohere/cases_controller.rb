@@ -7,7 +7,10 @@ module Cohere
       end
 
       @scope = Cases::Scope.from_key(params[:scope]) || Cases::Scope::All
-      @page, @cases = view_repo.find_all_for_search(params[:search], page: params[:page])
+      @page, @cases = view_repo.find_all_for_search(
+        params[:search],
+        page: params[:page]
+      )
     end
 
     def queue
@@ -24,57 +27,48 @@ module Cohere
       end
     end
 
-    def edit
-      @case = case_repo.find_with_associations(params[:id])
-      if policy.forbid?(:edit)
-        return deny_access
-      end
-
-      @chat = chat_repo.find_by_recipient_with_messages(@case.recipient.id.val)
-      @form = CaseForm.new(@case)
-    end
-
-    def update
-      @case = case_repo.find_with_associations(params[:id])
-      if policy.forbid?(:edit)
-        return deny_access
-      end
-
-      @chat = chat_repo.find_by_recipient_with_messages(@case.recipient.id.val)
-      @form = CaseForm.new(@case,
-        params
-          .fetch(:case, {})
-          .permit(CaseForm.params_shape)
-      )
-
-      save_action = %i[submit approve deny remove].find do |key|
-        params.key?(key)
-      end
-
-      save_form = SaveCaseForm.new(@case, @form, save_action)
-      if not save_form.()
-        flash.now[:alert] = "Please check #{@case.recipient.profile.name}'s case for errors."
-        return render(:edit)
-      end
-
-      redirect_path = if @case.complete?
-        case_path(@case.id)
-      else
-        edit_case_path(@case.id)
-      end
-
-      redirect_to(redirect_path,
-        notice: "Updated #{@case.recipient.profile.name}'s case!"
-      )
-    end
-
     def show
-      @case = view_repo.find_with_documents(params[:id])
-      @chat = chat_repo.find_by_recipient_with_messages(@case.recipient_id)
-
       if policy.forbid?(:view)
         return deny_access
       end
+
+      @case = view_repo.find(params[:id])
+      # TODO: integrate chat into detail
+      @chat = chat_repo.find_by_recipient_with_messages(@case.recipient_id)
+    end
+
+    def edit
+      if policy.forbid?(:edit)
+        return deny_access
+      end
+
+      @form = view_repo.edit_form(params[:id])
+      @case = @form.detail
+
+      # TODO: integrate chat into detail
+      @chat = chat_repo.find_by_recipient_with_messages(@case.recipient_id)
+    end
+
+    def update
+      if policy.forbid?(:edit)
+        return deny_access
+      end
+
+      @form = view_repo.edit_form(params[:id], params)
+      @case = @form.detail
+      # TODO: integrate chat into detail
+      @chat = chat_repo.find_by_recipient_with_messages(@case.recipient_id)
+
+      save_form = SaveCaseForm.new
+      if not save_form.(@form)
+        flash.now[:alert] = "Please check #{@case.recipient_name}'s case for errors."
+        return render(:edit)
+      end
+
+      redirect_to(
+        @case.detail_path(save_form.case.status),
+        notice: "Updated #{@case.recipient_name}'s case!"
+      )
     end
 
     def destroy
@@ -84,8 +78,8 @@ module Cohere
       end
 
       case_repo.save_destroyed(@case)
-
-      redirect_to(cases_path,
+      redirect_to(
+        cases_path,
         notice: "Destroyed #{@case.recipient.profile.name}'s case."
       )
     end

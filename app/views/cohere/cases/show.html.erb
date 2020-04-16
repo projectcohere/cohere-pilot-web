@@ -98,13 +98,13 @@
             <%= @case.household_income %>
           <%- end %>
 
-          <% if policy.permit?(:view_ownership) %>
+          <% if policy.permit?(:view_household_ownership) %>
             <%= field_tag("Rent or Own?", class: "ShowCase-ownership") do %>
               <%= @case.household_ownership %>
             <%- end %>
           <% end %>
 
-          <% if policy.permit?(:view_primary_residence) %>
+          <% if policy.permit?(:view_household_primary_residence) %>
             <%= field_tag(nil, "&nbsp".html_safe, class: "ShowCase-isPrimaryResidence") do %>
               <span class="<%= cx("Checkbox", "is-checked" => @case.household_primary_residence?) %>"></span> Primary Residence?
             <%- end %>
@@ -128,7 +128,7 @@
     <%=
       render(partial: "cohere/cases/chat", locals: {
         chat: @chat,
-        recevier: @case.recipient_name.first
+        recevier: @case.recipient_first_name
       })
     %>
   </div>

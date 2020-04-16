@@ -25,7 +25,7 @@ module Enroller
     end
 
     def show
-      @case = view_repo.find_with_documents(params[:id])
+      @case = view_repo.find(params[:id])
       if policy.forbid?(:view)
         return deny_access
       end
@@ -34,7 +34,7 @@ module Enroller
     end
 
     def complete
-      @case = case_repo.find_with_documents_for_enroller(params[:case_id], partner_id)
+      @case = case_repo.find_with_documents_for_enroller(params[:case_id], user_partner_id)
       if policy.forbid?(:complete)
         return deny_access
       end

@@ -1,6 +1,10 @@
 # A form model for an entity. It expects to be nested inside of the entity
 # as a namespace.
 class ApplicationForm
+  # for form objects, it's useful to have attribute assignment and validation
+  include ActiveModel::Model
+  include ActiveModel::Attributes
+
   # -- attrs --
   attr(:model)
 
@@ -14,7 +18,7 @@ class ApplicationForm
     # initialize subforms
     self.class.subform_map&.each do |sf_name, sf_class|
       sf_attrs = attrs.delete(sf_name) || {}
-      instance_variable_set("@#{sf_name}", sf_class.new(model, sf_attrs))
+      instance_variable_set("@#{sf_name}", sf_class.new(model, sf_attrs.stringify_keys))
     end
 
     super(attrs)
@@ -81,35 +85,32 @@ class ApplicationForm
   end
 
   # -- queries --
-  def self.params_shape
+  def self.params_shape(&permit)
     # find local form params
-    params = attribute_names.map(&:to_sym)
+    shape = attribute_names.map(&:to_sym)
 
     # join subform params
-    nested_params = @subform_map&.each_with_object({}) do |(sf_name, sf_class), memo|
-      memo[sf_name] = sf_class.params_shape
+    if subform_map != nil
+      sf_shape = subform_map.each_with_object({}) do |(sf_name, sf_class), memo|
+        if !block_given? || permit.(sf_name)
+          memo[sf_name] = sf_class.params_shape
+        end
+      end
+
+      shape.push(sf_shape)
     end
 
-    if nested_params != nil
-      params.push(nested_params)
-    end
-
-    return params
+    return shape
   end
 
   # -- ActiveModel --
   # -- ActiveModel::Model
-  # for form objects, it's helpful to have full attribute assignment and
-  # validation
-  include ActiveModel::Model
-  include ActiveModel::Attributes
-
   def id
     @model&.id
   end
 
   def persisted?
-    id&.val != nil
+    return id.is_a?(Id) ? id&.val != nil : id != nil
   end
 
   # -- ActiveModel::Naming

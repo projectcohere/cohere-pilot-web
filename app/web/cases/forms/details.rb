@@ -2,7 +2,7 @@ module Cases
   module Forms
     class Details < ApplicationForm
       # -- fields --
-      field(:contract_variant, :integer,
+      field(:contract_variant, :symbol,
         on: {
           submitted: { presence: true },
           completed: { presence: true },
@@ -16,16 +16,22 @@ module Cases
       end
 
       protected def initialize_attrs(attrs)
-        assign_defaults!(attrs, {
-          contract_variant: contracts.find_index { |c1| c1.variant == @model.contract_variant },
-        })
+        if @model.is_a?(Cases::Views::Detail)
+          assign_defaults!(attrs, {
+            contract_variant: @model.documents.find { |d| d.classification == :contract }&.source_url
+          })
+        else
+          assign_defaults!(attrs, {
+            contract_variant: @model.contract_variant,
+          })
+        end
       end
 
       # -- queries --
       # -- queries/contract
       def selected_contract
         if not contract_variant.nil?
-          contracts[contract_variant]
+          contracts.find { |c| c.variant == contract_variant }
         end
       end
 
@@ -34,8 +40,8 @@ module Cases
       end
 
       def contract_options
-        contracts.map.with_index do |c, i|
-          [name_from_contract_variant(c.variant), i]
+        contracts.map do |c, i|
+          [name_from_contract_variant(c.variant), c.variant]
         end
       end
 

@@ -16,17 +16,31 @@ module Cases
           return
         end
 
-        r = @model.recipient
-        n = r.profile.name
-        assign_defaults!(attrs, {
-          first_name: n.first,
-          last_name: n.last
-        })
+        if @model.is_a?(Cases::Views::Detail)
+          r = @model.recipient_profile
+          n = r.name
+          assign_defaults!(attrs, {
+            first_name: n.first,
+            last_name: n.last
+          })
 
-        p = r.profile.phone
-        assign_defaults!(attrs, {
-          phone_number: p.number
-        })
+          p = r.phone
+          assign_defaults!(attrs, {
+            phone_number: p.number
+          })
+        else
+          r = @model.recipient
+          n = r.profile.name
+          assign_defaults!(attrs, {
+            first_name: n.first,
+            last_name: n.last
+          })
+
+          p = r.profile.phone
+          assign_defaults!(attrs, {
+            phone_number: p.number
+          })
+        end
       end
 
       # -- santiziation --

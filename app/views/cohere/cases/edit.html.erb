@@ -1,23 +1,15 @@
-<% view = Cases::View.new(@case) %>
-
 <main class="EditCase Main">
   <header class="Main-header">
-    <%=
-      link_to(
-        view.back_label,
-        view.list_path,
-        class: "Main-back"
-      )
-    %>
+    <%= link_to("Back to Cases", :back, class: "Main-back") %>
 
     <h1 class="Main-title">
-      <%= view.recipient_name %>'s case
+      <%= @case.recipient_name %>'s case
     </h1>
 
     <div class="Main-actions">
-      <% if @case.can_submit? %>
+      <% if @case.can_remove? %>
         <%=
-          button_to("Remove from Pilot", @case,
+          button_to("Remove from Pilot", @case.remove_path,
             name: :remove,
             method: :patch,
             class: "Button Button--destructive",
@@ -43,7 +35,7 @@
   <div class="CaseDetail">
     <%- form_class = "CaseForm CaseDetail-case Panel" %>
     <%= form_for(@form, url: case_path(@case.id), html: { class: form_class }) do |f| %>
-      <% form_locals = { f: f, form: @form, view: view, policy: policy } %>
+      <% form_locals = { f: f, form: @form, view: @case, policy: policy } %>
 
       <section id="profile" class="Panel-tab is-visible">
         <%= render(partial: "cases/forms/details", locals: form_locals) %>
@@ -106,7 +98,7 @@
     <%=
       render(partial: "cohere/cases/chat", locals: {
         chat: @chat,
-        recevier: view.recipient_first_name
+        recevier: @case.recipient_first_name
       })
     %>
   </div>

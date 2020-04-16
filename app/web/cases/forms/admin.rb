@@ -11,20 +11,8 @@ module Cases
 
       protected def initialize_attrs(attrs)
         assign_defaults!(attrs, {
-          status: @model.status,
+          status: @model.status_key,
         })
-      end
-
-      # -- queries --
-      def submitted?
-        return @status == Case::Status::Submitted
-      end
-
-      def completed?
-        return (
-          @status == Case::Status::Approved ||
-          @status == Case::Status::Denied
-        )
       end
 
       # -- queries/view

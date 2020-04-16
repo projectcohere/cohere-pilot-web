@@ -2,7 +2,7 @@ module Enroller
   class AssignmentsController < Cases::BaseController
     # -- actions --
     def create
-      @case = case_repo.find_for_enroller(params[:case_id], partner_id)
+      @case = case_repo.find_for_enroller(params[:case_id], user_partner_id)
       if policy.forbid?(:create_assignment)
         return deny_access
       end

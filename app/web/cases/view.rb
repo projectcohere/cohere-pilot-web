@@ -31,7 +31,7 @@ module Cases
       return urls.cases_path
     end
 
-    def details_path
+    def detail_path
       return @scope&.completed? ? show_path : edit_path
     end
 
@@ -150,7 +150,7 @@ module Cases
       return household&.primary_residence?
     end
 
-    def fpl_percent
+    def household_fpl_percent
       fpl_percent = @case.recipient.household&.fpl_percent
       return fpl_percent.nil? ? nil : "#{fpl_percent}%"
     end

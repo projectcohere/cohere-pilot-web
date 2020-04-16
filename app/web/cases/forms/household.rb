@@ -27,14 +27,25 @@ module Cases
 
       # -- lifecycle --
       protected def initialize_attrs(attrs)
-        h = @model.recipient.household
-        assign_defaults!(attrs, {
-          dhs_number: h&.dhs_number,
-          size: h&.size&.to_s,
-          income: h&.income&.dollars&.to_s,
-          ownership: h&.ownership,
-          primary_residence: h&.primary_residence?
-        })
+        if @model.is_a?(Cases::Views::Detail)
+          h = @model.recipient_household
+          assign_defaults!(attrs, {
+            dhs_number: h&.dhs_number,
+            size: h&.size&.to_s,
+            income: h&.income&.dollars&.to_s,
+            ownership: h&.ownership,
+            primary_residence: h&.primary_residence?
+          })
+        else
+          h = @model.recipient.household
+          assign_defaults!(attrs, {
+            dhs_number: h&.dhs_number,
+            size: h&.size&.to_s,
+            income: h&.income&.dollars&.to_s,
+            ownership: h&.ownership,
+            primary_residence: h&.primary_residence?
+          })
+        end
       end
 
       # -- sanitization --

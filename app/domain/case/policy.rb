@@ -22,22 +22,36 @@ class Case
       # edit
       when :edit
         cohere? || governor?
+      when :edit_details
+        cohere?
+      when :edit_address
+        cohere? || supplier?
+      when :edit_contact
+        cohere? || supplier?
+      when :edit_household
+        cohere? || governor?
+      when :edit_household_ownership
+        cohere? && wrap?
+      when :edit_household_primary_residence
+        cohere? && wrap?
+      when :edit_supplier_account
+        cohere? || supplier?
       when :edit_supplier
         cohere?
-      when :edit_ownership
-        cohere? && wrap?
-      when :edit_primary_residence
-        cohere? && wrap?
       when :edit_supplier_account_active
         cohere? && wrap?
+      when :edit_documents
+        cohere?
+      when :edit_admin
+        cohere?
       # view
       when :view
         cohere? || enroller?
       when :view_fpl
         cohere? || enroller?
-      when :view_ownership
+      when :view_household_ownership
         cohere? && wrap?
-      when :view_primary_residence
+      when :view_household_primary_residence
         cohere? && wrap?
       when :view_supplier_account_active
         cohere? && wrap?

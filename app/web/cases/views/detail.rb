@@ -2,14 +2,16 @@ module Cases
   module Views
     # This is a read model representing one case in a list of cases.
     class Detail < ::Value
+      include Routing
       include ActionView::Helpers::DateHelper
       include ActionView::Helpers::NumberHelper
 
       # -- props --
-      prop(:id)
+      prop(:id, default: Id::None)
       prop(:status)
       prop(:program)
       prop(:enroller_name)
+      prop(:supplier_id)
       prop(:supplier_name)
       prop(:supplier_account)
       prop(:recipient_profile)
@@ -17,6 +19,7 @@ module Cases
       prop(:referrer, predicate: true)
       prop(:referred, predicate: true)
       prop(:documents)
+      prop(:assignments)
 
       # -- props/remove
       # TODO: remove this once the chat view is integrated into the detail
@@ -27,8 +30,16 @@ module Cases
         return @status.to_s.capitalize
       end
 
+      def status_key
+        return @status
+      end
+
       def recipient_name
         return @recipient_profile.name
+      end
+
+      def recipient_first_name
+        return recipient_name.first
       end
 
       def program_name
@@ -82,17 +93,16 @@ module Cases
         return @household&.fpl_percent&.then { |f| "#{f}%" }
       end
 
+      # -- queries/submit
+      def can_submit?
+        return Case::Status.opened?(@status) || Case::Status.pending?(@status)
+      end
+
+      alias :can_remove? :can_submit?
+
       # -- queries/complete
       def can_complete?
         return Case::Status.submitted?(@status)
-      end
-
-      def approve_path
-        return urls.case_completePath(@id, complete_action: :approve)
-      end
-
-      def deny_path
-        return urls.case_completePath(@id, complete_action: :deny)
       end
 
       # -- queries/referral
@@ -110,11 +120,6 @@ module Cases
 
       def referral_program
         return @program.referral_program
-      end
-
-      # -- queries/helpers
-      private def urls
-        return Rails.application.routes.url_helpers
       end
     end
   end

@@ -19,20 +19,20 @@
       <%= f.text_field(:income) %>
     <% end %>
 
-    <% if policy.permit?(:edit_ownership) %>
+    <% if policy.permit?(:edit_household_ownership) %>
       <%= f.field(:ownership, "Rent or Own", class: "CaseForm-ownership Field--select") do %>
         <%= f.select(:ownership, form.ownership_options) %>
       <%- end %>
     <% end %>
 
-    <% if policy.permit?(:edit_primary_residence) %>
+    <% if policy.permit?(:edit_household_primary_residence) %>
       <%= f.field(:primary_residence, "&nbsp".html_safe, class: "CaseForm-isPrimaryResidence Field--checkbox") do %>
         <%= f.check_box(:primary_residence) %> Primary Residence?
       <%- end %>
     <% end %>
 
     <%= field_tag(:fpl, "FPL Percent", class: "CaseForm-fpl Field--fixed") do %>
-      <%= field_value(view.fpl_percent, fallback: "Unknown. Please add household info.") %>
+      <%= field_value(view.household_fpl_percent, fallback: "Unknown. Please add household info.") %>
     <% end %>
   <% end %>
 <% end %>

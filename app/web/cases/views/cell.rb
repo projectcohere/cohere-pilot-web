@@ -2,11 +2,12 @@ module Cases
   module Views
     # This is a read model representing one case in a list of cases.
     class Cell < ::Value
+      include Routing
       include ActionView::Helpers::DateHelper
 
       # -- props --
       prop(:scope)
-      prop(:id)
+      prop(:id, default: Id::None)
       prop(:status)
       prop(:new_activity, predicate: true)
       prop(:program)
@@ -20,31 +21,6 @@ module Cases
       # -- queries --
       def status_key
         return @status
-      end
-
-      # -- queries/routing
-      def list_path
-        return urls.cases_path
-      end
-
-      def details_path
-        return @scope&.completed? ? show_path : edit_path
-      end
-
-      def show_path
-        return urls.case_path(@id)
-      end
-
-      def edit_path
-        return urls.edit_case_path(@id)
-      end
-
-      def assign_path
-        return urls.case_assignments_path(@id)
-      end
-
-      private def urls
-        return Rails.application.routes.url_helpers
       end
 
       # -- queries/labels

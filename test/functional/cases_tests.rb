@@ -387,7 +387,7 @@ class CasesTests < ActionDispatch::IntegrationTest
       patch(auth("/cases/#{case_rec.id}"), params: {
         case: {
           details: {
-            contract_variant: 0
+            contract_variant: :meap
           }
         }
       })

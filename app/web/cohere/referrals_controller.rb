@@ -1,56 +1,46 @@
 module Cohere
-  class ReferralsController < ApplicationController
+  class ReferralsController < Cases::BaseController
     # -- helpers --
     helper_method(:policy)
 
     # -- actions --
     def new
-      @case = Case::Repo.get.find_with_associations(params[:case_id])
       if policy.forbid?(:referral)
         return deny_access
       end
 
-      referral = @case.make_referral
+      referral = case_repo
+        .find_with_associations(params[:case_id])
+        .make_referral
 
-      @case = referral.referred
-      @chat = Chat::Repo.get.find_by_recipient_with_messages(@case.recipient.id.val)
-      @form = CaseForm.new(@case)
+      @form = view_repo.new_form(referral.referred)
+      @case = @form.detail
+      @chat = Chat::Repo.get.find_by_recipient_with_messages(@case.recipient_id)
     end
 
     def create
-      @case = Case::Repo.get.find_with_associations(params[:case_id])
       if policy.forbid?(:referral)
         return deny_access
       end
 
-      case_params = params
-        .require(:case)
-        .permit(CaseForm.params_shape)
+      referral = case_repo
+        .find_with_associations(params[:case_id])
+        .make_referral(supplier_id: params.dig(:case, :supplier_account, :supplier_id))
 
-      referral = @case.make_referral(
-        supplier_id: case_params.dig(:supplier_account, :supplier_id)
-      )
+      @form = view_repo.new_form(referral.referred, params)
+      @case = @form.detail
+      @chat = Chat::Repo.get.find_by_recipient_with_messages(@case.recipient_id)
 
-      @case = referral.referred
-      @chat = Chat::Repo.get.find_by_recipient_with_messages(@case.recipient.id.val)
-      @form = CaseForm.new(@case, case_params)
-
-      save_action = %i[submit].find do |key|
-        params.key?(key)
-      end
-
-      save_form = SaveReferralForm.new(referral, @form, save_action)
-      if not save_form.()
+      save_form = SaveReferralForm.new
+      if not save_form.(@form, referral)
         flash.now[:alert] = "Please check the case for errors."
         return render(:new)
       end
 
-      redirect_to(edit_case_path(@case.id), notice: "Created referral!")
-    end
-
-    # -- queries --
-    private def policy
-      Case::Policy.new(User::Repo.get.find_current, @case)
+      redirect_to(
+        @case.detail_path(save_form.case.status),
+        notice: "Created referral!"
+      )
     end
   end
 end

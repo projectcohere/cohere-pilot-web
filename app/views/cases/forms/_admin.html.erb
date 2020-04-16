@@ -37,7 +37,7 @@
     </p>
 
     <%=
-      link_to("Delete Case", form.model,
+      link_to("Delete Case", @case.delete_path,
         method: :delete,
         class: "CaseFormDanger-delete Button Button--destructive",
         data: {
