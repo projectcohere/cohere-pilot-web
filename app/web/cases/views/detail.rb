@@ -14,6 +14,7 @@ module Cases
       prop(:supplier_id)
       prop(:supplier_name)
       prop(:supplier_account)
+      prop(:recipient_id)
       prop(:recipient_profile)
       prop(:recipient_household)
       prop(:referrer, predicate: true)
@@ -21,9 +22,11 @@ module Cases
       prop(:documents)
       prop(:assignments)
 
-      # -- props/remove
-      # TODO: remove this once the chat view is integrated into the detail
-      prop(:recipient_id)
+      # -- lifetime --
+      def initialize(chat_repo: Chat::Repo.get, **props)
+        @chat_repo = chat_repo
+        super(props)
+      end
 
       # -- queries --
       def status_name
@@ -116,6 +119,12 @@ module Cases
 
       def referral_program
         return @program.referral_program
+      end
+
+      # -- queries/chat
+      def chat
+        # TODO: return Chats::Views::Detail instead of entity
+        return @chat ||= @chat_repo.find_by_recipient_with_messages(recipient_id)
       end
     end
   end

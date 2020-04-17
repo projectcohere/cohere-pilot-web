@@ -12,7 +12,6 @@ module Cohere
 
       @form = view_repo.new_form(referral.referred)
       @case = @form.detail
-      @chat = Chat::Repo.get.find_by_recipient_with_messages(@case.recipient_id)
     end
 
     def create
@@ -26,7 +25,6 @@ module Cohere
 
       @form = view_repo.new_form(referral.referred, params: params)
       @case = @form.detail
-      @chat = Chat::Repo.get.find_by_recipient_with_messages(@case.recipient_id)
 
       save_form = SaveReferralForm.new
       if not save_form.(@form, referral)

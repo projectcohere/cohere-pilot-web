@@ -33,8 +33,6 @@ module Cohere
       end
 
       @case = view_repo.find_detail(params[:id])
-      # TODO: integrate chat into detail
-      @chat = chat_repo.find_by_recipient_with_messages(@case.recipient_id)
     end
 
     def edit
@@ -44,9 +42,6 @@ module Cohere
 
       @form = view_repo.edit_form(params[:id])
       @case = @form.detail
-
-      # TODO: integrate chat into detail
-      @chat = chat_repo.find_by_recipient_with_messages(@case.recipient_id)
     end
 
     def update
@@ -56,8 +51,6 @@ module Cohere
 
       @form = view_repo.edit_form(params[:id], params: params)
       @case = @form.detail
-      # TODO: integrate chat into detail
-      @chat = chat_repo.find_by_recipient_with_messages(@case.recipient_id)
 
       save_form = SaveCaseForm.new
       if not save_form.(@form)
