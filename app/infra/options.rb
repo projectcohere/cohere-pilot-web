@@ -1,14 +1,17 @@
 module Options
   extend ActiveSupport::Concern
 
+  include ::Initializable
+
   # -- props --
   attr(:key)
   attr(:index)
 
   # -- lifetime --
-  def initialize(key, index)
+  def initialize(key, index, **props)
     @key = key
     @index = index
+    super(**props)
   end
 
   # -- queries --
@@ -19,11 +22,11 @@ module Options
   # -- statics --
   class_methods do
     # -- definition --
-    def option(key)
+    def option(key, **props)
       @all ||= {}
 
       # build option
-      option = @all[key] = new(key, @all.length).freeze
+      option = @all[key] = new(key, @all.length, **props).freeze
 
       # define constant: e.g. `Color::Red`
       const_set(key.capitalize, option)
