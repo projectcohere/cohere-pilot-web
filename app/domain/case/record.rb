@@ -3,6 +3,7 @@ class Case
     set_table_name!
 
     # -- associations --
+    belongs_to(:program, class_name: "::Program::Record")
     belongs_to(:recipient, class_name: "::Recipient::Record")
     belongs_to(:enroller, class_name: "::Partner::Record")
     belongs_to(:supplier, class_name: "::Partner::Record")
@@ -14,9 +15,6 @@ class Case
     # -- associations/referrals
     has_one(:referred, class_name: "::Case::Record", foreign_key: "referrer_id")
     belongs_to(:referrer, class_name: "::Case::Record", optional: true)
-
-    # -- program --
-    enum(program: Program::Name.keys)
 
     # -- status --
     enum(status: Status.all)

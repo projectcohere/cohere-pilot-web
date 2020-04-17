@@ -3,6 +3,17 @@ P = Program::Name
 M = Partner::Membership
 
 # -- partners --
+meap = Program::Record.create!(
+  name: "MEAP",
+  contracts: %i[meap]
+)
+
+wrap = Progarm::Record.create!(
+  name: "WRAP",
+  contracts: %i[wrap_3h wrap_1k]
+)
+
+# -- partners --
 cohere_0 = Partner::Record.create!(
   name: "Cohere",
   membership: M::Cohere.key,
@@ -16,23 +27,23 @@ governor_0 = Partner::Record.create!(
 supplier_0 = Partner::Record.create!(
   name: "DTE",
   membership: M::Supplier.key,
-  programs: [P::Meap.index],
+  programs: [meap],
 )
 
 supplier_1 = Partner::Record.create!(
   name: "Consumers Energy",
   membership: M::Supplier.key,
-  programs: [P::Meap.index],
+  programs: [meap],
 )
 
 supplier_2 = Partner::Record.create!(
   name: "DWSD",
   membership: M::Supplier.key,
-  programs: [P::Wrap.index],
+  programs: [wrap],
 )
 
 enroller_0 = Partner::Record.create!(
   name: "Wayne Metro",
   membership: M::Enroller.key,
-  programs: [P::Meap.index, P::Wrap.index],
+  programs: [meap, wrap],
 )

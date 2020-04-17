@@ -9,24 +9,31 @@ governor_1:
 enroller_1:
   name: "Test Metro"
   membership: enroller
-  programs: [0, 1]
+  programs:
+    - energy_0
+    - water_0
 
 enroller_2:
   name: "Test United"
   membership: enroller
-  programs: [0, 1]
+  programs:
+    - energy_0
+    - water_0
 
 supplier_1:
   name: "Test Energy"
   membership: supplier
-  programs: [0]
+  programs:
+    - energy_0
 
 supplier_2:
   name: "Test Energon"
   membership: supplier
-  programs: [0]
+  programs:
+    - energy_0
 
 supplier_3:
   name: "Test Water"
   membership: supplier
-  programs: [1]
+  programs:
+    - water_0

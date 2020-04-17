@@ -1,5 +1,6 @@
 opened_1:
   status: :opened
+  program: energy_0
   recipient: recipient_1
   enroller: enroller_1
   supplier: supplier_1
@@ -13,6 +14,7 @@ opened_1:
 
 opened_2:
   status: opened
+  program: energy_0
   recipient: recipient_1
   enroller: enroller_2
   supplier: supplier_1
@@ -26,6 +28,7 @@ opened_2:
 
 pending_1:
   status: pending
+  program: energy_0
   recipient: recipient_2
   enroller: enroller_2
   supplier: supplier_1
@@ -39,6 +42,7 @@ pending_1:
 
 pending_2:
   status: pending
+  program: energy_0
   recipient: recipient_1
   enroller: enroller_2
   supplier: supplier_1
@@ -52,6 +56,7 @@ pending_2:
 
 submitted_1:
   status: submitted
+  program: energy_0
   recipient: recipient_2
   enroller: enroller_1
   supplier: supplier_1
@@ -65,6 +70,7 @@ submitted_1:
 
 submitted_2:
   status: submitted
+  program: energy_0
   recipient: recipient_2
   enroller: enroller_2
   supplier: supplier_1
@@ -78,6 +84,7 @@ submitted_2:
 
 approved_1:
   status: approved
+  program: energy_0
   recipient: recipient_2
   enroller: enroller_1
   supplier: supplier_1
@@ -91,6 +98,7 @@ approved_1:
 
 approved_2:
   status: approved
+  program: energy_0
   recipient: recipient_3
   enroller: enroller_1
   supplier: supplier_2
@@ -104,7 +112,7 @@ approved_2:
 
 referral_1:
   status: pending
-  program: wrap
+  program: water_0
   recipient: recipient_2
   enroller: enroller_1
   supplier: supplier_3
@@ -119,6 +127,7 @@ referral_1:
 
 chattable_1:
   status: :opened
+  program: energy_0
   recipient: recipient_4
   enroller: enroller_2
   supplier: supplier_2

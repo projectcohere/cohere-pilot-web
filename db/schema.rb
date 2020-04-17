@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_15_205422) do
+ActiveRecord::Schema.define(version: 2020_04_17_195744) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -58,11 +58,12 @@ ActiveRecord::Schema.define(version: 2020_04_15_205422) do
     t.string "supplier_account_number"
     t.integer "supplier_account_arrears_cents"
     t.datetime "received_message_at", precision: 6
-    t.integer "program", default: 0
     t.bigint "referrer_id"
     t.boolean "supplier_account_active_service", default: true, null: false
     t.boolean "new_activity", default: false, null: false
+    t.bigint "program_id"
     t.index ["enroller_id"], name: "index_cases_on_enroller_id"
+    t.index ["program_id"], name: "index_cases_on_program_id"
     t.index ["recipient_id"], name: "index_cases_on_recipient_id"
     t.index ["referrer_id"], name: "index_cases_on_referrer_id"
     t.index ["status"], name: "index_cases_on_status"
@@ -110,8 +111,23 @@ ActiveRecord::Schema.define(version: 2020_04_15_205422) do
   create_table "partners", force: :cascade do |t|
     t.string "name", null: false
     t.integer "membership", null: false
-    t.integer "programs", array: true
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["membership"], name: "index_partners_on_membership"
+  end
+
+  create_table "partners_programs", id: false, force: :cascade do |t|
+    t.bigint "partner_id", null: false
+    t.bigint "program_id", null: false
+    t.index ["partner_id"], name: "index_partners_programs_on_partner_id"
+    t.index ["program_id"], name: "index_partners_programs_on_program_id"
+  end
+
+  create_table "programs", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "contracts", null: false, array: true
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "recipients", force: :cascade do |t|
