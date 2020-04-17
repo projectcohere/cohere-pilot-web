@@ -28,25 +28,25 @@ class User
     end
 
     # -- queries/many
-    def find_all_for_opened_case
-      user_recs = User::Record
+    def find_emails_for_opened_case
+      user_query = User::Record
         .by_membership(Partner::Membership::Cohere, Partner::Membership::Governor)
 
-      user_recs.map { |r| entity_from(r) }
+      return user_query.pluck(:email)
     end
 
-    def find_all_for_submitted_case(kase)
-      user_recs = User::Record
+    def find_emails_for_submitted_case(kase)
+      user_query = User::Record
         .where(partner_id: kase.enroller_id)
 
-      user_recs.map { |r| entity_from(r) }
+      return user_query.pluck(:email)
     end
 
-    def find_all_for_completed_case
-      user_recs = User::Record
+    def find_emails_for_completed_case
+      user_query = User::Record
         .by_membership(Partner::Membership::Cohere)
 
-      user_recs.map { |r| entity_from(r) }
+      return user_query.pluck(:email)
     end
 
     # -- commands --

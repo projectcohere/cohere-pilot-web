@@ -11,7 +11,7 @@ module Cases
 
       protected def initialize_attrs(attrs)
         assign_defaults!(attrs, {
-          status: @model.status_key,
+          status: @model.status,
         })
       end
 

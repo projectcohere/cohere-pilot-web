@@ -14,9 +14,9 @@ module Db
     test "find cohere and governor users for an opened case" do
       user_repo = User::Repo.new
 
-      users = user_repo.find_all_for_opened_case
-      assert_length(users, 2)
-      assert_same_elements(users.map { |u| u.role.membership.key }, [:cohere, :governor])
+      emails = user_repo.find_emails_for_opened_case
+      assert_length(emails, 2)
+      assert_all(emails, ->(e) { e.ends_with?("@projectcohere.com") || e.ends_with?("@michigan.gov") })
     end
 
     test "find authorized enrollers for a submitted case" do
@@ -24,17 +24,17 @@ module Db
       case_rec = cases(:submitted_1)
       kase = Case::Repo.map_record(case_rec)
 
-      users = user_repo.find_all_for_submitted_case(kase)
-      assert_length(users, 1)
-      assert_equal(users[0].role.partner_id, kase.enroller_id)
+      emails = user_repo.find_emails_for_submitted_case(kase)
+      assert_length(emails, 1)
+      assert_all(emails, ->(e) { e.ends_with?("@testmetro.org") })
     end
 
     test "find cohere users for a completed case" do
       user_repo = User::Repo.new
 
-      users = user_repo.find_all_for_completed_case
-      assert_length(users, 1)
-      assert_equal(users[0].role.membership, Partner::Membership::Cohere)
+      emails = user_repo.find_emails_for_completed_case
+      assert_length(emails, 1)
+      assert_all(emails, ->(e) { e.ends_with?("@projectcohere.com") })
     end
 
     # -- commands --

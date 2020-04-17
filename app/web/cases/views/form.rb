@@ -1,6 +1,6 @@
 module Cases
   module Views
-    # A form object for modifying any writeable case information.
+    # A Case form object for modifying any writeable information.
     class Form < ApplicationForm
       # -- fields --
       field(:action, :symbol)
@@ -19,7 +19,7 @@ module Cases
 
       # -- queries/validation
       def valid?
-        status = @admin&.status || @model&.status_key
+        status = @admin&.status || @model&.status
 
         scopes = []
         if action == :submit || Case::Status.submitted?(status)

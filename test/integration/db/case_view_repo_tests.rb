@@ -10,7 +10,7 @@ module Db
     # -- queries/supplier
     test "finds a page of cases for a supplier" do
       stub_user(:supplier_1)
-      case_repo = Cases::ViewRepo.new(Cases::Scope::All)
+      case_repo = Cases::Views::Repo.new(Cases::Scope::All)
 
       case_page, cases = case_repo.find_all_for_search(page: 1)
       assert_length(cases, 7)
@@ -21,7 +21,7 @@ module Db
     # -- queries/governor
     test "finds a page of assigned cases for a governor user" do
       stub_user(:governor_1)
-      case_repo = Cases::ViewRepo.new(nil)
+      case_repo = Cases::Views::Repo.new(nil)
 
       case_page, cases = case_repo.find_all_assigned(page: 1)
       assert_length(cases, 1)
@@ -30,7 +30,7 @@ module Db
 
     test "finds a page of queued cases for a governor user" do
       stub_user(:governor_1)
-      case_repo = Cases::ViewRepo.new(nil)
+      case_repo = Cases::Views::Repo.new(nil)
 
       case_page, cases = case_repo.find_all_queued(page: 1)
       assert_length(cases, 4)
@@ -39,7 +39,7 @@ module Db
 
     test "finds a page of cases for a governor user" do
       stub_user(:governor_1)
-      case_repo = Cases::ViewRepo.new(Cases::Scope::All)
+      case_repo = Cases::Views::Repo.new(Cases::Scope::All)
 
       case_page, cases = case_repo.find_all_for_search(page: 1)
       assert_length(cases, 5)
@@ -50,7 +50,7 @@ module Db
     # -- queries/cohere
     test "finds a page of assigned cases for a cohere user" do
       stub_user(:cohere_1)
-      case_repo = Cases::ViewRepo.new(nil)
+      case_repo = Cases::Views::Repo.new(nil)
 
       case_page, cases = case_repo.find_all_assigned(page: 1)
       assert_length(cases, 1)
@@ -59,7 +59,7 @@ module Db
 
     test "finds a page of queued cases for a cohere user" do
       stub_user(:cohere_1)
-      case_repo = Cases::ViewRepo.new(nil)
+      case_repo = Cases::Views::Repo.new(nil)
 
       case_page, cases = case_repo.find_all_queued(page: 1)
       assert_length(cases, 7)
@@ -68,7 +68,7 @@ module Db
 
     test "finds a page of cases by recipient name for a cohere user" do
       stub_user(:cohere_1)
-      case_repo = Cases::ViewRepo.new(Cases::Scope::All)
+      case_repo = Cases::Views::Repo.new(Cases::Scope::All)
 
       case_page, cases = case_repo.find_all_for_search("Johnice", page: 1)
       assert_length(cases, 5)
@@ -77,7 +77,7 @@ module Db
 
     test "finds a page of cases by phone number for a cohere user" do
       stub_user(:cohere_1)
-      case_repo = Cases::ViewRepo.new(Cases::Scope::All)
+      case_repo = Cases::Views::Repo.new(Cases::Scope::All)
 
       case_page, cases = case_repo.find_all_for_search("+1 (444) 555-6666", page: 1)
       assert_length(cases, 1)
@@ -86,7 +86,7 @@ module Db
 
     test "finds a page of open cases for a cohere user" do
       stub_user(:cohere_1)
-      case_repo = Cases::ViewRepo.new(Cases::Scope::Open)
+      case_repo = Cases::Views::Repo.new(Cases::Scope::Open)
 
       case_page, cases = case_repo.find_all_for_search(page: 1)
       assert_length(cases, 8)
@@ -96,7 +96,7 @@ module Db
 
     test "finds a page of completed cases for a cohere user" do
       stub_user(:cohere_1)
-      case_repo = Cases::ViewRepo.new(Cases::Scope::Completed)
+      case_repo = Cases::Views::Repo.new(Cases::Scope::Completed)
 
       case_page, cases = case_repo.find_all_for_search(page: 1)
       assert_length(cases, 2)
@@ -107,7 +107,7 @@ module Db
     # -- queries/enroller
     test "finds a page of assigned cases for an enroller" do
       stub_user(:enroller_1)
-      case_repo = Cases::ViewRepo.new(nil)
+      case_repo = Cases::Views::Repo.new(nil)
 
       case_page, cases = case_repo.find_all_assigned(page: 1)
       assert_length(cases, 1)
@@ -116,7 +116,7 @@ module Db
 
     test "finds a page of queued cases for an enroller" do
       stub_user(:enroller_1)
-      case_repo = Cases::ViewRepo.new(nil)
+      case_repo = Cases::Views::Repo.new(nil)
 
       case_page, cases = case_repo.find_all_queued(page: 1)
       assert_length(cases, 0)
@@ -125,7 +125,7 @@ module Db
 
     test "finds a page of cases by recipient name for an enroller" do
       stub_user(:enroller_1)
-      case_repo = Cases::ViewRepo.new(Cases::Scope::All)
+      case_repo = Cases::Views::Repo.new(Cases::Scope::All)
 
       case_page, cases = case_repo.find_all_for_search("Johnice", page: 1)
       assert_length(cases, 2)
@@ -134,7 +134,7 @@ module Db
 
     test "finds a page of cases by phone number for an enroller" do
       stub_user(:enroller_1)
-      case_repo = Cases::ViewRepo.new(Cases::Scope::All)
+      case_repo = Cases::Views::Repo.new(Cases::Scope::All)
 
       case_page, cases = case_repo.find_all_for_search("+1 (333) 444-5555", page: 1)
       assert_length(cases, 1)

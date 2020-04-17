@@ -30,8 +30,7 @@ module Cases
       end
 
       pdf_html = @render_html.(variant_path, {
-        date: Date.today,
-        kase: kase
+        view: Cases::Views::Repo.map_contract(kase),
       })
 
       return FileData.new(

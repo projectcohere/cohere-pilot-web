@@ -1,6 +1,6 @@
 module Cases
   module Views
-    # This is a read model representing one case in a list of cases.
+    # A Case read model for rendering a cell in a list of cases.
     class Cell < ::Value
       include Routing
       include ActionView::Helpers::DateHelper
@@ -19,10 +19,6 @@ module Cases
       prop(:updated_at)
 
       # -- queries --
-      def status_key
-        return @status
-      end
-
       # -- queries/labels
       def assign_label
         return "Assign to Me"
@@ -37,7 +33,7 @@ module Cases
       end
 
       # -- queries/details
-      def status_label
+      def status_name
         return @status.to_s.capitalize
       end
 

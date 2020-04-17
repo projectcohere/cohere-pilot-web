@@ -25,7 +25,7 @@ module Enroller
     end
 
     def show
-      @case = view_repo.find(params[:id])
+      @case = view_repo.find_detail(params[:id])
       if policy.forbid?(:view)
         return deny_access
       end

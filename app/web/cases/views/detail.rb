@@ -1,6 +1,6 @@
 module Cases
   module Views
-    # This is a read model representing one case in a list of cases.
+    # A Case read model for rendering a detail view.
     class Detail < ::Value
       include Routing
       include ActionView::Helpers::DateHelper
@@ -26,12 +26,8 @@ module Cases
       prop(:recipient_id)
 
       # -- queries --
-      def status
+      def status_name
         return @status.to_s.capitalize
-      end
-
-      def status_key
-        return @status
       end
 
       def recipient_name

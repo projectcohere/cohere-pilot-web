@@ -12,7 +12,7 @@ module Cases
     end
 
     protected def view_repo
-      return Cases::ViewRepo.get(@scope)
+      return Cases::Views::Repo.get(@scope)
     end
   end
 end

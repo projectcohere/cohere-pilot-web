@@ -1,8 +1,5 @@
 module Cohere
   class ReferralsController < Cases::BaseController
-    # -- helpers --
-    helper_method(:policy)
-
     # -- actions --
     def new
       if policy.forbid?(:referral)

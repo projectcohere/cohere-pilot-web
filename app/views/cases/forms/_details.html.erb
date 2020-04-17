@@ -2,7 +2,7 @@
 <%= f.fields_for(:details, form) do |f| %>
   <%= section_tag("Details", class: "CaseForm-details") do %>
     <%= field_tag(:status, class: "CaseForm-status Field--fixed") do %>
-      <%= view.status %>
+      <%= view.status_name %>
     <%- end %>
 
     <%= field_tag(:program, class: "CaseForm-program Field--fixed") do %>

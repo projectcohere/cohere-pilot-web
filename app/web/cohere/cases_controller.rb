@@ -32,7 +32,7 @@ module Cohere
         return deny_access
       end
 
-      @case = view_repo.find(params[:id])
+      @case = view_repo.find_detail(params[:id])
       # TODO: integrate chat into detail
       @chat = chat_repo.find_by_recipient_with_messages(@case.recipient_id)
     end

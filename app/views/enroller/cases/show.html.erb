@@ -42,7 +42,7 @@
       <section id="application" class="Panel-tab is-visible">
         <%= section_tag("Details", class: "ShowCase-details") do %>
           <%= field_tag("Status", class: "ShowCase-status") do %>
-            <%= @case.status %>
+            <%= @case.status_name %>
           <%- end %>
 
           <%= field_tag("Program", class: "ShowCase-program") do %>
