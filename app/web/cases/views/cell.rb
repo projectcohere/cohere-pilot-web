@@ -38,7 +38,7 @@ module Cases
       end
 
       def program_name
-        return @program.key.to_s.upcase
+        return @program.name
       end
 
       def approved?

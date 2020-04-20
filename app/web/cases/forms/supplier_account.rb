@@ -55,32 +55,25 @@ module Cases
       # -- queries --
       def supplier_options
         suppliers = @partner_repo
-          .find_all_suppliers_by_program(@model.program)
+          .find_all_suppliers_by_program(@model.program.id)
           .map { |s| [s.name, s.id] }
 
         return suppliers
       end
 
+      private def is_account_required
+        return true
+      end
+
+      # -- queries/transformation
       def map_to_supplier_account
-        Case::Account.new(
+        return Case::Account.new(
           number: account_number,
           arrears: Money.dollars(arrears),
           active_service: active_service.nil? ? true : active_service
         )
       end
 
-      private def is_account_required
-        if @model.nil?
-          return false
-        end
-
-        case @model.program
-        when Program::Name::Wrap
-          validation_context&.include?(:complete) == true
-        when Program::Name::Meap
-          false
-        end
-      end
     end
   end
 end

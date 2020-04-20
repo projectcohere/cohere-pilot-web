@@ -19,6 +19,7 @@ class AddPrograms < ActiveRecord::Migration[6.0]
     end
 
     change_table(:cases) do |t|
+      # TODO: make this (null: false) in a follow on migration
       t.belongs_to(:program)
     end
 

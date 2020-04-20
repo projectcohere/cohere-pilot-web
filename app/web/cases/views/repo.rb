@@ -121,7 +121,7 @@ module Cases
         q = Case::Record
 
         # inlcude associations
-        q = q.includes(:recipient, :enroller, :supplier, assignments: :user)
+        q = q.includes(:program, :recipient, :enroller, :supplier, assignments: :user)
         if detail
           q = q.includes(documents: { file_attachment: :blob })
         end
@@ -131,7 +131,7 @@ module Cases
         when Partner::Membership::Supplier
           q.for_supplier(user_partner_id)
         when Partner::Membership::Governor
-          q.for_governor
+          q.for_governor(user_partner_id)
         when Partner::Membership::Enroller
           q.for_enroller(user_partner_id)
         else
@@ -155,7 +155,7 @@ module Cases
         return Detail.new(
           id: Id.new(r.id),
           status: r.status.to_sym,
-          program: Case::Repo.map_program(r),
+          program: Program::Repo.map_record(r.program),
           supplier_id: r.supplier_id,
           supplier_name: r.supplier.name,
           supplier_account: Case::Repo.map_supplier_account(r),
@@ -226,7 +226,7 @@ module Cases
           id: Id.new(r.id),
           status: r.status.to_sym,
           new_activity: r.new_activity,
-          program: Case::Repo.map_program(r),
+          program: Program::Repo.map_record(r.program),
           supplier_name: r.supplier.name,
           enroller_name: r.enroller.name,
           recipient_name: Recipient::Repo.map_name(r.recipient),

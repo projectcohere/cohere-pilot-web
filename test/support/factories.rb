@@ -1,10 +1,13 @@
 module Support
   module Factories
     def self.stub_all
+      # TODO: search for all types to stub in domain
       types_to_stub = [
         User,
         User::Role,
         Partner,
+        Program,
+        Program::Contract,
         Case,
         Case::Account,
         Case::Recipient,

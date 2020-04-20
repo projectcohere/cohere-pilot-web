@@ -1,7 +1,5 @@
 module Cases
-  class Scope
-    include ::Options
-
+  class Scope < ::Option
     # -- options --
     option(:assigned)
     option(:queued)

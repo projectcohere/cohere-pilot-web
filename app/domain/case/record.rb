@@ -70,11 +70,19 @@ class Case
       )
     end
 
-    def self.for_governor
-      return where(
-        program: Program::Name::Meap.index,
-        status: [Status::Opened, Status::Pending]
-      )
+    def self.for_governor(governor_id)
+      scope = self
+        .includes(program: :partners)
+        .where(
+          status: [Status::Opened, Status::Pending],
+          programs: {
+            partners_programs: {
+              partner_id: governor_id,
+            },
+          },
+        )
+
+      return scope
     end
 
     def self.for_enroller(enroller_id)

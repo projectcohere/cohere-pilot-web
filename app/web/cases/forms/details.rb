@@ -10,44 +10,39 @@ module Cases
       )
 
       # -- lifecycle --
-      def initialize(model, attrs = {}, program_repo: Program::Repo.get)
-        @program_repo = program_repo
-        super(model, attrs)
-      end
-
       protected def initialize_attrs(attrs)
         assign_defaults!(attrs, {
-          contract_variant: @model.documents.find { |d| d.classification == :contract }&.source_url
+          contract_variant: @model.documents.find { |d| d.classification == :contract }&.source_url,
         })
       end
 
       # -- queries --
       # -- queries/contract
       def selected_contract
-        if not contract_variant.nil?
-          contracts.find { |c| c.variant == contract_variant }
-        end
-      end
-
-      def contracts
-        @program_repo.find_by_name(@model.program).contracts
+        return contracts.find { |c| c.variant == contract_variant }
       end
 
       def contract_options
-        contracts.map do |c, i|
+        return contracts.map do |c|
           [name_from_contract_variant(c.variant), c.variant]
         end
+      end
+
+      private def contracts
+        return @model.program.contracts
       end
 
       # -- queries/contract/helpers
       private def name_from_contract_variant(variant)
         case variant
-        when Program::Contract::Meap
+        when :meap
           "MEAP"
-        when Program::Contract::Wrap3h
+        when :wrap_3h
           "WRAP ($300)"
-        when Program::Contract::Wrap1k
+        when :wrap_1k
           "WRAP ($1000)"
+        else
+          "Unknown"
         end
       end
     end

@@ -72,7 +72,7 @@
             <%= @case.supplier_name %>
           <%- end %>
 
-          <% if policy.permit?(:view_supplier_account_active) %>
+          <% if policy.permit?(:view_supplier_account_active_service) %>
             <%= field_tag(nil, "&nbsp".html_safe, class: "ShowCase-hasActiveService") do %>
               <span class="<%= cx("Checkbox", "is-checked" => @case.supplier_account_active_service?) %>"></span> Active?
             <%- end %>

@@ -1,5 +1,4 @@
 class User < ::Entity
-  # TODO: should these be generalized for entity/ar?
   prop(:record, default: nil)
   prop(:events, default: ArrayQueue::Empty)
 

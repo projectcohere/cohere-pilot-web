@@ -1,15 +1,16 @@
 module Supplier
   class SaveCaseForm < ::Command
+    include Cases::Permissions
+
+    # -- props --
     attr(:case)
 
     # -- lifetime --
     def initialize(
       case_repo: Case::Repo.get,
-      user_repo: User::Repo.get,
       partner_repo: Partner::Repo.get
     )
       @case_repo = case_repo
-      @user_repo = user_repo
       @partner_repo = partner_repo
     end
 
@@ -27,7 +28,7 @@ module Supplier
         supplier_account: form.map_to_supplier_account,
       )
 
-      @case.assign_user(@user_repo.find_current)
+      @case.assign_user(user)
 
       # save the new case
       @case_repo.save_opened(@case)

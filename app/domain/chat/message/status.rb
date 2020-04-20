@@ -1,8 +1,6 @@
 class Chat
   class Message
-    class Status
-      include ::Options
-
+    class Status < ::Option
       # -- options --
       option(:queued)
       option(:failed)

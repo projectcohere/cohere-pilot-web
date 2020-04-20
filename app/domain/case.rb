@@ -101,7 +101,7 @@ class Case < ::Entity
   end
 
   # -- commands/referral
-  def make_referral(supplier_id: nil)
+  def make_referral(program, supplier_id: nil)
     if !can_make_referral?
       return
     end
@@ -109,12 +109,12 @@ class Case < ::Entity
     # mark as referrer
     @referrer = true
     @events.add(Events::DidMakeReferral.from_entity(self,
-      program: referral_program
+      program: program
     ))
 
     # create referred case
     referred = Case.new(
-      program: referral_program,
+      program: program,
       status: Status::Opened,
       recipient: recipient,
       enroller_id: enroller_id,
@@ -202,10 +202,6 @@ class Case < ::Entity
       return
     end
 
-    if program_contract.program != program
-      return
-    end
-
     new_document = Document.sign_contract(program_contract)
     add_document(new_document)
     @events.add(Events::DidSignContract.from_entity(self, new_document))
@@ -283,10 +279,6 @@ class Case < ::Entity
     return Status.complete?(@status)
   end
 
-  def wrap?
-    return @program == Program::Name::Wrap
-  end
-
   alias :can_complete? :submitted?
 
   def can_submit?
@@ -299,7 +291,8 @@ class Case < ::Entity
   end
 
   def referral_program
-    return @program.referral_program
+    # NEXT: choose referral by dropdown
+    return @program
   end
 
   # -- queries/documents

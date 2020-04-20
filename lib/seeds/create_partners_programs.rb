@@ -1,5 +1,4 @@
 # -- constants --
-P = Program::Name
 M = Partner::Membership
 
 # -- partners --

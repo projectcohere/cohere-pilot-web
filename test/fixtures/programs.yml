@@ -8,3 +8,9 @@ water_0:
   contracts:
     - wrap_3h
     - wrap_1k
+  requirements:
+    supplier_account:
+      - active_service
+    household:
+      - ownership
+      - primary_residence

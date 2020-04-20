@@ -10,7 +10,7 @@ class Partner
     # -- queries --
     # -- queries/one
     def find(id)
-      find_cached(id) do
+      return find_cached(id) do
         record = Partner::Record
           .find(id)
 
@@ -19,7 +19,7 @@ class Partner
     end
 
     def find_cohere
-      find_cached(:cohere) do
+      return find_cached(:cohere) do
         record = Partner::Record
           .find_by!(membership: Partner::Membership::Cohere.key)
 
@@ -28,7 +28,7 @@ class Partner
     end
 
     def find_dhs
-      find_cached(:dhs) do
+      return find_cached(:dhs) do
         record = Partner::Record
           .find_by!(membership: Partner::Membership::Governor.key)
 
@@ -42,11 +42,11 @@ class Partner
         return nil
       end
 
-      find(current_user.role.partner_id)
+      return find(current_user.role.partner_id)
     end
 
     def find_default_enroller
-      find_cached(:default_enroller) do
+      return find_cached(:default_enroller) do
         record = Partner::Record
           .find_by!(membership: Membership::Enroller.key)
 
@@ -58,7 +58,7 @@ class Partner
     def find_all_by_ids(ids)
       ids = ids.uniq
 
-      find_cached(ids.join(",")) do
+      return find_cached(ids.join(",")) do
         partner_recs = Partner::Record
           .where(id: ids)
 
@@ -66,21 +66,26 @@ class Partner
       end
     end
 
-    def find_all_suppliers_by_program(program)
+    def find_all_suppliers_by_program(program_id)
       partner_recs = Partner::Record
-        .where(membership: Partner::Membership::Supplier.key)
-        .where("programs @> '{?}'", program.index)
+        .includes(:programs)
+        .where(
+          membership: Partner::Membership::Supplier.key,
+          partners_programs: {
+            program_id: program_id
+          }
+        )
 
-      partner_recs.map { |r| entity_from(r) }
+      return partner_recs.map { |r| entity_from(r) }
     end
 
     # -- factories --
     def self.map_record(r)
-      Partner.new(
+      return Partner.new(
         id: r.id,
         name: r.name,
         membership: Membership.from_key(r.membership),
-        programs: r.programs&.map { |p| Program::Name.from_index(p) },
+        programs: r.programs.map { |r| Program::Repo.map_record(r) },
       )
     end
   end

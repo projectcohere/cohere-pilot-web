@@ -1,5 +1,5 @@
 class Case
-  # TODO: build this using ::Option
+  # TODO: derive this from ::Option
   module Status
     # -- options --
     Opened = :opened

@@ -1,7 +1,5 @@
 class Partner
-  class Membership
-    include ::Options
-
+  class Membership < ::Option
     # -- options --
     option(:cohere)
     option(:governor)

@@ -103,18 +103,20 @@ module Db
     test "finds an opened case by id for a governor user" do
       case_repo = Case::Repo.new
       case_rec = cases(:opened_1)
+      user_rec = users(:governor_1)
 
-      kase = case_repo.find_with_documents_for_governor(case_rec.id)
+      kase = case_repo.find_with_documents_for_governor(case_rec.id, user_rec.partner_id)
       assert_not_nil(kase)
       assert_equal(kase.status, Case::Status::Opened)
     end
 
-    test "can't find an submitted case by id for a governor user" do
+    test "can't find a submitted case by id for a governor user" do
       case_repo = Case::Repo.new
       case_rec = cases(:submitted_1)
+      user_rec = users(:governor_1)
 
       assert_raises(ActiveRecord::RecordNotFound) do
-        case_repo.find_with_documents_for_governor(case_rec.id)
+        case_repo.find_with_documents_for_governor(case_rec.id, user_rec.partner_id)
       end
     end
 
@@ -130,6 +132,10 @@ module Db
     # -- test/save
     test "saves an opened case" do
       case_repo = Case::Repo.new
+
+      user_rec = users(:supplier_2)
+      supplier_rec = user_rec.partner
+      enroller_rec = partners(:enroller_1)
 
       recipient_profile = Recipient::Profile.stub(
         phone: Phone.stub(
@@ -152,12 +158,10 @@ module Db
         arrears: Money.cents(1000_00),
       )
 
-      user_rec = users(:supplier_2)
-
       kase = Case.open(
         recipient_profile: recipient_profile,
-        enroller: Partner::Repo.map_record(partners(:enroller_1)),
-        supplier: Partner::Repo.map_record(user_rec.partner),
+        enroller: Partner::Repo.map_record(enroller_rec),
+        supplier: Partner::Repo.map_record(supplier_rec),
         supplier_account: supplier_account,
       )
 
@@ -180,7 +184,7 @@ module Db
       assert_not_nil(kase.recipient.id.val)
 
       case_rec = kase.record
-      assert_equal(case_rec.program, "wrap")
+      assert_equal(case_rec.program.id, supplier_rec.programs[0].id)
 
       events = kase.events
       assert_length(events, 0)
@@ -298,8 +302,7 @@ module Db
       )
 
       contract = Program::Contract.new(
-        program: Program::Name::Meap,
-        variant: Program::Contract::Meap
+        variant: :wrap_1k
       )
 
       kase = Case::Repo.map_record(case_rec)
@@ -331,6 +334,7 @@ module Db
       d = kase.new_documents[0].record
       assert_not_nil(d)
       assert_equal(d.classification, "contract")
+      assert_equal(d.source_url, "wrap_1k")
 
       events = kase.events
       assert_length(events, 0)
@@ -473,11 +477,13 @@ module Db
     test "saves a referral" do
       case_repo = Case::Repo.new
       case_rec = cases(:approved_1)
-      user_rec = users(:cohere_1)
+      program_rec = programs(:water_0)
       supplier_rec = partners(:supplier_3)
+      user_rec = users(:cohere_1)
 
       referrer = Case::Repo.map_record(case_rec, documents: case_rec.documents)
       referral = referrer.make_referral(
+        Program::Repo.map_record(program_rec),
         supplier_id: supplier_rec.id
       )
 
@@ -487,8 +493,7 @@ module Db
       )
 
       referred.sign_contract(Program::Contract.new(
-        program: Program::Name::Wrap,
-        variant: Program::Contract::Wrap3h
+        variant: :wrap_3h
       ))
 
       act = -> do
@@ -509,7 +514,7 @@ module Db
 
       referred_rec = referred.record
       assert_equal(referred_rec.status, "opened")
-      assert_equal(referred_rec.program, "wrap")
+      assert_equal(referred_rec.program.id, program_rec.id)
       assert_equal(referred_rec.referrer_id, referrer.id.val)
 
       document_recs = referred_rec.documents

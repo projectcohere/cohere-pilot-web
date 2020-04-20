@@ -8,7 +8,7 @@ module Cases
           profile: Recipient::Profile.stub,
         ),
         documents: [
-          Document.stub(source_url: Program::Contract::Wrap1k),
+          Document.stub(source_url: "wrap_1k"),
         ]
       )
 
@@ -34,7 +34,7 @@ module Cases
           profile: Recipient::Profile.stub
         ),
         documents: [
-          Document.stub(source_url: Program::Contract::Meap)
+          Document.stub(source_url: "meap")
         ]
       )
 
@@ -56,7 +56,7 @@ module Cases
           profile: Recipient::Profile.stub
         ),
         documents: [
-          Document.stub(source_url: Program::Contract::Wrap3h)
+          Document.stub(source_url: "wrap_3h")
         ]
       )
 

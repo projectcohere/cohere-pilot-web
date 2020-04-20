@@ -31,15 +31,15 @@ class Case
       when :edit_household
         cohere? || governor?
       when :edit_household_ownership
-        cohere? && wrap?
+        cohere? && requires?(&:household_ownership?)
       when :edit_household_primary_residence
-        cohere? && wrap?
+        cohere? && requires?(&:household_primary_residence?)
       when :edit_supplier_account
         cohere? || supplier?
       when :edit_supplier
         cohere?
-      when :edit_supplier_account_active
-        cohere? && wrap?
+      when :edit_supplier_account_active_service
+        cohere? && requires?(&:supplier_account_active_service?)
       when :edit_documents
         cohere?
       when :edit_admin
@@ -50,11 +50,11 @@ class Case
       when :view_fpl
         cohere? || enroller?
       when :view_household_ownership
-        cohere? && wrap?
+        cohere? && requires?(&:household_ownership?)
       when :view_household_primary_residence
-        cohere? && wrap?
-      when :view_supplier_account_active
-        cohere? && wrap?
+        cohere? && requires?(&:household_primary_residence?)
+      when :view_supplier_account_active_service
+        cohere? && requires?(&:supplier_account_active_service?)
       # actions
       when :referral
         cohere?
@@ -85,10 +85,8 @@ class Case
     end
 
     # -- queries --
-    delegate(:meap?, :wrap?, to: :program, private: :true)
-
-    private def program
-      return @case.program
+    private def requires?(&predicate)
+      return @case.program.requirements.any?(&predicate)
     end
   end
 end

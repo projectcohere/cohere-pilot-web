@@ -37,7 +37,9 @@ module Db
 
     test "finds all suppliers by program" do
       partner_repo = Partner::Repo.new
-      partners = partner_repo.find_all_suppliers_by_program(::Program::Name::Meap)
+      program_rec = programs(:energy_0)
+
+      partners = partner_repo.find_all_suppliers_by_program(program_rec.id)
       assert_length(partners, 2)
     end
   end

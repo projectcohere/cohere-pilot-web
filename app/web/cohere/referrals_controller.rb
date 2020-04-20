@@ -6,9 +6,12 @@ module Cohere
         return deny_access
       end
 
-      referral = case_repo
+      referrer = case_repo
         .find_with_associations(params[:case_id])
-        .make_referral
+
+      # NEXT: choose referral by dropdown
+      referral = referrer
+        .make_referral(referrer.program)
 
       @form = view_repo.new_form(referral.referred)
       @case = @form.detail
@@ -19,9 +22,14 @@ module Cohere
         return deny_access
       end
 
-      referral = case_repo
+      referrer = case_repo
         .find_with_associations(params[:case_id])
-        .make_referral(supplier_id: params.dig(:case, :supplier_account, :supplier_id))
+
+      # NEXT: choose referral by dropdown
+      referral = referrer.make_referral(
+        referrer.program,
+        supplier_id: params.dig(:case, :supplier_account, :supplier_id)
+      )
 
       @form = view_repo.new_form(referral.referred, params: params)
       @case = @form.detail

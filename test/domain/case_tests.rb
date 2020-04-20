@@ -10,12 +10,12 @@ class CaseTests < ActiveSupport::TestCase
     kase = Case.open(
       recipient_profile: profile,
       enroller: Partner.stub(id: 1),
-      supplier: Partner.stub(id: 2, programs: [Program::Name::Wrap]),
+      supplier: Partner.stub(id: 2, programs: [Program.stub(id: 3)]),
       supplier_account: :test_account,
     )
 
     assert(kase.new_activity?)
-    assert_equal(kase.program, Program::Name::Wrap)
+    assert_equal(kase.program.id, 3)
     assert_equal(kase.recipient.profile, profile)
     assert_equal(kase.supplier_account, :test_account)
     assert_equal(kase.enroller_id, 1)
@@ -124,7 +124,6 @@ class CaseTests < ActiveSupport::TestCase
   test "makes a referral to a new program" do
     kase = Case.stub(
       status: Case::Status::Approved,
-      program: Program::Name::Meap,
       documents: [
         Document.stub(
           classification: :unknown
@@ -138,7 +137,9 @@ class CaseTests < ActiveSupport::TestCase
       ),
     )
 
-    referral = kase.make_referral
+    program = Program.stub(id: 1)
+
+    referral = kase.make_referral(program)
     assert_not_nil(referral)
 
     referrer = referral.referrer
@@ -147,38 +148,18 @@ class CaseTests < ActiveSupport::TestCase
     referred = referral.referred
     assert(referred.referred?)
     assert(referred.new_activity?)
-    assert_equal(referred.program, Program::Name::Wrap)
+    assert_equal(referred.program, program)
 
     new_documents = referred.new_documents
     assert_length(new_documents, referrer.documents.length)
 
     event = referrer.events[0]
     assert_instances_of(referrer.events, [Case::Events::DidMakeReferral])
-    assert_equal(event.case_program, Program::Name::Wrap)
+    assert_equal(event.case_program, program)
 
     event = referred.events[0]
     assert_instances_of(referred.events, [Case::Events::DidOpen])
     assert(event.case_is_referred)
-  end
-
-  test "does not make a second referral" do
-    kase = Case.stub(
-      status: Case::Status::Approved,
-      program: Program::Name::Meap,
-      referrer: true
-    )
-
-    referral = kase.make_referral
-    assert_nil(referral)
-
-    kase = Case.stub(
-      status: Case::Status::Approved,
-      program: Program::Name::Wrap,
-      referred: true
-    )
-
-    referral = kase.make_referral
-    assert_nil(referral)
   end
 
   # -- commands/assignments
@@ -329,20 +310,14 @@ class CaseTests < ActiveSupport::TestCase
   end
 
   test "signs a contract" do
-    kase = Case.stub(
-      program: Program::Name::Wrap
-    )
-
-    contract = Program::Contract.new(
-      program: Program::Name::Wrap,
-      variant: Program::Contract::Wrap3h
-    )
+    kase = Case.stub
+    contract = Program::Contract.stub
 
     kase.sign_contract(contract)
 
-    documents = kase.new_documents
-    assert_length(documents, 1)
-    assert_equal(documents[0].classification, :contract)
+    document = kase.new_documents[0]
+    assert_length(kase.new_documents, 1)
+    assert_equal(document.classification, :contract)
 
     events = kase.events
     assert_instances_of(events, [Case::Events::DidSignContract])
@@ -356,21 +331,6 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     kase.sign_contract(nil)
-    assert_nil(kase.new_documents)
-    assert_empty(kase.events)
-  end
-
-  test "doesn't sign a contract for the wrong program" do
-    kase = Case.stub(
-      program: Program::Name::Meap
-    )
-
-    contract = Program::Contract.new(
-      program: Program::Name::Wrap,
-      variant: Program::Contract::Wrap1k
-    )
-
-    kase.sign_contract(contract)
     assert_nil(kase.new_documents)
     assert_empty(kase.events)
   end
@@ -447,10 +407,5 @@ class CaseTests < ActiveSupport::TestCase
 
     kase = Case.stub(status: Case::Status::Approved, referrer: true)
     assert_not(kase.can_make_referral?)
-  end
-
-  test "makes referrals to the other program" do
-    kase = Case.stub(program: Program::Name::Wrap)
-    assert_equal(kase.referral_program, Program::Name::Meap)
   end
 end

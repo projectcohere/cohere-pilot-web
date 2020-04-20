@@ -66,17 +66,17 @@ class Case
       return entity_from(case_rec, assignments: case_rec.assignments, documents: document_recs)
     end
 
-    def find_for_governor(case_id)
+    def find_for_governor(case_id, governor_id)
       case_rec = Case::Record
-        .for_governor
+        .for_governor(governor_id)
         .find(case_id)
 
       return entity_from(case_rec)
     end
 
-    def find_with_documents_for_governor(case_id)
+    def find_with_documents_for_governor(case_id, governor_id)
       case_rec = Case::Record
-        .for_governor
+        .for_governor(governor_id)
         .find(case_id)
 
       document_recs = Document::Record
@@ -355,7 +355,7 @@ class Case
     private def assign_partners(kase, case_rec)
       c = kase
       case_rec.assign_attributes(
-        program: c.program.key,
+        program_id: c.program.id,
         enroller_id: c.enroller_id,
         supplier_id: c.supplier_id
       )
@@ -468,7 +468,7 @@ class Case
       return Case.new(
         record: r,
         id: Id.new(r.id),
-        program: map_program(r),
+        program: Program::Repo.map_record(r.program),
         status: r.status.to_sym,
         recipient: map_recipient(r.recipient),
         enroller_id: r.enroller_id,
@@ -493,10 +493,6 @@ class Case
         profile: ::Recipient::Repo.map_profile(r),
         household: ::Recipient::Repo.map_household(r),
       )
-    end
-
-    def self.map_program(r)
-      return Program::Name.from_key(r.program)
     end
 
     def self.map_supplier_account(r)

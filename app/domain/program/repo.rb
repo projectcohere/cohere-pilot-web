@@ -1,25 +1,18 @@
 class Program
-  class Repo
-    include Service
-
-    # -- queries --
-    def find_by_name(name)
-      contract_variants = find_contract_variants_by_name(name)
-
-      Program.new(
-        id: name,
-        contracts: contract_variants.map { |variant|
-          Program::Contract.new(program: name, variant: variant)
-        }
+  class Repo < ::Repo
+    # -- mapping --
+    def self.map_record(r)
+      return Program.new(
+        id: r.id,
+        name: r.name,
+        contracts: r.contracts.map { |v| Contract.new(variant: v.to_sym) },
+        requirements: r.requirements.flat_map { |g, rs| map_requirements(g, rs) },
       )
     end
 
-    private def find_contract_variants_by_name(name)
-      case name
-      when Program::Name::Meap
-        [Program::Contract::Meap]
-      when Program::Name::Wrap
-        [Program::Contract::Wrap3h, Program::Contract::Wrap1k]
+    def self.map_requirements(group, rs)
+      return rs.map do |r|
+        Requirement.from_key(r, group: group)
       end
     end
   end

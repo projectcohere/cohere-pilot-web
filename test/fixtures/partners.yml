@@ -5,6 +5,8 @@ cohere_1:
 governor_1:
   name: "MDHHS"
   membership: governor
+  programs:
+    - energy_0
 
 enroller_1:
   name: "Test Metro"
