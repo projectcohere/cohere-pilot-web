@@ -27,25 +27,14 @@ module Cases
 
       # -- lifecycle --
       protected def initialize_attrs(attrs)
-        if @model.is_a?(Cases::Views::Detail)
-          h = @model.recipient_household
-          assign_defaults!(attrs, {
-            dhs_number: h&.dhs_number,
-            size: h&.size&.to_s,
-            income: h&.income&.dollars&.to_s,
-            ownership: h&.ownership,
-            primary_residence: h&.primary_residence?
-          })
-        else
-          h = @model.recipient.household
-          assign_defaults!(attrs, {
-            dhs_number: h&.dhs_number,
-            size: h&.size&.to_s,
-            income: h&.income&.dollars&.to_s,
-            ownership: h&.ownership,
-            primary_residence: h&.primary_residence?
-          })
-        end
+        h = @model.recipient_household
+        assign_defaults!(attrs, {
+          dhs_number: h&.dhs_number,
+          size: h&.size&.to_s,
+          income: h&.income&.dollars&.to_s,
+          ownership: h&.ownership,
+          primary_residence: h&.primary_residence?
+        })
       end
 
       # -- sanitization --
@@ -55,13 +44,13 @@ module Cases
 
       # -- queries --
       def ownership_options
-        Recipient::Ownership.all.map do |o|
+        return Recipient::Ownership.all.map do |o|
           [o.to_s.titlecase, o]
         end
       end
 
       def map_to_recipient_household
-        Recipient::Household.new(
+        return Recipient::Household.new(
           dhs_number: dhs_number,
           size: size.to_i,
           income: Money.dollars(income),

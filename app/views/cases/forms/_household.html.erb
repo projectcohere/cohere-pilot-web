@@ -7,10 +7,6 @@
   <% end %>
 
   <%= section_tag("Household", class: "CaseForm-household") do %>
-    <%= f.field(:dhs_number, "MDHHS Case #", class: "CaseForm-dhsNumber") do %>
-      <%= f.text_field(:dhs_number) %>
-    <% end %>
-
     <%= f.field(:size, "Size", class: "CaseForm-householdSize") do %>
       <%= f.text_field(:size) %>
     <% end %>
