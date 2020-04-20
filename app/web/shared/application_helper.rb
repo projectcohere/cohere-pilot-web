@@ -10,7 +10,7 @@ module ApplicationHelper
 
     return tag.h2(
       "#{page.items} of #{page.count} #{name}",
-      class: "Main-totals"
+      class: "PageHeader-totals"
     )
   end
 
@@ -92,7 +92,9 @@ module ApplicationHelper
     )
 
     tag.label(name, *args, class: field_class, **kwargs) do
-      hint_tag = tag.p(class: "Field-hint") do
+      title = title || name.to_s.titlecase
+
+      hint_tag = title.blank? ? raw("") : tag.p(class: "Field-hint") do
         hint_text = tag.span(title || name.to_s.titlecase)
         hint_error = errors.present? ? tag.span(" #{errors}", class: "Field-errors") : ""
         hint_text + hint_error

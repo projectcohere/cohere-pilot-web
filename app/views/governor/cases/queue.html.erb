@@ -1,14 +1,14 @@
 <% s = ::Cases::Scope %>
 
-<main class="Main">
-  <header class="Main-header">
-    <h1 class="Main-title">
+<main class="Page">
+  <header class="PageHeader">
+    <h1 class="PageHeader-title">
       <%= @scope.title %>
     </h1>
 
     <%= totals_for(@page, of: "cases") %>
 
-    <div class="Main-row Main-filters">
+    <div class="PageHeader-row PageHeader-filters">
       <nav class="Filters">
         <%= cases_scope_link_to(s::Assigned) %>
         <%= cases_scope_link_to(s::Queued) %>

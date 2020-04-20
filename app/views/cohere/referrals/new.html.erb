@@ -1,12 +1,12 @@
-<main class="EditCase Main">
-  <header class="Main-header">
-    <%= link_to("Back to Cases", :back, class: "Main-back") %>
+<main class="EditCase Page">
+  <header class="PageHeader">
+    <%= link_to("Back to Cases", :back, class: "PageHeader-back") %>
 
-    <h1 class="Main-title">
+    <h1 class="PageHeader-title">
       <%= @case.recipient_name %>'s case
     </h1>
 
-    <div class="Main-row Main-filters">
+    <div class="PageHeader-row PageHeader-filters">
       <nav class="Filters">
         <%= filter_for(:profile, is_error: errors?(@form.details, @form.contact), is_selected: true) %>
         <%= filter_for(:household, is_error: errors?(@form.address, @form.household)) %>

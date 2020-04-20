@@ -1,20 +1,11 @@
-// TODO: rename this to Page
-.Main {
-  flex: 1;
+.PageHeader {
+  position: relative;
   display: flex;
-  flex-direction: column;
-  padding: $spacing0;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-bottom: $spacing3;
 
-  // TODO: extract this into PageHeader
-  // -- Main-header --
-  &-header {
-    position: relative;
-    display: flex;
-    align-items: flex-end;
-    flex-wrap: wrap;
-    margin-bottom: $spacing3;
-  }
-
+  // -- elements --
   &-back {
     position: absolute;
     top: -30px;
@@ -46,12 +37,5 @@
     > * {
       margin-left: $spacing3;
     }
-  }
-
-  // -- variants --
-  &--actions &-totals {
-    width: 100%;
-    margin: 0;
-    margin-top: $spacing3;
   }
 }

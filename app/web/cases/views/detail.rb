@@ -42,7 +42,7 @@ module Cases
       end
 
       def program_name
-        return @program.to_s.upcase
+        return @program.name
       end
 
       # -- queries/contact

@@ -14,7 +14,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     get(auth("/cases", as: user_rec))
     assert_response(:success)
-    assert_select(".Main-title", text: /All Cases/)
+    assert_select(".PageHeader-title", text: /All Cases/)
     assert_select(".CaseCell", 7)
   end
 
@@ -26,7 +26,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     get(auth("/cases?scope=all", as: user_rec))
     assert_response(:success)
-    assert_select(".Main-title", text: /All Cases/)
+    assert_select(".PageHeader-title", text: /All Cases/)
     assert_select(".CaseCell", 10)
   end
 
@@ -43,7 +43,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     get(auth("/cases?scope=open", as: user_rec))
     assert_response(:success)
-    assert_select(".Main-title", text: /Open Cases/)
+    assert_select(".PageHeader-title", text: /Open Cases/)
     assert_select(".CaseCell", 8)
   end
 
@@ -52,7 +52,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     get(auth("/cases?scope=completed", as: user_rec))
     assert_response(:success)
-    assert_select(".Main-title", text: /Completed Cases/)
+    assert_select(".PageHeader-title", text: /Completed Cases/)
     assert_select(".CaseCell", 2)
   end
 
@@ -64,7 +64,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     get(auth("/cases/queue?scope=assigned", as: user_rec))
     assert_response(:success)
-    assert_select(".Main-title", text: /My Cases/)
+    assert_select(".PageHeader-title", text: /My Cases/)
     assert_select(".CaseCell", 1)
   end
 
@@ -73,7 +73,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     get(auth("/cases/queue?scope=queued", as: user_rec))
     assert_response(:success)
-    assert_select(".Main-title", text: /Available Cases/)
+    assert_select(".PageHeader-title", text: /Available Cases/)
     assert_select(".CaseCell", 7)
   end
 
@@ -82,7 +82,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     get(auth("/cases", as: user_rec))
     assert_response(:success)
-    assert_select(".Main-title", text: /All Cases/)
+    assert_select(".PageHeader-title", text: /All Cases/)
     assert_select(".CaseCell", 5)
   end
 
@@ -94,7 +94,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     get(auth("/cases/queue?scope=assigned", as: user_rec))
     assert_response(:success)
-    assert_select(".Main-title", text: /My Cases/)
+    assert_select(".PageHeader-title", text: /My Cases/)
     assert_select(".CaseCell", 1)
   end
 
@@ -103,7 +103,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     get(auth("/cases/queue?scope=queued", as: user_rec))
     assert_response(:success)
-    assert_select(".Main-title", text: /Available Cases/)
+    assert_select(".PageHeader-title", text: /Available Cases/)
     assert_select(".CaseCell", 4)
   end
 
@@ -112,7 +112,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     get(auth("/cases", as: user_rec))
     assert_response(:success)
-    assert_select(".Main-title", text: /All Cases/)
+    assert_select(".PageHeader-title", text: /All Cases/)
     assert_select(".CaseCell", 3)
   end
 
@@ -124,7 +124,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     get(auth("/cases/queue?scope=assigned", as: user_rec))
     assert_response(:success)
-    assert_select(".Main-title", text: /My Cases/)
+    assert_select(".PageHeader-title", text: /My Cases/)
     assert_select(".CaseCell", 1)
   end
 
@@ -133,7 +133,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     get(auth("/cases/queue?scope=queued", as: user_rec))
     assert_response(:success)
-    assert_select(".Main-title", text: /Available Cases/)
+    assert_select(".PageHeader-title", text: /Available Cases/)
     assert_select(".CaseCell", 0)
   end
 
@@ -143,7 +143,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     get(auth("/cases/new", as: user_rec))
     assert_response(:success)
-    assert_select(".Main-title", text: /Add a Case/)
+    assert_select(".PageHeader-title", text: /Add a Case/)
 
     assert_analytics_events(1) do |events|
       assert_match(/Did View Supplier Form/, events[0])
@@ -270,7 +270,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     get(auth("/cases/#{kase.id}", as: user_rec))
     assert_response(:success)
-    assert_select(".Main-title", text: /#{kase.recipient.profile.name}/)
+    assert_select(".PageHeader-title", text: /#{kase.recipient.profile.name}/)
   end
 
   test "view a case as an enroller" do
@@ -280,7 +280,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     get(auth("/cases/#{kase.id}", as: user_rec))
     assert_response(:success)
-    assert_select(".Main-title", text: /#{kase.recipient.profile.name}/)
+    assert_select(".PageHeader-title", text: /#{kase.recipient.profile.name}/)
 
     assert_analytics_events(1) do |events|
       assert_match(/Did View Enroller Case/, events[0])
@@ -309,7 +309,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     get(auth("/cases/#{case_rec.id}/edit", as: user_rec))
     assert_response(:success)
-    assert_select(".Main-title", text: /\w's case/)
+    assert_select(".PageHeader-title", text: /\w's case/)
 
     assert_analytics_events(1) do |events|
       assert_match(/Did View Governor Form/, events[0])
@@ -350,7 +350,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     get(auth("/cases/#{case_rec.id}/edit", as: user_rec))
     assert_response(:success)
-    assert_select(".Main-title", text: /\w+'s case/)
+    assert_select(".PageHeader-title", text: /\w+'s case/)
   end
 
   test "save an edited case as a cohere user" do
