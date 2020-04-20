@@ -15,23 +15,13 @@ module Cases
           return
         end
 
-        if @model.is_a?(Cases::Views::Detail)
-          a = @model.recipient_profile.address
-          assign_defaults!(attrs, {
-            street: a.street,
-            street2: a.street2,
-            city: a.city,
-            zip: a.zip,
-          })
-        else
-          a = @model.recipient.profile.address
-          assign_defaults!(attrs, {
-            street: a.street,
-            street2: a.street2,
-            city: a.city,
-            zip: a.zip,
-          })
-        end
+        a = @model.recipient_profile.address
+        assign_defaults!(attrs, {
+          street: a.street,
+          street2: a.street2,
+          city: a.city,
+          zip: a.zip,
+        })
       end
 
       # -- sanitization --

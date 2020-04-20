@@ -7,6 +7,7 @@ module Cases
       field(:arrears, :string, numericality: true, allow_blank: true)
       field(:active_service, :boolean)
 
+      # -- fields/validation
       validates(:account_number, presence: true, if: :is_account_required)
       validates(:arrears, presence: true, if: :is_account_required)
 
