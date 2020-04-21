@@ -2,21 +2,26 @@
 <html>
   <head>
     <title>Cohere Pilot</title>
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <%= stylesheet_link_tag("application", media: "all", "data-turbolinks-track": "reload") %>
     <%= javascript_pack_tag("application", defer: "defer", "data-turbolinks-track": "reload") %>
   </head>
-  <body>
-    <% if header? %>
-      <%= render(partial: "layouts/header") %>
+
+  <body class="Layout">
+    <% if shows_navigation? %>
+      <%= render(partial: "layouts/navigation") %>
     <% end %>
-    <div class="Layout">
+
+    <div class="Layout-content">
       <%= yield %>
-      <% if flash.present? %>
-        <%= render(partial: "layouts/flash") %>
-      <% end %>
     </div>
+
+    <% if flash.present? %>
+      <%= render(partial: "layouts/flash") %>
+    <% end %>
   </body>
 </html>

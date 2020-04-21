@@ -2,5 +2,10 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: $spacing0;
+  padding: 0 $spacing0;
+  padding-top: $spacing0;
+
+  > *:last-child {
+    padding-bottom: $spacing0;
+  }
 }

@@ -1,0 +1,124 @@
+$width: 74px;
+
+.Navigation {
+  --icon-width: 36px;
+  --icon-color: #{$black};
+
+  display: flex;
+  flex-direction: column;
+  background-color: $white;
+  box-shadow: 0px 4px 4px $color-shadow2;
+  z-index: 1;
+
+
+  &-logo {
+    --icon-width: 54px;
+
+    position: relative;
+    display: flex;
+    justify-content: center;
+    width: $width;
+    padding: $spacing3 0;
+
+    &:hover {
+      --icon-color: #{$brand-primary};
+    }
+  }
+
+  &-links {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &-link {
+    @extend .u-label-hint;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    padding: $spacing4 0;
+    line-height: initial;
+
+    &:hover {
+      --icon-color: #{$brand-primary};
+    }
+
+    &.is-active {
+      position: relative;
+      background-color: fade-out($brand-primary, 0.80);
+
+      &::after {
+        content: "";
+        position: absolute;
+        height: 100%;
+        width: 3px;
+        top: 0;
+        right: 0px;
+        background-color: $brand-primary;
+      }
+    }
+  }
+}
+
+// -- NavigationProfile --
+.NavigationProfile {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: $spacing3 0;
+
+  &:hover {
+    --icon-color: #{$brand-primary};
+  }
+
+  &-popup {
+    position: absolute;
+    left: $width;
+    bottom: 0;
+    visibility: hidden;
+  }
+
+  &:hover &-popup {
+    visibility: visible;
+  }
+
+  &-links {
+    display: flex;
+    flex-direction: column;
+    padding: $spacing5;
+    margin-left: $spacing4;
+    margin-bottom: $spacing4;
+    background-color: $white;
+    border-radius: $radius;
+    box-shadow: 0px 0px 10px $color-shadow2;
+  }
+}
+
+// -- NavigationIcon --
+.NavigationIcon {
+  width: var(--icon-width);
+  height: 36px;
+  background-color: var(--icon-color);
+  mask-size: contain;
+  mask-position: center;
+  mask-repeat: no-repeat;
+
+  // -- variants --
+  &.is-logo {
+    mask-image: image-url("logo-icon-black.svg");
+  }
+
+  &.is-queue {
+    mask-image: image-url("queue.svg");
+  }
+
+  &.is-cases {
+    mask-image: image-url("cases.svg");
+  }
+
+  &.is-profile {
+    mask-image: image-url("profile.svg");
+  }
+}

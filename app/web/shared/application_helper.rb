@@ -1,5 +1,6 @@
 module ApplicationHelper
   include Pagy::Frontend
+  include Helpers::NavigationHelper
 
   # -- elements --
   def totals_for(page, of:)
@@ -22,38 +23,6 @@ module ApplicationHelper
         "is-active" => is_error
       ),
       data: { turbolinks: false }
-    )
-  end
-
-  # -- elements/header
-  def header_routes
-    routes = []
-
-    if policy.permit?(:list_queue)
-      routes.push(["My Cases", queue_cases_path])
-    end
-
-    if policy.permit?(:list)
-      routes.push(["All Cases", cases_path])
-    end
-
-    active = routes.find do |(_, p)|
-      request.path.starts_with?(p)
-    end
-
-    links = routes.map do |r|
-      header_route_to(*r, active[1])
-    end
-
-    return raw(links.join)
-  end
-
-  def header_route_to(name, path, active)
-    return link_to(name, path,
-      class: cx(
-        "Header-route",
-        "is-active": path == active,
-      ),
     )
   end
 

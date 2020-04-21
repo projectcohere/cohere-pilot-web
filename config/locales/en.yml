@@ -3,7 +3,7 @@ en:
     failure_after_create: Your e-mail and password did not match.
     failure_after_update: Password did not meet requirements.
   layouts:
-    header:
+    navigation:
       logo: Cohere
       sign-out: Sign Out
   users:
