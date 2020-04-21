@@ -31,8 +31,6 @@ module Authentication
 
   # store chat id used to disambiguate concurrent cohere users
   def create_chat_user_id
-    user = user_repo.find_current
-
     # TODO: scope by policy
     if user&.role&.membership&.cohere?
       cookies.signed[:chat_user_id] = SecureRandom.base58

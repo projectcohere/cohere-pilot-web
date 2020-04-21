@@ -1,5 +1,6 @@
 module ApplicationHelper
   include Pagy::Frontend
+  include Helpers::LayoutHelper
   include Helpers::NavigationHelper
 
   # -- elements --

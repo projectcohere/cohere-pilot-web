@@ -9,6 +9,7 @@
     height: calc(var(--vh, 1vh) * 100);
   }
 
+  // -- children --
   &-content {
     @include desktop {
       flex: 1;
@@ -21,5 +22,27 @@
     @include mobile {
       height: 100%;
     }
+  }
+
+  // -- variants --
+  @mixin role-theme($role-color) {
+    --role-color: #{$role-color};
+    --role-color-bg: #{fade-out($role-color, 0.80)};
+  }
+
+  &--supplier {
+    @include role-theme($color-supplier);
+  }
+
+  &--governor {
+    @include role-theme($color-governor);
+  }
+
+  &--cohere {
+    @include role-theme($color-cohere);
+  }
+
+  &--enroller {
+    @include role-theme($color-enroller);
   }
 }

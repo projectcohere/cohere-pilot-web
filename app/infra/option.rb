@@ -73,10 +73,3 @@ class Option
     end
   end
 end
-
-# 1. short-term vs. long-term gig?
-# 2. what draws them to the work (mission vs. ?)?
-# 3. leader vs. manager?
-# 4. managers-of-one?
-# 5. exposure to public sector?
-# 6. bridging gap between tech and non-tech language/understanding?

@@ -1,6 +1,6 @@
 module Supplier
   class SaveCaseForm < ::Command
-    include Cases::Permissions
+    include Cases::Authorization
 
     # -- props --
     attr(:case)

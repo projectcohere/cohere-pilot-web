@@ -11,7 +11,7 @@
     <%= javascript_pack_tag("application", defer: "defer", "data-turbolinks-track": "reload") %>
   </head>
 
-  <body class="Layout">
+  <%= layout_tag do %>
     <% if shows_navigation? %>
       <%= render(partial: "layouts/navigation") %>
     <% end %>
@@ -23,5 +23,5 @@
     <% if flash.present? %>
       <%= render(partial: "layouts/flash") %>
     <% end %>
-  </body>
+  <%- end %>
 </html>

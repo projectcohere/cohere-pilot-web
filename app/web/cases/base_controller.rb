@@ -1,6 +1,6 @@
 module Cases
   class BaseController < ApplicationController
-    include Permissions
+    include Authorization
 
     # -- view helpers --
     helper(BaseHelper)

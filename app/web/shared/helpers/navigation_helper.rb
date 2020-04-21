@@ -1,7 +1,7 @@
 module Helpers
   module NavigationHelper
     # -- helpers --
-    def navigation_icon(key, name, width: 36)
+    def navigation_icon_tag(key, name, width: 36)
       return tag.span(
         class: "NavigationIcon is-#{key}",
         alt: "#{name} Icon",
@@ -10,7 +10,7 @@ module Helpers
       )
     end
 
-    def navigation_links
+    def navigation_link_tag_tags
       links = []
 
       if policy.permit?(:list_queue)
@@ -36,18 +36,18 @@ module Helpers
         end
       end
 
-      return raw(links.map { |r| navigation_link(r) }.join)
+      return raw(links.map { |r| navigation_link_tag(r) }.join)
     end
 
-    def navigation_link(route)
-      return link_to(route.path,
+    def navigation_link_tag(link)
+      return link_to(link.path,
         class: cx(
           "Navigation-link",
-          "is-active": route.active?,
+          "is-active": link.active?,
         ),
       ) do
-        navigation_icon(route.key, route.name) +
-        tag.span(route.name, class: "Navigation-linkName")
+        navigation_icon_tag(link.key, link.name) +
+        tag.span(link.name, class: "Navigation-linkName")
       end
     end
 

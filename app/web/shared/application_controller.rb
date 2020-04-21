@@ -2,6 +2,7 @@ class ApplicationController < ActionController::Base
   # -- modules --
   include Clearance::Controller
   include Authentication
+  include Authorization
 
   # -- config --
   default_form_builder(ApplicationFormBuilder)
@@ -11,6 +12,7 @@ class ApplicationController < ActionController::Base
   after_action(:dispatch_events)
 
   # -- helpers --
+  helper_method(:user_membership)
   helper_method(:shows_navigation?)
 
   # -- config --
