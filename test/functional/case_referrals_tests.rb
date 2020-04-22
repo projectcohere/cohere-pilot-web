@@ -1,34 +1,81 @@
 require "test_helper"
 
 class CaseReferralsTests < ActionDispatch::IntegrationTest
+  test "can't select a referral program if signed-out" do
+    get("/cases/3/referrals/select")
+    assert_redirected_to("/sign-in")
+  end
+
+  test "can't select a referral program without permission" do
+    user_rec = users(:supplier_1)
+
+    get(auth("/cases/4/referrals/select", as: user_rec))
+    assert_redirected_to("/cases")
+  end
+
+  test "select a referral program" do
+    user_rec = users(:cohere_1)
+    case_rec = cases(:approved_2)
+
+    get(auth("/cases/#{case_rec.id}/referrals/select", as: user_rec))
+    assert_response(:success)
+  end
+
+  test "can't start a referral if signed-out" do
+    get("/cases/3/referrals/select")
+    assert_redirected_to("/sign-in")
+  end
+
+  test "can't start a referral without permission" do
+    user_rec = users(:supplier_1)
+
+    get(auth("/cases/4/referrals/select", as: user_rec))
+    assert_redirected_to("/cases")
+  end
+
+  test "can't start a referral without a program" do
+    user_rec = users(:cohere_1)
+    case_rec = cases(:approved_2)
+
+    get(auth("/cases/#{case_rec.id}/referrals/start?program_id=", as: user_rec))
+    assert_redirected_to("/cases/#{case_rec.id}")
+  end
+
+  test "start a referral" do
+    user_rec = users(:cohere_1)
+
+    get(auth("/cases/4/referrals/start?program_id=6", as: user_rec))
+    assert_redirected_to("/cases/4/referrals/6/new")
+  end
+
   test "can't make a referral if signed-out" do
-    get("/cases/3/referrals/new")
+    get("/cases/3/referrals/6/new")
     assert_redirected_to("/sign-in")
   end
 
   test "can't make a referral without permission" do
     user_rec = users(:supplier_1)
 
-    get(auth("/cases/4/referrals/new", as: user_rec))
+    get(auth("/cases/4/referrals/6/new", as: user_rec))
     assert_redirected_to("/cases")
   end
 
   test "make a referral as a cohere user" do
     user_rec = users(:cohere_1)
-    case_rec = cases(:approved_1)
+    case_rec = cases(:approved_2)
+    program_rec = programs(:water_0)
 
-    get(auth("/cases/#{case_rec.id}/referrals/new", as: user_rec))
+    get(auth("/cases/#{case_rec.id}/referrals/#{program_rec.id}/new", as: user_rec))
     assert_response(:success)
   end
 
   test "save a referral as a cohere user" do
-    skip
-
     user_rec = users(:cohere_1)
     case_rec = cases(:approved_1)
+    program_rec = programs(:water_0)
     supplier_rec = partners(:supplier_3)
 
-    post(auth("/cases/#{case_rec.id}/referrals", as: user_rec), params: {
+    post(auth("/cases/#{case_rec.id}/referrals/#{program_rec.id}", as: user_rec), params: {
       case: {
         supplier_account: {
           supplier_id: supplier_rec.id
@@ -49,9 +96,10 @@ class CaseReferralsTests < ActionDispatch::IntegrationTest
   test "show errors when saving an invalid referral as a cohere user" do
     user_rec = users(:cohere_1)
     case_rec = cases(:approved_1)
+    program_rec = programs(:water_0)
     supplier_rec = partners(:supplier_3)
 
-    post(auth("/cases/#{case_rec.id}/referrals", as: user_rec), params: {
+    post(auth("/cases/#{case_rec.id}/referrals/#{program_rec.id}", as: user_rec), params: {
       case: {
         contact: {
           first_name: ""

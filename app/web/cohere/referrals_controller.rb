@@ -1,33 +1,50 @@
 module Cohere
   class ReferralsController < Cases::BaseController
     # -- actions --
-    def new
-      if policy.forbid?(:referral)
-        return deny_access
+    def select
+      permit!(:referral)
+      @case = view_repo.new_pending_referral(params[:case_id])
+    end
+
+    def start
+      permit!(:referral)
+
+      redirect_path = if params[:program_id].blank?
+        case_path(id: params[:case_id])
+      else
+        new_case_referrals_path(program_id: params[:program_id])
       end
+
+      redirect_to(redirect_path)
+    end
+
+    def new
+      permit!(:referral)
 
       referrer = case_repo
         .find_with_associations(params[:case_id])
 
-      # NEXT: choose referral by dropdown
+      program = program_repo
+        .find(params[:program_id])
+
       referral = referrer
-        .make_referral(referrer.program)
+        .make_referral(program)
 
       @form = view_repo.new_form(referral.referred)
       @case = @form.detail
     end
 
     def create
-      if policy.forbid?(:referral)
-        return deny_access
-      end
+      permit!(:referral)
 
       referrer = case_repo
         .find_with_associations(params[:case_id])
 
-      # NEXT: choose referral by dropdown
+      program = program_repo
+        .find(params[:program_id])
+
       referral = referrer.make_referral(
-        referrer.program,
+        program,
         supplier_id: params.dig(:case, :supplier_account, :supplier_id)
       )
 
@@ -44,6 +61,11 @@ module Cohere
         @case.detail_path(save_form.case.status),
         notice: "Created referral!"
       )
+    end
+
+    # -- queries --
+    private def program_repo
+      return Program::Repo.get
     end
   end
 end

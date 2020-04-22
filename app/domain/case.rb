@@ -287,7 +287,7 @@ class Case < ::Entity
 
   # -- queries/referral
   def can_make_referral?
-    approved? && !@referrer && !@referred
+    approved?
   end
 
   def referral_program

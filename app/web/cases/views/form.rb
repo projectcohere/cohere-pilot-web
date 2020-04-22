@@ -2,6 +2,8 @@ module Cases
   module Views
     # A Case form object for modifying any writeable information.
     class Form < ApplicationForm
+      alias :detail :model
+
       # -- fields --
       field(:action, :symbol)
 
@@ -15,19 +17,21 @@ module Cases
       subform(:admin, Cases::Forms::Admin)
 
       # -- queries --
-      alias :detail :model
-
       # -- queries/validation
       def valid?
-        status = @admin&.status || @model&.status
-
         scopes = []
+
+        status = @admin&.status || @model&.status
         if action == :submit || Case::Status.submitted?(status)
           scopes.push(:submitted)
         end
 
         if action == :complete || Case::Status.complete?(status)
           scopes.push(:completed)
+        end
+
+        if @model&.referred? == true && @model&.id == Id::None
+          scopes.push(:new_referral)
         end
 
         super(scopes)

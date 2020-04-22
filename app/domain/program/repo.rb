@@ -1,5 +1,23 @@
 class Program
   class Repo < ::Repo
+    include Service
+
+    # -- queries --
+    def find(id)
+      program_rec = Program::Record
+        .find(id)
+
+      return self.class.map_record(program_rec)
+    end
+
+    # -- queries/all
+    def find_all_available_by_recipient(recipient_id)
+      program_query = Program::Record
+        .with_no_case_for_recipient(recipient_id)
+
+      return program_query.map { |r| self.class.map_record(r) }
+    end
+
     # -- mapping --
     def self.map_record(r)
       return Program.new(

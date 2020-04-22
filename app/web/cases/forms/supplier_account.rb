@@ -22,29 +22,16 @@ module Cases
           return
         end
 
-        if @model.is_a?(Cases::Views::Detail)
-          assign_defaults!(attrs, {
-            supplier_id: @model.supplier_id,
-          })
+        assign_defaults!(attrs, {
+          supplier_id: @model.supplier_id,
+        })
 
-          a = @model.supplier_account
-          assign_defaults!(attrs, {
-            account_number: a&.number,
-            arrears: a&.arrears&.dollars&.to_s,
-            active_service: a&.active_service?,
-          })
-        else
-          assign_defaults!(attrs, {
-            supplier_id: @model.supplier_id,
-          })
-
-          a = @model.supplier_account
-          assign_defaults!(attrs, {
-            account_number: a&.number,
-            arrears: a&.arrears&.dollars&.to_s,
-            active_service: a&.active_service?,
-          })
-        end
+        a = @model.supplier_account
+        assign_defaults!(attrs, {
+          account_number: a&.number,
+          arrears: a&.arrears&.dollars&.to_s,
+          active_service: a&.active_service?,
+        })
       end
 
       # -- santization --
@@ -62,7 +49,7 @@ module Cases
       end
 
       private def is_account_required
-        return true
+        return validation_context&.include?(:new_referral) != true
       end
 
       # -- queries/transformation

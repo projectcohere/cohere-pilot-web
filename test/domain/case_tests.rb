@@ -398,14 +398,11 @@ class CaseTests < ActiveSupport::TestCase
   end
 
   # -- queries/referral
-  test "can make a referral when approved and no referral has been issued" do
+  test "can make a referral when approved" do
     kase = Case.stub(status: Case::Status::Approved)
     assert(kase.can_make_referral?)
 
     kase = Case.stub
-    assert_not(kase.can_make_referral?)
-
-    kase = Case.stub(status: Case::Status::Approved, referrer: true)
     assert_not(kase.can_make_referral?)
   end
 end

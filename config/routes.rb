@@ -127,6 +127,7 @@ Rails.application.routes.draw do
   end
 
   signed_in(role: :cohere) do |c|
+    # -- cases --
     resources(:cases, only: %i[
       edit
       update
@@ -145,19 +146,42 @@ Rails.application.routes.draw do
         constraints: merge(c, query(scope: /^(assigned|queued)?$/)),
       )
 
+      # -- cases/assignments
       resources(:assignments, only: %i[
         create
       ]) do
         delete("/:partner_id", on: :collection, action: :destroy, as: :destroy)
       end
 
-      resources(:referrals, only: %i[
-        new
-        create
-      ])
+      # -- cases/referrals
+      resources(:referrals, only: []) do
+        get("/select",
+          on: :collection,
+          action: :select,
+          as: :select,
+        )
+
+        get("/start",
+          on: :collection,
+          action: :start,
+          as: :start,
+        )
+
+        get("/:program_id/new",
+          on: :collection,
+          action: :new,
+          as: :new,
+        )
+
+        post("/:program_id",
+          on: :collection,
+          action: :create,
+          as: "",
+        )
+      end
     end
 
-    # chats
+    # -- chats --
     resources(:chats, only: []) do
       post("/files",
         action: :files,
@@ -165,7 +189,7 @@ Rails.application.routes.draw do
       )
     end
 
-    # fallback
+    # -- fallback --
     fallback(:cohere, to: "/cases/queue", constraints: c)
   end
 

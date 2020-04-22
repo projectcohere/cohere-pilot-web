@@ -7,11 +7,23 @@ module Cases
       include Authorization
 
       # -- lifetime --
-      def initialize(scope)
+      def initialize(scope, program_repo: Program::Repo.get)
         @scope = scope
+        @program_repo = program_repo
       end
 
       # -- queries --
+      # -- queries/pending
+      def new_pending_referral(id)
+        case_rec = make_query(detail: true)
+          .find(id)
+
+        programs = @program_repo
+          .find_all_available_by_recipient(case_rec.recipient_id)
+
+        return self.class.map_pending(case_rec, programs)
+      end
+
       # -- queries/detail
       def find_detail(id)
         case_rec = make_query(detail: true)
@@ -142,6 +154,16 @@ module Cases
       end
 
       # -- mapping --
+      # -- mapping/pending
+      def self.map_pending(r, programs)
+        return Pending.new(
+          id: Id.new(r.id),
+          recipient_id: r.recipient_id,
+          recipient_name: Recipient::Repo.map_name(r.recipient),
+          programs: programs,
+        )
+      end
+
       # -- mapping/detail
       def self.map_detail(entity_or_record)
         if entity_or_record.is_a?(Case)

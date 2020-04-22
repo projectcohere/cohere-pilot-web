@@ -106,19 +106,7 @@ module Cases
 
       # -- queries/referral
       def can_make_referral?
-        return Case::Status.complete?(@status) && !@referral && !@referrer
-      end
-
-      def referral_label
-        return "Make Referral to #{referral_program.to_s.upcase}"
-      end
-
-      def referral_path
-        return urls.new_case_referral_path(@id)
-      end
-
-      def referral_program
-        return @program.referral_program
+        return Case::Status.approved?(@status)
       end
 
       # -- queries/chat

@@ -41,6 +41,14 @@ module Cases
         return urls.case_complete_path(@id, complete_action: :deny)
       end
 
+      def select_referral_path
+        return urls.select_case_referrals_path(@id)
+      end
+
+      def start_referral_path
+        return urls.start_case_referrals_path(@id)
+      end
+
       def urls
         return Rails.application.routes.url_helpers
       end

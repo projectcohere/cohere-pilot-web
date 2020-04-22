@@ -18,13 +18,11 @@ module Db
     test "tests if a chat exists for a recipient" do
       chat_repo = Chat::Repo.new
 
-      chat_recipient_rec = chats(:idle_1).recipient
-      chat_exists = chat_repo.any_by_recipient?(chat_recipient_rec.id)
-      assert(chat_exists)
+      recipient_rec = chats(:idle_1).recipient
+      assert(chat_repo.any_by_recipient?(recipient_rec.id))
 
-      chat_recipient_rec = recipients(:recipient_3)
-      chat_exists = chat_repo.any_by_recipient?(chat_recipient_rec.id)
-      assert_not(chat_exists)
+      recipient_rec = recipients(:recipient_4)
+      assert_not(chat_repo.any_by_recipient?(recipient_rec.id))
     end
 
     test "finds a chat by recipient with messages" do
@@ -60,7 +58,7 @@ module Db
 
     # -- commands --
     test "saves an opened chat" do
-      recipient_rec = recipients(:recipient_3)
+      recipient_rec = recipients(:recipient_4)
       chat_recipient = Chat::Repo.map_recipient(recipient_rec)
       chat = Chat.open(chat_recipient)
       chat_repo = Chat::Repo.new
