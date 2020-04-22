@@ -22,6 +22,8 @@ class CaseReferralsTests < ActionDispatch::IntegrationTest
   end
 
   test "save a referral as a cohere user" do
+    skip
+
     user_rec = users(:cohere_1)
     case_rec = cases(:approved_1)
     supplier_rec = partners(:supplier_3)
