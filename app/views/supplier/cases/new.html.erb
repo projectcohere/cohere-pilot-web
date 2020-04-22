@@ -7,8 +7,8 @@
     </h1>
   </header>
 
-  <div class="CaseDetail">
-    <%- form_class = "CaseForm CaseDetail-case Panel" %>
+  <div class="CaseDetail CaseDetail--edit">
+    <%- form_class = "CaseDetail-case" %>
     <%= form_for(@form, url: cases_path, html: { class: form_class }) do |f| %>
       <%- form_locals = { f: f, form: @form, policy: policy } %>
 

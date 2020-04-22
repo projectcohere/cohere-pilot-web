@@ -17,6 +17,10 @@ module Cases
         return urls.edit_case_path(@id)
       end
 
+      def update_path
+        return urls.case_path(@id)
+      end
+
       def delete_path
         return urls.case_path(@id)
       end

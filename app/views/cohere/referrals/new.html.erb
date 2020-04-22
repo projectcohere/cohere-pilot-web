@@ -16,8 +16,8 @@
     </div>
   </header>
 
-  <div class="CaseDetail">
-    <%- form_class = "CaseForm CaseDetail-case Panel" %>
+  <div class="CaseDetail CaseDetail--edit">
+    <%- form_class = "CaseDetail-case" %>
     <%= form_for(@form, url: case_referrals_path, html: { class: form_class }) do |f| %>
       <% form_locals = { f: f, form: @form, view: @case, policy: policy } %>
 

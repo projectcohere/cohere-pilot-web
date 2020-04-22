@@ -3,7 +3,7 @@
     <div class="SignIn-left">
       <%= image_tag("logo-large-full.svg", height: 67, class: "SignIn-logo", alt: "Cohere Logo") %>
 
-      <%= form_for(:session, url: sessions_path, html: { class: "SignIn-form Panel--empty Panel" }) do |f| %>
+      <%= form_for(:session, url: sessions_path, html: { class: "SignIn-form Panel" }) do |f| %>
         <%= section_tag(class: "SignIn-credentials") do %>
           <%= f.field(:email, t("users.email.label"), class: "SignIn-email") do %>
             <% f.text_field(:email, type: "email", placeholder: t("users.email.placeholder")) %>

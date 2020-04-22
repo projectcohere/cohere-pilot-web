@@ -20,7 +20,7 @@ class ApplicationFormBuilder < ::ActionView::Helpers::FormBuilder
       "is-disabled" => disabled
     )
 
-    @template.field_tag(name, *args, errors: errors, class: field_class, **kwargs) do
+    @template.field_tag(name, title, *args, errors: errors, class: field_class, **kwargs) do
       if prefix.nil?
         field_content
       else

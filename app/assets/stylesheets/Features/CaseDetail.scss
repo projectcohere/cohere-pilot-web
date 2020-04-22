@@ -7,7 +7,6 @@
   }
 
   &-case {
-    @extend .u-panel-cozy;
     flex: 1;
     max-width: $width1;
   }
@@ -16,5 +15,18 @@
     align-self: flex-start;
     display: flex;
     flex-direction: column;
+  }
+
+  // -- variants --
+  &--edit &-case {
+    @extend .u-panel-cozy;
+    @extend .CaseForm;
+    @extend .Panel;
+  }
+
+  &--view &-case {
+    @extend .u-panel-cozy;
+    @extend .Panel;
+    @extend .Panel--read;
   }
 }

@@ -21,6 +21,10 @@
   height: $height3;
 }
 
+.ButtonBase {
+  @extend %button;
+}
+
 .Button--action {
   color: $white;
   background-color: $brand-primary;

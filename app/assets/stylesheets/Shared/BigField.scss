@@ -1,0 +1,23 @@
+.BigField {
+  @extend .u-panel;
+
+  display: flex;
+  height: $height0;
+  margin-top: $spacing5;
+  background-color: $white;
+  overflow: hidden;
+
+  &-input {
+    @extend .u-name;
+
+    flex: 1;
+    padding: 0 $spacing3;
+  }
+
+  &-action {
+    @extend .ButtonBase;
+    @extend .Button--action;
+
+    height: 100%;
+  }
+}
