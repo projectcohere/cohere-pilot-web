@@ -24,6 +24,56 @@ en:
       rules:
         - at least 12 characters
         - at least one letter, number, and symbol
+  cases: &cases
+    detail: &case-detail
+      title: "%{name}'s case"
+    show:
+      <<: *case-detail
+      actions:
+        back: "Back to Cases"
+        edit: "Edit Case"
+        referral: "Select Referral"
+      details:
+        title: "Details"
+        status: "Status"
+        program: "Program"
+        enroller: "Enroller"
+      contact:
+        title: "Contact"
+        phone-number: "Phone #"
+        address: "Primary Residential Address"
+      supplier-account:
+        title: "Utility Account"
+        supplier: "Supplier"
+        number: "Account #"
+        arrears: "Arrears"
+        active-service: "Active?"
+      dhs:
+        title: "MDHHS"
+        number: "Case #"
+      household:
+        title: "Household"
+        size: "Size"
+        income: "Monthly Income"
+        ownership: "Rent or Own?"
+        primary-residence: "Primary Residence?"
+        fpl: "FPL Percent"
+  referrals: &referrals
+    select:
+      <<: *case-detail
+      actions:
+        back: "Back to Case Details"
+        submit: "Start Referral"
+      program:
+        title: "Select a Program"
+        subtitle: "Please pick one of these available programs to start a new referral application."
+        placeholder: "Select a Program"
+  cohere:
+    cases:
+      <<: *cases
+    referrals:
+      <<: *referrals
+
   # imagine this nested in users. clearance actions & root templates don't
   # respect standard pathing:
   # https://github.com/thoughtbot/clearance/pull/743
