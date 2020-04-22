@@ -2,9 +2,7 @@ module Cohere
   class CasesController < Cases::BaseController
     # -- actions --
     def index
-      if policy.forbid?(:list)
-        return deny_access
-      end
+      permit!(:list)
 
       @scope = Cases::Scope.from_key(params[:scope]) || Cases::Scope::All
       @page, @cases = view_repo.find_all_for_search(
@@ -14,9 +12,7 @@ module Cohere
     end
 
     def queue
-      if policy.forbid?(:list_queue)
-        return deny_access
-      end
+      permit!(:list_queue)
 
       @scope = Cases::Scope.from_key(params[:scope]) || Cases::Scope::Assigned
       @page, @cases = case @scope
@@ -28,26 +24,20 @@ module Cohere
     end
 
     def show
-      if policy.forbid?(:view)
-        return deny_access
-      end
+      permit!(:view)
 
       @case = view_repo.find_detail(params[:id])
     end
 
     def edit
-      if policy.forbid?(:edit)
-        return deny_access
-      end
+      permit!(:edit)
 
       @form = view_repo.edit_form(params[:id])
       @case = @form.detail
     end
 
     def update
-      if policy.forbid?(:edit)
-        return deny_access
-      end
+      permit!(:edit)
 
       @form = view_repo.edit_form(params[:id], params: params)
       @case = @form.detail
@@ -65,21 +55,15 @@ module Cohere
     end
 
     def destroy
-      @case = case_repo.find(params[:id])
-      if policy.forbid?(:destroy)
-        return deny_access
-      end
+      permit!(:destroy)
 
+      @case = case_repo.find(params[:id])
       case_repo.save_destroyed(@case)
+
       redirect_to(
         cases_path,
         notice: "Destroyed #{@case.recipient.profile.name}'s case."
       )
-    end
-
-    # -- helpers --
-    private def chat_repo
-      return Chat::Repo.get
     end
   end
 end
