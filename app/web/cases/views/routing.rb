@@ -46,7 +46,7 @@ module Cases
       end
 
       def start_referral_path
-        return urls.start_case_referrals_path(@id)
+        return urls.new_case_referral_path(@id)
       end
 
       def urls

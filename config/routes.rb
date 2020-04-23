@@ -154,29 +154,14 @@ Rails.application.routes.draw do
       end
 
       # -- cases/referrals
-      resources(:referrals, only: []) do
+      resources(:referrals, only: %i[
+        new
+        create
+      ]) do
         get("/select",
           on: :collection,
           action: :select,
           as: :select,
-        )
-
-        get("/start",
-          on: :collection,
-          action: :start,
-          as: :start,
-        )
-
-        get("/:program_id/new",
-          on: :collection,
-          action: :new,
-          as: :new,
-        )
-
-        post("/:program_id",
-          on: :collection,
-          action: :create,
-          as: "",
         )
       end
     end

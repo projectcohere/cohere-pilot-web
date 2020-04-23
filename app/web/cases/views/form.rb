@@ -6,6 +6,7 @@ module Cases
 
       # -- fields --
       field(:action, :symbol)
+      field(:program_id, :integer)
 
       # -- subforms --
       subform(:details, Cases::Forms::Details)
@@ -15,6 +16,11 @@ module Cases
       subform(:supplier_account, Cases::Forms::SupplierAccount)
       subform(:documents, Cases::Forms::Documents)
       subform(:admin, Cases::Forms::Admin)
+
+      # -- lifetime --
+      protected def initialize_attrs(attrs)
+        attrs[:program_id] = @model&.program&.id
+      end
 
       # -- queries --
       # -- queries/validation

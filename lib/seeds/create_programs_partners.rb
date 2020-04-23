@@ -9,7 +9,7 @@ meap = Program::Record.create!(
   ]
 )
 
-wrap = Progarm::Record.create!(
+wrap = Program::Record.create!(
   name: "WRAP",
   contracts: %i[
     wrap_3h

@@ -9,17 +9,16 @@ module Cohere
     def start
       permit!(:referral)
 
-      redirect_path = if params[:program_id].blank?
-        case_path(id: params[:case_id])
-      else
-        new_case_referrals_path(program_id: params[:program_id])
-      end
 
       redirect_to(redirect_path)
     end
 
     def new
       permit!(:referral)
+
+      if params[:program_id].blank?
+        return redirect_to(case_path(id: params[:case_id]))
+      end
 
       referrer = case_repo
         .find_with_associations(params[:case_id])
@@ -41,7 +40,7 @@ module Cohere
         .find_with_associations(params[:case_id])
 
       program = program_repo
-        .find(params[:program_id])
+        .find(params.dig(:case, :program_id))
 
       referral = referrer.make_referral(
         program,

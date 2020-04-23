@@ -22,14 +22,14 @@ class CaseReferralsTests < ActionDispatch::IntegrationTest
   end
 
   test "can't start a referral if signed-out" do
-    get("/cases/3/referrals/select")
+    get("/cases/3/referrals/new?program_id=6")
     assert_redirected_to("/sign-in")
   end
 
   test "can't start a referral without permission" do
     user_rec = users(:supplier_1)
 
-    get(auth("/cases/4/referrals/select", as: user_rec))
+    get(auth("/cases/4/referrals/new?program_id=6", as: user_rec))
     assert_redirected_to("/cases")
   end
 
@@ -37,35 +37,16 @@ class CaseReferralsTests < ActionDispatch::IntegrationTest
     user_rec = users(:cohere_1)
     case_rec = cases(:approved_2)
 
-    get(auth("/cases/#{case_rec.id}/referrals/start?program_id=", as: user_rec))
+    get(auth("/cases/#{case_rec.id}/referrals/new?program_id=", as: user_rec))
     assert_redirected_to("/cases/#{case_rec.id}")
   end
 
-  test "start a referral" do
-    user_rec = users(:cohere_1)
-
-    get(auth("/cases/4/referrals/start?program_id=6", as: user_rec))
-    assert_redirected_to("/cases/4/referrals/6/new")
-  end
-
-  test "can't make a referral if signed-out" do
-    get("/cases/3/referrals/6/new")
-    assert_redirected_to("/sign-in")
-  end
-
-  test "can't make a referral without permission" do
-    user_rec = users(:supplier_1)
-
-    get(auth("/cases/4/referrals/6/new", as: user_rec))
-    assert_redirected_to("/cases")
-  end
-
-  test "make a referral as a cohere user" do
+  test "start a referral as a cohere user" do
     user_rec = users(:cohere_1)
     case_rec = cases(:approved_2)
     program_rec = programs(:water_0)
 
-    get(auth("/cases/#{case_rec.id}/referrals/#{program_rec.id}/new", as: user_rec))
+    get(auth("/cases/#{case_rec.id}/referrals/new?program_id=#{program_rec.id}", as: user_rec))
     assert_response(:success)
   end
 
@@ -75,8 +56,9 @@ class CaseReferralsTests < ActionDispatch::IntegrationTest
     program_rec = programs(:water_0)
     supplier_rec = partners(:supplier_3)
 
-    post(auth("/cases/#{case_rec.id}/referrals/#{program_rec.id}", as: user_rec), params: {
+    post(auth("/cases/#{case_rec.id}/referrals", as: user_rec), params: {
       case: {
+        program_id: program_rec.id,
         supplier_account: {
           supplier_id: supplier_rec.id
         }
@@ -99,8 +81,9 @@ class CaseReferralsTests < ActionDispatch::IntegrationTest
     program_rec = programs(:water_0)
     supplier_rec = partners(:supplier_3)
 
-    post(auth("/cases/#{case_rec.id}/referrals/#{program_rec.id}", as: user_rec), params: {
+    post(auth("/cases/#{case_rec.id}/referrals", as: user_rec), params: {
       case: {
+        program_id: program_rec.id,
         contact: {
           first_name: ""
         },
