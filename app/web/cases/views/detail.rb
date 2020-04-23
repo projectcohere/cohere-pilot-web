@@ -69,27 +69,27 @@ module Cases
 
       # -- queries/household
       def household_dhs_number
-        return @household&.dhs_number || "Unknown"
+        return @recipient_household&.dhs_number || "Unknown"
       end
 
       def household_size
-        return @household&.size || "Unknown"
+        return @recipient_household&.size || "Unknown"
       end
 
       def household_income
-        return @household&.income&.dollars&.then { |f| "$#{f}" } || "Unknown"
+        return @recipient_household&.income&.dollars&.then { |f| "$#{f}" } || "Unknown"
       end
 
       def household_ownership
-        return @household&.ownership&.to_s&.titlecase
+        return @recipient_household&.ownership&.to_s&.titlecase
       end
 
       def household_primary_residence?
-        return @household&.primary_residence?
+        return @recipient_household&.primary_residence?
       end
 
       def household_fpl_percent
-        return @household&.fpl_percent&.then { |f| "#{f}%" }
+        return @recipient_household&.fpl_percent&.then { |f| "#{f}%" }
       end
 
       # -- queries/submit
