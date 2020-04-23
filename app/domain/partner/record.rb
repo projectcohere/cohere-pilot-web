@@ -1,10 +1,8 @@
 class Partner
-  class Record < ::ApplicationRecord
-    set_table_name!
-
+  class Record < ApplicationRecord
     # -- associations --
-    has_many(:users, class_name: "User::Record", foreign_key: "partner_id")
-    has_and_belongs_to_many(:programs, class_name: "Program::Record", foreign_key: "partner_id", association_foreign_key: "program_id")
+    has_many(:users)
+    has_and_belongs_to_many(:programs)
 
     # -- membership class --
     enum(membership: Membership.keys)

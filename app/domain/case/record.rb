@@ -1,20 +1,18 @@
 class Case
-  class Record < ::ApplicationRecord
-    set_table_name!
-
+  class Record < ApplicationRecord
     # -- associations --
-    belongs_to(:program, class_name: "::Program::Record")
-    belongs_to(:recipient, class_name: "::Recipient::Record")
-    belongs_to(:enroller, class_name: "::Partner::Record")
-    belongs_to(:supplier, class_name: "::Partner::Record")
+    belongs_to(:program)
+    belongs_to(:recipient)
+    belongs_to(:enroller, record: :partner)
+    belongs_to(:supplier, record: :partner)
 
     # -- associations/children
-    has_many(:documents, foreign_key: "case_id", class_name: "::Document::Record", dependent: :destroy)
-    has_many(:assignments, foreign_key: "case_id", class_name: "::Case::Assignment::Record", dependent: :destroy)
+    has_many(:documents, dependent: :destroy)
+    has_many(:assignments, child: true, dependent: :destroy)
 
     # -- associations/referrals
-    has_one(:referred, class_name: "::Case::Record", foreign_key: "referrer_id")
-    belongs_to(:referrer, class_name: "::Case::Record", optional: true)
+    has_one(:referred, record: :case, foreign_key: "referrer_id")
+    belongs_to(:referrer, record: :case, optional: true)
 
     # -- status --
     enum(status: Status.all)

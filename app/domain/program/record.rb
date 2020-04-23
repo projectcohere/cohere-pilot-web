@@ -1,10 +1,8 @@
 class Program
   class Record < ApplicationRecord
-    set_table_name!
-
     # -- associations --
-    has_and_belongs_to_many(:partners, class_name: "Partner::Record", foreign_key: "program_id", association_foreign_key: "partner_id")
-    has_many(:cases, class_name: "Case::Record", foreign_key: "program_id")
+    has_many(:cases)
+    has_and_belongs_to_many(:partners)
 
     # -- scopes --
     def self.with_no_case_for_recipient(recipient_id)

@@ -1,13 +1,9 @@
 class User
-  class Record < ::ApplicationRecord
+  class Record < ApplicationRecord
     include Clearance::User
 
-    # -- config --
-    set_table_name!
-
     # -- associations --
-    belongs_to(:partner, class_name: "::Partner::Record")
-    belongs_to(:organization, polymorphic: true, optional: true)
+    belongs_to(:partner)
 
     # -- validations --
     validate(:check_password_requirements, unless: :skip_password_validation?)
