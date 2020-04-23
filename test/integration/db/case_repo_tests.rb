@@ -135,6 +135,7 @@ module Db
 
       user_rec = users(:supplier_2)
       supplier_rec = user_rec.partner
+      program_rec = supplier_rec.programs.first
       enroller_rec = partners(:enroller_1)
 
       recipient_profile = Recipient::Profile.stub(
@@ -162,6 +163,7 @@ module Db
         recipient_profile: recipient_profile,
         enroller: Partner::Repo.map_record(enroller_rec),
         supplier: Partner::Repo.map_record(supplier_rec),
+        supplier_program: Program::Repo.map_record(program_rec),
         supplier_account: supplier_account,
       )
 
@@ -194,6 +196,11 @@ module Db
     test "saves an opened case for an existing recipient" do
       case_repo = Case::Repo.new
 
+      user_rec = users(:supplier_1)
+      enroller_rec = partners(:enroller_1)
+      supplier_rec = user_rec.partner
+      program_rec = supplier_rec.programs.first
+
       recipient_profile = Recipient::Profile.new(
         phone: Phone.new(
           number: "1112223333"
@@ -215,12 +222,12 @@ module Db
         arrears: Money.cents(1000_00),
       )
 
-      user_rec = users(:supplier_1)
 
       kase = Case.open(
         recipient_profile: recipient_profile,
-        enroller: Partner::Repo.map_record(partners(:enroller_1)),
-        supplier: Partner::Repo.map_record(user_rec.partner),
+        enroller: Partner::Repo.map_record(enroller_rec),
+        supplier: Partner::Repo.map_record(supplier_rec),
+        supplier_program: Program::Repo.map_record(program_rec),
         supplier_account: supplier_account,
       )
 

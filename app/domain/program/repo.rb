@@ -11,6 +11,13 @@ class Program
     end
 
     # -- queries/all
+    def find_all_by_partner(partner_id)
+      program_query = Program::Record
+        .for_partner(partner_id)
+
+      return program_query.map { |r| self.class.map_record(r) }
+    end
+
     def find_all_available_by_recipient(recipient_id)
       program_query = Program::Record
         .with_no_case_for_recipient(recipient_id)

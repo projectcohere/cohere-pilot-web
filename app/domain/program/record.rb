@@ -5,6 +5,14 @@ class Program
     has_and_belongs_to_many(:partners)
 
     # -- scopes --
+    def self.for_partner(partner_id)
+      query = self
+        .includes(:partners)
+        .where(partners: { id: partner_id })
+
+      return query
+    end
+
     def self.with_no_case_for_recipient(recipient_id)
       query = <<~SQL
         SELECT 1

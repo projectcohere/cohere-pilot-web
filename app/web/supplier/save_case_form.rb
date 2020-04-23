@@ -20,11 +20,21 @@ module Supplier
         return false
       end
 
+      supplier = @partner_repo.find(user_partner_id)
+
+      # validate program
+      supplier_program = supplier.find_program(form.program_id)
+      if supplier_program == nil
+        form.errors.add(:program_id, "This is not one of the your programs.")
+        return false
+      end
+
       # open a new case for the recipient
       @case = Case.open(
         recipient_profile: form.map_to_recipient_profile,
         enroller: @partner_repo.find_default_enroller,
-        supplier: @partner_repo.find_current_supplier,
+        supplier: supplier,
+        supplier_program: supplier_program,
         supplier_account: form.map_to_supplier_account,
       )
 

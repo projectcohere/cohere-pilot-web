@@ -5,6 +5,10 @@ module Cases
         return urls.cases_path
       end
 
+      def new_path
+        return urls.new_case_path
+      end
+
       def detail_path(status = nil)
         return Case::Status.complete?(status || @status) ? show_path : edit_path
       end

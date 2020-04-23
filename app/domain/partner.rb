@@ -6,7 +6,7 @@ class Partner < ::Entity
   prop(:programs)
 
   # -- queries --
-  def primary_program
-    return programs.first
+  def find_program(program_id)
+    return @programs.find { |p| p.id == program_id }
   end
 end

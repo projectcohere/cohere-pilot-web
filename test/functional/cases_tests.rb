@@ -138,10 +138,43 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   # -- create --
+  test "can't select a case program if signed-out" do
+    get("/cases/select")
+    assert_redirected_to("/sign-in")
+  end
+
+  test "can't select a case program without permission" do
+    user_rec = users(:enroller_1)
+
+    get(auth("/cases/select", as: user_rec))
+    assert_redirected_to("/cases/queue")
+  end
+
+  test "select a case program" do
+    user_rec = users(:supplier_1)
+    case_rec = cases(:approved_2)
+
+    get(auth("/cases/select", as: user_rec))
+    assert_response(:success)
+  end
+
+  test "can't view prompt to open a case if signed-out" do
+    get("/cases/new?program_id=3")
+    assert_redirected_to("/sign-in")
+  end
+
+  test "can't view prompt to open a case without permission" do
+    user_rec = users(:cohere_1)
+
+    get(auth("/cases/new?program_id=3", as: user_rec))
+    assert_redirected_to("/cases/queue")
+  end
+
   test "views prompt to open a case as a supplier" do
     user_rec = users(:supplier_1)
+    program_rec = user_rec.partner.programs.first
 
-    get(auth("/cases/new", as: user_rec))
+    get(auth("/cases/new?program_id=#{program_rec.id}", as: user_rec))
     assert_response(:success)
     assert_select(".PageHeader-title", text: /Add a Case/)
 
@@ -150,22 +183,12 @@ class CasesTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "can't view prompt to open a case if signed-out" do
-    get("/cases/new")
-    assert_redirected_to("/sign-in")
-  end
-
-  test "can't view prompt to open a case without permission" do
-    skip
-    user_rec = users(:cohere_1)
-
-    get(auth("/cases/new", as: user_rec))
-    assert_redirected_to("/cases")
-  end
-
   test "opens a case as a supplier" do
     user_rec = users(:supplier_1)
+    program_rec = user_rec.partner.programs.first
+
     case_params = {
+      program_id: program_rec.id,
       contact: {
         first_name: "Janice",
         last_name: "Sample",

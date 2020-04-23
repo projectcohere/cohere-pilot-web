@@ -10,12 +10,13 @@ class CaseTests < ActiveSupport::TestCase
     kase = Case.open(
       recipient_profile: profile,
       enroller: Partner.stub(id: 1),
-      supplier: Partner.stub(id: 2, programs: [Program.stub(id: 3)]),
+      supplier: Partner.stub(id: 2),
+      supplier_program: :test_program,
       supplier_account: :test_account,
     )
 
     assert(kase.new_activity?)
-    assert_equal(kase.program.id, 3)
+    assert_equal(kase.program, :test_program)
     assert_equal(kase.recipient.profile, profile)
     assert_equal(kase.supplier_account, :test_account)
     assert_equal(kase.enroller_id, 1)

@@ -1,0 +1,30 @@
+<main class="PendingCase Page">
+  <header class="PageHeader">
+    <%= link_to(t(".actions.back"), :back, class: "PageHeader-back") %>
+
+    <h1 class="PageHeader-title">
+      <%= t(".title", name: @case.recipient_name) %>
+    </h1>
+  </header>
+
+  <div class="CaseDetail">
+    <div class="CaseDetail-case">
+      <%= tag.p(t(".program.title"), class: "PendingCase-title") %>
+      <%= tag.p(t(".program.subtitle"), class: "PendingCase-subtitle") %>
+
+      <%= form_tag(@case.new_path, method: :get, class: "PendingCase-field BigField") do %>
+        <div class="BigField-input Select">
+          <%=
+            select_tag(
+              :program_id,
+              options_for_select(@case.program_options),
+              include_blank: t(".program.placeholder")
+            )
+          %>
+        </div>
+
+        <%= submit_tag(t(".actions.submit"), class: "BigField-action") %>
+      <%- end %>
+    </div>
+  </div>
+</main>

@@ -36,15 +36,6 @@ class Partner
       end
     end
 
-    def find_current_supplier
-      current_user = @user_repo.find_current
-      if not current_user.role.membership.supplier?
-        return nil
-      end
-
-      return find(current_user.role.partner_id)
-    end
-
     def find_default_enroller
       return find_cached(:default_enroller) do
         record = Partner::Record

@@ -54,17 +54,23 @@ Rails.application.routes.draw do
   end
 
   signed_in(role: :supplier) do |c|
-    resources(:cases, only: %i[
+    resources(:cases, id: /\d+/, only: %i[
       index
       new
       create
-    ])
+    ]) do
+      get("/select",
+        on: :collection,
+        action: :select,
+        as: :select,
+      )
+    end
 
     fallback(:supplier, to: "/cases", constraints: c)
   end
 
   signed_in(role: :governor) do |c|
-    resources(:cases, only: %i[
+    resources(:cases, id: /\d+/, only: %i[
       edit
       update
     ]) do
@@ -93,7 +99,7 @@ Rails.application.routes.draw do
   end
 
   signed_in(role: :enroller) do |c|
-    resources(:cases, only: %i[
+    resources(:cases, id: /\d+/, only: %i[
       show
     ]) do
       get("/",
@@ -128,7 +134,7 @@ Rails.application.routes.draw do
 
   signed_in(role: :cohere) do |c|
     # -- cases --
-    resources(:cases, only: %i[
+    resources(:cases, id: /\d+/, only: %i[
       edit
       update
       show

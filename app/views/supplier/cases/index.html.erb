@@ -1,19 +1,21 @@
 <main class="Page">
   <header class="PageHeader">
     <h1 class="PageHeader-title">
-      <%= @scope.name %> Cases
+      <%= t(".title", name: @scope.name) %>
     </h1>
 
     <div class="PageHeader-actions">
-      <%= link_to("Add a Case", new_case_path, class: "Button Button--action") %>
+      <%=
+        link_to(t(".actions.new"), select_cases_path,
+          class: "Button Button--action"
+        )
+      %>
     </div>
   </header>
 
   <ul class="CaseList">
     <% if @cases.blank? %>
-      <h2 class="CaseList-fallback">
-        No cases added.
-      </h2>
+      <%= tag.h2(t(".list.fallback"), class: "CaseList-fallback") %>
     <% else %>
       <%= render(partial: "supplier/cases/cell", collection: @cases) %>
     <% end %>

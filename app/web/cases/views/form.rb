@@ -19,7 +19,7 @@ module Cases
 
       # -- lifetime --
       protected def initialize_attrs(attrs)
-        attrs[:program_id] = @model&.program&.id
+        attrs[:program_id] ||= @model&.program&.id
       end
 
       # -- queries --

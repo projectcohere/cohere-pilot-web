@@ -78,7 +78,7 @@ en:
 
       program:
         title: "Start a New Referral"
-        subtitle: "Please pick one of these available programs to start a new referral application."
+        subtitle: "Please pick one of these programs to start a new referral application."
         placeholder: "Select a Program"
 
   cohere:
@@ -86,6 +86,27 @@ en:
       <<: *cases
     referrals:
       <<: *referrals
+
+  supplier:
+    cases:
+      index:
+        title: "%{name} Cases"
+        actions:
+          new: "Start a Case"
+        list:
+          fallback: "No cases added."
+
+      select:
+        title: "New Case"
+        actions:
+          back: "Back to Cases"
+          submit: "Start Case"
+
+        program:
+          title: "Start a New Case"
+          subtitle: "Please pick one of these programs to start a new application."
+          placeholder: "Select a Program"
+
 
   # imagine this nested in users. clearance actions & root templates don't
   # respect standard pathing:

@@ -14,6 +14,13 @@ module Cases
 
       # -- queries --
       # -- queries/pending
+      def new_pending(partner_id)
+        programs = @program_repo
+          .find_all_by_partner(partner_id)
+
+        return self.class.map_pending(nil, programs)
+      end
+
       def new_pending_referral(id)
         case_rec = make_query(detail: true)
           .find(id)
@@ -157,9 +164,9 @@ module Cases
       # -- mapping/pending
       def self.map_pending(r, programs)
         return Pending.new(
-          id: Id.new(r.id),
-          recipient_id: r.recipient_id,
-          recipient_name: Recipient::Repo.map_name(r.recipient),
+          id: r != nil ? Id.new(r.id) : Id::None,
+          recipient_id: r&.recipient_id,
+          recipient_name: r&.recipient&.then { |r| Recipient::Repo.map_name(r) },
           programs: programs,
         )
       end

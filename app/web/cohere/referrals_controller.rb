@@ -6,13 +6,6 @@ module Cohere
       @case = view_repo.new_pending_referral(params[:case_id])
     end
 
-    def start
-      permit!(:referral)
-
-
-      redirect_to(redirect_path)
-    end
-
     def new
       permit!(:referral)
 
