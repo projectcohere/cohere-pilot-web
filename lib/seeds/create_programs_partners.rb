@@ -4,12 +4,26 @@ M = Partner::Membership
 # -- partners --
 meap = Program::Record.create!(
   name: "MEAP",
-  contracts: %i[meap]
+  contracts: %i[
+    meap
+  ]
 )
 
 wrap = Progarm::Record.create!(
   name: "WRAP",
-  contracts: %i[wrap_3h wrap_1k]
+  contracts: %i[
+    wrap_3h
+    wrap_1k
+  ],
+  requirements: {
+    supplier_account: %i[
+      active_service
+    ],
+    household: %i[
+      ownership
+      primary_residence
+    ],
+  }
 )
 
 # -- partners --
