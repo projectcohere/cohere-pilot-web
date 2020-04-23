@@ -39,7 +39,7 @@ class Partner
     def find_default_enroller
       return find_cached(:default_enroller) do
         record = Partner::Record
-          .find_by!(membership: Membership::Enroller.key)
+          .find_by!(membership: Partner::Membership::Enroller.key)
 
         entity_from(record)
       end
@@ -75,7 +75,7 @@ class Partner
       return Partner.new(
         id: r.id,
         name: r.name,
-        membership: Membership.from_key(r.membership),
+        membership: Partner::Membership.from_key(r.membership),
         programs: r.programs.map { |r| Program::Repo.map_record(r) },
       )
     end
