@@ -107,7 +107,6 @@ en:
           subtitle: "Please pick one of these programs to start a new application."
           placeholder: "Select a Program"
 
-
   # imagine this nested in users. clearance actions & root templates don't
   # respect standard pathing:
   # https://github.com/thoughtbot/clearance/pull/743

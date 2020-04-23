@@ -17,7 +17,7 @@
 
           <% if assignment.partner_membership != Partner::Membership::Supplier %>
             <%=
-              link_to("Unassign", destroy_case_assignments_path(form.model, assignment.partner_id),
+              link_to("Unassign", destroy_case_assignments_path(view.id, assignment.partner_id),
                 method: :delete,
                 class: "CaseFormAssignments-unassign Link--destructive",
                 data: {
