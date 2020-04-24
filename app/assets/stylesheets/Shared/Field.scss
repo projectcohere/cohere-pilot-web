@@ -119,10 +119,7 @@
 
   &--checkbox input[type="checkbox"] {
     @extend .Checkbox;
-
-    appearance: none;
-    -moz-appearance: none;
-    -webkit-appearance: none;
+    @include prefix(moz webkit, (appearance: none));
 
     &:checked {
       @include u-checkmark;

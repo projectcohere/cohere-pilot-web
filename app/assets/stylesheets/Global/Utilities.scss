@@ -78,6 +78,23 @@
   background-color: $white;
 }
 
+// -- prefixing --
+// TODO: it's probably nicer to use postcss and compile our sass with
+// webpack, but i couldn't figure out how to get that to work with globbed
+// imports. see `postcss` branch.
+//
+// https://css-tricks.com/snippets/sass/mixin-prefix-properties
+@mixin prefix($prefixes, $declarations) {
+  @each $property, $value in $declarations {
+    @each $prefix in $prefixes {
+      #{'-' + $prefix + '-' + $property}: $value;
+    }
+
+    // Output standard non-prefixed declaration
+    #{$property}: $value;
+  }
+}
+
 /* breakpoints */
 @mixin mobile {
   @media(max-width: 667px) {

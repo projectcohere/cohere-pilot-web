@@ -108,24 +108,28 @@ $width: 74px;
   width: var(--icon-width);
   height: 36px;
   background-color: var(--icon-color);
-  mask-size: contain;
-  mask-position: center;
-  mask-repeat: no-repeat;
+
+  @include prefix(webkit, (
+    mask-size: contain,
+    mask-position: center,
+    mask-repeat: no-repeat
+  ));
 
   // -- variants --
   &.is-logo {
-    mask-image: image-url("logo-icon-black.svg");
+    @include prefix(webkit, (mask-image: image-url("logo-icon-black.svg")));
   }
 
   &.is-queue {
-    mask-image: image-url("queue.svg");
+    @include prefix(webkit, (mask-image: image-url("queue.svg")));
   }
 
   &.is-cases {
+    @include prefix(webkit, (mask-image: image-url("cases.svg")));
     mask-image: image-url("cases.svg");
   }
 
   &.is-profile {
-    mask-image: image-url("profile.svg");
+    @include prefix(webkit, (mask-image: image-url("profile.svg")));
   }
 }

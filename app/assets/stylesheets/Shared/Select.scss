@@ -5,12 +5,11 @@
 
   // -- input --
   select {
+    @include prefix(moz webkit, (appearance: none));
+
     width: 100%;
     border: none;
     background: none;
-    appearance: none;
-    -moz-appearance: none;
-    -webkit-appearance: none;
     cursor: pointer;
   }
 
