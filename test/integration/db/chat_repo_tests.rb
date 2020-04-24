@@ -116,7 +116,7 @@ module Db
 
       events = chat.events
       assert_length(events, 0)
-      assert_length(Service::Container.domain_events, 1)
+      assert_length(Events::DispatchAll.get.events, 1)
     end
 
     test "saves a new message with remote attachments" do

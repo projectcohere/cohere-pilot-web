@@ -2,9 +2,12 @@ module Events
   class DispatchAll < ::Command
     include Service::Single
 
+    # -- props --
+    attr(:events)
+
     # -- lifetime --
     def initialize(
-      events: Service::Container.domain_events,
+      events: ArrayQueue.new,
       dispatchers: [Events::DispatchEffects.get, Events::DispatchAnalytics.get]
     )
       @events = events

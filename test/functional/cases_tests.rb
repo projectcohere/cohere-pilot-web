@@ -198,6 +198,7 @@ class CasesTests < ActionDispatch::IntegrationTest
         street: "123 Test Street",
         city: "Testopolis",
         zip: "11111",
+        geography: true,
       },
       supplier_account: {
         account_number: "22222",

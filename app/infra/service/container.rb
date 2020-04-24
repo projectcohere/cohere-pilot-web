@@ -10,12 +10,7 @@ module Service
     end
 
     # -- services/domain
-    single(:domain_events) do
-      ArrayQueue.new
-    end
-
     single(Events::DispatchAll)
-
     single(User::Repo)
     single(Partner::Repo)
 

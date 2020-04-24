@@ -190,7 +190,7 @@ module Db
 
       events = kase.events
       assert_length(events, 0)
-      assert_length(Service::Container.domain_events, 2)
+      assert_length(Events::DispatchAll.get.events, 2)
     end
 
     test "saves an opened case for an existing recipient" do
@@ -251,7 +251,7 @@ module Db
 
       events = kase.events
       assert_length(events, 0)
-      assert_length(Service::Container.domain_events, 2)
+      assert_length(Events::DispatchAll.get.events, 2)
     end
 
     test "saves a dhs contribution" do
@@ -345,7 +345,7 @@ module Db
 
       events = kase.events
       assert_length(events, 0)
-      assert_length(Service::Container.domain_events, 4)
+      assert_length(Events::DispatchAll.get.events, 4)
     end
 
     test "saves a new assignment" do
@@ -374,7 +374,7 @@ module Db
 
       events = kase.events
       assert_length(events, 0)
-      assert_length(Service::Container.domain_events, 1)
+      assert_length(Events::DispatchAll.get.events, 1)
     end
 
     test "saves a destroyed assignment" do
@@ -400,7 +400,7 @@ module Db
 
       events = kase.events
       assert_length(events, 0)
-      assert_length(Service::Container.domain_events, 1)
+      assert_length(Events::DispatchAll.get.events, 1)
     end
 
     test "saves a new message" do
@@ -440,7 +440,7 @@ module Db
 
       events = kase.events
       assert_length(events, 0)
-      assert_length(Service::Container.domain_events, 1)
+      assert_length(Events::DispatchAll.get.events, 1)
     end
 
     test "saves the selected attachment" do
@@ -529,7 +529,7 @@ module Db
 
       assert_length(referrer.events, 0)
       assert_length(referred.events, 0)
-      assert_length(Service::Container.domain_events, 4)
+      assert_length(Events::DispatchAll.get.events, 4)
     end
   end
 end

@@ -1,14 +1,12 @@
 module Events
   class DispatchAnalytics < ::Command
+    include Authorization
+
     # -- constants --
     Unsaved = "Unsaved".freeze
 
     # -- lifetime --
-    def initialize(
-      user_repo: User::Repo.get,
-      analytics_events: Service::Container.analytics_events
-    )
-      @user_repo = user_repo
+    def initialize(analytics_events: Service::Container.analytics_events)
       @analytics_events = analytics_events
     end
 
@@ -67,10 +65,8 @@ module Events
       end
 
       # add user attrs if available
-      @user_repo.find_current&.tap do |u|
-        event_attrs.merge!(
-          user_id: u.id.val
-        )
+      user&.tap do |u|
+        event_attrs.merge!(user_id: u.id.val)
       end
 
       # track event

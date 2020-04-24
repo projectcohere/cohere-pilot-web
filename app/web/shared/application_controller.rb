@@ -31,7 +31,7 @@ class ApplicationController < ActionController::Base
 
   # -- events --
   protected def events
-    Service::Container.domain_events
+    Events::DispatchAll.get.events
   end
 
   protected def dispatch_events

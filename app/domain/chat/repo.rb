@@ -4,7 +4,7 @@ class Chat
 
     # -- lifetime --
     def initialize(
-      domain_events: Service::Container.domain_events,
+      domain_events: ::Events::DispatchAll.get.events,
       message_repo: Chat::Message::Repo.get
     )
       @domain_events = domain_events

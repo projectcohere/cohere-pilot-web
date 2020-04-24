@@ -3,7 +3,7 @@ class User
     include Service::Single
 
     # -- lifetime --
-    def initialize(domain_events: Service::Container.domain_events)
+    def initialize(domain_events: ::Events::DispatchAll.get.events)
       @domain_events = domain_events
     end
 

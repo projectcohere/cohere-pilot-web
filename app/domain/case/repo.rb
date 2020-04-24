@@ -4,7 +4,7 @@ class Case
 
     # -- lifetime --
     def initialize(
-      domain_events: Service::Container.domain_events,
+      domain_events: ::Events::DispatchAll.get.events,
       partner_repo: Partner::Repo.get
     )
       @domain_events = domain_events
