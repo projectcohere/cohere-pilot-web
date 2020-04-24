@@ -1,5 +1,9 @@
 Rails.application.configure do
   config.assets.version = "1.0"
   config.assets.paths << Rails.root.join("node_modules")
-  config.assets.precompile << "contract.css"
+  config.assets.precompile = [
+    "fonts",
+    "images",
+  ]
+  # config.assets.precompile << "contract.css"
 end

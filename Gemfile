@@ -15,7 +15,7 @@ gem "pg", ">= 0.18", "< 2.0"
 gem "puma", "~> 3.11"
 gem "rails", "~> 6.0.0"
 gem "redis", "~> 4.1"
-gem "sass-rails", "~> 5"
+# gem "sass-rails", "~> 5"
 gem "sentry-raven", "~> 2.12"
 gem "sidekiq", "~> 6.0"
 # https://github.com/ondrejbartas/sidekiq-cron/issues/278

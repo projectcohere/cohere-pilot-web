@@ -1,5 +1,6 @@
 module.exports = {
   plugins: [
+    new Error("boo."),
     require('postcss-import'),
     require('postcss-flexbugs-fixes'),
     require('postcss-preset-env')({

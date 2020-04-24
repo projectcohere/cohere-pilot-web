@@ -1,7 +1,8 @@
-@import "Global/Resets";
-@import "Global/Config";
-@import "Global/Fonts";
-@import "Global/Utilities";
-@import "Global/Theme";
+@import "Global/Resets.scss";
+@import "Global/Config.scss";
+@import "Global/Fonts.scss";
+@import "Global/Utilities.scss";
+@import "Global/Theme.scss";
+@import "Shared/BigField.scss";
 @import "Shared/*";
 @import "Features/*";

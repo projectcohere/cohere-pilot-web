@@ -1,3 +1,5 @@
+import "../../assets/stylesheets/application.scss"
+
 import {
   start,
   Viewport,
