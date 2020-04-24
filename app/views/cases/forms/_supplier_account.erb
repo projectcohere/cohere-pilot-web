@@ -8,8 +8,8 @@
     <% end %>
 
     <% if policy.permit?(:edit_supplier_account_active_service) %>
-      <%= f.field(:active_service, "&nbsp".html_safe, class: "CaseForm-hasActiveService Field--checkbox") do %>
-        <%= f.check_box(:active_service) %> Active?
+      <%= f.field(:active_service, "Active?", class: "CaseForm-hasActiveService Field--checkbox") do %>
+        <%= f.check_box(:active_service) %>
       <% end %>
     <% end %>
 

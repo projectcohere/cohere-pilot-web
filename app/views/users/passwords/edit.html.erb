@@ -24,8 +24,8 @@
           <% end %>
 
           <div class="SignIn-helpers">
-            <%= f.field(:show_password, class: "SignIn-showPassword Field--bare Field--checkbox") do %>
-              <%= check_box_tag(:show_password) %> Show Password?
+            <%= f.field(:show_password, "Show Password?", class: "SignIn-showPassword Field--bare Field--checkbox") do %>
+              <%= check_box_tag(:show_password) %>
             <% end %>
           </div>
         <% end %>

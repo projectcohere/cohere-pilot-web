@@ -22,8 +22,8 @@
     <% end %>
 
     <% if policy.permit?(:edit_household_primary_residence) %>
-      <%= f.field(:primary_residence, "&nbsp".html_safe, class: "CaseForm-isPrimaryResidence Field--checkbox") do %>
-        <%= f.check_box(:primary_residence) %> Primary Residence?
+      <%= f.field(:primary_residence, "Primary Residence?", class: "CaseForm-isPrimaryResidence Field--checkbox") do %>
+        <%= f.check_box(:primary_residence) %>
       <%- end %>
     <% end %>
 
