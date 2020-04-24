@@ -34,84 +34,12 @@
   <div class="CaseDetail CaseDetail--view">
     <article class="CaseDetail-case">
       <section id="application" class="Panel-tab is-visible">
-        <%= section_tag(t(".details.title"), class: "ShowCase-details") do %>
-          <%= field_tag(t(".details.status"), class: "ShowCase-status") do %>
-            <%= @case.status_name %>
-          <%- end %>
-
-          <%= field_tag(t(".details.program"), class: "ShowCase-program") do %>
-            <%= @case.program_name %>
-          <%- end %>
-
-          <%= field_tag(t(".details.enroller"), class: "ShowCase-enroller") do %>
-            <%= @case.enroller_name %>
-          <%- end %>
-        <%- end %>
-
-        <%= section_tag(t(".contact.title"), class: "ShowCase-contact") do %>
-          <%= field_tag(t(".contact.phone-number"), class: "ShowCase-phoneNumber") do %>
-            +1 <%= number_to_phone(@case.phone_number) %>
-          <%- end %>
-
-          <%= field_tag(t(".contact.address"), class: "ShowCase-address") do %>
-            <% @case.address.each do |line| %>
-              <%= line %>
-              <br>
-            <% end %>
-          <%- end %>
-        <%- end %>
-
-        <%= section_tag(t(".supplier-account.title"), class: "ShowCase-utilityAccount") do %>
-          <%= field_tag(t(".supplier-account.supplier"), class: "ShowCase-supplier") do %>
-            <%= @case.supplier_name %>
-          <%- end %>
-
-          <% if policy.permit?(:view_supplier_account_active_service) %>
-            <%= field_tag(nil, "&nbsp".html_safe, class: "ShowCase-hasActiveService") do %>
-              <span class="<%= cx("Checkbox", "is-checked" => @case.supplier_account_active_service?) %>"></span> <%= t(".supplier-account.active-service") %>
-            <%- end %>
-          <% end %>
-
-          <%= field_tag(t(".supplier-account.number"), class: "ShowCase-accountNumber") do %>
-            <%= @case.supplier_account_number %>
-          <%- end %>
-
-          <%= field_tag(t(".supplier-account.arrears"), class: "ShowCase-arrears") do %>
-            <%= @case.supplier_account_arrears %>
-          <%- end %>
-        <%- end %>
-
-        <%= section_tag(t(".dhs.title"), class: "ShowCase-dhs") do %>
-          <%= field_tag(t(".dhs.number"), class: "ShowCase-dhsNumber") do %>
-            <%= @case.household_dhs_number %>
-          <%- end %>
-        <%- end %>
-
-        <%= section_tag(t(".household.title"), class: "ShowCase-household") do %>
-          <%= field_tag(t(".household.size"), class: "ShowCase-householdSize") do %>
-            <%= @case.household_size %>
-          <%- end %>
-
-          <%= field_tag(t(".household.income"), class: "ShowCase-monthlyIncome") do %>
-            <%= @case.household_income %>
-          <%- end %>
-
-          <% if policy.permit?(:view_household_ownership) %>
-            <%= field_tag(t(".household.ownership"), class: "ShowCase-ownership") do %>
-              <%= @case.household_ownership %>
-            <%- end %>
-          <% end %>
-
-          <% if policy.permit?(:view_household_primary_residence) %>
-            <%= field_tag(nil, "&nbsp".html_safe, class: "ShowCase-isPrimaryResidence") do %>
-              <span class="<%= cx("Checkbox", "is-checked" => @case.household_primary_residence?) %>"></span> <%= t(".household.primary-residence") %>
-            <%- end %>
-          <% end %>
-
-          <%= field_tag(t(".household.fpl"), class: "ShowCase-fpl") do %>
-            <%= @case.household_fpl_percent %>
-          <%- end %>
-        <%- end %>
+        <%- locals = { view: @case } %>
+        <%= render(partial: "cases/detail/details", locals: locals) %>
+        <%= render(partial: "cases/detail/contact", locals: locals) %>
+        <%= render(partial: "cases/detail/supplier_account", locals: locals) %>
+        <%= render(partial: "cases/detail/dhs", locals: locals) %>
+        <%= render(partial: "cases/detail/household", locals: locals) %>
       </section>
 
       <section id="documents" class="Panel-tab">

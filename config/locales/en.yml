@@ -28,17 +28,11 @@ en:
         - at least 12 characters
         - at least one letter, number, and symbol
 
-  cases: &cases
-    detail: &case-detail
+  cases:
+    single: &case-single
       title: "%{name}'s case"
 
-    show:
-      <<: *case-detail
-      actions:
-        back: "Back to Cases"
-        edit: "Edit Case"
-        referral: "Select Referral"
-
+    detail:
       details:
         title: "Details"
         status: "Status"
@@ -50,7 +44,7 @@ en:
         phone-number: "Phone #"
         address: "Primary Residential Address"
 
-      supplier-account:
+      supplier_account:
         title: "Utility Account"
         supplier: "Supplier"
         number: "Account #"
@@ -69,23 +63,28 @@ en:
         primary-residence: "Primary Residence?"
         fpl: "FPL Percent"
 
-  referrals: &referrals
-    select:
-      <<: *case-detail
-      actions:
-        back: "Back to Case Details"
-        submit: "Start Referral"
-
-      program:
-        title: "Start a New Referral"
-        subtitle: "Please pick one of these programs to start a new referral application."
-        placeholder: "Select a Program"
+    show: &show-case
 
   cohere:
     cases:
-      <<: *cases
+      show:
+        <<: *case-single
+        actions:
+          back: "Back to Cases"
+          edit: "Edit Case"
+          referral: "Select Referral"
+
     referrals:
-      <<: *referrals
+      select:
+        <<: *case-single
+        actions:
+          back: "Back to Case Details"
+          submit: "Start Referral"
+
+        program:
+          title: "Start a New Referral"
+          subtitle: "Please pick one of these programs to start a new referral application."
+          placeholder: "Select a Program"
 
   supplier:
     cases:

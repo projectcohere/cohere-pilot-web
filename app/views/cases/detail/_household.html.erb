@@ -1,0 +1,25 @@
+<%= section_tag(t(".title"), class: "ShowCase-household") do %>
+  <%= field_tag(t(".size"), class: "ShowCase-householdSize") do %>
+    <%= view.household_size %>
+  <%- end %>
+
+  <%= field_tag(t(".income"), class: "ShowCase-monthlyIncome") do %>
+    <%= view.household_income %>
+  <%- end %>
+
+  <% if permit?(:view_household_ownership) %>
+    <%= field_tag(t(".ownership"), class: "ShowCase-ownership") do %>
+      <%= view.household_ownership %>
+    <%- end %>
+  <% end %>
+
+  <% if permit?(:view_household_primary_residence) %>
+    <%= field_tag(nil, "&nbsp".html_safe, class: "ShowCase-isPrimaryResidence") do %>
+      <span class="<%= cx("Checkbox", "is-checked" => view.household_primary_residence?) %>"></span> <%= t(".primary-residence") %>
+    <%- end %>
+  <% end %>
+
+  <%= field_tag(t(".fpl"), class: "ShowCase-fpl") do %>
+    <%= view.household_fpl_percent %>
+  <%- end %>
+<%- end %>

@@ -1,0 +1,19 @@
+<%= section_tag(t(".title"), class: "ShowCase-utilityAccount") do %>
+  <%= field_tag(t(".supplier"), class: "ShowCase-supplier") do %>
+    <%= view.supplier_name %>
+  <%- end %>
+
+  <% if permit?(:view_supplier_account_active_service) %>
+    <%= field_tag(nil, "&nbsp".html_safe, class: "ShowCase-hasActiveService") do %>
+      <span class="<%= cx("Checkbox", "is-checked" => view.supplier_account_active_service?) %>"></span> <%= t(".active-service") %>
+    <%- end %>
+  <% end %>
+
+  <%= field_tag(t(".number"), class: "ShowCase-accountNumber") do %>
+    <%= view.supplier_account_number %>
+  <%- end %>
+
+  <%= field_tag(t(".arrears"), class: "ShowCase-arrears") do %>
+    <%= view.supplier_account_arrears %>
+  <%- end %>
+<%- end %>
