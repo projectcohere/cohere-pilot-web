@@ -6,12 +6,16 @@ module Recipient
     Own = :own
 
     # -- queries --
-    def self.all
-      @all ||= [
-        Unknown,
-        Rent,
-        Own
-      ]
+    class << self
+      def keys
+        @all ||= [
+          Unknown,
+          Rent,
+          Own
+        ]
+      end
+
+      alias :values :keys
     end
   end
 end

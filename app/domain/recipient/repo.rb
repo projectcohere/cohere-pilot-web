@@ -40,6 +40,7 @@ module Recipient
       return Household.new(
         dhs_number: r.dhs_number,
         size: r.household_size,
+        proof_of_income: ProofOfIncome.from_key(r.household_proof_of_income&.to_sym),
         income: Money.cents(r.household_income_cents),
         ownership: r.household_ownership.to_sym,
         primary_residence: r.household_primary_residence,

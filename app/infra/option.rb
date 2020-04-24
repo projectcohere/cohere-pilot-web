@@ -13,6 +13,10 @@ class Option
   end
 
   # -- queries --
+  def to_sym
+    return @key
+  end
+
   def to_s
     return @key.to_s
   end

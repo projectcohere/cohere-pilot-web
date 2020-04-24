@@ -31,11 +31,19 @@ class Case
       when :edit_address_geography
         supplier?
       when :edit_household
+        cohere? || supplier? || governor?
+      when :edit_household_size
         cohere? || governor?
       when :edit_household_ownership
-        cohere? && requires?(&:household_ownership?)
+        cohere? #&& requires?(&:household_ownership?)
       when :edit_household_primary_residence
-        cohere? && requires?(&:household_primary_residence?)
+        cohere? #&& requires?(&:household_primary_residence?)
+      when :edit_household_proof_of_income
+        cohere? || supplier?
+      when :edit_household_dhs_number
+        cohere? || governor?
+      when :edit_household_income
+        cohere? || governor?
       when :edit_supplier_account
         cohere? || supplier?
       when :edit_supplier

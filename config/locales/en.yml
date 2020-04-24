@@ -8,8 +8,17 @@ en:
       logo: Cohere
       sign-out: Sign Out
 
+  # -- domain --
+  recipient:
+    proof_of_income:
+      dhs: "MDHHS Account"
+      document: "Proxy Document"
+      census: "Census Tract"
+      attestation: "Self Attestation"
+
+  # -- views --
   users:
-    # fields
+    # -- fields
     email:
       label: E-mail
       placeholder: "you@work.com"
@@ -18,7 +27,7 @@ en:
     password-confirmation:
       label: Confirm Password
 
-    # controllers
+    # -- controllers
     passwords:
       forgot:
         title: Forgot Your Password?
@@ -32,7 +41,7 @@ en:
     single: &case-single
       title: "%{name}'s case"
 
-    detail:
+    fields: &case-fields
       details:
         title: "Details"
         status: "Status"
@@ -53,17 +62,24 @@ en:
 
       dhs:
         title: "MDHHS"
-        number: "Case #"
 
       household:
         title: "Household"
         size: "Size"
-        income: "Monthly Income"
         ownership: "Rent or Own?"
         primary-residence: "Primary Residence?"
-        fpl: "FPL Percent"
+        proof-of-income: "Proof of Income"
+        dhs-number: "MDHHS Case #"
+        income: "Monthly Income"
+        fpl-pecent:
+          label: "FPL Percent"
+          fallback: "Unknown. Please add household info."
 
-    show: &show-case
+    forms:
+      <<: *case-fields
+
+    detail:
+      <<: *case-fields
 
   cohere:
     cases:

@@ -14,12 +14,12 @@
   <% end %>
 
   <% if permit?(:view_household_primary_residence) %>
-    <%= field_tag(nil, "&nbsp".html_safe, class: "ShowCase-isPrimaryResidence") do %>
+    <%= field_tag(nil, "&nbsp".html_safe, class: "ShowCase-residence") do %>
       <span class="<%= cx("Checkbox", "is-checked" => view.household_primary_residence?) %>"></span> <%= t(".primary-residence") %>
     <%- end %>
   <% end %>
 
-  <%= field_tag(t(".fpl"), class: "ShowCase-fpl") do %>
+  <%= field_tag(t(".fpl"), class: "ShowCase-fplPercent") do %>
     <%= view.household_fpl_percent %>
   <%- end %>
 <%- end %>

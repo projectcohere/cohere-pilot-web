@@ -3,6 +3,7 @@ module Recipient
     # -- props --
     prop(:dhs_number)
     prop(:size)
+    prop(:proof_of_income)
     prop(:income)
     prop(:ownership, default: Ownership::Unknown)
     prop(:primary_residence, predicate: true, default: true)

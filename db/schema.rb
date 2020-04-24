@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_20_161139) do
+ActiveRecord::Schema.define(version: 2020_04_24_204534) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -53,7 +53,7 @@ ActiveRecord::Schema.define(version: 2020_04_20_161139) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "enroller_id", null: false
-    t.integer "status", default: 0
+    t.integer "status", default: 0, null: false
     t.bigint "supplier_id", null: false
     t.string "supplier_account_number"
     t.integer "supplier_account_arrears_cents"
@@ -147,6 +147,7 @@ ActiveRecord::Schema.define(version: 2020_04_20_161139) do
     t.integer "household_income_cents"
     t.integer "household_ownership", default: 0, null: false
     t.boolean "household_primary_residence", default: true, null: false
+    t.integer "household_proof_of_income", default: 0, null: false
     t.index "((((first_name)::text || ' '::text) || (last_name)::text)) gin_trgm_ops", name: "recipients_by_full_name", using: :gin
     t.index ["phone_number"], name: "index_recipients_on_phone_number", unique: true
   end
