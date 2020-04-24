@@ -7,13 +7,13 @@ class Policy
   # -- queries --
   # checks if the given user / scope is allowed to perform an action.
   def permit?(action)
-    false
+    return false
   end
 
   # checks if the given user / scope is forbidden from performing
   # an action
   def forbid?(action)
-    not permit?(action)
+    return !permit?(action)
   end
 
   # -- queries --

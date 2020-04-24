@@ -28,6 +28,8 @@ class Case
         cohere? || supplier?
       when :edit_contact
         cohere? || supplier?
+      when :edit_address_geography
+        supplier?
       when :edit_household
         cohere? || governor?
       when :edit_household_ownership

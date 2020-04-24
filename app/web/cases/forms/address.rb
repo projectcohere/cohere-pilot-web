@@ -5,9 +5,8 @@ module Cases
       field(:street, :string, presence: true)
       field(:street2, :string)
       field(:city, :string, presence: true)
-      field(:zip, :string,
-        presence: true, numericality: true
-      )
+      field(:zip, :string, presence: true, numericality: true )
+      field(:geography, :boolean, presence: true)
 
       # -- lifecycle --
       protected def initialize_attrs(attrs)
@@ -21,6 +20,7 @@ module Cases
           street2: a.street2,
           city: a.city,
           zip: a.zip,
+          geography: true,
         })
       end
 

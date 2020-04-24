@@ -9,6 +9,10 @@
       <%= f.text_field(:street2) %>
     <%- end %>
 
+    <%= f.field(:geography, "Wayne County?", disabled: forbid?(:edit_address_geography), class: "CaseForm-geography Field--checkbox") do %>
+      <%= f.check_box(:geography) %>
+    <%- end %>
+
     <%= f.field(:city, class: "CaseForm-city") do %>
       <%= f.text_field(:city) %>
     <%- end %>

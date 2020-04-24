@@ -1,9 +1,13 @@
 module Cases
   module BaseHelper
-    def cases_is_open
-      @scope == Cases::Scope::Open
+    # -- authorization --
+    def shared_policy
+      @shared_policy ||= policy
     end
 
+    delegate(:permit?, :forbid?, to: :shared_policy)
+
+    # -- search --
     def cases_search_params
       return request.query_parameters
     end
@@ -19,6 +23,7 @@ module Cases
       return uri.to_s
     end
 
+    # -- filters --
     def cases_scope_link_to(scope)
       return link_to(scope.name, cases_search_path(scope: scope.key),
         id: "filter-#{scope.key}",
@@ -29,6 +34,7 @@ module Cases
       )
     end
 
+    # -- cells --
     def case_cell_options(view, shows_status: true, shows_activity: false)
       return {
         id: "case-#{view.id}",

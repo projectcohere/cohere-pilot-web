@@ -1,6 +1,6 @@
 module Events
   class DispatchAll < ::Command
-    include Service::Singleton
+    include Service::Single
 
     # -- lifetime --
     def initialize(
