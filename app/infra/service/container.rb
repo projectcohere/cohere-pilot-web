@@ -5,16 +5,21 @@ module Service
 
     # -- services --
     # -- services/web
-    singleton(:analytics_events) do
+    single(:analytics_events) do
       RedisQueue.new("analytics--events")
     end
 
-    # -- services/domain --
-    singleton(:domain_events) do
+    # -- services/domain
+    single(:domain_events) do
       ArrayQueue.new
     end
 
-    # -- infra --
-    singleton(Redis)
+    single(Events::DispatchAll)
+
+    single(User::Repo)
+    single(Partner::Repo)
+
+    # -- services/infra
+    single(Redis)
   end
 end

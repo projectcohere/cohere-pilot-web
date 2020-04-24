@@ -1,6 +1,6 @@
 class Partner
   class Repo < ::Repo
-    include Service::Singleton
+    include Service::Single
 
     # -- lifetime --
     def initialize(user_repo: User::Repo.get)
