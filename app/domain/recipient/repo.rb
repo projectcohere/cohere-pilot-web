@@ -33,10 +33,6 @@ module Recipient
     end
 
     def self.map_household(r)
-      if r.dhs_number == nil
-        return nil
-      end
-
       return Household.new(
         dhs_number: r.dhs_number,
         size: r.household_size,

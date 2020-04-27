@@ -303,9 +303,10 @@ module Db
       )
 
       recipient_household = Recipient::Household.new(
-        dhs_number: "11111",
         size: 3,
+        proof_of_income: Recipient::ProofOfIncome::Dhs,
         income: Money.cents(999_00),
+        dhs_number: "11111",
       )
 
       contract = Program::Contract.new(

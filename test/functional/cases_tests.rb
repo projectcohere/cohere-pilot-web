@@ -200,6 +200,9 @@ class CasesTests < ActionDispatch::IntegrationTest
         zip: "11111",
         geography: true,
       },
+      household: {
+        proof_of_income: "dhs",
+      },
       supplier_account: {
         account_number: "22222",
         arrears: "1000.00"
@@ -346,9 +349,11 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
       case: {
-        dhs_number: "12345",
-        household_size: "5",
-        income: "$500.00"
+        household: {
+          size: "5",
+          income: "$500.00",
+          dhs_number: "12345",
+        },
       }
     })
 

@@ -2,18 +2,14 @@ module Governor
   class CasesController < Cases::BaseController
     # -- actions --
     def index
-      if policy.forbid?(:list)
-        return deny_access
-      end
+      permit!(:list)
 
       @scope = Cases::Scope::All
       @page, @cases = view_repo.find_all_for_search(page: params[:page])
     end
 
     def queue
-      if policy.forbid?(:list_queue)
-        return deny_access
-      end
+      permit!(:list_queue)
 
       @scope = Cases::Scope.from_key(params[:scope]) || Cases::Scope::Assigned
       @page, @cases = case @scope
@@ -25,9 +21,7 @@ module Governor
     end
 
     def edit
-      if policy.forbid?(:edit)
-        return deny_access
-      end
+      permit!(:edit)
 
       @form = view_repo.edit_form(params[:id])
       @case = @form.detail
@@ -36,11 +30,9 @@ module Governor
     end
 
     def update
-      if policy.forbid?(:edit)
-        return deny_access
-      end
+      permit!(:edit)
 
-      @form = view_repo.edit_form(params[:id])
+      @form = view_repo.edit_form(params[:id], params: params)
       @case = @form.detail
 
       save_form = SaveCaseForm.new
