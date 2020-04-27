@@ -7,7 +7,7 @@ module Chats
     end
 
     def receive(event)
-      assert(sender != nil, "must be a cohere user to send messages")
+      assert(sender != nil, "must be an agent to send messages")
 
       if event["name"] == "ADD_MESSAGE"
         add_web_message(event["data"])
@@ -34,7 +34,7 @@ module Chats
 
     # -- queries --
     private def sender
-      return Chat::Sender.cohere(connection.chat_user_id)
+      return Chat::Sender.agent(connection.chat_user_id)
     end
 
     private def find_current_chat!(chat_id)

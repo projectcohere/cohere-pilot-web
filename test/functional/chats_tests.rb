@@ -27,8 +27,8 @@ class ChatsTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "upload files as a cohere user" do
-    user_rec = users(:cohere_1)
+  test "upload files as an agent" do
+    user_rec = users(:agent_1)
     chat_rec = chats(:idle_1)
 
     act = -> do

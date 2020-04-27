@@ -10,7 +10,7 @@ module Enroller
       channel = Cases::ActivityChannel
       channel.broadcast_to(
         channel.role_stream(
-          Role::Verifier,
+          Role::Enroller,
           @partner_repo.find_default_enroller.id,
         ),
         Cases::ActivityEvent.did_add_queued_case(

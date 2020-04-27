@@ -1,4 +1,4 @@
-module Supplier
+module Source
   class SaveCaseForm < ::Command
     include Cases::Authorization
 

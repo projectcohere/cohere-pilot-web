@@ -2,7 +2,7 @@
   <%=
     render(partial: "chats/chat", locals: {
       chat: chat,
-      sender: Chat::Sender.cohere(cookies.signed[:chat_user_id]),
+      sender: Chat::Sender.agent(cookies.signed[:chat_user_id]),
       receiver: recevier,
       data: {
         id: chat.id.val,
@@ -10,7 +10,7 @@
     })
   %>
 
-  <div class="Chat-cohere">
+  <div class="Chat-agent">
     <%= render(partial: "chats/macros") %>
   </div>
 </div>

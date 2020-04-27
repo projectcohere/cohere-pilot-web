@@ -29,7 +29,7 @@ module Authentication
     end
   end
 
-  # store chat id used to disambiguate concurrent cohere users
+  # store chat id used to disambiguate concurrent agents
   def create_chat_user_id
     # TODO: scope by policy
     if user&.role&.agent?
@@ -37,7 +37,7 @@ module Authentication
     end
   end
 
-  # destroy chat id used to disambiguate concurrent cohere users
+  # destroy chat id used to disambiguate concurrent agents
   def destroy_chat_user_id
     cookies.delete(:chat_user_id)
   end

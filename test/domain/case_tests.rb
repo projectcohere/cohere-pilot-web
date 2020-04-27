@@ -26,13 +26,13 @@ class CaseTests < ActiveSupport::TestCase
   end
 
   # -- commands --
-  test "adds cohere data" do
+  test "adds agent data" do
     kase = Case.stub(
       recipient: Case::Recipient.stub,
       new_activity: true,
     )
 
-    kase.add_cohere_data(
+    kase.add_agent_data(
       Case::Account.stub,
       Recipient::Profile.stub,
       Recipient::Household.stub,
@@ -44,7 +44,7 @@ class CaseTests < ActiveSupport::TestCase
     assert_not(kase.new_activity?)
   end
 
-  test "adds dhs data" do
+  test "adds governor data" do
     kase = Case.stub(
       status: Case::Status::Opened,
       recipient: Case::Recipient.stub,
@@ -298,7 +298,7 @@ class CaseTests < ActiveSupport::TestCase
     assert_not(event.is_first)
   end
 
-  test "adds a cohere message" do
+  test "adds an agent message" do
     kase = Case.stub(
       status: Case::Status::Opened,
       new_activity: true,

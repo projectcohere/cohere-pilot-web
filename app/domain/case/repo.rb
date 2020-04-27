@@ -66,17 +66,17 @@ class Case
       return entity_from(case_rec, assignments: case_rec.assignments, documents: document_recs)
     end
 
-    def find_for_governor(case_id, governor_id)
+    def find_for_governor(case_id, partner_id)
       case_rec = Case::Record
-        .for_governor(governor_id)
+        .for_governor(partner_id)
         .find(case_id)
 
       return entity_from(case_rec)
     end
 
-    def find_with_documents_for_governor(case_id, governor_id)
+    def find_with_documents_for_governor(case_id, partner_id)
       case_rec = Case::Record
-        .for_governor(governor_id)
+        .for_governor(partner_id)
         .find(case_id)
 
       document_recs = Document::Record
@@ -159,7 +159,7 @@ class Case
       @domain_events.consume(kase.events)
     end
 
-    def save_dhs_contribution(kase)
+    def save_governor_data(kase)
       case_rec = kase.record
       recipient_rec = kase.recipient.record
 
@@ -182,7 +182,7 @@ class Case
       @domain_events.consume(kase.events)
     end
 
-    def save_cohere_contribution(kase)
+    def save_agent_data(kase)
       case_rec = kase.record
       recipient_rec = kase.recipient.record
 

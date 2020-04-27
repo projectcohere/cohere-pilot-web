@@ -10,7 +10,7 @@ module Governor
       channel = Cases::ActivityChannel
       channel.broadcast_to(
         channel.role_stream(
-          Role::Contributor,
+          Role::Governor,
           @partner_repo.find_dhs.id,
         ),
         Cases::ActivityEvent.did_add_queued_case(

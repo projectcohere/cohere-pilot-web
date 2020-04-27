@@ -77,11 +77,6 @@ module Cases
         return self.class.map_notification(case_rec)
       end
 
-      def find_assignment_notification(assignment_id)
-        assignment_rec = Case::Assignment::Record.find(assignment_id)
-        return self.class.map_assignment(assignment_rec)
-      end
-
       # -- queries/cells
       def find_all_for_search(search = "", page:)
         q = make_query
@@ -123,7 +118,7 @@ module Cases
       def find_all_queued(page:)
         case_query = make_query
           .incomplete
-          .with_no_assignment_for_partner(user_partner_id)
+          .with_no_assignment_for_role(user_role)
           .by_updated_date
 
         return paginate(case_query, page)
@@ -151,12 +146,12 @@ module Cases
         end
 
         # filter by role
-        q = case user_membership
-        when Partner::Membership::Supplier
-          q.for_supplier(user_partner_id)
-        when Partner::Membership::Governor
+        q = case user_role
+        when Role::Source
+          q.for_source(user_partner_id)
+        when Role::Governor
           q.for_governor(user_partner_id)
-        when Partner::Membership::Enroller
+        when Role::Enroller
           q.for_enroller(user_partner_id)
         else
           q
@@ -242,14 +237,6 @@ module Cases
           status: r.status.to_sym,
           recipient_name: Recipient::Repo.map_name(r.recipient),
           enroller_id: r.enroller_id,
-        )
-      end
-
-      def self.map_assignment(r)
-        return Assignment.new(
-          role: Role.from_key(r.role),
-          case_id: r.case_id,
-          partner_id: r.partner_id,
         )
       end
 

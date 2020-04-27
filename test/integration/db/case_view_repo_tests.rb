@@ -7,19 +7,19 @@ module Db
     end
 
     # -- queries --
-    # -- queries/supplier
-    test "finds a page of cases for a supplier" do
-      stub_user(:supplier_1)
+    # -- queries/source
+    test "finds a page of cases for a source" do
+      stub_user(:source_1)
       case_repo = Cases::Views::Repo.new(Cases::Scope::All)
 
       case_page, cases = case_repo.find_all_for_search(page: 1)
-      assert_length(cases, 7)
-      assert_equal(case_page.count, 7)
-      assert(cases.any? { |c| c.assignee_email != nil })
+      assert_length(cases, 1)
+      assert_equal(case_page.count, 1)
+      assert(cases.all? { |c| c.assignee_email != nil })
     end
 
     # -- queries/governor
-    test "finds a page of assigned cases for a governor user" do
+    test "finds a page of assigned cases for a governor" do
       stub_user(:governor_1)
       case_repo = Cases::Views::Repo.new(nil)
 
@@ -28,7 +28,7 @@ module Db
       assert_equal(case_page.count, 1)
     end
 
-    test "finds a page of queued cases for a governor user" do
+    test "finds a page of queued cases for a governor" do
       stub_user(:governor_1)
       case_repo = Cases::Views::Repo.new(nil)
 
@@ -37,7 +37,7 @@ module Db
       assert_equal(case_page.count, 4)
     end
 
-    test "finds a page of cases for a governor user" do
+    test "finds a page of cases for a governor" do
       stub_user(:governor_1)
       case_repo = Cases::Views::Repo.new(Cases::Scope::All)
 
@@ -47,9 +47,9 @@ module Db
       assert(cases.any? { |c| c.assignee_email != nil })
     end
 
-    # -- queries/cohere
-    test "finds a page of assigned cases for a cohere user" do
-      stub_user(:cohere_1)
+    # -- queries/agent
+    test "finds a page of assigned cases for an agent" do
+      stub_user(:agent_1)
       case_repo = Cases::Views::Repo.new(nil)
 
       case_page, cases = case_repo.find_all_assigned(page: 1)
@@ -57,8 +57,8 @@ module Db
       assert_equal(case_page.count, 1)
     end
 
-    test "finds a page of queued cases for a cohere user" do
-      stub_user(:cohere_1)
+    test "finds a page of queued cases for an agent" do
+      stub_user(:agent_1)
       case_repo = Cases::Views::Repo.new(nil)
 
       case_page, cases = case_repo.find_all_queued(page: 1)
@@ -66,8 +66,8 @@ module Db
       assert_equal(case_page.count, 7)
     end
 
-    test "finds a page of cases by recipient name for a cohere user" do
-      stub_user(:cohere_1)
+    test "finds a page of cases by recipient name for an agent" do
+      stub_user(:agent_1)
       case_repo = Cases::Views::Repo.new(Cases::Scope::All)
 
       case_page, cases = case_repo.find_all_for_search("Johnice", page: 1)
@@ -75,8 +75,8 @@ module Db
       assert_equal(case_page.count, 5)
     end
 
-    test "finds a page of cases by phone number for a cohere user" do
-      stub_user(:cohere_1)
+    test "finds a page of cases by phone number for an agent" do
+      stub_user(:agent_1)
       case_repo = Cases::Views::Repo.new(Cases::Scope::All)
 
       case_page, cases = case_repo.find_all_for_search("+1 (444) 555-6666", page: 1)
@@ -84,8 +84,8 @@ module Db
       assert_equal(case_page.count, 1)
     end
 
-    test "finds a page of open cases for a cohere user" do
-      stub_user(:cohere_1)
+    test "finds a page of open cases for an agent" do
+      stub_user(:agent_1)
       case_repo = Cases::Views::Repo.new(Cases::Scope::Open)
 
       case_page, cases = case_repo.find_all_for_search(page: 1)
@@ -94,8 +94,8 @@ module Db
       assert(cases.any? { |c| c.assignee_email != nil })
     end
 
-    test "finds a page of completed cases for a cohere user" do
-      stub_user(:cohere_1)
+    test "finds a page of completed cases for an agent" do
+      stub_user(:agent_1)
       case_repo = Cases::Views::Repo.new(Cases::Scope::Completed)
 
       case_page, cases = case_repo.find_all_for_search(page: 1)

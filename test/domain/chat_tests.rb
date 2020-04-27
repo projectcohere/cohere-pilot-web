@@ -30,7 +30,7 @@ class ChatTests < ActiveSupport::TestCase
   end
 
   # -- commands/messages
-  test "adds a cohere message" do
+  test "adds an agent message" do
     chat = Chat.stub(
       id: Id.new(42),
       recipient: stub_recipient,
@@ -38,7 +38,7 @@ class ChatTests < ActiveSupport::TestCase
     )
 
     chat.add_message(
-      sender: Chat::Sender.cohere(:test_sender),
+      sender: Chat::Sender.agent(:test_sender),
       body: "This is a test.",
       files: %i[test_io],
       status: Chat::Message::Status::Queued,
@@ -75,7 +75,7 @@ class ChatTests < ActiveSupport::TestCase
     )
 
     chat.add_message(
-      sender: Chat::Sender.cohere(:test_sender),
+      sender: Chat::Sender.agent(:test_sender),
       body: "This is a test.",
       files: [Sms::Media.stub(url: :test_url)],
       status: Chat::Message::Status::Received,

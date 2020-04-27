@@ -5,13 +5,13 @@ module Db
     # -- queries --
     test "find a user by remember token" do
       user_repo = User::Repo.new
-      user_rec = users(:cohere_1)
+      user_rec = users(:agent_1)
 
       user = user_repo.find_by_remember_token(user_rec.remember_token)
       assert_equal(user.id.val, user_rec.id)
     end
 
-    test "find cohere and governor users for an opened case" do
+    test "find agents and governors for an opened case" do
       user_repo = User::Repo.new
 
       emails = user_repo.find_emails_for_opened_case
@@ -29,7 +29,7 @@ module Db
       assert_all(emails, ->(e) { e.ends_with?("@testmetro.org") })
     end
 
-    test "find cohere users for a completed case" do
+    test "find agents for a completed case" do
       user_repo = User::Repo.new
 
       emails = user_repo.find_emails_for_completed_case
@@ -40,7 +40,7 @@ module Db
     # -- commands --
     test "signs in the current user" do
       user_repo = User::Repo.new
-      user_rec = users(:cohere_1)
+      user_rec = users(:agent_1)
 
       user_repo.sign_in(user_rec)
       assert_equal(user_repo.find_current.id.val, user_rec.id)

@@ -13,15 +13,15 @@ class Case
       when :list
         true
       when :list_queue
-        agent? || verifier? || contributor?
+        agent? || enroller? || governor?
       # create
       when :create
         source?
       when :create_assignment
-        agent? || verifier? || contributor?
+        agent? || enroller? || governor?
       # edit
       when :edit
-        agent? || contributor?
+        agent? || governor?
       when :edit_details
         agent?
       when :edit_address
@@ -31,9 +31,9 @@ class Case
       when :edit_address_geography
         source?
       when :edit_household
-        agent? || source? || contributor?
+        agent? || source? || governor?
       when :edit_household_size
-        agent? || contributor?
+        agent? || governor?
       when :edit_household_ownership
         agent? #&& requires?(&:household_ownership?)
       when :edit_household_primary_residence
@@ -41,9 +41,9 @@ class Case
       when :edit_household_proof_of_income
         agent? || source?
       when :edit_household_dhs_number
-        agent? || contributor?
+        agent? || governor?
       when :edit_household_income
-        agent? || contributor?
+        agent? || governor?
       when :edit_supplier_account
         agent? || source?
       when :edit_supplier
@@ -56,9 +56,9 @@ class Case
         agent?
       # view
       when :view
-        agent? || verifier?
+        agent? || enroller?
       when :view_fpl
-        agent? || verifier?
+        agent? || enroller?
       when :view_household_ownership
         agent? && requires?(&:household_ownership?)
       when :view_household_primary_residence
@@ -69,7 +69,7 @@ class Case
       when :referral
         agent?
       when :complete
-        agent? || verifier?
+        agent? || enroller?
       # destroy
       when :destroy
         agent?

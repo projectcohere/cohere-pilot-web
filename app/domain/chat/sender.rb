@@ -5,7 +5,7 @@ class Chat
     Automated = "automated".freeze
 
     # -- options --
-    def self.cohere(chat_token)
+    def self.agent(chat_token)
       return chat_token
     end
 

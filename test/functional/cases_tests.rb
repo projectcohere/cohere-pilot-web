@@ -9,17 +9,17 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/sign-in")
   end
 
-  test "can list cases as a supplier" do
-    user_rec = users(:supplier_1)
+  test "can list cases as a source" do
+    user_rec = users(:source_1)
 
     get(auth("/cases", as: user_rec))
     assert_response(:success)
     assert_select(".PageHeader-title", text: /All Cases/)
-    assert_select(".CaseCell", 7)
+    assert_select(".CaseCell", 1)
   end
 
-  test "can list cases as a cohere user" do
-    user_rec = users(:cohere_1)
+  test "can list cases as an agent" do
+    user_rec = users(:agent_1)
 
     get(auth("/cases", as: user_rec))
     assert_response(:success)
@@ -30,16 +30,16 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 10)
   end
 
-  test "can list cases with a search query as a cohere user" do
-    user_rec = users(:cohere_1)
+  test "can list cases with a search query as an agent" do
+    user_rec = users(:agent_1)
 
     get(auth("/cases?scope=all&search=Janice", as: user_rec))
     assert_response(:success)
     assert_select(".CaseCell", 3)
   end
 
-  test "can list open cases as a cohere user" do
-    user_rec = users(:cohere_1)
+  test "can list open cases as an agent" do
+    user_rec = users(:agent_1)
 
     get(auth("/cases?scope=open", as: user_rec))
     assert_response(:success)
@@ -47,8 +47,8 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 8)
   end
 
-  test "can list completed cases as a cohere user" do
-    user_rec = users(:cohere_1)
+  test "can list completed cases as an agent" do
+    user_rec = users(:agent_1)
 
     get(auth("/cases?scope=completed", as: user_rec))
     assert_response(:success)
@@ -56,8 +56,8 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 2)
   end
 
-  test "can list assigned cases as a cohere user" do
-    user_rec = users(:cohere_1)
+  test "can list assigned cases as an agent" do
+    user_rec = users(:agent_1)
 
     get(auth("/cases/queue", as: user_rec))
     assert_response(:success)
@@ -68,8 +68,8 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 1)
   end
 
-  test "can list queued cases as a cohere user" do
-    user_rec = users(:cohere_1)
+  test "can list queued cases as an agent" do
+    user_rec = users(:agent_1)
 
     get(auth("/cases/queue?scope=queued", as: user_rec))
     assert_response(:success)
@@ -77,7 +77,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 7)
   end
 
-  test "can list cases as a governor user" do
+  test "can list cases as a governor" do
     user_rec = users(:governor_1)
 
     get(auth("/cases", as: user_rec))
@@ -86,7 +86,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 5)
   end
 
-  test "can list assigned cases as a governor user" do
+  test "can list assigned cases as a governor" do
     user_rec = users(:governor_1)
 
     get(auth("/cases/queue", as: user_rec))
@@ -98,7 +98,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 1)
   end
 
-  test "can list queued cases as a governor user" do
+  test "can list queued cases as a governor" do
     user_rec = users(:governor_1)
 
     get(auth("/cases/queue?scope=queued", as: user_rec))
@@ -151,7 +151,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "select a case program" do
-    user_rec = users(:supplier_1)
+    user_rec = users(:source_1)
     case_rec = cases(:approved_2)
 
     get(auth("/cases/select", as: user_rec))
@@ -164,14 +164,14 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "can't view prompt to open a case without permission" do
-    user_rec = users(:cohere_1)
+    user_rec = users(:agent_1)
 
     get(auth("/cases/new?program_id=3", as: user_rec))
     assert_redirected_to("/cases/queue")
   end
 
-  test "views prompt to open a case as a supplier" do
-    user_rec = users(:supplier_1)
+  test "views prompt to open a case as a source" do
+    user_rec = users(:source_1)
     program_rec = user_rec.partner.programs.first
 
     get(auth("/cases/new?program_id=#{program_rec.id}", as: user_rec))
@@ -183,8 +183,8 @@ class CasesTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "opens a case as a supplier" do
-    user_rec = users(:supplier_1)
+  test "opens a case as a source" do
+    user_rec = users(:source_1)
     program_rec = user_rec.partner.programs.first
 
     case_params = {
@@ -233,7 +233,7 @@ class CasesTests < ActionDispatch::IntegrationTest
       assert_match(/Did Open/, events[0])
     end
 
-    assert_matching_broadcast_on(case_activity_for(:cohere_1)) do |msg|
+    assert_matching_broadcast_on(case_activity_for(:agent_1)) do |msg|
       assert_equal(msg["name"], "DID_ADD_QUEUED_CASE")
       assert_entry(msg["data"], "case_id")
     end
@@ -250,8 +250,8 @@ class CasesTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "show errors when opening an invalid case as a supplier" do
-    user_rec = users(:supplier_1)
+  test "show errors when opening an invalid case as a source" do
+    user_rec = users(:source_1)
 
     post(auth("/cases", as: user_rec), params: {
       case: {
@@ -274,7 +274,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "can't view a case without permission" do
-    user_rec = users(:supplier_1)
+    user_rec = users(:source_1)
     case_rec = cases(:submitted_1)
 
     get(auth("/cases/#{case_rec.id}", as: user_rec))
@@ -290,8 +290,8 @@ class CasesTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "view a case as a cohere user" do
-    user_rec = users(:cohere_1)
+  test "view a case as an agent" do
+    user_rec = users(:agent_1)
     case_rec = cases(:approved_1)
     kase = Case::Repo.map_record(case_rec)
 
@@ -323,14 +323,14 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "can't edit a case without permission" do
-    user_rec = users(:supplier_1)
+    user_rec = users(:source_1)
     case_rec = cases(:submitted_1)
 
     get(auth("/cases/#{case_rec.id}", as: user_rec))
     assert_redirected_to("/cases")
   end
 
-  test "edit a case as a governor user" do
+  test "edit a case as a governor" do
     user_rec = users(:governor_1)
     case_rec = cases(:pending_1)
 
@@ -343,7 +343,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "save an edited case as a governor user" do
+  test "save an edited case as a governor" do
     user_rec = users(:governor_1)
     case_rec = cases(:opened_1)
 
@@ -360,7 +360,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
 
-    assert_broadcast_on(case_activity_for(:cohere_1), {
+    assert_broadcast_on(case_activity_for(:agent_1), {
       name: "HAS_NEW_ACTIVITY",
       data: {
         case_id: case_rec.id,
@@ -373,8 +373,8 @@ class CasesTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "edit a case as a cohere user" do
-    user_rec = users(:cohere_1)
+  test "edit a case as an agent" do
+    user_rec = users(:agent_1)
     case_rec = cases(:submitted_1)
 
     get(auth("/cases/#{case_rec.id}/edit", as: user_rec))
@@ -382,7 +382,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".PageHeader-title", text: /\w+'s case/)
   end
 
-  test "save an edited case as a cohere user" do
+  test "save an edited case as an agent" do
     case_rec = cases(:pending_1)
 
     patch(auth("/cases/#{case_rec.id}"), params: {
@@ -398,7 +398,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_equal(case_rec.reload.status, "submitted")
 
-    assert_broadcast_on(case_activity_for(:cohere_1), {
+    assert_broadcast_on(case_activity_for(:agent_1), {
       name: "HAS_NEW_ACTIVITY",
       data: {
         case_id: case_rec.id,
@@ -438,7 +438,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_match(/Janice\s*Sample/, pdf_text)
   end
 
-  test "show errors when saving an invalid case as a cohere user" do
+  test "show errors when saving an invalid case as an agent" do
     case_rec = cases(:pending_1)
 
     patch(auth("/cases/#{case_rec.id}"), params: {
@@ -463,7 +463,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "can't update a case with an action without permission" do
-    user_rec = users(:supplier_1)
+    user_rec = users(:source_1)
 
     assert_raises(ActionController::RoutingError) do
       patch(auth("/cases/4", as: user_rec), params: {
@@ -472,7 +472,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "show errors submitting an invalid case as a cohere user" do
+  test "show errors submitting an invalid case as an agent" do
     case_rec = cases(:pending_2)
 
     patch(auth("/cases/#{case_rec.id}"), params: {
@@ -483,8 +483,8 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:alert])
   end
 
-  test "submit a case as a cohere user" do
-    user_rec = users(:cohere_1)
+  test "submit a case as an agent" do
+    user_rec = users(:agent_1)
     case_rec = cases(:pending_1)
 
     patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
@@ -494,7 +494,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/#{case_rec.id}/edit")
     assert_present(flash[:notice])
 
-    assert_broadcast_on(case_activity_for(:cohere_1), {
+    assert_broadcast_on(case_activity_for(:agent_1), {
       name: "HAS_NEW_ACTIVITY",
       data: {
         case_id: case_rec.id,
@@ -527,7 +527,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "can't destroy a case without permission" do
-    user_rec = users(:supplier_1)
+    user_rec = users(:source_1)
 
     assert_raises(ActionController::RoutingError) do
       delete(auth("/cases/4", as: user_rec))
@@ -535,7 +535,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "destroy a case" do
-    user_rec = users(:cohere_1)
+    user_rec = users(:agent_1)
     case_rec = cases(:pending_1)
 
     delete(auth("/cases/#{case_rec.id}", as: user_rec))
@@ -572,7 +572,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/#{case_rec.id}")
     assert_present(flash[:notice])
 
-    assert_broadcast_on(case_activity_for(:cohere_1), {
+    assert_broadcast_on(case_activity_for(:agent_1), {
       name: "HAS_NEW_ACTIVITY",
       data: {
         case_id: case_rec.id,
@@ -593,8 +593,8 @@ class CasesTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "complete a case as a cohere user" do
-    user_rec = users(:cohere_1)
+  test "complete a case as an agent" do
+    user_rec = users(:agent_1)
     case_rec = cases(:submitted_1)
 
     patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
@@ -604,7 +604,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/#{case_rec.id}")
     assert_present(flash[:notice])
 
-    assert_broadcast_on(case_activity_for(:cohere_1), {
+    assert_broadcast_on(case_activity_for(:agent_1), {
       name: "HAS_NEW_ACTIVITY",
       data: {
         case_id: case_rec.id,
@@ -625,8 +625,8 @@ class CasesTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "remove a case from the pilot as a cohere user" do
-    user_rec = users(:cohere_1)
+  test "remove a case from the pilot as an agent" do
+    user_rec = users(:agent_1)
     case_rec = cases(:pending_1)
 
     patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
@@ -636,7 +636,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/#{case_rec.id}")
     assert_present(flash[:notice])
 
-    assert_broadcast_on(case_activity_for(:cohere_1), {
+    assert_broadcast_on(case_activity_for(:agent_1), {
       name: "HAS_NEW_ACTIVITY",
       data: {
         case_id: case_rec.id,

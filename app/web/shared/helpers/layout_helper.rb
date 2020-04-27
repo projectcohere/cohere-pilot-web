@@ -1,12 +1,12 @@
 module Helpers
   module LayoutHelper
     def layout_tag(&children)
-      m = user_membership
+      role = user_role
 
       return tag.body(
         class: cx(
           "Layout",
-          "Layout--#{m}" => m != nil,
+          "Layout--#{role}" => role != nil,
         ),
         &children
       )

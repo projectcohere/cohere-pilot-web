@@ -1,4 +1,4 @@
-module Cohere
+module Agent
   class ReferralsController < Cases::BaseController
     # -- actions --
     def select

@@ -1,4 +1,4 @@
-module Cohere
+module Agent
   class AssignmentsController < Cases::BaseController
     # -- actions --
     def create

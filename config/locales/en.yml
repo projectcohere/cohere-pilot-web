@@ -81,7 +81,7 @@ en:
     detail:
       <<: *case-fields
 
-  cohere:
+  agent:
     cases:
       show:
         <<: *case-single
@@ -102,7 +102,7 @@ en:
           subtitle: "Please pick one of these programs to start a new referral application."
           placeholder: "Select a Program"
 
-  supplier:
+  source:
     cases:
       index:
         title: "%{name} Cases"

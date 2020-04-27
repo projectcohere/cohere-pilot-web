@@ -14,14 +14,14 @@ class Case
       assert(policy.permit?(:list))
     end
 
-    test "permits verifiers to list cases" do
-      user = stub_user(:verifier)
+    test "permits enrollers to list cases" do
+      user = stub_user(:enroller)
       policy = Case::Policy.new(user)
       assert(policy.permit?(:list))
     end
 
-    test "permits contributors users to list cases" do
-      user = stub_user(:contributor)
+    test "permits governors users to list cases" do
+      user = stub_user(:governor)
       policy = Case::Policy.new(user)
       assert(policy.permit?(:list))
     end
@@ -33,8 +33,8 @@ class Case
     end
 
     # -- show --
-    test "permits verifiers to view a case" do
-      user = stub_user(:verifier)
+    test "permits enrollers to view a case" do
+      user = stub_user(:enroller)
       kase = cases(:submitted_1)
       policy = Case::Policy.new(user, kase)
       assert(policy.permit?(:view))
@@ -47,8 +47,8 @@ class Case
       assert(policy.permit?(:view))
     end
 
-    test "forbids contributors from viewing a case" do
-      user = stub_user(:contributor)
+    test "forbids governors from viewing a case" do
+      user = stub_user(:governor)
       kase = cases(:opened_1)
       policy = Case::Policy.new(user, kase)
       assert(policy.forbid?(:view))
@@ -69,15 +69,15 @@ class Case
       assert(policy.permit?(:edit))
     end
 
-    test "permits contributors to edit a case" do
-      user = stub_user(:contributor)
+    test "permits governors to edit a case" do
+      user = stub_user(:governor)
       kase = cases(:opened_1)
       policy = Case::Policy.new(user, kase)
       assert(policy.permit?(:edit))
     end
 
-    test "forbids verifiers from editing a case" do
-      user = stub_user(:verifier)
+    test "forbids enrollers from editing a case" do
+      user = stub_user(:enroller)
       kase = cases(:submitted_1)
       policy = Case::Policy.new(user, kase)
       assert(policy.forbid?(:edit))

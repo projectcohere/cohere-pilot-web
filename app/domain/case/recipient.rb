@@ -12,7 +12,7 @@ class Case
       @household = household
     end
 
-    def add_cohere_data(profile, household)
+    def add_agent_data(profile, household)
       @profile = profile
       @household = household
     end

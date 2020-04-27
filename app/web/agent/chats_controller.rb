@@ -1,4 +1,4 @@
-module Cohere
+module Agent
   class ChatsController < ApplicationController
     def files
       @chat = Chat::Repo.get.find(params[:chat_id])

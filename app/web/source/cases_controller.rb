@@ -1,4 +1,4 @@
-module Supplier
+module Source
   class CasesController < Cases::BaseController
     # -- actions --
     def index

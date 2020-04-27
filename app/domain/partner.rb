@@ -15,11 +15,11 @@ class Partner < ::Entity
     when Membership::Cohere
       Role::Agent
     when Membership::Governor
-      Role::Contributor
+      Role::Governor
     when Membership::Supplier
       Role::Source
     when Membership::Enroller
-      Role::Verifier
+      Role::Enroller
     end
   end
 end

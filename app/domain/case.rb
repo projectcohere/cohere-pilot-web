@@ -55,9 +55,9 @@ class Case < ::Entity
     track_new_activity(true)
   end
 
-  def add_cohere_data(supplier_account, profile, household)
+  def add_agent_data(supplier_account, profile, household)
     @supplier_account = supplier_account
-    @recipient.add_cohere_data(profile, household)
+    @recipient.add_agent_data(profile, household)
 
     track_new_activity(false)
   end

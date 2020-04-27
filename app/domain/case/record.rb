@@ -62,20 +62,27 @@ class Case
       return where.not(completed_at: nil)
     end
 
-    def self.for_supplier(supplier_id)
-      return where(
-        supplier_id: supplier_id
-      )
+    def self.for_source(partner_id)
+      scope = self
+        .includes(:assignments)
+        .references(:case_assignments)
+        .where(
+          case_assignments: {
+            partner_id: partner_id
+          }
+        )
+
+      return scope
     end
 
-    def self.for_governor(governor_id)
+    def self.for_governor(partner_id)
       scope = self
         .includes(program: :partners)
         .where(
           status: [Status::Opened, Status::Pending],
           programs: {
             partners_programs: {
-              partner_id: governor_id,
+              partner_id: partner_id,
             },
           },
         )
@@ -94,19 +101,23 @@ class Case
       scope = self
         .includes(:assignments)
         .references(:case_assignments)
-        .where(case_assignments: { user_id: user_id })
+        .where(
+          case_assignments: {
+            user_id: user_id
+          }
+        )
 
       return scope
     end
 
-    def self.with_no_assignment_for_partner(partner_id)
+    def self.with_no_assignment_for_role(role)
       query = <<~SQL
         SELECT 1
         FROM case_assignments AS ca
-        WHERE ca.case_id = cases.id AND ca.partner_id = ?
+        WHERE ca.case_id = cases.id AND ca.role = ?
       SQL
 
-      return where("NOT EXISTS (#{query})", partner_id)
+      return where("NOT EXISTS (#{query})", role.to_i)
     end
 
     def self.by_updated_date

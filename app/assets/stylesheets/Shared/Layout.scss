@@ -30,16 +30,16 @@
     --role-color-bg: #{fade-out($role-color, 0.80)};
   }
 
-  &--supplier {
-    @include role-theme($color-supplier);
+  &--source {
+    @include role-theme($color-source);
   }
 
   &--governor {
     @include role-theme($color-governor);
   }
 
-  &--cohere {
-    @include role-theme($color-cohere);
+  &--agent {
+    @include role-theme($color-agent);
   }
 
   &--enroller {

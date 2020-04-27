@@ -18,7 +18,7 @@ module Events
           ))
         end
 
-        Cohere::PublishQueuedCase.perform_async(
+        Agent::PublishQueuedCase.perform_async(
           event.case_id.val,
         )
 
@@ -61,7 +61,7 @@ module Events
           event.document_id.val,
         )
       when Case::Events::DidChangeActivity
-        Cohere::PublishActivity.perform_async(
+        Agent::PublishActivity.perform_async(
           event.case_id.val,
           event.case_new_activity,
         )

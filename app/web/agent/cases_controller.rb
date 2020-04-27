@@ -1,4 +1,4 @@
-module Cohere
+module Agent
   class CasesController < Cases::BaseController
     # -- actions --
     def index

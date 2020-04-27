@@ -69,7 +69,7 @@ class ChatSmsTests < ActionDispatch::IntegrationTest
       assert_length(msg["attachments"], 0)
     end
 
-    assert_matching_broadcast_on(case_activity_for(:cohere_1)) do |msg|
+    assert_matching_broadcast_on(case_activity_for(:agent_1)) do |msg|
       assert_equal(msg["name"], "HAS_NEW_ACTIVITY")
       assert(msg["data"]["case_new_activity"])
     end

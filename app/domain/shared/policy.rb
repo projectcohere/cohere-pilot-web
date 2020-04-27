@@ -21,5 +21,5 @@ class Policy
     return @user.role
   end
 
-  delegate(:source?, :contributor?, :agent?, :verifier?, to: :role)
+  delegate(:source?, :governor?, :agent?, :enroller?, to: :role)
 end

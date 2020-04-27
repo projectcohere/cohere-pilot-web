@@ -1,21 +1,20 @@
-module Cohere
-  class PublishActivity < ApplicationWorker
+module Agent
+  class PublishQueuedCase < ApplicationWorker
     # -- lifetime --
     def initialize(partner_repo: Partner::Repo.get)
       @partner_repo = partner_repo
     end
 
     # -- command --
-    def call(case_id, case_new_activity)
+    def call(case_id)
       channel = Cases::ActivityChannel
       channel.broadcast_to(
         channel.role_stream(
           Role::Agent,
           @partner_repo.find_cohere.id,
         ),
-        Cases::ActivityEvent.has_new_activity(
+        Cases::ActivityEvent.did_add_queued_case(
           case_id,
-          case_new_activity,
         ),
       )
     end

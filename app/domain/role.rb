@@ -1,7 +1,7 @@
 class Role < ::Option
   # -- options --
   option(:source)
-  option(:contributor)
+  option(:governor)
   option(:agent)
-  option(:verifier)
+  option(:enroller)
 end

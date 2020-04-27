@@ -1,4 +1,4 @@
-module Cohere
+module Agent
   class SaveReferralForm < ::Command
     attr(:case)
 
@@ -20,7 +20,7 @@ module Cohere
       @case = referral.referred
 
       # populate the case
-      @case.add_cohere_data(
+      @case.add_agent_data(
         form.map_to_supplier_account,
         form.map_to_recipient_profile,
         form.map_to_recipient_household,

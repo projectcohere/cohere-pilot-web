@@ -100,7 +100,7 @@ module Db
       end
     end
 
-    test "finds an opened case by id for a governor user" do
+    test "finds an opened case by id for a governor" do
       case_repo = Case::Repo.new
       case_rec = cases(:opened_1)
       user_rec = users(:governor_1)
@@ -110,7 +110,7 @@ module Db
       assert_equal(kase.status, Case::Status::Opened)
     end
 
-    test "can't find a submitted case by id for a governor user" do
+    test "can't find a submitted case by id for a governor" do
       case_repo = Case::Repo.new
       case_rec = cases(:submitted_1)
       user_rec = users(:governor_1)
@@ -133,7 +133,7 @@ module Db
     test "saves an opened case" do
       case_repo = Case::Repo.new
 
-      user_rec = users(:supplier_2)
+      user_rec = users(:source_2)
       supplier_rec = user_rec.partner
       program_rec = supplier_rec.programs.first
       enroller_rec = partners(:enroller_1)
@@ -196,7 +196,7 @@ module Db
     test "saves an opened case for an existing recipient" do
       case_repo = Case::Repo.new
 
-      user_rec = users(:supplier_1)
+      user_rec = users(:source_1)
       enroller_rec = partners(:enroller_1)
       supplier_rec = user_rec.partner
       program_rec = supplier_rec.programs.first
@@ -265,7 +265,7 @@ module Db
       ))
 
       case_repo = Case::Repo.new
-      case_repo.save_dhs_contribution(kase)
+      case_repo.save_governor_data(kase)
 
       case_rec = kase.record
       assert(case_rec.new_activity)
@@ -277,7 +277,7 @@ module Db
       assert_equal(recipient_rec.household_income_cents, 999_00)
     end
 
-    test "saves a cohere contribution" do
+    test "saves agent data" do
       case_repo = Case::Repo.new
       case_rec = cases(:opened_2)
 
@@ -314,12 +314,12 @@ module Db
       )
 
       kase = Case::Repo.map_record(case_rec)
-      kase.add_cohere_data(supplier_account, recipient_profile, recipient_household)
+      kase.add_agent_data(supplier_account, recipient_profile, recipient_household)
       kase.sign_contract(contract)
       kase.submit_to_enroller
       kase.complete(Case::Status::Approved)
 
-      case_repo.save_cohere_contribution(kase)
+      case_repo.save_agent_data(kase)
 
       c = kase.record
       assert_equal(c.status, "approved")
@@ -352,7 +352,7 @@ module Db
     test "saves a new assignment" do
       case_repo = Case::Repo.new
       case_rec = cases(:opened_2)
-      user_rec = users(:cohere_1)
+      user_rec = users(:agent_1)
 
       kase = Case::Repo.map_record(case_rec)
       user = User::Repo.map_record(user_rec)
@@ -487,7 +487,7 @@ module Db
       case_rec = cases(:approved_1)
       program_rec = programs(:water_0)
       supplier_rec = partners(:supplier_3)
-      user_rec = users(:cohere_1)
+      user_rec = users(:agent_1)
 
       referrer = Case::Repo.map_record(case_rec, documents: case_rec.documents)
       referral = referrer.make_referral(

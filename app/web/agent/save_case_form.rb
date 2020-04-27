@@ -1,4 +1,4 @@
-module Cohere
+module Agent
   class SaveCaseForm < ::Command
     attr(:case)
 
@@ -17,7 +17,7 @@ module Cohere
       @case = @case_repo.find(form.detail.id.val)
 
       # udate
-      @case.add_cohere_data(
+      @case.add_agent_data(
         form.map_to_supplier_account,
         form.map_to_recipient_profile,
         form.map_to_recipient_household,
@@ -45,7 +45,7 @@ module Cohere
         @case.complete(Case::Status::Denied)
       end
 
-      @case_repo.save_cohere_contribution(@case)
+      @case_repo.save_agent_data(@case)
       true
     end
   end

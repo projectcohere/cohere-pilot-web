@@ -4,10 +4,10 @@ class ChatMessagesTests < ActionCable::Channel::TestCase
   tests(Chats::MessagesChannel)
 
   # -- tests --
-  test "subscribe a cohere user" do
+  test "subscribe an agent" do
     chat_rec = chats(:idle_1)
     chat = Chat::Repo.map_record(chat_rec)
-    user_rec = users(:cohere_1)
+    user_rec = users(:agent_1)
     user = User::Repo.map_record(user_rec)
     stub_connection(chat_user_id: user)
 
@@ -15,7 +15,7 @@ class ChatMessagesTests < ActionCable::Channel::TestCase
     assert_has_stream_for(chat)
   end
 
-  test "receive and publish a message from a cohere user" do
+  test "receive and publish a message from an agent" do
     chat_rec = chats(:idle_1)
 
     case_rec = chat_rec.recipient.cases.order(updated_at: :desc).first
@@ -65,7 +65,7 @@ class ChatMessagesTests < ActionCable::Channel::TestCase
       assert_length(msg["attachments"], 0)
     end
 
-    assert_broadcast_on(case_activity_for(:cohere_1), {
+    assert_broadcast_on(case_activity_for(:agent_1), {
       name: "HAS_NEW_ACTIVITY",
       data: {
         case_id: case_rec.id,
@@ -74,7 +74,7 @@ class ChatMessagesTests < ActionCable::Channel::TestCase
     })
   end
 
-  test "receive and publish attachments from a cohere user" do
+  test "receive and publish attachments from an agent" do
     chat_rec = chats(:idle_1)
     blob_rec = active_storage_blobs(:blob_1)
 

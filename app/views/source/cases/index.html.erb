@@ -17,7 +17,7 @@
     <% if @cases.blank? %>
       <%= tag.h2(t(".list.fallback"), class: "CaseList-fallback") %>
     <% else %>
-      <%= render(partial: "supplier/cases/cell", collection: @cases) %>
+      <%= render(partial: "source/cases/cell", collection: @cases) %>
     <% end %>
   </ul>
 

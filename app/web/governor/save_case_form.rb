@@ -20,7 +20,7 @@ module Governor
       @case.add_governor_data(form.map_to_recipient_household)
 
       # save the case
-      @case_repo.save_dhs_contribution(@case)
+      @case_repo.save_governor_data(@case)
 
       return true
     end

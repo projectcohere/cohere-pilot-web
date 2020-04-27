@@ -5,7 +5,7 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
 
   # -- create --
   test "can't self-assign a case without permission" do
-    user_rec = users(:supplier_1)
+    user_rec = users(:source_1)
 
     assert_raises(ActionController::RoutingError) do
       post("/cases/3/assignments")
@@ -16,8 +16,8 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "self-assign a case as a cohere user" do
-    user_rec = users(:cohere_1)
+  test "self-assign a case as an agent" do
+    user_rec = users(:agent_1)
     case_rec = cases(:opened_2)
 
     act = -> do
@@ -32,13 +32,13 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/queue?scope=queued")
     assert_present(flash[:notice])
 
-    assert_matching_broadcast_on(case_activity_for(:cohere_1)) do |msg|
+    assert_matching_broadcast_on(case_activity_for(:agent_1)) do |msg|
       assert_equal(msg["name"], "DID_ASSIGN_USER")
       assert_entry(msg["data"], "case_id")
     end
   end
 
-  test "self-assign a case a governor user" do
+  test "self-assign a case a governor" do
     user_rec = users(:governor_1)
     case_rec = cases(:opened_2)
 
@@ -94,7 +94,7 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
 
   # -- destroy --
   test "can't unassign a user without permission" do
-    user_rec = users(:supplier_1)
+    user_rec = users(:source_1)
 
     assert_raises(ActionController::RoutingError) do
       delete("/cases/3/assignments/1")
@@ -105,8 +105,8 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "unassign a user as a cohere user" do
-    user_rec = users(:cohere_1)
+  test "unassign a user as an agent" do
+    user_rec = users(:agent_1)
     case_rec = cases(:opened_1)
     case_assignment_rec = case_rec.assignments.first
 
@@ -122,7 +122,7 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/#{case_rec.id}/edit")
     assert_present(flash[:notice])
 
-    assert_matching_broadcast_on(case_activity_for(:cohere_1)) do |msg|
+    assert_matching_broadcast_on(case_activity_for(:agent_1)) do |msg|
       assert_equal(msg["name"], "DID_UNASSIGN_USER")
       assert_entry(msg["data"], "case_id")
     end

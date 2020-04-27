@@ -53,7 +53,7 @@ Rails.application.routes.draw do
     end
   end
 
-  signed_in(role: :supplier) do |c|
+  signed_in(role: Role::Source) do |c|
     resources(:cases, id: /\d+/, only: %i[
       index
       new
@@ -66,10 +66,10 @@ Rails.application.routes.draw do
       )
     end
 
-    fallback(:supplier, to: "/cases", constraints: c)
+    fallback(Role::Source, to: "/cases", constraints: c)
   end
 
-  signed_in(role: :governor) do |c|
+  signed_in(role: Role::Governor) do |c|
     resources(:cases, id: /\d+/, only: %i[
       edit
       update
@@ -95,10 +95,10 @@ Rails.application.routes.draw do
       ])
     end
 
-    fallback(:governor, to: "/cases/queue", constraints: c)
+    fallback(Role::Governor, to: "/cases/queue", constraints: c)
   end
 
-  signed_in(role: :enroller) do |c|
+  signed_in(role: Role::Enroller) do |c|
     resources(:cases, id: /\d+/, only: %i[
       show
     ]) do
@@ -129,10 +129,10 @@ Rails.application.routes.draw do
       ])
     end
 
-    fallback(:enroller, to: "/cases/queue", constraints: c)
+    fallback(Role::Enroller, to: "/cases/queue", constraints: c)
   end
 
-  signed_in(role: :cohere) do |c|
+  signed_in(role: Role::Agent) do |c|
     # -- cases --
     resources(:cases, id: /\d+/, only: %i[
       edit
@@ -181,7 +181,7 @@ Rails.application.routes.draw do
     end
 
     # -- fallback --
-    fallback(:cohere, to: "/cases/queue", constraints: c)
+    fallback(Role::Agent, to: "/cases/queue", constraints: c)
   end
 
   # -- development --

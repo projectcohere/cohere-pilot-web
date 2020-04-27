@@ -21,6 +21,10 @@ class Option
     return @key.to_s
   end
 
+  def to_i
+    return @index
+  end
+
   # -- statics --
   class << self
     def keys

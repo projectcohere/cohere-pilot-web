@@ -6,21 +6,36 @@
       <%= @case.recipient_name %>'s case
     </h1>
 
+    <div class="PageHeader-actions">
+      <% if @case.can_remove? %>
+        <%=
+          button_to("Remove from Pilot", @case.remove_path,
+            name: :remove,
+            method: :patch,
+            class: "Button Button--destructive",
+            data: {
+              confirm: "Are you sure you want to remove this case from the pilot?"
+            },
+          )
+        %>
+      <% end %>
+    </div>
+
     <div class="PageHeader-row PageHeader-filters">
       <nav class="Filters">
         <%= filter_for(:profile, is_error: errors?(@form.details, @form.contact), is_selected: true) %>
         <%= filter_for(:household, is_error: errors?(@form.address, @form.household)) %>
         <%= filter_for(:accounts, is_error: errors?(@form.supplier_account)) %>
         <%= filter_for(:documents, is_error: errors?(@form.documents)) %>
+        <%= filter_for(:admin) %>
       </nav>
     </div>
   </header>
 
   <div class="CaseDetail CaseDetail--edit">
     <%- form_class = "CaseDetail-case" %>
-    <%= form_for(@form, url: case_referrals_path, html: { class: form_class }) do |f| %>
+    <%= form_for(@form, url: @case.update_path, html: { class: form_class }) do |f| %>
       <% form_locals = { f: f, form: @form, view: @case, policy: policy } %>
-      <%= f.hidden_field(:program_id) %>
 
       <section id="profile" class="Panel-tab is-visible">
         <%= render(partial: "cases/forms/details", locals: form_locals) %>
@@ -40,22 +55,48 @@
         <%= render(partial: "cases/documents", locals: { documents: @form.documents.all }) %>
       </section>
 
+      <section id="admin" class="Panel-tab">
+        <%= render(partial: "cases/forms/admin", locals: form_locals) %>
+      </section>
+
       <div class="Panel-actions">
         <%= f.submit("Save", class: "Button Button--action") %>
-        <%=
-          f.submit("Save & Submit to Enroller",
-            name: :submit,
-            class: "Button Button--secondary",
-            data: {
-              confirm: "Are you sure you want to submit this case?"
-            },
-          )
-        %>
+
+        <%- if @case.can_submit? %>
+          <%=
+            f.submit("Save & Submit to Enroller",
+              name: :submit,
+              class: "Button Button--secondary",
+              data: {
+                confirm: "Are you sure you want to submit this case?"
+              },
+            )
+          %>
+        <% elsif @case.can_complete? %>
+          <%=
+            f.submit("Save & Approve",
+              name: :approve,
+              class: "Button Button--secondary",
+              data: {
+                confirm: "Are you sure you want to approve this case?"
+              }
+            )
+          %>
+          <%=
+            f.submit("Save & Deny",
+              name: :deny,
+              class: "Button Button--destructive",
+              data: {
+                confirm: "Are you sure you want to deny this case?"
+              },
+            )
+          %>
+        <%- end %>
       </div>
     <% end %>
 
     <%=
-      render(partial: "cohere/cases/chat", locals: {
+      render(partial: "agent/cases/chat", locals: {
         chat: @case.chat,
         recevier: @case.recipient_first_name
       })
