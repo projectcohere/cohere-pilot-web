@@ -6,6 +6,9 @@ class Case
       belongs_to(:user)
       belongs_to(:partner)
 
+      # -- roles --
+      enum(role: Role.keys)
+
       # -- scopes --
       def self.join_user
         return includes(:user)

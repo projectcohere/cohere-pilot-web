@@ -26,17 +26,19 @@ module Events
           event.case_id.val,
         )
       when Case::Events::DidAssignUser
-        if event.partner_membership != Partner::Membership::Supplier
+        if not event.assignment_role.source?
           Cases::PublishAssignUser.perform_async(
             event.case_id.val,
-            event.partner_id,
+            event.assignment_partner_id,
+            event.assignment_role.key,
           )
         end
       when Case::Events::DidUnassignUser
-        if event.partner_membership != Partner::Membership::Supplier
+        if not event.assignment_role.source?
           Cases::PublishUnassignUser.perform_async(
             event.case_id.val,
-            event.partner_id,
+            event.assignment_partner_id,
+            event.assignment_role.key,
           )
         end
       when Case::Events::DidSubmit

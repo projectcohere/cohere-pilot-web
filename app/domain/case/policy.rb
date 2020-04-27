@@ -13,68 +13,68 @@ class Case
       when :list
         true
       when :list_queue
-        cohere? || enroller? || governor?
+        agent? || verifier? || contributor?
       # create
       when :create
-        supplier?
+        source?
       when :create_assignment
-        cohere? || enroller? || governor?
+        agent? || verifier? || contributor?
       # edit
       when :edit
-        cohere? || governor?
+        agent? || contributor?
       when :edit_details
-        cohere?
+        agent?
       when :edit_address
-        cohere? || supplier?
+        agent? || source?
       when :edit_contact
-        cohere? || supplier?
+        agent? || source?
       when :edit_address_geography
-        supplier?
+        source?
       when :edit_household
-        cohere? || supplier? || governor?
+        agent? || source? || contributor?
       when :edit_household_size
-        cohere? || governor?
+        agent? || contributor?
       when :edit_household_ownership
-        cohere? #&& requires?(&:household_ownership?)
+        agent? #&& requires?(&:household_ownership?)
       when :edit_household_primary_residence
-        cohere? #&& requires?(&:household_primary_residence?)
+        agent? #&& requires?(&:household_primary_residence?)
       when :edit_household_proof_of_income
-        cohere? || supplier?
+        agent? || source?
       when :edit_household_dhs_number
-        cohere? || governor?
+        agent? || contributor?
       when :edit_household_income
-        cohere? || governor?
+        agent? || contributor?
       when :edit_supplier_account
-        cohere? || supplier?
+        agent? || source?
       when :edit_supplier
-        cohere?
+        agent?
       when :edit_supplier_account_active_service
-        cohere? && requires?(&:supplier_account_active_service?)
+        agent? && requires?(&:supplier_account_active_service?)
       when :edit_documents
-        cohere?
+        agent?
       when :edit_admin
-        cohere?
+        agent?
       # view
       when :view
-        cohere? || enroller?
+        agent? || verifier?
       when :view_fpl
-        cohere? || enroller?
+        agent? || verifier?
       when :view_household_ownership
-        cohere? && requires?(&:household_ownership?)
+        agent? && requires?(&:household_ownership?)
       when :view_household_primary_residence
-        cohere? && requires?(&:household_primary_residence?)
+        agent? && requires?(&:household_primary_residence?)
       when :view_supplier_account_active_service
-        cohere? && requires?(&:supplier_account_active_service?)
+        agent? && requires?(&:supplier_account_active_service?)
       # actions
       when :referral
-        cohere?
+        agent?
       when :complete
-        cohere? || enroller?
+        agent? || verifier?
       # destroy
       when :destroy
-        cohere?
+        agent?
       when :destroy_assignment
-        cohere?
+        agent?
       else
         super
       end

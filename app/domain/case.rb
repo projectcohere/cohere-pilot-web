@@ -146,19 +146,19 @@ class Case < ::Entity
   def assign_user(user)
     @assignments ||= []
 
-    has_assignment = @assignments.any? do |a|
-      a.partner_id == user.role.partner_id
+    assigned = @assignments.any? do |a|
+      a.role == user.role && a.partner_id == user.partner_id
     end
 
-    if has_assignment
+    if assigned
       return
     end
 
     @new_assignment = Assignment.new(
+      role: user.role,
       user_id: user.id,
       user_email: user.email,
-      partner_id: user.role.partner_id,
-      partner_membership: user.role.membership,
+      partner_id: user.partner_id,
     )
 
     @assignments.push(@new_assignment)
@@ -314,5 +314,9 @@ class Case < ::Entity
   def did_save(record)
     @id.set(record.id)
     @record = record
+  end
+
+  def did_save_assignment(record)
+    @new_assignment.did_save(record)
   end
 end

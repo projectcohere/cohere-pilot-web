@@ -1,24 +1,29 @@
 supplier_1:
+  role: source
   user: supplier_1
   case: opened_1
   partner: supplier_1
 
 cohere_1:
+  role: agent
   user: cohere_1
   case: opened_1
   partner: cohere_1
 
 governor_1:
+  role: contributor
   user: governor_1
   case: opened_1
   partner: governor_1
 
 enroller_1:
+  role: verifier
   user: enroller_1
   case: submitted_1
   partner: enroller_1
 
 approved_2:
+  role: agent
   user: cohere_1
   case: approved_2
   partner: cohere_1

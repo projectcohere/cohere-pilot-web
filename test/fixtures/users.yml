@@ -1,35 +1,41 @@
 cohere_1:
   email: me@projectcohere.com
   encrypted_password: <%= password("password123$") %>
+  role: agent
   partner: cohere_1
   remember_token: <%= SecureRandom.uuid %>
 
 governor_1:
   email: me@michigan.gov
   encrypted_password: <%= password("password123$") %>
+  role: contributor
   partner: governor_1
   remember_token: <%= SecureRandom.uuid %>
 
 enroller_1:
   email: me@testmetro.org
   encrypted_password: <%= password("password123$") %>
+  role: verifier
   partner: enroller_1
   remember_token: <%= SecureRandom.uuid %>
 
 enroller_2:
   email: me@testunited.org
   encrypted_password: <%= password("password123$") %>
+  role: verifier
   partner: enroller_2
   remember_token: <%= SecureRandom.uuid %>
 
 supplier_1:
   email: me@testenergy.com
   encrypted_password: <%= password("password123$") %>
+  role: source
   partner: supplier_1
   remember_token: <%= SecureRandom.uuid %>
 
 supplier_2:
   email: me@testwater.com
   encrypted_password: <%= password("password123$") %>
+  role: source
   partner: supplier_3
   remember_token: <%= SecureRandom.uuid %>

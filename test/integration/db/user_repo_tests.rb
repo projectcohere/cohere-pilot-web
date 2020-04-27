@@ -48,10 +48,12 @@ module Db
 
     test "save an invited user" do
       user_repo = User::Repo.new
-      user_partner_rec = partners(:cohere_1)
+
+      partner_rec = partners(:cohere_1)
       user = User.invite(User::Invitation.new(
         email: "test@website.com",
-        partner_id: user_partner_rec.id,
+        role: Role::Agent,
+        partner_id: partner_rec.id,
       ))
 
       act = -> do

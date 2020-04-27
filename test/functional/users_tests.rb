@@ -149,11 +149,12 @@ class UsersTests < ActionDispatch::IntegrationTest
     Rake.application.rake_require("tasks/users")
 
     input = <<-CSV.strip_heredoc
-      email,parter_id
-      test@cohere.org,#{partners(:cohere_1).id}
-      test@michigan.gov,#{partners(:governor_1).id}
-      test@testenergy.org,#{partners(:supplier_1).id}
-      test@testmetro.org,#{partners(:enroller_1).id}
+      email,partner_id,role
+      test@cohere.org,#{partners(:cohere_1).id},
+      test@michigan.gov,#{partners(:governor_1).id},
+      test@testenergy.org,#{partners(:supplier_1).id},
+      test@testmetro.org,#{partners(:enroller_1).id},
+      best@testmetro.org,#{partners(:enroller_1).id},source
     CSV
 
     act = -> do
@@ -163,11 +164,11 @@ class UsersTests < ActionDispatch::IntegrationTest
     end
 
     assert_difference(
-      -> { User::Record.count } => 4,
+      -> { User::Record.count } => 5,
       &act
     )
 
-    assert_send_emails(4) do
+    assert_send_emails(5) do
       assert_select("a", text: /create a password/) do |el|
         assert_match(%r[#{ENV["HOST"]}/user/\d+/password/edit\?invited=true&token=\w+], el[0][:href])
       end

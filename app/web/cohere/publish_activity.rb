@@ -7,14 +7,16 @@ module Cohere
 
     # -- command --
     def call(case_id, case_new_activity)
-      cohere = @partner_repo.find_cohere
-
-      Cases::ActivityChannel.broadcast_to(
-        cohere.id,
+      channel = Cases::ActivityChannel
+      channel.broadcast_to(
+        channel.role_stream(
+          Role::Agent,
+          @partner_repo.find_cohere.id,
+        ),
         Cases::ActivityEvent.has_new_activity(
           case_id,
           case_new_activity,
-        )
+        ),
       )
     end
   end

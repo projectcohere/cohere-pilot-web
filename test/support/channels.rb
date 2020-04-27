@@ -1,14 +1,14 @@
 module Support
   module Channels
     # -- queries --
-    def case_activity_for(partner_name)
-      partner_rec = partners(partner_name)
-      return Cases::ActivityChannel::broadcasting_for(partner_rec.id)
+    def case_activity_for(user_name)
+      user_rec = users(user_name)
+      return Cases::ActivityChannel.broadcasting_for("#{user_rec.role}@#{user_rec.partner_id}")
     end
 
     def chat_messages_for(chat_name)
       chat_rec = chats(chat_name)
-      return Chats::MessagesChannel::broadcasting_for(chat_rec.id)
+      return Chats::MessagesChannel.broadcasting_for(chat_rec.id)
     end
 
     # -- asserts --

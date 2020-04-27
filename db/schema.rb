@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_24_204534) do
+ActiveRecord::Schema.define(version: 2020_04_27_160141) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -41,9 +41,10 @@ ActiveRecord::Schema.define(version: 2020_04_24_204534) do
     t.bigint "user_id", null: false
     t.bigint "case_id", null: false
     t.bigint "partner_id", null: false
+    t.integer "role", null: false
     t.index ["case_id"], name: "index_case_assignments_on_case_id"
     t.index ["partner_id"], name: "index_case_assignments_on_partner_id"
-    t.index ["user_id", "case_id", "partner_id"], name: "by_natural_key", unique: true
+    t.index ["user_id", "role", "case_id", "partner_id"], name: "by_natural_key", unique: true
     t.index ["user_id"], name: "index_case_assignments_on_user_id"
   end
 
@@ -160,6 +161,7 @@ ActiveRecord::Schema.define(version: 2020_04_24_204534) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "partner_id", null: false
+    t.integer "role", default: 0, null: false
     t.index ["email"], name: "index_users_on_email"
     t.index ["partner_id"], name: "index_users_on_partner_id"
     t.index ["remember_token"], name: "index_users_on_remember_token"

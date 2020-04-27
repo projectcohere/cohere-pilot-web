@@ -7,7 +7,7 @@ module Cases
       include Authorization
 
       # -- lifetime --
-      def initialize(scope, program_repo: Program::Repo.get)
+      def initialize(scope = nil, program_repo: Program::Repo.get)
         @scope = scope
         @program_repo = program_repo
       end
@@ -71,10 +71,15 @@ module Cases
         return form
       end
 
-      # -- queries/notification
+      # -- queries/notifications
       def find_notification(id)
         case_rec = Case::Record.find(id)
         return self.class.map_notification(case_rec)
+      end
+
+      def find_assignment_notification(assignment_id)
+        assignment_rec = Case::Assignment::Record.find(assignment_id)
+        return self.class.map_assignment(assignment_rec)
       end
 
       # -- queries/cells
@@ -230,13 +235,21 @@ module Cases
         )
       end
 
-      # -- mapping/notification
+      # -- mapping/notifications
       def self.map_notification(r)
         return Notification.new(
           id: Id.new(r.id),
           status: r.status.to_sym,
           recipient_name: Recipient::Repo.map_name(r.recipient),
           enroller_id: r.enroller_id,
+        )
+      end
+
+      def self.map_assignment(r)
+        return Assignment.new(
+          role: Role.from_key(r.role),
+          case_id: r.case_id,
+          partner_id: r.partner_id,
         )
       end
 

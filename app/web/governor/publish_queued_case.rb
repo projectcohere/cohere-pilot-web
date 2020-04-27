@@ -7,10 +7,12 @@ module Governor
 
     # -- command --
     def call(case_id)
-      dhs = @partner_repo.find_dhs
-
-      Cases::ActivityChannel.broadcast_to(
-        dhs.id,
+      channel = Cases::ActivityChannel
+      channel.broadcast_to(
+        channel.role_stream(
+          Role::Contributor,
+          @partner_repo.find_dhs.id,
+        ),
         Cases::ActivityEvent.did_add_queued_case(
           case_id,
         ),

@@ -386,9 +386,10 @@ class Case
       c = kase
       a = assignment
       assignment_rec.assign_attributes(
+        role: a.role.index,
         case_id: c.id.val,
-        user_id: assignment.user_id.val,
-        partner_id: assignment.partner_id,
+        user_id: a.user_id.val,
+        partner_id: a.partner_id,
       )
     end
 
@@ -505,10 +506,10 @@ class Case
 
     def self.map_assignment(r)
       return Assignment.new(
+        role: Role.from_key(r.role),
         user_id: r.user.id,
         user_email: r.user.email,
         partner_id: r.partner_id,
-        partner_membership: r.partner.membership.to_sym,
       )
     end
 

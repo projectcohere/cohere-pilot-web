@@ -60,14 +60,16 @@ class User
       user_rec = User::Record.new
 
       # update record
+      u = user
       user_rec.assign_attributes(
-        email: user.email,
+        email: u.email,
+        role: u.role.index,
         password: SecureRandom.uuid
       )
 
-      r = user.role
+      p = u.partner
       user_rec.assign_attributes(
-        partner_id: r.partner_id,
+        partner_id: p.id,
       )
 
       # save record
@@ -87,27 +89,10 @@ class User
       return User.new(
         id: Id.new(r.id),
         email: r.email,
-        role: map_role(r),
+        role: Role.from_key(r.role),
+        partner: Partner::Repo.map_record(r.partner),
         confirmation_token: r.confirmation_token
       )
-    end
-
-    def self.map_role(r)
-      return User::Role.new(
-        partner_id: r.partner.id,
-        membership: Partner::Membership.from_key(r.partner.membership),
-      )
-    end
-  end
-
-  class Record
-    # -- scopes --
-    def self.by_membership(*membership)
-      scope = self
-        .includes(:partner)
-        .where(partners: { membership: membership.map(&:key) })
-
-      return scope
     end
   end
 end

@@ -12,7 +12,7 @@ class Chat
       # then check action permissions
       case action
       when :files
-        cohere?
+        agent?
       else
         false
       end

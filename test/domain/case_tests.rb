@@ -167,13 +167,17 @@ class CaseTests < ActiveSupport::TestCase
   test "doesn't assign a user if an assignment for that partner exists" do
     kase = Case.stub(
       assignments: [
-        Case::Assignment.stub(partner_id: 3)
+        Case::Assignment.stub(
+          role: Role::Agent,
+          partner_id: 3
+        )
       ]
     )
 
     user = User.stub(
       id: Id.new(3),
-      role: User::Role.stub(partner_id: 3),
+      role: Role::Agent,
+      partner: Partner.stub(id: 3),
     )
 
     kase.assign_user(user)
@@ -186,8 +190,9 @@ class CaseTests < ActiveSupport::TestCase
     user = User.stub(
       id: Id.new(3),
       email: :test_email,
-      role: User::Role.stub(
-        partner_id: 5,
+      role: Role::Agent,
+      partner: Partner.stub(
+        id: 5,
         membership: Partner::Membership::Cohere,
       ),
     )
