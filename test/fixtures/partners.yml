@@ -20,22 +20,29 @@ enroller_2:
   membership: enroller
   programs:
     - energy_0
+    - energy_c
     - water_0
+    - water_c
+    - food_c
+    - housing_c
 
 supplier_1:
   name: "Test Energy"
   membership: supplier
   programs:
     - energy_0
+    - energy_c
 
 supplier_2:
   name: "Test Energon"
   membership: supplier
   programs:
     - energy_0
+    - energy_c
 
 supplier_3:
   name: "Test Water"
   membership: supplier
   programs:
     - water_0
+    - water_c

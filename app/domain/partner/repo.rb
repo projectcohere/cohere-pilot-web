@@ -1,11 +1,7 @@
 class Partner
   class Repo < ::Repo
     include Service::Single
-
-    # -- lifetime --
-    def initialize(user_repo: User::Repo.get)
-      @user_repo = user_repo
-    end
+    include Authorization
 
     # -- queries --
     # -- queries/one
@@ -58,16 +54,17 @@ class Partner
     end
 
     def find_all_suppliers_by_program(program_id)
-      partner_recs = Partner::Record
-        .includes(:programs)
-        .where(
-          membership: Partner::Membership::Supplier.key,
-          partners_programs: {
-            program_id: program_id
-          }
-        )
+      partner_query = Partner::Record
+        .with_membership(Partner::Membership::Supplier)
+        .with_program(program_id)
 
-      return partner_recs.map { |r| entity_from(r) }
+      # authorize by membership
+      q = partner_query
+      if user_partner&.membership&.supplier?
+        q = q.where(id: user_partner_id)
+      end
+
+      return q.map { |r| entity_from(r) }
     end
 
     # -- factories --

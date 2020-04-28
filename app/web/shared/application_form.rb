@@ -9,32 +9,44 @@ class ApplicationForm
   attr(:model)
 
   # -- lifetime --
-  def initialize(model = nil, attrs = {}, &permit)
+  def initialize(model = nil, attrs = {}, parent:, &permit)
     @model = model
 
-    # get the list of subforms
+    # TODO: this is only used by the supplier_account form to pull the
+    # program id from the root form when the model is nil. it may be better
+    # to expose context data to subforms or pass a non-nil model for new
+    # forms rather offer unfettered access to their parent
+    @parent = parent
+
+    # filter list of permitted subforms
     sf_names = self.class.subform_map&.keys
 
     if block_given?
       shape = self.class.params_shape(&permit)
-      sf_names &= shape.last.keys # this will fail if the shape has no nested attrs
 
       # whitelist attrs if permittable
       if attrs.respond_to?(:permit) && !attrs.permitted?
         attrs = attrs.permit(shape)
       end
+
+      sf_names &= shape.last.keys
     end
 
-    # create permitted subforms
-    sf_names&.each do |sf_name|
-      sf_class = self.class.subform_map[sf_name]
-      sf_attrs = attrs.delete(sf_name) || {}
-      instance_variable_set("@#{sf_name}", sf_class.new(model, sf_attrs.stringify_keys))
+    # extract nested attrs for permitted subforms
+    sf_attrs = sf_names&.each_with_object({}) do |sf_name, memo|
+      memo[sf_name] = attrs.delete(sf_name) || {}
     end
 
-    # assign local values
+    # assign local attrs
     initialize_attrs(attrs)
     super(attrs)
+
+    # create permitted subforms
+    sf_attrs&.each do |sf_name, sf_attrs|
+      sf_class = self.class.subform_map[sf_name]
+      subform = sf_class.new(model, sf_attrs.stringify_keys, parent: self)
+      instance_variable_set("@#{sf_name}", subform)
+    end
   end
 
   # -- lifecycle --
@@ -156,6 +168,7 @@ class ApplicationForm
   def assign_defaults!(attrs, defaults)
     defaults.each do |key, value|
       key = key.to_s
+
       if attrs[key].nil?
         attrs[key] = value
       end

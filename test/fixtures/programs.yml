@@ -1,7 +1,16 @@
+food_c:
+  name: "Food (CARES)"
+
+housing_c:
+  name: "Housing (CARES)"
+
 energy_0:
   name: "NRG"
   contracts:
     - meap
+
+energy_c:
+  name: "Energy (CARES)"
 
 water_0:
   name: "WTR"
@@ -14,3 +23,6 @@ water_0:
     household:
       - ownership
       - primary_residence
+
+water_c:
+  name: "Water (CARES)"

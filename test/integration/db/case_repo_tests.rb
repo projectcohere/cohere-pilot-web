@@ -186,7 +186,7 @@ module Db
       assert_not_nil(kase.recipient.id.val)
 
       case_rec = kase.record
-      assert_equal(case_rec.program.id, supplier_rec.programs[0].id)
+      assert_equal(case_rec.program.id, program_rec.id)
 
       events = kase.events
       assert_length(events, 0)

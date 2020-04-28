@@ -19,7 +19,9 @@ module Cases
 
       # -- lifetime --
       protected def initialize_attrs(attrs)
-        attrs[:program_id] ||= @model&.program&.id
+        assign_defaults!(attrs, {
+          program_id: @model&.program&.id,
+        })
       end
 
       # -- queries --
@@ -46,6 +48,10 @@ module Cases
       # -- queries/transformation
       def map_to_admin
         return admin.status
+      end
+
+      def map_to_supplier
+        return supplier_account.map_to_supplier
       end
 
       def map_to_supplier_account

@@ -5,10 +5,6 @@ module Cases
       field(:status, :symbol, presence: true)
 
       # -- lifecycle --
-      def initialize(model, attrs = {})
-        super(model, attrs)
-      end
-
       protected def initialize_attrs(attrs)
         assign_defaults!(attrs, {
           status: @model.status,

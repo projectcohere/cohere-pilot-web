@@ -19,13 +19,6 @@ enroller_1:
   partner: enroller_1
   remember_token: <%= SecureRandom.uuid %>
 
-enroller_2:
-  email: me@testunited.org
-  encrypted_password: <%= password("password123$") %>
-  role: enroller
-  partner: enroller_2
-  remember_token: <%= SecureRandom.uuid %>
-
 source_1:
   email: me@testenergy.com
   encrypted_password: <%= password("password123$") %>
@@ -38,4 +31,11 @@ source_2:
   encrypted_password: <%= password("password123$") %>
   role: source
   partner: supplier_3
+  remember_token: <%= SecureRandom.uuid %>
+
+source_3:
+  email: me@testunited.org
+  encrypted_password: <%= password("password123$") %>
+  role: source
+  partner: enroller_2
   remember_token: <%= SecureRandom.uuid %>

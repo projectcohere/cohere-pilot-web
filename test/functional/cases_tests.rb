@@ -158,19 +158,19 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_response(:success)
   end
 
-  test "can't view prompt to open a case if signed-out" do
+  test "can't view open case form if signed-out" do
     get("/cases/new?program_id=3")
     assert_redirected_to("/sign-in")
   end
 
-  test "can't view prompt to open a case without permission" do
+  test "can't view open case form without permission" do
     user_rec = users(:agent_1)
 
     get(auth("/cases/new?program_id=3", as: user_rec))
     assert_redirected_to("/cases/queue")
   end
 
-  test "views prompt to open a case as a source" do
+  test "views open case form as a source" do
     user_rec = users(:source_1)
     program_rec = user_rec.partner.programs.first
 
@@ -181,6 +181,15 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_analytics_events(1) do |events|
       assert_match(/Did View Supplier Form/, events[0])
     end
+  end
+
+  test "views open case form as a non-supplier source" do
+    user_rec = users(:source_3)
+    program_rec = user_rec.partner.programs.first
+
+    get(auth("/cases/new?program_id=#{program_rec.id}", as: user_rec))
+    assert_response(:success)
+    assert_select(".PageHeader-title", text: /Add a Case/)
   end
 
   test "opens a case as a source" do
@@ -248,6 +257,53 @@ class CasesTests < ActionDispatch::IntegrationTest
         assert_match(%r[#{ENV["HOST"]}/cases/\d+/edit], el[0][:href])
       end
     end
+  end
+
+  test "opens a case a non-supplier source" do
+    user_rec = users(:source_3)
+    program_rec = user_rec.partner.programs.first
+
+    case_params = {
+      program_id: program_rec.id,
+      contact: {
+        first_name: "Janice",
+        last_name: "Sample",
+        phone_number: Faker::Number.number(digits: 10),
+      },
+      address: {
+        street: "123 Test Street",
+        city: "Testopolis",
+        zip: "11111",
+        geography: true,
+      },
+      household: {
+        proof_of_income: "dhs",
+      },
+      supplier_account: {
+        account_number: "22222",
+        arrears: "1000.00"
+      }
+    }
+
+    act = -> do
+      VCR.use_cassette("chats--send-cohere-msg--attachments") do
+        post(auth("/cases", as: user_rec), params: {
+          case: case_params
+        })
+      end
+    end
+
+    assert_difference(
+      -> { Case::Record.count } => 1,
+      -> { Case::Assignment::Record.count } => 1,
+      -> { Recipient::Record.count } => 1,
+      -> { Chat::Record.count } => 1,
+      -> { Chat::Message::Record.count } => 1,
+      &act
+    )
+
+    assert_present(flash[:notice])
+    assert_redirected_to("/cases")
   end
 
   test "show errors when opening an invalid case as a source" do

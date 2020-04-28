@@ -11,11 +11,11 @@ module Authorization
     return user&.role
   end
 
-  def user_membership
-    return user&.partner&.membership
+  def user_partner
+    return user&.partner
   end
 
   def user_partner_id
-    return user&.partner&.id
+    return user_partner&.id
   end
 end

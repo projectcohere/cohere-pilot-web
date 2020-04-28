@@ -17,9 +17,15 @@ class Policy
   end
 
   # -- queries --
-  private def role
+  protected def role
     return @user.role
   end
 
   delegate(:source?, :governor?, :agent?, :enroller?, to: :role)
+
+  protected def membership
+    return @user.partner.membership
+  end
+
+  delegate(:supplier?, to: :membership)
 end

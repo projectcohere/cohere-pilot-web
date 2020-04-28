@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_27_160141) do
+ActiveRecord::Schema.define(version: 2020_04_27_225750) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -55,7 +55,7 @@ ActiveRecord::Schema.define(version: 2020_04_27_160141) do
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "enroller_id", null: false
     t.integer "status", default: 0, null: false
-    t.bigint "supplier_id", null: false
+    t.bigint "supplier_id"
     t.string "supplier_account_number"
     t.integer "supplier_account_arrears_cents"
     t.datetime "received_message_at", precision: 6
@@ -126,7 +126,7 @@ ActiveRecord::Schema.define(version: 2020_04_27_160141) do
 
   create_table "programs", force: :cascade do |t|
     t.string "name", null: false
-    t.string "contracts", null: false, array: true
+    t.string "contracts", default: [], null: false, array: true
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.json "requirements", default: {}, null: false

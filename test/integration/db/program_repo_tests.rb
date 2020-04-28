@@ -9,11 +9,11 @@ module Db
 
       recipient_rec = recipients(:recipient_3)
       programs = program_repo.find_all_available_by_recipient(recipient_rec.id)
-      assert_length(programs, 1)
+      assert_length(programs, 5)
 
       recipient_rec = recipients(:recipient_2)
       programs = program_repo.find_all_available_by_recipient(recipient_rec.id)
-      assert_length(programs, 0)
+      assert_length(programs, 4)
     end
   end
 end

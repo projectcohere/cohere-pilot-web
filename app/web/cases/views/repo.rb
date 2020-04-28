@@ -64,7 +64,7 @@ module Cases
         end
 
         # build a form that from permitted attrs
-        form = Form.new(detail, attrs) do |subform|
+        form = Form.new(detail, attrs, parent: nil) do |subform|
           policy.permit?(:"edit_#{subform}")
         end
 

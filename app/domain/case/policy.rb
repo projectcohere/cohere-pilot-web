@@ -47,7 +47,7 @@ class Case
       when :edit_supplier_account
         agent? || source?
       when :edit_supplier
-        agent?
+        agent? || source? && !supplier?
       when :edit_supplier_account_active_service
         agent? && requires?(&:supplier_account_active_service?)
       when :edit_documents

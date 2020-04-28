@@ -20,7 +20,7 @@ module Source
         return false
       end
 
-      supplier = @partner_repo.find(user_partner_id)
+      supplier = form.map_to_supplier
 
       # validate program
       supplier_program = supplier.find_program(form.program_id)
