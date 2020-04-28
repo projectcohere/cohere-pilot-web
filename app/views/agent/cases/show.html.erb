@@ -35,9 +35,14 @@
     <article class="CaseDetail-case">
       <section id="application" class="Panel-tab is-visible">
         <%- locals = { view: @case } %>
+
         <%= render(partial: "cases/detail/details", locals: locals) %>
         <%= render(partial: "cases/detail/contact", locals: locals) %>
-        <%= render(partial: "cases/detail/supplier_account", locals: locals) %>
+
+        <% if permit?(:view_supplier_account) %>
+          <%= render(partial: "cases/detail/supplier_account", locals: locals) %>
+        <% end %>
+
         <%= render(partial: "cases/detail/dhs", locals: locals) %>
         <%= render(partial: "cases/detail/household", locals: locals) %>
       </section>

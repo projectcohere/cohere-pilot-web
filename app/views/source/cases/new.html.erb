@@ -16,7 +16,10 @@
       <%= render(partial: "cases/forms/contact", locals: form_locals) %>
       <%= render(partial: "cases/forms/address", locals: form_locals) %>
       <%= render(partial: "cases/forms/household", locals: form_locals) %>
-      <%= render(partial: "cases/forms/supplier_account", locals: form_locals) %>
+
+      <% if permit?(:edit_supplier_account) %>
+        <%= render(partial: "cases/forms/supplier_account", locals: form_locals) %>
+      <% end %>
 
       <div class="Panel-actions">
         <%= f.submit("Save", class: "Button Button--action") %>

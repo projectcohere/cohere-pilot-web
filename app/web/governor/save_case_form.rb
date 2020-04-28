@@ -13,7 +13,7 @@ module Governor
         return false
       end
 
-      case_id = form.detail.id.val
+      case_id = form.model.id.val
 
       # add governor data to the case
       @case = @case_repo.find_with_documents_for_governor(case_id, user_partner_id)

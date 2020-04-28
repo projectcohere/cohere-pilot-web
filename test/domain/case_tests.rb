@@ -2,16 +2,15 @@ require "test_helper"
 
 class CaseTests < ActiveSupport::TestCase
   # -- creation --
-  test "opens a case for the supplier's primary program" do
+  test "opens a case" do
     profile = Recipient::Profile.stub(
       phone: Phone.stub(number: "1")
     )
 
     kase = Case.open(
+      program: :test_program,
       recipient_profile: profile,
       enroller: Partner.stub(id: 1),
-      supplier: Partner.stub(id: 2),
-      supplier_program: :test_program,
       supplier_account: :test_account,
     )
 
@@ -20,7 +19,6 @@ class CaseTests < ActiveSupport::TestCase
     assert_equal(kase.recipient.profile, profile)
     assert_equal(kase.supplier_account, :test_account)
     assert_equal(kase.enroller_id, 1)
-    assert_equal(kase.supplier_id, 2)
 
     assert_instances_of(kase.events, [Case::Events::DidOpen])
   end

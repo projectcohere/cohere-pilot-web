@@ -128,9 +128,7 @@ module ApplicationHelper
 
   # -- queries --
   def errors?(*models)
-    models.any? do |model|
-      model.errors.present?
-    end
+    return models.any? { |m| m.errors.present? }
   end
 
   # -- utilities --

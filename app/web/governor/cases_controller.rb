@@ -24,7 +24,7 @@ module Governor
       permit!(:edit)
 
       @form = view_repo.edit_form(params[:id])
-      @case = @form.detail
+      @case = @form.model
 
       events.add(Cases::Events::DidViewGovernorForm.from_entity(@case))
     end
@@ -33,7 +33,7 @@ module Governor
       permit!(:edit)
 
       @form = view_repo.edit_form(params[:id], params: params)
-      @case = @form.detail
+      @case = @form.model
 
       save_form = SaveCaseForm.new
       if not save_form.(@form)

@@ -33,14 +33,14 @@ module Agent
       permit!(:edit)
 
       @form = view_repo.edit_form(params[:id])
-      @case = @form.detail
+      @case = @form.model
     end
 
     def update
       permit!(:edit)
 
       @form = view_repo.edit_form(params[:id], params: params)
-      @case = @form.detail
+      @case = @form.model
 
       save_form = SaveCaseForm.new
       if not save_form.(@form)

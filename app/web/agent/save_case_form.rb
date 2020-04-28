@@ -14,7 +14,7 @@ module Agent
       end
 
       # populate the case
-      @case = @case_repo.find(form.detail.id.val)
+      @case = @case_repo.find(form.model.id.val)
 
       # udate
       @case.add_agent_data(

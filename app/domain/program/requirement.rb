@@ -2,6 +2,7 @@ class Program
   class Requirement < ::Option
     # -- options --
     group(:supplier_account) do
+      option(:present)
       option(:active_service)
     end
 

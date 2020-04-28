@@ -33,7 +33,11 @@ module Cases
 
       # -- lifecycle --
       protected def initialize_attrs(attrs)
-        h = @model&.recipient_household
+        if not @model.respond_to?(:recipient_household)
+          return
+        end
+
+        h = @model.recipient_household
         assign_defaults!(attrs, {
           dhs_number: h&.dhs_number,
           size: h&.size&.to_s,

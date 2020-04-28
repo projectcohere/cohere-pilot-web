@@ -12,7 +12,7 @@ class Program
 
       requirement = program.requirements[0]
       assert_present(program.requirements)
-      assert_equal(requirement, Requirement::SupplierAccountActiveService)
+      assert_equal(requirement, Requirement::SupplierAccountPresent)
     end
   end
 end

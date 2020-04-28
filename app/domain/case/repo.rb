@@ -357,7 +357,11 @@ class Case
       case_rec.assign_attributes(
         program_id: c.program.id,
         enroller_id: c.enroller_id,
-        supplier_id: c.supplier_id
+      )
+
+      a = c.supplier_account
+      case_rec.assign_attributes(
+        supplier_id: a&.supplier_id,
       )
     end
 
@@ -473,7 +477,6 @@ class Case
         status: r.status.to_sym,
         recipient: map_recipient(r.recipient),
         enroller_id: r.enroller_id,
-        supplier_id: r.supplier_id,
         supplier_account: map_supplier_account(r),
         documents: documents&.map { |r| map_document(r) },
         assignments: assignments&.map { |r| map_assignment(r) },
@@ -498,6 +501,7 @@ class Case
 
     def self.map_supplier_account(r)
       return Account.new(
+        supplier_id: r.supplier_id,
         number: r.supplier_account_number,
         arrears: Money.cents(r.supplier_account_arrears_cents),
         active_service: r.supplier_account_active_service

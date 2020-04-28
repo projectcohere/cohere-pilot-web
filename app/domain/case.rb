@@ -9,7 +9,6 @@ class Case < ::Entity
   prop(:program)
   prop(:recipient)
   prop(:enroller_id)
-  prop(:supplier_id)
   prop(:supplier_account)
   prop(:documents, default: nil)
   prop(:assignments, default: nil)
@@ -28,13 +27,12 @@ class Case < ::Entity
   attr(:selected_document)
 
   # -- factory --
-  def self.open(recipient_profile:, enroller:, supplier:, supplier_program:, supplier_account:)
+  def self.open(program:, recipient_profile:, enroller:, supplier_account: nil)
     kase = Case.new(
       status: Status::Opened,
-      program: supplier_program,
+      program: program,
       recipient: Recipient.new(profile: recipient_profile),
       enroller_id: enroller.id,
-      supplier_id: supplier.id,
       supplier_account: supplier_account,
       new_activity: true,
     )
@@ -101,7 +99,7 @@ class Case < ::Entity
   end
 
   # -- commands/referral
-  def make_referral(program, supplier_id: nil)
+  def make_referral(program)
     if !can_make_referral?
       return
     end
@@ -118,7 +116,6 @@ class Case < ::Entity
       status: Status::Opened,
       recipient: recipient,
       enroller_id: enroller_id,
-      supplier_id: supplier_id,
       supplier_account: nil,
       documents: new_documents,
       referred: true,
@@ -136,7 +133,7 @@ class Case < ::Entity
     )
 
     # produce referral
-    Referral.new(
+    return Referral.new(
       referrer: self,
       referred: referred
     )

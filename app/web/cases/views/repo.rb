@@ -13,22 +13,22 @@ module Cases
       end
 
       # -- queries --
-      # -- queries/pending
-      def new_pending(partner_id)
+      # -- queries/program-picker
+      def new_program_picker(partner_id)
         programs = @program_repo
           .find_all_by_partner(partner_id)
 
-        return self.class.map_pending(nil, programs)
+        return self.class.map_program_picker(nil, programs)
       end
 
-      def new_pending_referral(id)
+      def program_picker(id)
         case_rec = make_query(detail: true)
           .find(id)
 
         programs = @program_repo
           .find_all_available_by_recipient(case_rec.recipient_id)
 
-        return self.class.map_pending(case_rec, programs)
+        return self.class.map_program_picker(case_rec, programs)
       end
 
       # -- queries/detail
@@ -36,26 +36,38 @@ module Cases
         case_rec = make_query(detail: true)
           .find(id)
 
-        return self.class.map_detail(case_rec)
+        return self.class.map_detail_from_record(case_rec)
       end
 
-      # -- queries/form
-      def new_form(entity = nil, params: nil)
-        return make_form(entity, params)
+      # -- queries/forms
+      def new_form(program_id, params: nil)
+        program = @program_repo
+          .find(program_id)
+
+        return make_form(
+          self.class.map_pending(program),
+          params,
+        )
       end
 
       def edit_form(id, params: nil)
         case_rec = make_query(detail: true)
           .find(id)
 
-        return make_form(case_rec, params)
+        return make_form(
+          self.class.map_detail_from_record(case_rec),
+          params,
+        )
       end
 
-      private def make_form(entity_or_record, params)
-        detail = if entity_or_record != nil
-          self.class.map_detail(entity_or_record)
-        end
+      def referral_form(entity, params: nil)
+        return make_form(
+          self.class.map_detail_from_entity(entity),
+          params,
+        )
+      end
 
+      private def make_form(model, params)
         # extract case params and set action, if any
         attrs = {}
         if params != nil
@@ -63,9 +75,11 @@ module Cases
           attrs[:action] = %i[submit approve deny remove].find { |k| params.key?(k) }
         end
 
-        # build a form that from permitted attrs
-        form = Form.new(detail, attrs, parent: nil) do |subform|
-          policy.permit?(:"edit_#{subform}")
+        # build a form with permitted attrs
+        form = policy.with_case(model) do |p|
+          Form.new(model, attrs) do |subform|
+            p.permit?(:"edit_#{subform}")
+          end
         end
 
         return form
@@ -161,9 +175,9 @@ module Cases
       end
 
       # -- mapping --
-      # -- mapping/pending
-      def self.map_pending(r, programs)
-        return Pending.new(
+      # -- mapping/program-picker
+      def self.map_program_picker(r, programs)
+        return ProgramPicker.new(
           id: r != nil ? Id.new(r.id) : Id::None,
           recipient_id: r&.recipient_id,
           recipient_name: r&.recipient&.then { |r| Recipient::Repo.map_name(r) },
@@ -171,22 +185,20 @@ module Cases
         )
       end
 
-      # -- mapping/detail
-      def self.map_detail(entity_or_record)
-        if entity_or_record.is_a?(Case)
-          return self.map_detail_from_entity(entity_or_record)
-        else
-          return self.map_detail_from_record(entity_or_record)
-        end
+      # -- mapping/pending
+      def self.map_pending(program)
+        return Pending.new(
+          program: program,
+        )
       end
 
+      # -- mapping/detail
       def self.map_detail_from_record(r)
         return Detail.new(
           id: Id.new(r.id),
           status: r.status.to_sym,
           program: Program::Repo.map_record(r.program),
-          supplier_id: r.supplier_id,
-          supplier_name: r.supplier.name,
+          supplier_name: r.supplier&.name,
           supplier_account: Case::Repo.map_supplier_account(r),
           enroller_name: r.enroller.name,
           recipient_id: r.recipient_id,
@@ -204,8 +216,7 @@ module Cases
           id: e.id,
           status: e.status,
           program: e.program,
-          supplier_id: e.supplier_id,
-          supplier_name: e.supplier_id&.then { |id| find_partner_name(id) },
+          supplier_name: e.supplier_account&.supplier_id&.then { |i| find_partner_name(i) },
           supplier_account: e.supplier_account,
           enroller_name: find_partner_name(e.enroller_id),
           recipient_id: e.recipient.id.val,
@@ -220,14 +231,6 @@ module Cases
 
       def self.find_partner_name(partner_id)
         return Partner::Record.select(:name).find(partner_id).name
-      end
-
-      # -- mapping/form
-      def self.map_form(entity_or_record, attrs)
-        return Form.new(
-          entity_or_record != nil ? map_detail(entity_or_record) : nil,
-          attrs
-        )
       end
 
       # -- mapping/notifications
@@ -256,7 +259,7 @@ module Cases
           status: r.status.to_sym,
           new_activity: r.new_activity,
           program: Program::Repo.map_record(r.program),
-          supplier_name: r.supplier.name,
+          supplier_name: r.supplier&.name,
           enroller_name: r.enroller.name,
           recipient_name: Recipient::Repo.map_name(r.recipient),
           assignee_email: find_assignee_email(r, partner_id),

@@ -10,7 +10,7 @@ module Cases
 
       # -- lifecycle --
       protected def initialize_attrs(attrs)
-        if @model.nil?
+        if not @model.respond_to?(:recipient_profile)
           return
         end
 

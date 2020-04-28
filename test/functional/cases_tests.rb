@@ -261,7 +261,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "opens a case a non-supplier source" do
     user_rec = users(:source_3)
-    program_rec = user_rec.partner.programs.first
+    program_rec = user_rec.partner.programs.find { |p| p.requirements.blank? }
 
     case_params = {
       program_id: program_rec.id,
@@ -308,9 +308,11 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "show errors when opening an invalid case as a source" do
     user_rec = users(:source_1)
+    program_rec = user_rec.partner.programs.first
 
     post(auth("/cases", as: user_rec), params: {
       case: {
+        program_id: program_rec.id,
         contact: {
           first_name: "Janice",
         },

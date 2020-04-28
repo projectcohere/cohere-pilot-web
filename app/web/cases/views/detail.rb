@@ -11,7 +11,6 @@ module Cases
       prop(:status)
       prop(:program)
       prop(:enroller_name)
-      prop(:supplier_id)
       prop(:supplier_name)
       prop(:supplier_account)
       prop(:recipient_id)

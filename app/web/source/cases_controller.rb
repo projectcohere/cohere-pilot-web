@@ -10,19 +10,19 @@ module Source
 
     def select
       permit!(:create)
-      @case = view_repo.new_pending(user_partner_id)
+      @case = view_repo.new_program_picker(user_partner_id)
     end
 
     def new
       permit!(:create)
 
-      if params[:program_id].blank?
+      program_id = params[:program_id]
+      if program_id.blank?
         return redirect_to(select_cases_path)
       end
 
-      @form = view_repo.new_form(params: {
-        case: params.permit(:program_id),
-      })
+      @form = view_repo.new_form(program_id)
+      @case = @form.model
 
       events.add(Cases::Events::DidViewSupplierForm.new)
     end
@@ -30,7 +30,11 @@ module Source
     def create
       permit!(:create)
 
-      @form = view_repo.new_form(params: params)
+      program_id = params.dig(:case, :program_id)
+
+      @form = view_repo.new_form(program_id, params: params)
+      @case = @form.model
+
       if not SaveCaseForm.(@form)
         flash.now[:alert] = "Please check the case for errors."
         return render(:new)

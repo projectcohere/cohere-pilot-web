@@ -71,7 +71,7 @@ en:
         proof-of-income: "Proof of Income"
         dhs-number: "MDHHS Case #"
         income: "Monthly Income"
-        fpl-pecent:
+        fpl-percent:
           label: "FPL Percent"
           fallback: "Unknown. Please add household info."
 

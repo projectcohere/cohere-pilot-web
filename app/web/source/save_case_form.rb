@@ -20,21 +20,13 @@ module Source
         return false
       end
 
-      supplier = form.map_to_supplier
-
-      # validate program
-      supplier_program = supplier.find_program(form.program_id)
-      if supplier_program == nil
-        form.errors.add(:program_id, "This is not one of the your programs.")
-        return false
-      end
+      program = form.model.program
 
       # open a new case for the recipient
       @case = Case.open(
+        program: program,
         recipient_profile: form.map_to_recipient_profile,
         enroller: @partner_repo.find_default_enroller,
-        supplier: supplier,
-        supplier_program: supplier_program,
         supplier_account: form.map_to_supplier_account,
       )
 

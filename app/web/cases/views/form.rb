@@ -2,8 +2,6 @@ module Cases
   module Views
     # A Case form object for modifying any writeable information.
     class Form < ApplicationForm
-      alias :detail :model
-
       # -- fields --
       field(:action, :symbol)
       field(:program_id, :integer)
@@ -20,7 +18,7 @@ module Cases
       # -- lifetime --
       protected def initialize_attrs(attrs)
         assign_defaults!(attrs, {
-          program_id: @model&.program&.id,
+          program_id: @model.program.id,
         })
       end
 
@@ -29,7 +27,7 @@ module Cases
       def valid?
         scopes = []
 
-        status = @admin&.status || @model&.status
+        status = @admin&.status || @model.try(:status)
         if action == :submit || Case::Status.submitted?(status)
           scopes.push(:submitted)
         end
@@ -38,7 +36,7 @@ module Cases
           scopes.push(:completed)
         end
 
-        if @model&.referred? == true && @model&.id == Id::None
+        if @model.try(:referred?) == true && @model.id == Id::None
           scopes.push(:new_referral)
         end
 
@@ -50,12 +48,8 @@ module Cases
         return admin.status
       end
 
-      def map_to_supplier
-        return supplier_account.map_to_supplier
-      end
-
       def map_to_supplier_account
-        return supplier_account.map_to_supplier_account
+        return supplier_account&.map_to_supplier_account
       end
 
       def map_to_recipient_profile

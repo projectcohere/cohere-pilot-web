@@ -41,6 +41,10 @@ module Cases
         return @program.name
       end
 
+      def details_names
+        return [program_name, @supplier_name, @enroller_name].compact
+      end
+
       def approved?
         return @status == Case::Status::Approved
       end

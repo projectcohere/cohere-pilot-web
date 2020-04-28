@@ -155,15 +155,15 @@ module Db
       )
 
       supplier_account = Case::Account.stub(
+        supplier_id: supplier_rec.id,
         number: "12345",
         arrears: Money.cents(1000_00),
       )
 
       kase = Case.open(
+        program: Program::Repo.map_record(program_rec),
         recipient_profile: recipient_profile,
         enroller: Partner::Repo.map_record(enroller_rec),
-        supplier: Partner::Repo.map_record(supplier_rec),
-        supplier_program: Program::Repo.map_record(program_rec),
         supplier_account: supplier_account,
       )
 
@@ -218,16 +218,16 @@ module Db
       )
 
       supplier_account = Case::Account.new(
+        supplier_id: supplier_rec.id,
         number: "12345",
         arrears: Money.cents(1000_00),
       )
 
 
       kase = Case.open(
+        program: Program::Repo.map_record(program_rec),
         recipient_profile: recipient_profile,
         enroller: Partner::Repo.map_record(enroller_rec),
-        supplier: Partner::Repo.map_record(supplier_rec),
-        supplier_program: Program::Repo.map_record(program_rec),
         supplier_account: supplier_account,
       )
 
@@ -282,6 +282,7 @@ module Db
       case_rec = cases(:opened_2)
 
       supplier_account = Case::Account.new(
+        supplier_id: case_rec.supplier_id,
         number: "12345",
         arrears: Money.cents(1000_00),
       )
@@ -490,19 +491,11 @@ module Db
       user_rec = users(:agent_1)
 
       referrer = Case::Repo.map_record(case_rec, documents: case_rec.documents)
-      referral = referrer.make_referral(
-        Program::Repo.map_record(program_rec),
-        supplier_id: supplier_rec.id
-      )
+      referral = referrer.make_referral(Program::Repo.map_record(program_rec))
 
       referred = referral.referred
-      referred.assign_user(
-        User::Repo.map_record(user_rec)
-      )
-
-      referred.sign_contract(Program::Contract.new(
-        variant: :wrap_3h
-      ))
+      referred.assign_user(User::Repo.map_record(user_rec))
+      referred.sign_contract(Program::Contract.new(variant: :wrap_3h))
 
       act = -> do
         case_repo.save_referral(referral)

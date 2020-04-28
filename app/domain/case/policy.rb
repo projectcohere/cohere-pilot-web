@@ -35,9 +35,9 @@ class Case
       when :edit_household_size
         agent? || governor?
       when :edit_household_ownership
-        agent? #&& requires?(&:household_ownership?)
+        agent? && requires?(&:household_ownership?)
       when :edit_household_primary_residence
-        agent? #&& requires?(&:household_primary_residence?)
+        agent? && requires?(&:household_primary_residence?)
       when :edit_household_proof_of_income
         agent? || source?
       when :edit_household_dhs_number
@@ -45,9 +45,9 @@ class Case
       when :edit_household_income
         agent? || governor?
       when :edit_supplier_account
-        agent? || source?
+        (agent? || source?) & requires?(&:supplier_account_present?)
       when :edit_supplier
-        agent? || source? && !supplier?
+        agent? || (source? && !supplier?)
       when :edit_supplier_account_active_service
         agent? && requires?(&:supplier_account_active_service?)
       when :edit_documents
@@ -57,6 +57,8 @@ class Case
       # view
       when :view
         agent? || enroller?
+      when :view_supplier_account
+        (agent? || enroller?) && requires?(&:supplier_account_present?)
       when :view_fpl
         agent? || enroller?
       when :view_household_ownership
@@ -89,7 +91,7 @@ class Case
     def with_case(kase)
       previous = @case
       @case = kase
-      result = yield
+      result = yield(self)
       @case = previous
       result
     end

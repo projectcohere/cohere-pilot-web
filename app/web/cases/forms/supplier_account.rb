@@ -2,34 +2,31 @@ module Cases
   module Forms
     class SupplierAccount < ApplicationForm
       # -- fields --
-      field(:supplier_id, :integer)
-      field(:account_number, :string)
-      field(:arrears, :string, numericality: true, allow_blank: true)
+      is_present = { presence: { if: :is_account_required } }
+
+      field(:supplier_id, :integer, **is_present)
+      field(:account_number, :string, **is_present)
+      field(:arrears, :string, **is_present, numericality: true, allow_blank: true)
       field(:active_service, :boolean)
 
       # -- fields/validation
-      validates(:account_number, presence: true, if: :is_account_required)
-      validates(:arrears, presence: true, if: :is_account_required)
+      validate(:supplies_program!)
 
       # -- lifecycle --
-      def initialize(model, attrs = {}, parent: nil, partner_repo: Partner::Repo.get)
+      def initialize(model, attrs = {}, partner_repo: Partner::Repo.get)
         @partner_repo = partner_repo
-        super(model, attrs, parent: parent)
+        super(model, attrs)
       end
 
       protected def initialize_attrs(attrs)
-        supplier_id = if @model != nil
-          @model.supplier_id
-        else
-          suppliers.first&.id
+        if not @model.respond_to?(:supplier_account)
+          assign_defaults!(attrs, supplier_id: suppliers.first&.id)
+          return
         end
 
+        a = @model.supplier_account
         assign_defaults!(attrs, {
-          supplier_id: supplier_id
-        })
-
-        a = @model&.supplier_account
-        assign_defaults!(attrs, {
+          supplier_id: a&.supplier_id,
           account_number: a&.number,
           arrears: a&.arrears&.dollars&.to_s,
           active_service: a&.active_service?,
@@ -58,13 +55,16 @@ module Cases
         return @suppliers
       end
 
-      # -- queries/transformation
-      def map_to_supplier
-        return suppliers.find { |s| s.id == supplier_id }
+      def supplies_program!
+        if suppliers.none? { |s| s.id == supplier_id }
+          errors.add(:supplier_id, "must be part of program")
+        end
       end
 
+      # -- queries/transformation
       def map_to_supplier_account
         return Case::Account.new(
+          supplier_id: supplier_id,
           number: account_number,
           arrears: Money.dollars(arrears),
           active_service: active_service.nil? ? true : active_service

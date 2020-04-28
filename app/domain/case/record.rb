@@ -4,7 +4,7 @@ class Case
     belongs_to(:program)
     belongs_to(:recipient)
     belongs_to(:enroller, record: :partner)
-    belongs_to(:supplier, record: :partner)
+    belongs_to(:supplier, record: :partner, optional: true)
 
     # -- associations/children
     has_many(:documents, dependent: :destroy)

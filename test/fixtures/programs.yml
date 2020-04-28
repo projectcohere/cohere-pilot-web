@@ -8,9 +8,15 @@ energy_0:
   name: "NRG"
   contracts:
     - meap
+  requirements:
+    supplier_account:
+      - present
 
 energy_c:
   name: "Energy (CARES)"
+  requirements:
+    supplier_account:
+      - present
 
 water_0:
   name: "WTR"
@@ -19,6 +25,7 @@ water_0:
     - wrap_1k
   requirements:
     supplier_account:
+      - present
       - active_service
     household:
       - ownership
@@ -26,3 +33,6 @@ water_0:
 
 water_c:
   name: "Water (CARES)"
+  requirements:
+    supplier_account:
+      - present

@@ -12,20 +12,20 @@ module Cases
 
       # -- lifecycle --
       protected def initialize_attrs(attrs)
-        if @model.nil?
+        if not @model.respond_to?(:recipient_profile)
           return
         end
 
-        r = @model.recipient_profile
-        n = r.name
+        r = @model&.recipient_profile
+        n = r&.name
         assign_defaults!(attrs, {
-          first_name: n.first,
-          last_name: n.last
+          first_name: n&.first,
+          last_name: n&.last
         })
 
-        p = r.phone
+        p = r&.phone
         assign_defaults!(attrs, {
-          phone_number: p.number
+          phone_number: p&.number
         })
       end
 
@@ -44,13 +44,13 @@ module Cases
 
       # -- queries --
       def map_to_recipient_phone
-        Phone.new(
+        return Phone.new(
           number: phone_number,
         )
       end
 
       def map_to_recipient_name
-        Name.new(
+        return Name.new(
           first: first_name,
           last: last_name,
         )

@@ -3,7 +3,7 @@ module Agent
     # -- actions --
     def select
       permit!(:referral)
-      @case = view_repo.new_pending_referral(params[:case_id])
+      @case = view_repo.program_picker(params[:case_id])
     end
 
     def new
@@ -13,35 +13,23 @@ module Agent
         return redirect_to(case_path(id: params[:case_id]))
       end
 
-      referrer = case_repo
+      referral = case_repo
         .find_with_associations(params[:case_id])
+        .make_referral(program_repo.find(params[:program_id]))
 
-      program = program_repo
-        .find(params[:program_id])
-
-      referral = referrer
-        .make_referral(program)
-
-      @form = view_repo.new_form(referral.referred)
-      @case = @form.detail
+      @form = view_repo.referral_form(referral.referred)
+      @case = @form.model
     end
 
     def create
       permit!(:referral)
 
-      referrer = case_repo
+      referral = case_repo
         .find_with_associations(params[:case_id])
+        .make_referral(program_repo.find(params.dig(:case, :program_id)))
 
-      program = program_repo
-        .find(params.dig(:case, :program_id))
-
-      referral = referrer.make_referral(
-        program,
-        supplier_id: params.dig(:case, :supplier_account, :supplier_id)
-      )
-
-      @form = view_repo.new_form(referral.referred, params: params)
-      @case = @form.detail
+      @form = view_repo.referral_form(referral.referred, params: params)
+      @case = @form.model
 
       save_form = SaveReferralForm.new
       if not save_form.(@form, referral)

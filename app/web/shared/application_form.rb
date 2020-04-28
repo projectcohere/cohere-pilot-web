@@ -9,14 +9,8 @@ class ApplicationForm
   attr(:model)
 
   # -- lifetime --
-  def initialize(model = nil, attrs = {}, parent:, &permit)
+  def initialize(model = nil, attrs = {}, &permit)
     @model = model
-
-    # TODO: this is only used by the supplier_account form to pull the
-    # program id from the root form when the model is nil. it may be better
-    # to expose context data to subforms or pass a non-nil model for new
-    # forms rather offer unfettered access to their parent
-    @parent = parent
 
     # filter list of permitted subforms
     sf_names = self.class.subform_map&.keys
@@ -44,7 +38,7 @@ class ApplicationForm
     # create permitted subforms
     sf_attrs&.each do |sf_name, sf_attrs|
       sf_class = self.class.subform_map[sf_name]
-      subform = sf_class.new(model, sf_attrs.stringify_keys, parent: self)
+      subform = sf_class.new(model, sf_attrs.stringify_keys)
       instance_variable_set("@#{sf_name}", subform)
     end
   end

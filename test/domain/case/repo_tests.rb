@@ -15,7 +15,6 @@ class Case
       assert_not_nil(kase.status)
       assert_not_nil(kase.recipient)
       assert_not_nil(kase.enroller_id)
-      assert_not_nil(kase.supplier_id)
       assert_not_nil(kase.supplier_account)
       assert_not_nil(kase.received_message_at)
       assert_not_nil(kase.updated_at)

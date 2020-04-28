@@ -25,7 +25,11 @@
       <nav class="Filters">
         <%= filter_for(:profile, is_error: errors?(@form.details, @form.contact), is_selected: true) %>
         <%= filter_for(:household, is_error: errors?(@form.address, @form.household)) %>
-        <%= filter_for(:accounts, is_error: errors?(@form.supplier_account)) %>
+
+        <% if permit?(:edit_supplier_account) %>
+          <%= filter_for(:accounts, is_error: errors?(@form.supplier_account)) %>
+        <% end %>
+
         <%= filter_for(:documents, is_error: errors?(@form.documents)) %>
         <%= filter_for(:admin) %>
       </nav>
@@ -47,9 +51,11 @@
         <%= render(partial: "cases/forms/household", locals: form_locals) %>
       </section>
 
-      <section id="accounts" class="Panel-tab">
-        <%= render(partial: "cases/forms/supplier_account", locals: form_locals) %>
-      </section>
+      <% if permit?(:edit_supplier_account) %>
+        <section id="accounts" class="Panel-tab">
+          <%= render(partial: "cases/forms/supplier_account", locals: form_locals) %>
+        </section>
+      <% end %>
 
       <section id="documents" class="Panel-tab">
         <%= render(partial: "cases/documents", locals: { documents: @form.documents.all }) %>
