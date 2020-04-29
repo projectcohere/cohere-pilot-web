@@ -15,6 +15,11 @@ en:
       document: "Proxy Document"
       census: "Census Tract"
       attestation: "Self Attestation"
+    ownership:
+      rent: "Rent"
+      own: "Own"
+      unknown: ""
+
 
   # -- views --
   users:

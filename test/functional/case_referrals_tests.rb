@@ -59,9 +59,12 @@ class CaseReferralsTests < ActionDispatch::IntegrationTest
     post(auth("/cases/#{case_rec.id}/referrals", as: user_rec), params: {
       case: {
         program_id: program_rec.id,
+        household: {
+          ownership: Recipient::Ownership::Rent.key,
+        },
         supplier_account: {
           supplier_id: supplier_rec.id
-        }
+        },
       }
     })
 

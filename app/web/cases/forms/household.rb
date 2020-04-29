@@ -1,6 +1,7 @@
 module Cases
   module Forms
     class Household < ApplicationForm
+      include Case::Policy::Context::Shared
       include ActionView::Helpers::TranslationHelper
 
       # -- fields --
@@ -8,7 +9,7 @@ module Cases
       field(:proof_of_income, :symbol, presence: true)
       field(:dhs_number, :string, presence: { on: :submitted })
       field(:income, :string, presence: { on: :submitted }, numericality: { allow_blank: true })
-      field(:ownership, :symbol, presence: { on: :submitted })
+      field(:ownership, :symbol, inclusion: { in: Recipient::Ownership.valid.map(&:key), if: :required? })
 
       # -- lifecycle --
       protected def initialize_attrs(attrs)
@@ -22,7 +23,7 @@ module Cases
           size: h&.size&.to_s,
           proof_of_income: h&.proof_of_income,
           income: h&.income&.dollars&.to_s,
-          ownership: h&.ownership,
+          ownership: h&.ownership&.to_sym,
         })
       end
 
@@ -32,18 +33,24 @@ module Cases
       end
 
       # -- queries --
+      def required?
+        return permit?(:edit_household_ownership)
+      end
+
+      # -- queries/options
       def proof_of_income_options
-        return Recipient::ProofOfIncome.values.map do |o|
-          [t("recipient.proof_of_income.#{o.key}"), o.key]
+        return Recipient::ProofOfIncome.map do |o|
+          [t("recipient.proof_of_income.#{o}"), o.key]
         end
       end
 
       def ownership_options
-        return Recipient::Ownership.values.map do |o|
-          [o.to_s.titlecase, o]
+        return Recipient::Ownership.map do |o|
+          [t("recipient.ownership.#{o}"), o.key]
         end
       end
 
+      # -- transformation --
       def map_to_recipient_household
         return Recipient::Household.new(
           size: size.to_i,
@@ -53,6 +60,9 @@ module Cases
           ownership: Recipient::Ownership.from_key(ownership),
         )
       end
+
+      # -- Case::Policy::Context --
+      alias :case :model
     end
   end
 end

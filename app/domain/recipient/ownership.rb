@@ -1,21 +1,13 @@
 module Recipient
-  module Ownership
+  class Ownership < ::Option
     # -- options --
-    Unknown = :unknown
-    Rent = :rent
-    Own = :own
+    option(:unknown)
+    option(:rent)
+    option(:own)
 
-    # -- queries --
-    class << self
-      def keys
-        @all ||= [
-          Unknown,
-          Rent,
-          Own
-        ]
-      end
-
-      alias :values :keys
+    # -- statics --
+    def self.valid
+      return [Rent, Own]
     end
   end
 end

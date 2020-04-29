@@ -3,6 +3,9 @@ food_c:
 
 housing_c:
   name: "Housing (CARES)"
+  requirements:
+    household:
+      - ownership
 
 energy_0:
   name: "NRG"

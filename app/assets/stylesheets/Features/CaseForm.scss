@@ -9,7 +9,7 @@
   }
 
   &-program {
-    grid-area: 3 / span 2;
+    grid-area: 3 / span 3;
   }
 
   &-contract {
@@ -91,12 +91,8 @@
     grid-area: auto / span 3;
   }
 
-  &-residence {
-    grid-area: auto / span 4;
-  }
-
   &-proofOfIncome {
-    grid-area: auto / span 5;
+    grid-area: 3 / span 5;
   }
 
   &-dhsNumber {

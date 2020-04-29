@@ -27,6 +27,8 @@ class Option
 
   # -- statics --
   class << self
+    include Enumerable
+
     def keys
       return all.keys
     end
@@ -34,6 +36,8 @@ class Option
     def values
       return all.values
     end
+
+    delegate(:each, to: :values)
 
     private def all
       return @all.freeze
