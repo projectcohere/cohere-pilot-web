@@ -1,6 +1,6 @@
 <%= section_tag(t(".title"), class: "ShowCase-contact") do %>
   <%= field_tag(t(".phone-number"), class: "ShowCase-phoneNumber") do %>
-    +1 <%= number_to_phone(view.phone_number) %>
+    <%= view.phone_number %>
   <%- end %>
 
   <%= field_tag(t(".address"), class: "ShowCase-address") do %>

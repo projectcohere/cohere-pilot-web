@@ -75,6 +75,10 @@ module Cases
         return @recipient_household&.size || "Unknown"
       end
 
+      def household_proof_of_income
+        return @recipient_household&.proof_of_income
+      end
+
       def household_income
         return @recipient_household&.income&.dollars&.then { |f| "$#{f}" } || "Unknown"
       end

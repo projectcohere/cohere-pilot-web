@@ -7,7 +7,9 @@
     <%= view.program_name %>
   <%- end %>
 
-  <%= field_tag(t(".enroller"), class: "ShowCase-enroller") do %>
-    <%= view.enroller_name %>
-  <%- end %>
+  <% if permit?(:view_details_enroller) %>
+    <%= field_tag(t(".enroller"), class: "ShowCase-enroller") do %>
+      <%= view.enroller_name %>
+    <%- end %>
+  <% end %>
 <%- end %>

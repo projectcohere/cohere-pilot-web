@@ -2,7 +2,7 @@
 <%= f.fields_for(:household, form) do |f| %>
   <%= section_tag(t(".title"), class: "CaseForm-household") do %>
     <% if permit?(:edit_household_size) %>
-      <%= f.field(:size, t(".size"), class: "CaseForm-householdSize") do %>
+      <%= f.field(:size, t(".size"), class: "CaseForm-size") do %>
         <%= f.text_field(:size) %>
       <% end %>
     <% end %>

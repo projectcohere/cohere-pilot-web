@@ -63,6 +63,8 @@ class Case
         (agent? || enroller?) && requires?(&:supplier_account_present?)
       when :view_fpl
         agent? || enroller?
+      when :view_details_enroller
+        agent?
       when :view_household_ownership
         agent? && requires?(&:household_ownership?)
       when :view_household_primary_residence

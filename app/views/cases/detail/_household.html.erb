@@ -1,10 +1,6 @@
 <%= section_tag(t(".title"), class: "ShowCase-household") do %>
-  <%= field_tag(t(".size"), class: "ShowCase-householdSize") do %>
+  <%= field_tag(t(".size"), class: "ShowCase-size") do %>
     <%= view.household_size %>
-  <%- end %>
-
-  <%= field_tag(t(".income"), class: "ShowCase-monthlyIncome") do %>
-    <%= view.household_income %>
   <%- end %>
 
   <% if permit?(:view_household_ownership) %>
@@ -19,7 +15,19 @@
     <%- end %>
   <% end %>
 
-  <%= field_tag(t(".fpl"), class: "ShowCase-fplPercent") do %>
+  <%= field_tag(t(".proof-of-income"), class: "ShowCase-proofOfIncome") do %>
+    <%= t("recipient.proof_of_income.#{view.household_proof_of_income}") %>
+  <%- end %>
+
+  <%= field_tag(t(".dhs-number"), class: "ShowCase-dhsNumber") do %>
+    <%= view.household_dhs_number %>
+  <%- end %>
+
+  <%= field_tag(t(".income"), class: "ShowCase-monthlyIncome") do %>
+    <%= view.household_income %>
+  <%- end %>
+
+  <%= field_tag(t(".fpl-percent.label"), class: "ShowCase-fplPercent") do %>
     <%= view.household_fpl_percent %>
   <%- end %>
 <%- end %>
