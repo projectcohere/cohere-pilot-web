@@ -4,7 +4,7 @@ module Cases
     # used to render Case UI.
     class Repo < ::Repo
       include Service
-      include Authorization
+      include Case::Policy::Context
 
       # -- lifetime --
       def initialize(scope = nil, program_repo: Program::Repo.get)

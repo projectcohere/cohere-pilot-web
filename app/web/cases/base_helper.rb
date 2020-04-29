@@ -1,11 +1,6 @@
 module Cases
   module BaseHelper
-    # -- authorization --
-    def shared_policy
-      @shared_policy ||= policy
-    end
-
-    delegate(:permit?, :forbid?, to: :shared_policy)
+    include Case::Policy::Context::Shared
 
     # -- search --
     def cases_search_params

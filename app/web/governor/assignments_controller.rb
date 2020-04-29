@@ -2,11 +2,9 @@ module Governor
   class AssignmentsController < Cases::BaseController
     # -- actions --
     def create
-      @case = case_repo.find_for_governor(params[:case_id], user_partner_id)
-      if policy.forbid?(:create_assignment)
-        return deny_access
-      end
+      permit!(:create_assignment)
 
+      @case = case_repo.find_for_governor(params[:case_id], user_partner_id)
       @case.assign_user(user)
       case_repo.save_new_assignment(@case)
 

@@ -1,6 +1,6 @@
 module Governor
   class SaveCaseForm < ::Command
-    include Cases::Authorization
+    include User::Context
 
     # -- lifetime --
     def initialize(case_repo: Case::Repo.get)

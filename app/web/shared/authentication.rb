@@ -1,6 +1,9 @@
 module Authentication
   extend ActiveSupport::Concern
 
+  # -- includes --
+  include User::Context
+
   # -- hooks --
   included do
     # -- callbacks
@@ -40,10 +43,5 @@ module Authentication
   # destroy chat id used to disambiguate concurrent agents
   def destroy_chat_user_id
     cookies.delete(:chat_user_id)
-  end
-
-  # -- queries --
-  private def user_repo
-    return User::Repo.get
   end
 end

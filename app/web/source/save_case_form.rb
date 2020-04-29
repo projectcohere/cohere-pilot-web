@@ -1,9 +1,6 @@
 module Source
   class SaveCaseForm < ::Command
-    include Cases::Authorization
-
-    # -- props --
-    attr(:case)
+    include User::Context
 
     # -- lifetime --
     def initialize(

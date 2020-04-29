@@ -1,7 +1,7 @@
 class Partner
   class Repo < ::Repo
     include Service::Single
-    include Authorization
+    include User::Context
 
     # -- queries --
     # -- queries/one

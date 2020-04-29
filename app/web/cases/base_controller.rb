@@ -1,10 +1,16 @@
 module Cases
   class BaseController < ApplicationController
-    include Authorization
+    include Case::Policy::Context
 
     # -- view helpers --
     helper(BaseHelper)
-    helper_method(:policy)
+
+    # -- commands --
+    def permit!(key)
+      if forbid?(key)
+        deny_access
+      end
+    end
 
     # -- queries --
     protected def case_repo

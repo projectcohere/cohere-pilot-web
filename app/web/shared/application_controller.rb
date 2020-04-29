@@ -2,7 +2,6 @@ class ApplicationController < ActionController::Base
   # -- modules --
   include Clearance::Controller
   include Authentication
-  include Authorization
 
   # -- config --
   default_form_builder(ApplicationFormBuilder)

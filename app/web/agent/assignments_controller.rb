@@ -2,11 +2,9 @@ module Agent
   class AssignmentsController < Cases::BaseController
     # -- actions --
     def create
-      @case = case_repo.find(params[:case_id])
-      if policy.forbid?(:create_assignment)
-        return deny_access
-      end
+      permit!(:create_assignment)
 
+      @case = case_repo.find(params[:case_id])
       @case.assign_user(user)
       case_repo.save_new_assignment(@case)
 
@@ -16,11 +14,9 @@ module Agent
     end
 
     def destroy
-      @case = case_repo.find_with_assignment(params[:case_id], params[:partner_id])
-      if policy.forbid?(:destroy_assignment)
-        return deny_access
-      end
+      permit!(:destroy_assignment)
 
+      @case = case_repo.find_with_assignment(params[:case_id], params[:partner_id])
       email = @case.selected_assignment.user_email
       @case.destroy_selected_assignment
       case_repo.save_destroyed_assignment(@case)

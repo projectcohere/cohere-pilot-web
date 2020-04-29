@@ -1,6 +1,6 @@
 module Events
   class DispatchAnalytics < ::Command
-    include Authorization
+    include User::Context
 
     # -- constants --
     Unsaved = "Unsaved".freeze
