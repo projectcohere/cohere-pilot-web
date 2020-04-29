@@ -57,17 +57,7 @@ class ApplicationForm
     attribute(name, type)
 
     if validations.present?
-      # add context-dependent validations
-      by_context = validations.delete(:on)
-      by_context&.each do |context, validations|
-        validations[:on] = context
-        validates(name, validations)
-      end
-
-      # add context-independent validations
-      if validations.present?
-        validates(name, validations)
-      end
+      validates(name, validations)
     end
   end
 

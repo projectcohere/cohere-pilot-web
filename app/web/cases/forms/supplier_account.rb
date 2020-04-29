@@ -2,11 +2,9 @@ module Cases
   module Forms
     class SupplierAccount < ApplicationForm
       # -- fields --
-      is_present = { presence: { if: :is_account_required } }
-
-      field(:supplier_id, :integer, **is_present)
-      field(:account_number, :string, **is_present)
-      field(:arrears, :string, **is_present, numericality: true, allow_blank: true)
+      field(:supplier_id, :integer, presence: { if: :is_account_required })
+      field(:account_number, :string, presence: { if: :is_account_required })
+      field(:arrears, :string, presence: { if: :is_account_required }, numericality: { allow_blank: true })
       field(:active_service, :boolean)
 
       # -- fields/validation

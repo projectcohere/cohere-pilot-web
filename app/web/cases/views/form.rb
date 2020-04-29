@@ -28,12 +28,8 @@ module Cases
         scopes = []
 
         status = @admin&.status || @model.try(:status)
-        if action == :submit || Case::Status.submitted?(status)
+        if action == :submit || Case::Status.submitted?(status) || action == :complete || Case::Status.complete?(status)
           scopes.push(:submitted)
-        end
-
-        if action == :complete || Case::Status.complete?(status)
-          scopes.push(:completed)
         end
 
         if @model.try(:referred?) == true && @model.id == Id::None

@@ -4,31 +4,11 @@ module Cases
       include ActionView::Helpers::TranslationHelper
 
       # -- fields --
-      field(:size, :string,
-        numericality: { allow_blank: true },
-        on: { submitted: { presence: true } }
-      )
-
-      field(:proof_of_income, :symbol,
-        presence: true,
-      )
-
-      field(:dhs_number, :string,
-        on: {
-          submitted: { presence: true },
-          completed: { presence: true },
-        },
-      )
-
-      field(:income, :string,
-        numericality: { allow_blank: true },
-        on: { submitted: { presence: true } }
-      )
-
-      field(:ownership, :string,
-        on: { submitted: { presence: true } }
-      )
-
+      field(:size, :string, presence: { on: :submitted }, numericality: { allow_blank: true })
+      field(:proof_of_income, :symbol, presence: true)
+      field(:dhs_number, :string, presence: { on: :submitted })
+      field(:income, :string, presence: { on: :submitted }, numericality: { allow_blank: true })
+      field(:ownership, :string, presence: { on: :submitted })
       field(:primary_residence, :boolean)
 
       # -- lifecycle --

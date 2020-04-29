@@ -2,12 +2,7 @@ module Cases
   module Forms
     class Details < ApplicationForm
       # -- fields --
-      field(:contract_variant, :symbol,
-        on: {
-          submitted: { presence: true },
-          completed: { presence: true },
-        },
-      )
+      field(:contract_variant, :symbol, presence: { on: :submitted })
 
       # -- lifecycle --
       protected def initialize_attrs(attrs)

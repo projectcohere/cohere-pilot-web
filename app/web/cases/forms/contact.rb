@@ -1,14 +1,10 @@
 module Cases
   module Forms
     class Contact < ApplicationForm
-      # -- name --
+      # -- fields --
       field(:first_name, :string, presence: true)
       field(:last_name, :string, presence: true)
-
-      # -- phone --
-      field(:phone_number, :string,
-        presence: true, numericality: true, length: { is: 10 }
-      )
+      field(:phone_number, :string, presence: true, numericality: true, length: { is: 10 })
 
       # -- lifecycle --
       protected def initialize_attrs(attrs)

@@ -5,7 +5,7 @@ module Cases
       field(:street, :string, presence: true)
       field(:street2, :string)
       field(:city, :string, presence: true)
-      field(:zip, :string, presence: true, numericality: true )
+      field(:zip, :string, presence: true, numericality: true)
       field(:geography, :boolean, presence: true)
 
       # -- lifecycle --
