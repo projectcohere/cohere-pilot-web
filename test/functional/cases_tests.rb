@@ -251,12 +251,6 @@ class CasesTests < ActionDispatch::IntegrationTest
       assert_equal(msg["name"], "DID_ADD_QUEUED_CASE")
       assert_entry(msg["data"], "case_id")
     end
-
-    assert_send_emails(1) do
-      assert_select("a", text: /Janice Sample/) do |el|
-        assert_match(%r[#{ENV["HOST"]}/cases/\d+/edit], el[0][:href])
-      end
-    end
   end
 
   test "opens a case a non-supplier source" do
@@ -466,7 +460,6 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_redirected_to("/cases/#{case_rec.id}/edit")
     assert_present(flash[:notice])
-    assert_send_emails(0)
   end
 
   test "save a signed contract" do
@@ -569,12 +562,6 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_analytics_events(1) do |events|
       assert_match(/Did Submit/, events[0])
     end
-
-    assert_send_emails(1) do
-      assert_select("a", text: /Johnice Sample/) do |el|
-        assert_match(%r[#{ENV["HOST"]}/cases/\d+], el[0][:href])
-      end
-    end
   end
 
   test "submit a case that doesn't require a contract as an agent" do
@@ -653,14 +640,6 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_analytics_events(1) do |events|
       assert_match(/Did Complete/, events[0])
     end
-
-    assert_send_emails(1) do
-      assert_select("a", text: /Johnice Sample/) do |el|
-        assert_match(%r[#{ENV["HOST"]}/cases/\d+], el[0][:href])
-      end
-
-      assert_select("p", text: /denied/)
-    end
   end
 
   test "complete a case as an agent" do
@@ -684,14 +663,6 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_analytics_events(1) do |events|
       assert_match(/Did Complete/, events[0])
-    end
-
-    assert_send_emails(1) do
-      assert_select("a", text: /Johnice Sample/) do |el|
-        assert_match(%r[#{ENV["HOST"]}/cases/\d+], el[0][:href])
-      end
-
-      assert_select("p", text: /approved/)
     end
   end
 
@@ -717,7 +688,5 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_analytics_events(1) do |events|
       assert_match(/Did Complete/, events[0])
     end
-
-    assert_send_emails(0)
   end
 end

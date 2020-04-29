@@ -85,12 +85,6 @@ module Cases
         return form
       end
 
-      # -- queries/notifications
-      def find_notification(id)
-        case_rec = Case::Record.find(id)
-        return self.class.map_notification(case_rec)
-      end
-
       # -- queries/cells
       def find_all_for_search(search = "", page:)
         q = make_query
@@ -231,16 +225,6 @@ module Cases
 
       def self.find_partner_name(partner_id)
         return Partner::Record.select(:name).find(partner_id).name
-      end
-
-      # -- mapping/notifications
-      def self.map_notification(r)
-        return Notification.new(
-          id: Id.new(r.id),
-          status: r.status.to_sym,
-          recipient_name: Recipient::Repo.map_name(r.recipient),
-          enroller_id: r.enroller_id,
-        )
       end
 
       # -- mapping/contract

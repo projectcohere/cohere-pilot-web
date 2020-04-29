@@ -12,10 +12,6 @@ module Events
           Chats::OpenChat.(
             event.case_recipient_id.val,
           )
-
-          deliver(Cases::Mailer.did_open(
-            event.case_id.val,
-          ))
         end
 
         Agent::PublishQueuedCase.perform_async(
@@ -42,19 +38,11 @@ module Events
           )
         end
       when Case::Events::DidSubmit
-        deliver(Cases::Mailer.did_submit(
-          event.case_id.val,
-        ))
-
         Enroller::PublishQueuedCase.perform_async(
           event.case_id.val,
         )
       when Case::Events::DidComplete
-        if event.case_status != Case::Status::Removed
-          deliver(Cases::Mailer.did_complete(
-            event.case_id.val,
-          ))
-        end
+        return
       when Case::Events::DidSignContract
         Cases::AttachContract.perform_async(
           event.case_id.val,

@@ -11,32 +11,6 @@ module Db
       assert_equal(user.id.val, user_rec.id)
     end
 
-    test "find agents and governors for an opened case" do
-      user_repo = User::Repo.new
-
-      emails = user_repo.find_emails_for_opened_case
-      assert_length(emails, 2)
-      assert_all(emails, ->(e) { e.ends_with?("@projectcohere.com") || e.ends_with?("@michigan.gov") })
-    end
-
-    test "find authorized enrollers for a submitted case" do
-      user_repo = User::Repo.new
-      case_rec = cases(:submitted_1)
-      kase = Case::Repo.map_record(case_rec)
-
-      emails = user_repo.find_emails_for_submitted_case(kase)
-      assert_length(emails, 1)
-      assert_all(emails, ->(e) { e.ends_with?("@testmetro.org") })
-    end
-
-    test "find agents for a completed case" do
-      user_repo = User::Repo.new
-
-      emails = user_repo.find_emails_for_completed_case
-      assert_length(emails, 1)
-      assert_all(emails, ->(e) { e.ends_with?("@projectcohere.com") })
-    end
-
     # -- commands --
     test "signs in the current user" do
       user_repo = User::Repo.new

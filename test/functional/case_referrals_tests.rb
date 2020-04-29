@@ -68,7 +68,6 @@ class CaseReferralsTests < ActionDispatch::IntegrationTest
     assert_redirected_to(%r[/cases/\d+/edit])
     assert_present(flash[:notice])
 
-    assert_send_emails(0)
     assert_analytics_events(2) do |events|
       assert_match(/Did Make Referral/, events[0])
       assert_match(/Did Open/, events[1])

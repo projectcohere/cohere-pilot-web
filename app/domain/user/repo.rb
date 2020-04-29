@@ -27,28 +27,6 @@ class User
       entity_from(user_rec)
     end
 
-    # -- queries/many
-    def find_emails_for_opened_case
-      user_query = User::Record
-        .by_membership(Partner::Membership::Cohere, Partner::Membership::Governor)
-
-      return user_query.pluck(:email)
-    end
-
-    def find_emails_for_submitted_case(kase)
-      user_query = User::Record
-        .where(partner_id: kase.enroller_id)
-
-      return user_query.pluck(:email)
-    end
-
-    def find_emails_for_completed_case
-      user_query = User::Record
-        .by_membership(Partner::Membership::Cohere)
-
-      return user_query.pluck(:email)
-    end
-
     # -- commands --
     def sign_in(user_rec)
       if @current&.id&.val != user_rec&.id
