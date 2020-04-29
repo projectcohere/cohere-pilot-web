@@ -62,8 +62,8 @@ module Db
       case_repo = Cases::Views::Repo.new(nil)
 
       case_page, cases = case_repo.find_all_queued(page: 1)
-      assert_length(cases, 7)
-      assert_equal(case_page.count, 7)
+      assert_length(cases, 8)
+      assert_equal(case_page.count, 8)
     end
 
     test "finds a page of cases by recipient name for an agent" do
@@ -71,8 +71,8 @@ module Db
       case_repo = Cases::Views::Repo.new(Cases::Scope::All)
 
       case_page, cases = case_repo.find_all_for_search("Johnice", page: 1)
-      assert_length(cases, 5)
-      assert_equal(case_page.count, 5)
+      assert_length(cases, 6)
+      assert_equal(case_page.count, 6)
     end
 
     test "finds a page of cases by phone number for an agent" do
@@ -89,8 +89,8 @@ module Db
       case_repo = Cases::Views::Repo.new(Cases::Scope::Open)
 
       case_page, cases = case_repo.find_all_for_search(page: 1)
-      assert_length(cases, 8)
-      assert_equal(case_page.count, 8)
+      assert_length(cases, 9)
+      assert_equal(case_page.count, 9)
       assert(cases.any? { |c| c.assignee_email != nil })
     end
 

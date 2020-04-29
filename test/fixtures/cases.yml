@@ -54,6 +54,20 @@ pending_2:
   received_message_at: null
   completed_at: null
 
+pending_3:
+  status: pending
+  program: food_c
+  recipient: recipient_2
+  enroller: enroller_2
+  supplier: supplier_1
+  supplier_account_number: A1
+  supplier_account_arrears_cents: 1000_00
+  new_activity: false
+  created_at: <%= Time.zone.now - 1.days %>
+  updated_at: <%= Time.zone.now - 1.hours %>
+  received_message_at: <%= Time.zone.now %>
+  completed_at: null
+
 submitted_1:
   status: submitted
   program: energy_0

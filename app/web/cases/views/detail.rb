@@ -91,6 +91,11 @@ module Cases
         return @recipient_household&.fpl_percent&.then { |f| "#{f}%" }
       end
 
+      # -- queries/documents
+      def contract
+        return @documents.find { |d| d.classification == :contract }
+      end
+
       # -- queries/submit
       def can_submit?
         return Case::Status.opened?(@status) || Case::Status.pending?(@status)

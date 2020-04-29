@@ -1,17 +1,23 @@
 module Cases
   module Forms
     class Details < ApplicationForm
+      include Case::Policy::Context::Shared
+
       # -- fields --
-      field(:contract_variant, :symbol, presence: { on: :submitted })
+      field(:contract_variant, :symbol, presence: { on: :submitted, if: :required? })
 
       # -- lifecycle --
       protected def initialize_attrs(attrs)
         assign_defaults!(attrs, {
-          contract_variant: @model.documents.find { |d| d.classification == :contract }&.source_url,
+          contract_variant: @model.contract&.source_url,
         })
       end
 
       # -- queries --
+      private def required?
+        return permit?(:edit_contract)
+      end
+
       # -- queries/contract
       def selected_contract
         return contracts.find { |c| c.variant == contract_variant }
@@ -40,6 +46,9 @@ module Cases
           "Unknown"
         end
       end
+
+      # -- Case::Policy::Context --
+      alias :case :model
     end
   end
 end

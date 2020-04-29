@@ -11,7 +11,7 @@ class Case
       # -- queries --
       # constructs a case policy
       def policy
-        return Case::Policy.new(user, @case)
+        return Case::Policy.new(user, self.case)
       end
 
       # returns the case used to construct the policy. defaults

@@ -9,6 +9,8 @@ energy_0:
   contracts:
     - meap
   requirements:
+    contract:
+      - present
     supplier_account:
       - present
 
@@ -24,6 +26,8 @@ water_0:
     - wrap_3h
     - wrap_1k
   requirements:
+    contract:
+      - present
     supplier_account:
       - present
       - active_service

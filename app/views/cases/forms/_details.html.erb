@@ -5,17 +5,19 @@
       <%= view.status_name %>
     <%- end %>
 
-    <%= field_tag(:program, class: "CaseForm-program Field--fixed") do %>
-      <%= view.program_name %>
-    <%- end %>
-
     <%= field_tag(:enroller, class: "CaseForm-enroller Field--fixed") do %>
       <%= view.enroller_name %>
     <%- end %>
 
-    <%- disabled = form.contract_variant.present? %>
-    <%= f.field(:contract_variant, "Signed Contract?", disabled: disabled, class: "CaseForm-contract Field--select") do %>
-      <%= f.select(:contract_variant, form.contract_options, include_blank: "None") %>
+    <%= field_tag(:program, class: "CaseForm-program Field--fixed") do %>
+      <%= view.program_name %>
     <%- end %>
+
+    <% if permit?(:edit_contract) %>
+      <%- disabled = form.contract_variant.present? %>
+      <%= f.field(:contract_variant, "Signed Contract?", disabled: disabled, class: "CaseForm-contract Field--select") do %>
+        <%= f.select(:contract_variant, form.contract_options, include_blank: "None") %>
+      <%- end %>
+    <% end %>
   <% end %>
 <% end %>

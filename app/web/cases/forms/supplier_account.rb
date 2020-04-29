@@ -2,9 +2,9 @@ module Cases
   module Forms
     class SupplierAccount < ApplicationForm
       # -- fields --
-      field(:supplier_id, :integer, presence: { if: :is_account_required })
-      field(:account_number, :string, presence: { if: :is_account_required })
-      field(:arrears, :string, presence: { if: :is_account_required }, numericality: { allow_blank: true })
+      field(:supplier_id, :integer, presence: { if: :required? })
+      field(:account_number, :string, presence: { if: :required? })
+      field(:arrears, :string, presence: { if: :required? }, numericality: { allow_blank: true })
       field(:active_service, :boolean)
 
       # -- fields/validation
@@ -37,7 +37,7 @@ module Cases
       end
 
       # -- queries --
-      private def is_account_required
+      private def required?
         return validation_context&.include?(:new_referral) != true
       end
 

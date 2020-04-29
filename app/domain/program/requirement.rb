@@ -1,6 +1,10 @@
 class Program
   class Requirement < ::Option
     # -- options --
+    group(:contract) do
+      option(:present)
+    end
+
     group(:supplier_account) do
       option(:present)
       option(:active_service)

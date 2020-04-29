@@ -13,7 +13,7 @@ module Db
 
       recipient_rec = recipients(:recipient_2)
       programs = program_repo.find_all_available_by_recipient(recipient_rec.id)
-      assert_length(programs, 4)
+      assert_length(programs, 3)
     end
   end
 end

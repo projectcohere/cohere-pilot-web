@@ -27,7 +27,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases?scope=all", as: user_rec))
     assert_response(:success)
     assert_select(".PageHeader-title", text: /All Cases/)
-    assert_select(".CaseCell", 10)
+    assert_select(".CaseCell", 11)
   end
 
   test "can list cases with a search query as an agent" do
@@ -44,7 +44,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases?scope=open", as: user_rec))
     assert_response(:success)
     assert_select(".PageHeader-title", text: /Open Cases/)
-    assert_select(".CaseCell", 8)
+    assert_select(".CaseCell", 9)
   end
 
   test "can list completed cases as an agent" do
@@ -74,7 +74,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases/queue?scope=queued", as: user_rec))
     assert_response(:success)
     assert_select(".PageHeader-title", text: /Available Cases/)
-    assert_select(".CaseCell", 7)
+    assert_select(".CaseCell", 8)
   end
 
   test "can list cases as a governor" do
@@ -575,6 +575,18 @@ class CasesTests < ActionDispatch::IntegrationTest
         assert_match(%r[#{ENV["HOST"]}/cases/\d+], el[0][:href])
       end
     end
+  end
+
+  test "submit a case that doesn't require a contract as an agent" do
+    user_rec = users(:agent_1)
+    case_rec = cases(:pending_3)
+
+    patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
+      submit: :ignored
+    })
+
+    assert_redirected_to("/cases/#{case_rec.id}/edit")
+    assert_present(flash[:notice])
   end
 
   # -- destroy --
