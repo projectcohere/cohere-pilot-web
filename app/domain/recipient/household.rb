@@ -6,7 +6,6 @@ module Recipient
     prop(:proof_of_income)
     prop(:income)
     prop(:ownership, default: Ownership::Unknown)
-    prop(:primary_residence, predicate: true, default: true)
 
     # -- queries --
     def fpl_percent

@@ -37,9 +37,7 @@ class Case
       when :edit_household_size
         agent? || governor?
       when :edit_household_ownership
-        agent? && requires?(&:household_ownership?)
-      when :edit_household_primary_residence
-        agent? && requires?(&:household_primary_residence?)
+        (agent? || source?) && requires?(&:household_ownership?)
       when :edit_household_proof_of_income
         agent? || source?
       when :edit_household_dhs_number
@@ -67,8 +65,6 @@ class Case
         agent?
       when :view_household_ownership
         agent? && requires?(&:household_ownership?)
-      when :view_household_primary_residence
-        agent? && requires?(&:household_primary_residence?)
       when :view_supplier_account_active_service
         agent? && requires?(&:supplier_account_active_service?)
       # actions

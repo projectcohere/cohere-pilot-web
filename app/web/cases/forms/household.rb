@@ -8,8 +8,7 @@ module Cases
       field(:proof_of_income, :symbol, presence: true)
       field(:dhs_number, :string, presence: { on: :submitted })
       field(:income, :string, presence: { on: :submitted }, numericality: { allow_blank: true })
-      field(:ownership, :string, presence: { on: :submitted })
-      field(:primary_residence, :boolean)
+      field(:ownership, :symbol, presence: { on: :submitted })
 
       # -- lifecycle --
       protected def initialize_attrs(attrs)
@@ -24,7 +23,6 @@ module Cases
           proof_of_income: h&.proof_of_income,
           income: h&.income&.dollars&.to_s,
           ownership: h&.ownership,
-          primary_residence: h&.primary_residence?
         })
       end
 
@@ -52,8 +50,7 @@ module Cases
           proof_of_income: Recipient::ProofOfIncome.from_key(proof_of_income),
           dhs_number: dhs_number,
           income: Money.dollars(income),
-          ownership: ownership.nil? ? Recipient::Ownership::Unknown : ownership,
-          primary_residence: primary_residence.nil? ? true : primary_residence
+          ownership: Recipient::Ownership.from_key(ownership),
         )
       end
     end

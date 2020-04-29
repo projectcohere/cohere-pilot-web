@@ -21,7 +21,6 @@ wrap = Program::Record.create!(
     ],
     household: %i[
       ownership
-      primary_residence
     ],
   }
 )

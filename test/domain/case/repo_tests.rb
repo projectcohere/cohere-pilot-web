@@ -51,8 +51,7 @@ class Case
       assert(kase.supplier_account.active_service?)
 
       household = kase.recipient.household
-      assert_equal(household.ownership, :unknown)
-      assert(household.primary_residence?)
+      assert_equal(household.ownership, ::Recipient::Ownership::Unknown)
     end
   end
 end

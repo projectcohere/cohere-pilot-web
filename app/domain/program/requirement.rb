@@ -12,7 +12,6 @@ class Program
 
     group(:household) do
       option(:ownership)
-      option(:primary_residence)
     end
   end
 end

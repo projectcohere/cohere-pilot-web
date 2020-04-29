@@ -437,8 +437,7 @@ class Case
         dhs_number: h.dhs_number,
         household_size: h.size,
         household_income_cents: h.income&.cents,
-        household_ownership: h.ownership,
-        household_primary_residence: h.primary_residence?
+        household_ownership: h.ownership.key,
       )
     end
 

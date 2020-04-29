@@ -87,10 +87,6 @@ module Cases
         return @recipient_household&.ownership&.to_s&.titlecase
       end
 
-      def household_primary_residence?
-        return @recipient_household&.primary_residence?
-      end
-
       def household_fpl_percent
         return @recipient_household&.fpl_percent&.then { |f| "#{f}%" }
       end

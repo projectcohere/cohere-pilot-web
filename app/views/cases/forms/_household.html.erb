@@ -13,12 +13,6 @@
       <%- end %>
     <% end %>
 
-    <% if permit?(:edit_household_primary_residence) %>
-      <%= f.field(:primary_residence, t(".primary-residence"), class: "CaseForm-residence Field--checkbox") do %>
-        <%= f.check_box(:primary_residence) %>
-      <%- end %>
-    <% end %>
-
     <% if permit?(:edit_household_proof_of_income) %>
       <%= f.field(:proof_of_income, t(".proof-of-income"), class: "CaseForm-proofOfIncome Field--select") do %>
         <%= f.select(:proof_of_income, form.proof_of_income_options, include_blank: true) %>

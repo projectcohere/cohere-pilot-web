@@ -9,12 +9,6 @@
     <%- end %>
   <% end %>
 
-  <% if permit?(:view_household_primary_residence) %>
-    <%= field_tag(nil, "&nbsp".html_safe, class: "ShowCase-residence") do %>
-      <span class="<%= cx("Checkbox", "is-checked" => view.household_primary_residence?) %>"></span> <%= t(".primary-residence") %>
-    <%- end %>
-  <% end %>
-
   <%= field_tag(t(".proof-of-income"), class: "ShowCase-proofOfIncome") do %>
     <%= t("recipient.proof_of_income.#{view.household_proof_of_income}") %>
   <%- end %>

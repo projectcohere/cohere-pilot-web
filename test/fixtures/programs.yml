@@ -33,7 +33,6 @@ water_0:
       - active_service
     household:
       - ownership
-      - primary_residence
 
 water_c:
   name: "Water (CARES)"
