@@ -4,20 +4,22 @@ module Governor
     def index
       permit!(:list)
 
-      @scope = Cases::Scope::All
-      @page, @cases = view_repo.find_all_for_search(page: params[:page])
+      @scope = Cases::Scope::Assigned
+      @page, @cases = view_repo.find_all_assigned(page: params[:page])
     end
 
     def queue
       permit!(:list_queue)
 
-      @scope = Cases::Scope.from_key(params[:scope]) || Cases::Scope::Assigned
-      @page, @cases = case @scope
-      when Cases::Scope::Assigned
-        view_repo.find_all_assigned(page: params[:page])
-      when Cases::Scope::Queued
-        view_repo.find_all_queued(page: params[:page])
-      end
+      @scope = Cases::Scope::Queued
+      @page, @cases = view_repo.find_all_queued(page: params[:page])
+    end
+
+    def search
+      permit!(:list_search)
+
+      @scope = Cases::Scope::Open
+      @page, @cases = view_repo.find_all_for_search(params[:search], page: params[:page])
     end
 
     def edit

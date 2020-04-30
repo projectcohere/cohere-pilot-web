@@ -6,6 +6,10 @@
   margin-bottom: $spacing3;
 
   // -- elements --
+  %row {
+    width: 100%;
+  }
+
   &-back {
     position: absolute;
     top: -30px;
@@ -17,14 +21,18 @@
     font-size: $font-size0;
   }
 
+  &-subtitle {
+    @extend %row;
+  }
+
   &-totals {
     margin-left: $spacing4;
     margin-bottom: 4px;
   }
 
   &-row {
-    width: 100%;
-    margin-top: 30px;
+    @extend %row;
+    margin-top: $spacing3;
   }
 
   &-filters {

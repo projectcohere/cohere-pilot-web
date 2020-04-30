@@ -1,31 +1,11 @@
-<% s = ::Cases::Scope %>
-
 <main class="Page">
   <header class="PageHeader">
-    <h1 class="PageHeader-title">
-      <%= @scope.title %>
-    </h1>
-
-    <%= totals_for(@page, of: "cases") %>
-
-    <div class="PageHeader-row">
-      <%= render(partial: "cases/search") %>
-    </div>
-
-    <div class="PageHeader-row PageHeader-filters">
-      <nav class="Filters">
-        <%= cases_scope_link_to(s::All) %>
-        <%= cases_scope_link_to(s::Open) %>
-        <%= cases_scope_link_to(s::Completed) %>
-      </nav>
-    </div>
+    <%= tag.h1(t(".title"), class: "PageHeader-title") %>
   </header>
 
   <ul id="case-list" class="CaseList">
     <% if @cases&.blank? %>
-      <h2 class="CaseList-fallback">
-        No <%= @scope.adjective %> cases found.
-      </h2>
+      <%= tag.p(t(".fallback", cta: link_to(t(".cta-link"), queue_cases_path)).html_safe, class: "CaseList-fallback") %>
     <% else %>
       <%= render(partial: "agent/cases/cell", collection: @cases) %>
     <% end %>

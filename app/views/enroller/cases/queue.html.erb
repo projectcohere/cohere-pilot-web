@@ -1,26 +1,15 @@
-<% s = ::Cases::Scope %>
-
 <main class="Page">
   <header class="PageHeader">
-    <h1 class="PageHeader-title">
-      <%= @scope.title %>
-    </h1>
-
-    <%= totals_for(@page, of: "cases") %>
-
-    <div class="PageHeader-row PageHeader-filters">
-      <nav class="Filters">
-        <%= cases_scope_link_to(s::Assigned) %>
-        <%= cases_scope_link_to(s::Queued) %>
-      </nav>
-    </div>
+    <%= tag.h1(t(".title"), class: "PageHeader-title") %>
   </header>
 
   <ul id="case-list" class="CaseList">
+    <%= tag.p(class: "CaseList-prompt") do %>
+      <%= t(".subtitle", cta: link_to(t(".cta-link"), cases_path)).html_safe %>
+    <%- end %>
+
     <% if @cases&.blank? %>
-      <h2 class="CaseList-fallback">
-        No <%= @scope.adjective %> cases found.
-      </h2>
+      <%= tag.p(t(".fallback"), class: "CaseList-fallback") %>
     <% else %>
       <%= render(partial: "enroller/cases/cell", collection: @cases) %>
     <% end %>

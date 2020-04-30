@@ -3,6 +3,7 @@ module Agent
     # -- actions --
     def select
       permit!(:referral)
+
       @case = view_repo.program_picker(params[:case_id])
     end
 

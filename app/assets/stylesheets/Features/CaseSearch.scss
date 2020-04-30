@@ -1,8 +1,8 @@
 .CaseSearch {
   max-width: $width2;
 
-  &-title {
-    @extend .u-subtitle;
+  &-prompt {
+    @extend .u-prompt;
   }
 
   &-field {

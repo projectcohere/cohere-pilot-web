@@ -1,0 +1,31 @@
+<% s = ::Cases::Scope %>
+
+<main class="Page">
+  <header class="PageHeader">
+    <h1 class="PageHeader-title">
+      <%= tag.h1(t(".title"), class: "PageHeader-title") %>
+    </h1>
+
+    <div class="PageHeader-row">
+      <%= render(partial: "cases/search") %>
+    </div>
+
+    <div class="PageHeader-row PageHeader-filters">
+      <nav class="Filters">
+        <%= cases_scope_link_to(s::All) %>
+        <%= cases_scope_link_to(s::Open) %>
+        <%= cases_scope_link_to(s::Completed) %>
+      </nav>
+    </div>
+  </header>
+
+  <ul id="case-list" class="CaseList">
+    <% if @cases&.blank? %>
+      <%= tag.p(t(".fallback", adj: @scope.adjective), class: "CaseList-fallback") %>
+    <% else %>
+      <%= render(partial: "agent/cases/cell", collection: @cases) %>
+    <% end %>
+  </ul>
+
+  <%= pager_for(@page, of: "cases") %>
+</main>

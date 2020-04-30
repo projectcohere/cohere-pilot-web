@@ -3,8 +3,13 @@
   flex-direction: column;
   max-width: $width1;
 
+  &-prompt {
+    @extend .u-prompt;
+  }
+
   &-fallback {
-    margin-left: $spacing6;
+    font-size: $font-size4;
+    font-style: italic;
   }
 
   > * + * {

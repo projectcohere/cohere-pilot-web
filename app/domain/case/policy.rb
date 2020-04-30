@@ -14,6 +14,8 @@ class Case
         true
       when :list_queue
         agent? || enroller? || governor?
+      when :list_search
+        agent? || enroller? || governor?
       # create
       when :create
         source?

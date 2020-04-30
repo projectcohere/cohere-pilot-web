@@ -4,7 +4,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   include ActionCable::Channel::TestCase::Behavior
 
   # -- list --
-  test "can't list cases if signed-out" do
+  test "can't list my cases if signed-out" do
     get("/cases")
     assert_redirected_to("/sign-in")
   end
@@ -18,51 +18,10 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 1)
   end
 
-  test "can list cases as an agent" do
+  test "can list my cases as an agent" do
     user_rec = users(:agent_1)
 
     get(auth("/cases", as: user_rec))
-    assert_response(:success)
-
-    get(auth("/cases?scope=all", as: user_rec))
-    assert_response(:success)
-    assert_select(".PageHeader-title", text: /All Cases/)
-    assert_select(".CaseCell", 11)
-  end
-
-  test "can list cases with a search query as an agent" do
-    user_rec = users(:agent_1)
-
-    get(auth("/cases?scope=all&search=Janice", as: user_rec))
-    assert_response(:success)
-    assert_select(".CaseCell", 3)
-  end
-
-  test "can list open cases as an agent" do
-    user_rec = users(:agent_1)
-
-    get(auth("/cases?scope=open", as: user_rec))
-    assert_response(:success)
-    assert_select(".PageHeader-title", text: /Open Cases/)
-    assert_select(".CaseCell", 9)
-  end
-
-  test "can list completed cases as an agent" do
-    user_rec = users(:agent_1)
-
-    get(auth("/cases?scope=completed", as: user_rec))
-    assert_response(:success)
-    assert_select(".PageHeader-title", text: /Completed Cases/)
-    assert_select(".CaseCell", 2)
-  end
-
-  test "can list assigned cases as an agent" do
-    user_rec = users(:agent_1)
-
-    get(auth("/cases/queue", as: user_rec))
-    assert_response(:success)
-
-    get(auth("/cases/queue?scope=assigned", as: user_rec))
     assert_response(:success)
     assert_select(".PageHeader-title", text: /My Cases/)
     assert_select(".CaseCell", 1)
@@ -71,28 +30,41 @@ class CasesTests < ActionDispatch::IntegrationTest
   test "can list queued cases as an agent" do
     user_rec = users(:agent_1)
 
-    get(auth("/cases/queue?scope=queued", as: user_rec))
+    get(auth("/cases/inbox", as: user_rec))
     assert_response(:success)
-    assert_select(".PageHeader-title", text: /Available Cases/)
+    assert_select(".PageHeader-title", text: /Inbox/)
     assert_select(".CaseCell", 8)
   end
 
-  test "can list cases as a governor" do
+  test "can search cases as an agent" do
+    user_rec = users(:agent_1)
+
+    get(auth("/cases/search?scope=all&search=Janice", as: user_rec))
+    assert_response(:success)
+    assert_select(".PageHeader-title", text: /Search/)
+    assert_select(".CaseCell", 3)
+  end
+
+  test "can search open cases as an agent" do
+    user_rec = users(:agent_1)
+
+    get(auth("/cases/search?scope=open", as: user_rec))
+    assert_response(:success)
+    assert_select(".CaseCell", 9)
+  end
+
+  test "can search completed cases as an agent" do
+    user_rec = users(:agent_1)
+
+    get(auth("/cases/search?scope=completed", as: user_rec))
+    assert_response(:success)
+    assert_select(".CaseCell", 2)
+  end
+
+  test "can list my cases as a governor" do
     user_rec = users(:governor_1)
 
     get(auth("/cases", as: user_rec))
-    assert_response(:success)
-    assert_select(".PageHeader-title", text: /All Cases/)
-    assert_select(".CaseCell", 5)
-  end
-
-  test "can list assigned cases as a governor" do
-    user_rec = users(:governor_1)
-
-    get(auth("/cases/queue", as: user_rec))
-    assert_response(:success)
-
-    get(auth("/cases/queue?scope=assigned", as: user_rec))
     assert_response(:success)
     assert_select(".PageHeader-title", text: /My Cases/)
     assert_select(".CaseCell", 1)
@@ -101,28 +73,25 @@ class CasesTests < ActionDispatch::IntegrationTest
   test "can list queued cases as a governor" do
     user_rec = users(:governor_1)
 
-    get(auth("/cases/queue?scope=queued", as: user_rec))
+    get(auth("/cases/inbox", as: user_rec))
     assert_response(:success)
-    assert_select(".PageHeader-title", text: /Available Cases/)
+    assert_select(".PageHeader-title", text: /Inbox/)
     assert_select(".CaseCell", 4)
   end
 
-  test "can list cases as an enroller" do
+  test "can search active cases as an governor" do
+    user_rec = users(:governor_1)
+
+    get(auth("/cases/search", as: user_rec))
+    assert_response(:success)
+    assert_select(".PageHeader-title", text: /Search/)
+    assert_select(".CaseCell", 5)
+  end
+
+  test "can list my cases as an enroller" do
     user_rec = users(:enroller_1)
 
     get(auth("/cases", as: user_rec))
-    assert_response(:success)
-    assert_select(".PageHeader-title", text: /All Cases/)
-    assert_select(".CaseCell", 3)
-  end
-
-  test "can list assigned cases as an enroller" do
-    user_rec = users(:enroller_1)
-
-    get(auth("/cases/queue", as: user_rec))
-    assert_response(:success)
-
-    get(auth("/cases/queue?scope=assigned", as: user_rec))
     assert_response(:success)
     assert_select(".PageHeader-title", text: /My Cases/)
     assert_select(".CaseCell", 1)
@@ -131,10 +100,19 @@ class CasesTests < ActionDispatch::IntegrationTest
   test "can list queued cases as an enroller" do
     user_rec = users(:enroller_1)
 
-    get(auth("/cases/queue?scope=queued", as: user_rec))
+    get(auth("/cases/inbox", as: user_rec))
     assert_response(:success)
-    assert_select(".PageHeader-title", text: /Available Cases/)
+    assert_select(".PageHeader-title", text: /Inbox/)
     assert_select(".CaseCell", 0)
+  end
+
+  test "can search completed cases as an enroller" do
+    user_rec = users(:enroller_1)
+
+    get(auth("/cases/search", as: user_rec))
+    assert_response(:success)
+    assert_select(".PageHeader-title", text: /Search/)
+    assert_select(".CaseCell", 3)
   end
 
   # -- create --
@@ -147,7 +125,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     user_rec = users(:enroller_1)
 
     get(auth("/cases/select", as: user_rec))
-    assert_redirected_to("/cases/queue")
+    assert_redirected_to("/cases")
   end
 
   test "select a case program" do
@@ -167,7 +145,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     user_rec = users(:agent_1)
 
     get(auth("/cases/new?program_id=3", as: user_rec))
-    assert_redirected_to("/cases/queue")
+    assert_redirected_to("/cases")
   end
 
   test "views open case form as a source" do

@@ -8,7 +8,8 @@ module Agent
       @case.assign_user(user)
       case_repo.save_new_assignment(@case)
 
-      redirect_to(queue_cases_path(scope: Cases::Scope::Queued.key),
+      redirect_to(
+        queue_cases_path,
         notice: "You've been assigned to #{@case.recipient.profile.name}'s case."
       )
     end
@@ -21,7 +22,8 @@ module Agent
       @case.destroy_selected_assignment
       case_repo.save_destroyed_assignment(@case)
 
-      redirect_to(edit_case_path(@case),
+      redirect_to(
+        edit_case_path(@case),
         notice: "You've unassigned #{email} from #{@case.recipient.profile.name}'s case."
       )
     end

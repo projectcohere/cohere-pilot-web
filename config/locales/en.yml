@@ -3,8 +3,14 @@ en:
     failure_after_create: Your e-mail and password did not match.
     failure_after_update: Password did not meet requirements.
 
+  pages: &pages
+    cases: Cases
+    queue: Inbox
+    search: Search
+
   layouts:
     navigation:
+      <<: *pages
       logo: Cohere
       sign-out: Sign Out
 
@@ -19,7 +25,6 @@ en:
       rent: "Rent"
       own: "Own"
       unknown: ""
-
 
   # -- views --
   users:
@@ -43,6 +48,23 @@ en:
         - at least one letter, number, and symbol
 
   cases:
+    # -- lists
+    index: &case-index
+      title: "My Cases"
+      fallback: "You've finished your cases. Check the %{cta} for more."
+      cta-link: "Inbox"
+
+    queue: &case-queue
+      title: "Inbox"
+      subtitle: "These cases are waiting to be claimed. Click 'Assign to Me' to add it to %{cta}."
+      fallback: "There are no cases left in the Inbox."
+      cta-link: "Your Cases"
+
+    search: &case-search
+      title: "Search Cases"
+      fallback: "There are no matching %{adj} cases."
+
+    # -- detail/forms
     single: &case-single
       title: "%{name}'s case"
 
@@ -80,32 +102,16 @@ en:
           label: "FPL Percent"
           fallback: "Unknown. Please add household info."
 
+    # -- partials
     forms:
       <<: *case-fields
 
     detail:
       <<: *case-fields
 
-  agent:
-    cases:
-      show:
-        <<: *case-single
-        actions:
-          back: "Back to Cases"
-          edit: "Edit Case"
-          referral: "Select Referral"
-
-    referrals:
-      select:
-        <<: *case-single
-        actions:
-          back: "Back to Case Details"
-          submit: "Start Referral"
-
-        program:
-          title: "Start a New Referral"
-          subtitle: "Please pick one of these programs to start a new referral application."
-          placeholder: "Select a Program"
+    search:
+      prompt: "Enter an applicant's name or phone number to find their cases."
+      action: "Find Cases"
 
   source:
     cases:
@@ -126,6 +132,53 @@ en:
           title: "Start a New Case"
           subtitle: "Please pick one of these programs to start a new application."
           placeholder: "Select a Program"
+
+  governor:
+    cases:
+      index:
+        <<: *case-index
+      queue:
+        <<: *case-queue
+      search:
+        <<: *case-search
+
+  agent:
+    cases:
+      index:
+        <<: *case-index
+      queue:
+        <<: *case-queue
+      search:
+        <<: *case-search
+
+      show:
+        <<: *case-single
+        actions:
+          back: "Back to Cases"
+          edit: "Edit Case"
+          referral: "Select Referral"
+
+    referrals:
+      select:
+        <<: *case-single
+        actions:
+          back: "Back to Case Details"
+          submit: "Start Referral"
+
+        program:
+          title: "Start a New Referral"
+          subtitle: "Please pick one of these programs to start a new referral application."
+          placeholder: "Select a Program"
+
+  enroller:
+    cases:
+      index:
+        <<: *case-index
+      queue:
+        <<: *case-queue
+      search:
+        <<: *case-search
+
 
   # imagine this nested in users. clearance actions & root templates don't
   # respect standard pathing:

@@ -1,35 +1,22 @@
 module Helpers
   module NavigationHelper
     # -- helpers --
-    def navigation_icon_tag(key, name, width: 36)
-      return tag.span(
-        class: "NavigationIcon is-#{key}",
-        alt: "#{name} Icon",
-        width: width,
-        height: 36,
-      )
-    end
-
-    def navigation_link_tag_tags
+    def navigation_link_tags
       links = []
 
-      if policy.permit?(:list_queue)
-        links.push(Link.new(
-          key: :queue,
-          name: "Queue",
-          path: queue_cases_path
-        ))
-      end
-
       if policy.permit?(:list)
-        links.push(Link.new(
-          key: :cases,
-          name: "Cases",
-          path: cases_path
-        ))
+        links.push(Link.new(:cases, cases_path))
       end
 
-      links.find.each do |r|
+      if policy.permit?(:list_queue)
+        links.push(Link.new(:queue, queue_cases_path))
+      end
+
+      if policy.permit?(:list_search)
+        links.push(Link.new(:search, search_cases_path))
+      end
+
+      links.reverse.each do |r|
         if request.path.starts_with?(r.path)
           r.active!
           break
@@ -46,24 +33,32 @@ module Helpers
           "is-active": link.active?,
         ),
       ) do
-        navigation_icon_tag(link.key, link.name) +
-        tag.span(link.name, class: "Navigation-linkName")
+        name = t(".#{link.key}")
+        next (
+          navigation_icon_tag(link.key, name) +
+          tag.span(name, class: "Navigation-linkName")
+        )
       end
+    end
+
+    def navigation_icon_tag(key, name, width: 36)
+      return tag.span(
+        class: "NavigationIcon is-#{key}",
+        alt: "#{name} Icon",
+        width: width,
+        height: 36,
+      )
     end
 
     # -- types --
-    class Link < ::Value
-      # -- props --
-      prop(:key)
-      prop(:name)
-      prop(:path)
-      prop(:active, default: false, predicate: true)
-
-      # -- queries --
+    Link = Struct.new(:key, :path) do
       def active!
         @active = true
       end
-    end
 
+      def active?
+        return @active
+      end
+    end
   end
 end

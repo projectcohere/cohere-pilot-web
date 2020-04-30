@@ -9,7 +9,7 @@ module Governor
       case_repo.save_new_assignment(@case)
 
       redirect_to(
-        queue_cases_path(scope: Cases::Scope::Queued.key),
+        queue_cases_path,
         notice: "You've been assigned to #{@case.recipient.profile.name}'s case."
       )
     end

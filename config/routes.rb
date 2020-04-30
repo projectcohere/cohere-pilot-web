@@ -71,23 +71,18 @@ Rails.application.routes.draw do
 
   signed_in(role: Role::Governor) do |c|
     resources(:cases, id: /\d+/, only: %i[
+      index
       edit
       update
     ]) do
-      get("/",
-        on: :collection,
-        action: :index,
-      )
-
-      get("/queue",
+      get("/inbox",
         on: :collection,
         action: :queue,
-        constraints: merge(c, query(scope: /^(assigned|queued)?$/)),
       )
 
-      get("/",
+      get("/search",
         on: :collection,
-        to: redirect("/cases/queue")
+        action: :search,
       )
 
       resources(:assignments, only: %i[
@@ -95,27 +90,22 @@ Rails.application.routes.draw do
       ])
     end
 
-    fallback(Role::Governor, to: "/cases/queue", constraints: c)
+    fallback(Role::Governor, to: "/cases", constraints: c)
   end
 
   signed_in(role: Role::Enroller) do |c|
     resources(:cases, id: /\d+/, only: %i[
+      index
       show
     ]) do
-      get("/",
-        on: :collection,
-        action: :index,
-      )
-
-      get("/queue",
+      get("/inbox",
         on: :collection,
         action: :queue,
-        constraints: merge(c, query(scope: /^(assigned|queued)?$/)),
       )
 
-      get("/",
+      get("/search",
         on: :collection,
-        to: redirect("/cases/queue")
+        action: :search,
       )
 
       patch("/:complete_action",
@@ -129,27 +119,28 @@ Rails.application.routes.draw do
       ])
     end
 
-    fallback(Role::Enroller, to: "/cases/queue", constraints: c)
+    fallback(Role::Enroller, to: "/cases", constraints: c)
   end
 
   signed_in(role: Role::Agent) do |c|
     # -- cases --
     resources(:cases, id: /\d+/, only: %i[
+      index
       edit
       update
       show
       destroy
     ]) do
-      get("/",
-        on: :collection,
-        action: :index,
-        constraints: merge(c, query(scope: /^(all|open|completed)?$/)),
-      )
-
-      get("/queue",
+      get("/inbox",
         on: :collection,
         action: :queue,
-        constraints: merge(c, query(scope: /^(assigned|queued)?$/)),
+        as: :queue,
+      )
+
+      get("/search",
+        on: :collection,
+        action: :search,
+        constraints: merge(c, query(scope: /^(all|open|completed)?$/)),
       )
 
       # -- cases/assignments
@@ -181,7 +172,7 @@ Rails.application.routes.draw do
     end
 
     # -- fallback --
-    fallback(Role::Agent, to: "/cases/queue", constraints: c)
+    fallback(Role::Agent, to: "/cases", constraints: c)
   end
 
   # -- development --

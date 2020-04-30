@@ -9,7 +9,7 @@ module Users
 
     # -- Clearance::SessionsController --
     def url_after_create
-      return queue_cases_path
+      return cases_path
     end
   end
 end

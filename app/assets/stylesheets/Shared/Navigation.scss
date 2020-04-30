@@ -6,6 +6,7 @@ $width: 74px;
 
   display: flex;
   flex-direction: column;
+  width: $width;
   background-color: $white;
   box-shadow: 0px 4px 4px $color-shadow2;
   z-index: 1;
@@ -44,7 +45,8 @@ $width: 74px;
     flex-direction: column;
     align-items: center;
     text-decoration: none;
-    padding: $spacing4 0;
+    padding: $spacing4 $spacing6;
+    text-align: center;
     line-height: initial;
 
     &:hover {
@@ -120,13 +122,16 @@ $width: 74px;
     @include prefix(webkit, (mask-image: image-url("logo-icon-black.svg")));
   }
 
+  &.is-cases {
+    @include prefix(webkit, (mask-image: image-url("cases.svg")));
+  }
+
   &.is-queue {
     @include prefix(webkit, (mask-image: image-url("queue.svg")));
   }
 
-  &.is-cases {
-    @include prefix(webkit, (mask-image: image-url("cases.svg")));
-    mask-image: image-url("cases.svg");
+  &.is-search {
+    @include prefix(webkit, (mask-image: image-url("search.svg")));
   }
 
   &.is-profile {

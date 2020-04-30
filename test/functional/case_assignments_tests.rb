@@ -29,7 +29,7 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
       &act
     )
 
-    assert_redirected_to("/cases/queue?scope=queued")
+    assert_redirected_to("/cases/inbox")
     assert_present(flash[:notice])
 
     assert_matching_broadcast_on(case_activity_for(:agent_1)) do |msg|
@@ -51,7 +51,7 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
       &act
     )
 
-    assert_redirected_to("/cases/queue?scope=queued")
+    assert_redirected_to("/cases/inbox")
     assert_present(flash[:notice])
 
     assert_matching_broadcast_on(case_activity_for(:governor_1)) do |msg|
@@ -83,7 +83,7 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
       &act
     )
 
-    assert_redirected_to("/cases/queue?scope=queued")
+    assert_redirected_to("/cases/inbox")
     assert_present(flash[:notice])
 
     assert_matching_broadcast_on(case_activity_for(:enroller_1)) do |msg|

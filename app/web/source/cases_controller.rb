@@ -10,6 +10,7 @@ module Source
 
     def select
       permit!(:create)
+
       @case = view_repo.new_program_picker(user_partner_id)
     end
 

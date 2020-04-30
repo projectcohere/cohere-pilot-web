@@ -18,7 +18,7 @@ class UsersTests < ActionDispatch::IntegrationTest
 
     post("/sessions", params: session_params)
     assert(current_session.signed_in?)
-    assert_redirected_to("/cases/queue")
+    assert_redirected_to("/cases")
   end
 
   test "signs in as an enroller" do
@@ -31,7 +31,7 @@ class UsersTests < ActionDispatch::IntegrationTest
 
     post("/sessions", params: session_params)
     assert(current_session.signed_in?)
-    assert_redirected_to("/cases/queue")
+    assert_redirected_to("/cases")
   end
 
   test "signs in as a source" do
@@ -44,7 +44,7 @@ class UsersTests < ActionDispatch::IntegrationTest
 
     post("/sessions", params: session_params)
     assert(current_session.signed_in?)
-    assert_redirected_to("/cases/queue")
+    assert_redirected_to("/cases")
   end
 
   test "signs in as a governor" do
@@ -57,7 +57,7 @@ class UsersTests < ActionDispatch::IntegrationTest
 
     post("/sessions", params: session_params)
     assert(current_session.signed_in?)
-    assert_redirected_to("/cases/queue")
+    assert_redirected_to("/cases")
   end
 
   # -- sign-out --

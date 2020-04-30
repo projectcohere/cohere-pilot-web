@@ -1,12 +1,12 @@
 <header class="Navigation">
   <%=
-    link_to(queue_cases_path, class: "Navigation-logo") do
+    link_to(cases_path, class: "Navigation-logo") do
       navigation_icon_tag(:logo, t(".logo"), width: 54)
     end
   %>
 
   <nav class="Navigation-links">
-    <%= navigation_link_tag_tags %>
+    <%= navigation_link_tags %>
   </nav>
 
   <% if signed_in? %>
