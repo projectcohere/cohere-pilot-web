@@ -25,37 +25,87 @@ wrap = Program::Record.create!(
   }
 )
 
+cares_food = Program::Record.create!(
+  name: "Food (CARES)",
+)
+
+cares_energy = Program::Record.create!(
+  name: "Energy (CARES)",
+  requirements: {
+    supplier_account: %i[
+      present
+    ],
+  },
+)
+
+cares_water = Program::Record.create!(
+  name: "Water (CARES)",
+  requirements: {
+    supplier_account: %i[
+      present
+    ],
+  },
+)
+
+cares_housing = Program::Record.create!(
+  name: "Housing (CARES)",
+  requirements: {
+    household: %i[
+      ownership
+    ],
+  },
+)
+
 # -- partners --
-cohere_0 = Partner::Record.create!(
+Partner::Record.create!(
   name: "Cohere",
   membership: M::Cohere.key,
 )
 
-governor_0 = Partner::Record.create!(
+Partner::Record.create!(
   name: "MDHHS",
   membership: M::Governor.key,
+  programs: [
+    meap,
+  ],
 )
 
-supplier_0 = Partner::Record.create!(
+Partner::Record.create!(
   name: "DTE",
   membership: M::Supplier.key,
-  programs: [meap],
+  programs: [
+    meap,
+    cares_energy,
+  ],
 )
 
-supplier_1 = Partner::Record.create!(
+Partner::Record.create!(
   name: "Consumers Energy",
   membership: M::Supplier.key,
-  programs: [meap],
+  programs: [
+    meap,
+    cares_energy,
+  ],
 )
 
-supplier_2 = Partner::Record.create!(
+Partner::Record.create!(
   name: "DWSD",
   membership: M::Supplier.key,
-  programs: [wrap],
+  programs: [
+    wrap,
+    cares_water,
+  ],
 )
 
-enroller_0 = Partner::Record.create!(
+Partner::Record.create!(
   name: "Wayne Metro",
   membership: M::Enroller.key,
-  programs: [meap, wrap],
+  programs: [
+    meap,
+    wrap,
+    cares_food,
+    cares_energy,
+    cares_water,
+    cares_housing,
+  ],
 )
