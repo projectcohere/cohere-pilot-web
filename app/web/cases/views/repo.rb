@@ -111,7 +111,7 @@ module Cases
           assert(false, "#{@scope} is not allowed for search")
         end
 
-        return paginate(q, page)
+        return find_cells(q, page)
       end
 
       def find_all_assigned(page:)
@@ -120,7 +120,7 @@ module Cases
           .with_assigned_user(user.id.val)
           .by_updated_date
 
-        return paginate(case_query, page)
+        return find_cells(case_query, page)
       end
 
       def find_all_queued(page:)
@@ -129,12 +129,15 @@ module Cases
           .with_no_assignment_for_role(user_role)
           .by_updated_date
 
-        return paginate(case_query, page)
+        return find_cells(case_query, page)
       end
 
-      private def paginate(case_query, page)
-        case_page = Pagy.new(count: case_query.count(:all), page: page)
-        case_recs = case_query.offset(case_page.offset).limit(case_page.items)
+      private def find_cells(case_query, page)
+        q = case_query
+        q = q.visible
+
+        case_page = Pagy.new(count: q.count(:all), page: page)
+        case_recs = q.offset(case_page.offset).limit(case_page.items)
 
         case_cells = case_recs.map do |r|
           self.class.map_cell(r, @scope, user_partner_id)

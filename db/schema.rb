@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_29_195752) do
+ActiveRecord::Schema.define(version: 2020_04_30_210719) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -63,6 +63,8 @@ ActiveRecord::Schema.define(version: 2020_04_29_195752) do
     t.boolean "new_activity", default: false, null: false
     t.bigint "referrer_id"
     t.bigint "program_id", null: false
+    t.boolean "deleted", default: false, null: false
+    t.index ["deleted"], name: "index_cases_on_deleted"
     t.index ["enroller_id"], name: "index_cases_on_enroller_id"
     t.index ["program_id"], name: "index_cases_on_program_id"
     t.index ["recipient_id"], name: "index_cases_on_recipient_id"

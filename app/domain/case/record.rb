@@ -18,6 +18,10 @@ class Case
     enum(status: Status.all)
 
     # -- scopes --
+    def self.visible
+      return where(deleted: false)
+    end
+
     def self.join_recipient(references: false)
       scope = includes(:recipient)
 
