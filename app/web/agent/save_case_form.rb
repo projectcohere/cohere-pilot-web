@@ -14,7 +14,7 @@ module Agent
       end
 
       # populate the case
-      @case = @case_repo.find(form.model.id.val)
+      @case = @case_repo.find_with_associations(form.model.id.val)
 
       # update the case
       @case.add_agent_data(

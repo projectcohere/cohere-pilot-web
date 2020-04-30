@@ -17,6 +17,7 @@ wrap = Program::Record.create!(
   ],
   requirements: {
     supplier_account: %i[
+      present
       active_service
     ],
     household: %i[

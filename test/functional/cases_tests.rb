@@ -467,6 +467,27 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_match(/Janice\s*Sample/, pdf_text)
   end
 
+  test "doesn't save a duplicate contract" do
+    case_rec = cases(:pending_1)
+
+    act = ->() do
+      patch(auth("/cases/#{case_rec.id}"), params: {
+        case: {
+          details: {
+            contract_variant: :meap
+          }
+        }
+      })
+    end
+
+    assert_difference(
+      -> { Document::Record.count } => 0,
+      &act
+    )
+
+    assert_enqueued_jobs(0)
+  end
+
   test "show errors when saving an invalid case as an agent" do
     case_rec = cases(:pending_1)
 
@@ -482,7 +503,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:alert])
   end
 
-  # -- edit/save --
+  # -- submit/action --
   test "can't update a case with an action if signed-out" do
     assert_raises(ActionController::RoutingError) do
       patch("/cases/3", params: {

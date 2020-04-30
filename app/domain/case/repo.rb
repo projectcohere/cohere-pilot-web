@@ -139,6 +139,7 @@ class Case
       )
 
       assign_recipient_profile(kase, recipient_rec)
+      assign_household(kase, recipient_rec)
 
       # initialize a new assignment
       assignment_rec = Case::Assignment::Record.new
@@ -430,15 +431,20 @@ class Case
       )
     end
 
-    private def assign_household(kase, recipient_rec)
+    private def assign_household(kase, rec)
       r = kase.recipient
       h = r.household
-      recipient_rec.assign_attributes(
-        dhs_number: h.dhs_number,
-        household_proof_of_income: h.proof_of_income.key,
-        household_size: h.size,
-        household_income_cents: h.income&.cents,
-        household_ownership: h.ownership.key,
+
+      # TODO: need to think through how best to handle partial assignment
+      # destroy data if it overwites values with nil (maybe only use assign
+      # helpers than expect values or intentional nils, maybe introduce an
+      # `omitted` value that is filtered from assignment)
+      rec.assign_attributes(
+        dhs_number: h.dhs_number || rec.dhs_number,
+        household_proof_of_income: h.proof_of_income&.key || rec.household_proof_of_income,
+        household_size: h.size || rec.household_size,
+        household_income_cents: h.income&.cents || rec.household_income_cents,
+        household_ownership: h.ownership&.key || rec.household_ownership,
       )
     end
 
