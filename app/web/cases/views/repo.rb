@@ -196,8 +196,8 @@ module Cases
           supplier_account: Case::Repo.map_supplier_account(r),
           enroller_name: r.enroller.name,
           recipient_id: r.recipient_id,
-          recipient_profile: Recipient::Repo.map_profile(r.recipient),
-          recipient_household: Recipient::Repo.map_household(r.recipient),
+          profile: Recipient::Repo.map_profile(r.recipient),
+          household: Recipient::Repo.map_household(r.recipient),
           referrer: r.referred != nil,
           referred: r.referrer_id != nil,
           assignments: r.assignments.map { |r| Case::Repo.map_assignment(r) },
@@ -214,8 +214,8 @@ module Cases
           supplier_account: e.supplier_account,
           enroller_name: find_partner_name(e.enroller_id),
           recipient_id: e.recipient.id.val,
-          recipient_profile: e.recipient.profile,
-          recipient_household: e.recipient.household,
+          profile: e.recipient.profile,
+          household: e.recipient.household,
           referrer: e.referrer?,
           referred: e.referred?,
           assignments: e.assignments,
@@ -231,7 +231,7 @@ module Cases
       def self.map_contract(e)
         return Contract.new(
           date: Date.today,
-          recipient_profile: e.recipient.profile,
+          profile: e.recipient.profile,
         )
       end
 

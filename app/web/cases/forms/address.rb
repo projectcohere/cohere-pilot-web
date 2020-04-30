@@ -10,11 +10,11 @@ module Cases
 
       # -- lifecycle --
       protected def initialize_attrs(attrs)
-        if not @model.respond_to?(:recipient_profile)
+        if not @model.respond_to?(:profile)
           return
         end
 
-        a = @model.recipient_profile.address
+        a = @model.profile.address
         assign_defaults!(attrs, {
           street: a.street,
           street2: a.street2,

@@ -13,11 +13,11 @@ module Cases
 
       # -- lifecycle --
       protected def initialize_attrs(attrs)
-        if not @model.respond_to?(:recipient_household)
+        if not @model.respond_to?(:household)
           return
         end
 
-        h = @model.recipient_household
+        h = @model.household
         assign_defaults!(attrs, {
           dhs_number: h&.dhs_number,
           size: h&.size&.to_s,
@@ -51,7 +51,7 @@ module Cases
       end
 
       # -- transformation --
-      def map_to_recipient_household
+      def map_to_household
         return Recipient::Household.new(
           size: size.to_i,
           proof_of_income: Recipient::ProofOfIncome.from_key(proof_of_income),

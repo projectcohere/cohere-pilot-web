@@ -138,7 +138,7 @@ module Db
       program_rec = supplier_rec.programs.first
       enroller_rec = partners(:enroller_1)
 
-      recipient_profile = Recipient::Profile.stub(
+      profile = Recipient::Profile.stub(
         phone: Phone.stub(
           number: Faker::PhoneNumber.phone_number
         ),
@@ -154,7 +154,7 @@ module Db
         )
       )
 
-      recipient_household = Recipient::Household.stub(
+      household = Recipient::Household.stub(
         proof_of_income: Recipient::ProofOfIncome::Weatherization,
         ownership: Recipient::Ownership::Own,
       )
@@ -167,8 +167,8 @@ module Db
 
       kase = Case.open(
         program: Program::Repo.map_record(program_rec),
-        recipient_profile: recipient_profile,
-        recipient_household: recipient_household,
+        profile: profile,
+        household: household,
         enroller: Partner::Repo.map_record(enroller_rec),
         supplier_account: supplier_account,
       )
@@ -207,7 +207,7 @@ module Db
       supplier_rec = user_rec.partner
       program_rec = supplier_rec.programs.first
 
-      recipient_profile = Recipient::Profile.new(
+      profile = Recipient::Profile.new(
         phone: Phone.new(
           number: "1112223333"
         ),
@@ -223,7 +223,7 @@ module Db
         )
       )
 
-      recipient_household = Recipient::Household.stub(
+      household = Recipient::Household.stub(
         proof_of_income: Recipient::ProofOfIncome::Uia,
         ownership: Recipient::Ownership::Rent,
       )
@@ -236,8 +236,8 @@ module Db
 
       kase = Case.open(
         program: Program::Repo.map_record(program_rec),
-        recipient_profile: recipient_profile,
-        recipient_household: recipient_household,
+        profile: profile,
+        household: household,
         enroller: Partner::Repo.map_record(enroller_rec),
         supplier_account: supplier_account,
       )
@@ -298,7 +298,7 @@ module Db
         arrears: Money.cents(1000_00),
       )
 
-      recipient_profile = Recipient::Profile.new(
+      profile = Recipient::Profile.new(
         phone: Phone.new(
           number: "1112223333"
         ),
@@ -314,7 +314,7 @@ module Db
         )
       )
 
-      recipient_household = Recipient::Household.new(
+      household = Recipient::Household.new(
         size: 3,
         proof_of_income: Recipient::ProofOfIncome::Uia,
         income: Money.cents(999_00),
@@ -327,7 +327,7 @@ module Db
       )
 
       kase = Case::Repo.map_record(case_rec)
-      kase.add_agent_data(supplier_account, recipient_profile, recipient_household)
+      kase.add_agent_data(supplier_account, profile, household)
       kase.sign_contract(contract)
       kase.submit_to_enroller
       kase.complete(Case::Status::Approved)

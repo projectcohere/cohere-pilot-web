@@ -22,8 +22,8 @@ module Source
       # open a new case for the recipient
       @case = Case.open(
         program: program,
-        recipient_profile: form.map_to_recipient_profile,
-        recipient_household: form.map_to_recipient_household,
+        profile: form.map_to_profile,
+        household: form.map_to_household,
         enroller: @partner_repo.find_default_enroller,
         supplier_account: form.map_to_supplier_account,
       )

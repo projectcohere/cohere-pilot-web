@@ -8,11 +8,11 @@ module Cases
 
       # -- lifecycle --
       protected def initialize_attrs(attrs)
-        if not @model.respond_to?(:recipient_profile)
+        if not @model.respond_to?(:profile)
           return
         end
 
-        r = @model&.recipient_profile
+        r = @model&.profile
         n = r&.name
         assign_defaults!(attrs, {
           first_name: n&.first,

@@ -48,7 +48,7 @@ module Cases
         return supplier_account&.map_to_supplier_account
       end
 
-      def map_to_recipient_profile
+      def map_to_profile
         return Recipient::Profile.new(
           phone: contact.map_to_recipient_phone,
           name: contact.map_to_recipient_name,
@@ -56,8 +56,8 @@ module Cases
         )
       end
 
-      def map_to_recipient_household
-        return household.map_to_recipient_household
+      def map_to_household
+        return household.map_to_household
       end
 
       # -- ApplicationForm --

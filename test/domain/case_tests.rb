@@ -9,8 +9,8 @@ class CaseTests < ActiveSupport::TestCase
 
     kase = Case.open(
       program: :test_program,
-      recipient_profile: profile,
-      recipient_household: :test_household,
+      profile: profile,
+      household: :test_household,
       enroller: Partner.stub(id: 1),
       supplier_account: :test_account,
     )

@@ -17,7 +17,7 @@ module Governor
 
       # add governor data to the case
       @case = @case_repo.find_with_documents_for_governor(case_id, user_partner_id)
-      @case.add_governor_data(form.map_to_recipient_household)
+      @case.add_governor_data(form.map_to_household)
 
       # save the case
       @case_repo.save_governor_data(@case)

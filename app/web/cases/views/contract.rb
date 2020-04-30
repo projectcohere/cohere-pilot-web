@@ -6,19 +6,19 @@ module Cases
 
       # -- props --
       prop(:date)
-      prop(:recipient_profile)
+      prop(:profile)
 
       # -- queries --
       def recipient_name
-        return @recipient_profile.name
+        return @profile.name
       end
 
       def phone_number
-        return "+1 #{number_to_phone(@recipient_profile.phone.number)}"
+        return "+1 #{number_to_phone(@profile.phone.number)}"
       end
 
       def address
-        return @recipient_profile.address.lines
+        return @profile.address.lines
       end
     end
   end

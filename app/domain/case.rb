@@ -27,10 +27,10 @@ class Case < ::Entity
   attr(:selected_document)
 
   # -- factory --
-  def self.open(program:, recipient_profile:, recipient_household:, enroller:, supplier_account: nil)
+  def self.open(program:, profile:, household:, enroller:, supplier_account: nil)
     recipient = Recipient.new(
-      profile: recipient_profile,
-      household: recipient_household,
+      profile: profile,
+      household: household,
     )
 
     kase = Case.new(

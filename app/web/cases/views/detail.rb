@@ -14,8 +14,8 @@ module Cases
       prop(:supplier_name)
       prop(:supplier_account)
       prop(:recipient_id)
-      prop(:recipient_profile)
-      prop(:recipient_household)
+      prop(:profile)
+      prop(:household)
       prop(:referrer, predicate: true)
       prop(:referred, predicate: true)
       prop(:documents)
@@ -33,7 +33,7 @@ module Cases
       end
 
       def recipient_name
-        return @recipient_profile.name
+        return @profile.name
       end
 
       def recipient_first_name
@@ -46,11 +46,11 @@ module Cases
 
       # -- queries/contact
       def address
-        return @recipient_profile.address.lines
+        return @profile.address.lines
       end
 
       def phone_number
-        return "+1 #{number_to_phone(@recipient_profile.phone.number)}"
+        return "+1 #{number_to_phone(@profile.phone.number)}"
       end
 
       # -- queries/account
@@ -68,27 +68,27 @@ module Cases
 
       # -- queries/household
       def household_dhs_number
-        return @recipient_household&.dhs_number || "Unknown"
+        return @household&.dhs_number || "Unknown"
       end
 
       def household_size
-        return @recipient_household&.size || "Unknown"
+        return @household&.size || "Unknown"
       end
 
       def household_proof_of_income
-        return @recipient_household&.proof_of_income
+        return @household&.proof_of_income
       end
 
       def household_income
-        return @recipient_household&.income&.dollars&.then { |f| "$#{f}" } || "Unknown"
+        return @household&.income&.dollars&.then { |f| "$#{f}" } || "Unknown"
       end
 
       def household_ownership
-        return @recipient_household&.ownership&.to_s&.titlecase
+        return @household&.ownership&.to_s&.titlecase
       end
 
       def household_fpl_percent
-        return @recipient_household&.fpl_percent&.then { |f| "#{f}%" }
+        return @household&.fpl_percent&.then { |f| "#{f}%" }
       end
 
       # -- queries/documents
