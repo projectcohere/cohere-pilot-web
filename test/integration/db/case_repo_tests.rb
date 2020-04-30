@@ -154,6 +154,11 @@ module Db
         )
       )
 
+      recipient_household = Recipient::Household.stub(
+        proof_of_income: Recipient::ProofOfIncome::Weatherization,
+        ownership: Recipient::Ownership::Own,
+      )
+
       supplier_account = Case::Account.stub(
         supplier_id: supplier_rec.id,
         number: "12345",
@@ -163,6 +168,7 @@ module Db
       kase = Case.open(
         program: Program::Repo.map_record(program_rec),
         recipient_profile: recipient_profile,
+        recipient_household: recipient_household,
         enroller: Partner::Repo.map_record(enroller_rec),
         supplier_account: supplier_account,
       )
@@ -217,16 +223,21 @@ module Db
         )
       )
 
+      recipient_household = Recipient::Household.stub(
+        proof_of_income: Recipient::ProofOfIncome::Uia,
+        ownership: Recipient::Ownership::Rent,
+      )
+
       supplier_account = Case::Account.new(
         supplier_id: supplier_rec.id,
         number: "12345",
         arrears: Money.cents(1000_00),
       )
 
-
       kase = Case.open(
         program: Program::Repo.map_record(program_rec),
         recipient_profile: recipient_profile,
+        recipient_household: recipient_household,
         enroller: Partner::Repo.map_record(enroller_rec),
         supplier_account: supplier_account,
       )
@@ -305,9 +316,10 @@ module Db
 
       recipient_household = Recipient::Household.new(
         size: 3,
-        proof_of_income: Recipient::ProofOfIncome::Dhs,
+        proof_of_income: Recipient::ProofOfIncome::Uia,
         income: Money.cents(999_00),
         dhs_number: "11111",
+        ownership: Recipient::Ownership::Rent,
       )
 
       contract = Program::Contract.new(
@@ -338,7 +350,9 @@ module Db
       assert_equal(r.zip, "12345")
       assert_equal(r.dhs_number, "11111")
       assert_equal(r.household_size, 3)
+      assert_equal(r.household_proof_of_income, "uia")
       assert_equal(r.household_income_cents, 999_00)
+      assert_equal(r.household_ownership, "rent")
 
       d = kase.new_documents[0].record
       assert_not_nil(d)

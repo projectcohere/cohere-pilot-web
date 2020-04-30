@@ -17,10 +17,20 @@ en:
   # -- domain --
   recipient:
     proof_of_income:
-      dhs: "MDHHS Account"
-      document: "Proxy Document"
-      census: "Census Tract"
-      attestation: "Self Attestation"
+      dhs: "Active MDHHS Case"
+      wrap: "WRAP"
+      meap: "MEAP"
+      ec_program: "Early Childhood Program"
+      weatherization: "Weatherization"
+      uia: "UIA Benefit Letter or Application"
+      ssi_ssdi: "SSI or SSDI"
+      pension_retirement: "Pension or Retirement Benefits"
+      military: "Military Benefits"
+      paystubs: "Paystubs"
+      layoff: "Layoff or Reduced Hours Notice"
+      hptap_pays: "HPTAP or PAYS"
+      attested_income: "Income, Self-Attested"
+      attested_no_income: "No Income, Self-Attested"
     ownership:
       rent: "Rent"
       own: "Own"

@@ -5,7 +5,7 @@ class Case
     # -- props --
     prop(:id, default: Id::None)
     prop(:profile)
-    prop(:household, default: nil)
+    prop(:household)
 
     # -- commands --
     def add_governor_data(household)

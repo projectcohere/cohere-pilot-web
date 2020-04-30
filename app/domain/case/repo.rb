@@ -435,6 +435,7 @@ class Case
       h = r.household
       recipient_rec.assign_attributes(
         dhs_number: h.dhs_number,
+        household_proof_of_income: h.proof_of_income.key,
         household_size: h.size,
         household_income_cents: h.income&.cents,
         household_ownership: h.ownership.key,

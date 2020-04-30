@@ -16,7 +16,7 @@ module Agent
       # populate the case
       @case = @case_repo.find(form.model.id.val)
 
-      # udate
+      # update the case
       @case.add_agent_data(
         form.map_to_supplier_account,
         form.map_to_recipient_profile,
