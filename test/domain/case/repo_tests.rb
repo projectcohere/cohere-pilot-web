@@ -12,7 +12,7 @@ class Case
 
       assert_not_nil(kase.record)
       assert_not_nil(kase.id.val)
-      assert_not_nil(kase.status)
+      assert(kase.status&.approved?)
       assert_not_nil(kase.recipient)
       assert_not_nil(kase.enroller_id)
       assert_not_nil(kase.supplier_account)

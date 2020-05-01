@@ -98,19 +98,19 @@ module Cases
 
       # -- queries/submit
       def can_submit?
-        return Case::Status.opened?(@status) || Case::Status.pending?(@status)
+        return @status.opened? || @status.pending?
       end
 
       alias :can_remove? :can_submit?
 
       # -- queries/complete
       def can_complete?
-        return Case::Status.submitted?(@status)
+        return @status.submitted?
       end
 
       # -- queries/referral
       def can_make_referral?
-        return Case::Status.approved?(@status)
+        return @status.approved?
       end
 
       # -- queries/chat

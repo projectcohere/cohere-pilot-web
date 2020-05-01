@@ -9,9 +9,7 @@ class Stats
     prop(:completed_at)
 
     # -- queries --
-    def approved?
-      return @status == ::Case::Status::Approved
-    end
+    delegate(:approved?, to: :status)
 
     def same_day_determination?
       return to_local_date(@created_at) === to_local_date(@completed_at)

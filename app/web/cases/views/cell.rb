@@ -33,6 +33,8 @@ module Cases
       end
 
       # -- queries/details
+      delegate(:approved?, to: :status)
+
       def status_name
         return @status.to_s.capitalize
       end
@@ -43,10 +45,6 @@ module Cases
 
       def details_names
         return [program_name, @supplier_name, @enroller_name].compact
-      end
-
-      def approved?
-        return @status == Case::Status::Approved
       end
 
       # -- queries/assignment

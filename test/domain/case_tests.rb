@@ -419,13 +419,4 @@ class CaseTests < ActiveSupport::TestCase
 
     assert_not_nil(kase.contract_document)
   end
-
-  # -- queries/referral
-  test "can make a referral when approved" do
-    kase = Case.stub(status: Case::Status::Approved)
-    assert(kase.can_make_referral?)
-
-    kase = Case.stub
-    assert_not(kase.can_make_referral?)
-  end
 end

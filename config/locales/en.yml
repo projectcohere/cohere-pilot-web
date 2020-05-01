@@ -15,6 +15,15 @@ en:
       sign-out: Sign Out
 
   # -- domain --
+  case:
+    status:
+      opened: "Opened"
+      pending: "Pending"
+      submitted: "Submitted"
+      approved: "Approved"
+      denied: "Denied"
+      removed: "Removed"
+
   recipient:
     proof_of_income:
       dhs: "Active MDHHS Case"

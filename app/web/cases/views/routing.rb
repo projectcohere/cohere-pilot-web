@@ -10,7 +10,7 @@ module Cases
       end
 
       def detail_path(status = nil)
-        return Case::Status.complete?(status || @status) ? show_path : edit_path
+        return (status || @status).complete? ? show_path : edit_path
       end
 
       def show_path

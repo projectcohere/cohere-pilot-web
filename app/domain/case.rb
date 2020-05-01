@@ -110,7 +110,7 @@ class Case < ::Entity
 
   # -- commands/referral
   def make_referral(program)
-    if !can_make_referral?
+    if not @status.approved?
       return
     end
 
@@ -254,52 +254,22 @@ class Case < ::Entity
 
   # -- queries --
   # -- queries/status
-  def opened?
-    return Status.opened?(@status)
-  end
-
-  def pending?
-    return Status.pending?(@status)
-  end
-
-  def submitted?
-    return Status.submitted?(@status)
-  end
-
-  def approved?
-    return Status.approved?(@status)
-  end
-
-  def denied?
-    return Status.denied?(@status)
-  end
-
-  def removed?
-    return Status.removed?(@status)
-  end
-
-  def active?
-    return Status.active?(@status)
-  end
-
-  def complete?
-    return Status.complete?(@status)
-  end
+  delegate(
+    :opened?,
+    :pending?,
+    :submitted?,
+    :approved?,
+    :denied?,
+    :removed?,
+    :active?,
+    :complete?,
+    to: :status
+  )
 
   alias :can_complete? :submitted?
 
   def can_submit?
     return opened? || pending?
-  end
-
-  # -- queries/referral
-  def can_make_referral?
-    approved?
-  end
-
-  def referral_program
-    # NEXT: choose referral by dropdown
-    return @program
   end
 
   # -- queries/documents

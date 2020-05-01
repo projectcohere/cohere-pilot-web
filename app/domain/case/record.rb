@@ -83,7 +83,7 @@ class Case
       scope = self
         .includes(program: :partners)
         .where(
-          status: [Status::Opened, Status::Pending],
+          status: [Status::Opened.key, Status::Pending.key],
           programs: {
             partners_programs: {
               partner_id: partner_id,
@@ -97,7 +97,7 @@ class Case
     def self.for_enroller(enroller_id)
       return where(
         enroller_id: enroller_id,
-        status: [Status::Submitted, Status::Approved, Status::Denied],
+        status: [Status::Submitted.key, Status::Approved.key, Status::Denied.key],
       )
     end
 

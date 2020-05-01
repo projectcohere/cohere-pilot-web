@@ -108,7 +108,7 @@ class Case
 
     def find_active_by_recipient(recipient_id)
       case_rec = Case::Record
-        .where(status: [:opened, :pending, :submitted])
+        .where(status: [Status::Opened.key, Status::Pending.key, Status::Submitted.key])
         .order(updated_at: :desc)
         .find_by!(recipient_id: recipient_id)
 
@@ -369,7 +369,7 @@ class Case
     private def assign_status(kase, case_rec)
       c = kase
       case_rec.assign_attributes(
-        status: c.status,
+        status: c.status.key,
         condition: c.condition.key,
         completed_at: c.completed_at
       )
@@ -480,7 +480,7 @@ class Case
       return Case.new(
         record: r,
         id: Id.new(r.id),
-        status: r.status.to_sym,
+        status: Status.from_key(r.status),
         condition: Condition.from_key(r.condition),
         program: Program::Repo.map_record(r.program),
         recipient: map_recipient(r.recipient),

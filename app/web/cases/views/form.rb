@@ -27,8 +27,8 @@ module Cases
       def valid?
         scopes = []
 
-        status = @admin&.status || @model.try(:status)
-        if action == :submit || Case::Status.submitted?(status) || action == :complete || Case::Status.complete?(status)
+        status = @admin&.map_to_status || @model.try(:status)
+        if action == :submit || status&.submitted? || action == :complete || status&.complete?
           scopes.push(:submitted)
         end
 
@@ -61,7 +61,7 @@ module Cases
       end
 
       def map_to_admin
-        return admin.status
+        return admin&.map_to_status
       end
 
       # -- ApplicationForm --

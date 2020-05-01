@@ -18,7 +18,7 @@ class Stats
       case_recs = ::Case::Record
         .where(
           # program: ::Program::Name::Meap.index,
-          status: [::Case::Status::Approved, ::Case::Status::Denied],
+          status: [::Case::Status::Approved.key, ::Case::Status::Denied.key],
         )
         .where("created_at >= ?", StartDate)
 

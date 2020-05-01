@@ -193,7 +193,7 @@ module Cases
       def self.map_detail_from_record(r)
         return Detail.new(
           id: Id.new(r.id),
-          status: r.status.to_sym,
+          status: Case::Status.from_key(r.status),
           program: Program::Repo.map_record(r.program),
           supplier_name: r.supplier&.name,
           supplier_account: Case::Repo.map_supplier_account(r),
@@ -243,7 +243,7 @@ module Cases
         return Cell.new(
           scope: scope,
           id: Id.new(r.id),
-          status: r.status.to_sym,
+          status: Case::Status.from_key(r.status),
           new_activity: r.new_activity,
           program: Program::Repo.map_record(r.program),
           supplier_name: r.supplier&.name,
