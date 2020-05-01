@@ -109,8 +109,8 @@ en:
         dhs-number: "MDHHS Case #"
         income: "Monthly Income"
         fpl-percent:
-          label: "FPL Percent"
-          fallback: "Unknown. Please add household info."
+          label: "FPL"
+          fallback: "Unknown"
 
     # -- partials
     forms:

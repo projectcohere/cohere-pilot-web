@@ -575,6 +575,18 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:notice])
   end
 
+  test "submit a case that doesn't require dhs income as an agent" do
+    user_rec = users(:agent_1)
+    case_rec = cases(:pending_4)
+
+    patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
+      submit: :ignored
+    })
+
+    assert_redirected_to("/cases/#{case_rec.id}/edit")
+    assert_present(flash[:notice])
+  end
+
   # -- destroy --
   test "can't destroy a case if signed-out" do
     assert_raises(ActionController::RoutingError) do

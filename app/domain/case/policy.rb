@@ -27,7 +27,7 @@ class Case
       when :edit_details
         agent?
       when :edit_contract
-        agent? && requires?(&:contract_present?)
+        agent? && requirement?(&:contract_present?)
       when :edit_address
         agent? || source?
       when :edit_contact
@@ -39,19 +39,21 @@ class Case
       when :edit_household_size
         agent? || governor?
       when :edit_household_ownership
-        (agent? || source?) && requires?(&:household_ownership?)
+        (agent? || source?) && requirement?(&:household_ownership?)
       when :edit_household_proof_of_income
         agent? || source?
       when :edit_household_dhs_number
+        (agent? || governor?) && proof_of_income?(&:dhs?)
+      when :edit_household_size
         agent? || governor?
       when :edit_household_income
-        agent? || governor?
+        (agent? || governor?) && proof_of_income?(&:dhs?)
       when :edit_supplier_account
-        (agent? || source?) & requires?(&:supplier_account_present?)
+        (agent? || source?) && requirement?(&:supplier_account_present?)
       when :edit_supplier
         agent? || (source? && !supplier?)
       when :edit_supplier_account_active_service
-        agent? && requires?(&:supplier_account_active_service?)
+        agent? && requirement?(&:supplier_account_active_service?)
       when :edit_documents
         agent?
       when :edit_admin
@@ -60,15 +62,21 @@ class Case
       when :view
         agent? || enroller?
       when :view_supplier_account
-        (agent? || enroller?) && requires?(&:supplier_account_present?)
+        (agent? || enroller?) && requirement?(&:supplier_account_present?)
       when :view_fpl
         agent? || enroller?
       when :view_details_enroller
         agent?
       when :view_household_ownership
-        agent? && requires?(&:household_ownership?)
+        agent? && requirement?(&:household_ownership?)
+      when :view_household_size
+        agent? || enroller?
+      when :view_household_dhs_number
+        (agent? || enroller?) && proof_of_income(&:dhs?)
+      when :view_household_income
+        (agent? || enroller?) && proof_of_income(&:dhs?)
       when :view_supplier_account_active_service
-        agent? && requires?(&:supplier_account_active_service?)
+        agent? && requirement?(&:supplier_account_active_service?)
       # actions
       when :referral
         agent?
@@ -99,8 +107,12 @@ class Case
     end
 
     # -- queries --
-    private def requires?(&predicate)
+    private def requirement?(&predicate)
       return @case.program.requirements.any?(&predicate)
+    end
+
+    private def proof_of_income?(&predicate)
+      return predicate.(@case.household.proof_of_income)
     end
   end
 end

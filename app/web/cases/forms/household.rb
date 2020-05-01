@@ -5,11 +5,34 @@ module Cases
       include ActionView::Helpers::TranslationHelper
 
       # -- fields --
-      field(:size, :string, presence: { on: :submitted }, numericality: { allow_blank: true })
       field(:proof_of_income, :symbol, presence: true)
-      field(:dhs_number, :string, presence: { on: :submitted })
-      field(:income, :string, presence: { on: :submitted }, numericality: { allow_blank: true })
-      field(:ownership, :symbol, inclusion: { in: Recipient::Ownership.valid.map(&:key), if: :required? })
+
+      field(:size, :string, numericality: { allow_blank: true },
+        presence: {
+          on: :submitted,
+        },
+      )
+
+      field(:dhs_number, :string,
+        presence: {
+          on: :submitted,
+          if: -> { permit?(:edit_dhs_number) }
+        }
+      )
+
+      field(:income, :string, numericality: { allow_blank: true },
+        presence: {
+          on: :submitted,
+          if: -> { permit?(:edit_household_income) },
+        },
+      )
+
+      field(:ownership, :symbol,
+        inclusion: {
+          in: Recipient::Ownership.valid.map(&:key),
+          if: -> { permit?(:edit_household_ownership) },
+        },
+      )
 
       # -- lifecycle --
       protected def initialize_attrs(attrs)
@@ -30,11 +53,6 @@ module Cases
       # -- sanitization --
       def income=(value)
         super(value&.gsub(/[^\d\.]+/, ""))
-      end
-
-      # -- queries --
-      def required?
-        return permit?(:edit_household_ownership)
       end
 
       # -- queries/options

@@ -4,18 +4,18 @@ module Cases
       include Case::Policy::Context::Shared
 
       # -- fields --
-      field(:contract_variant, :symbol, presence: { on: :submitted, if: :required? })
+      field(:contract_variant, :symbol,
+        presence: {
+          on: :submitted,
+          if: -> { permit?(:edit_contract) },
+        },
+      )
 
       # -- lifecycle --
       protected def initialize_attrs(attrs)
         assign_defaults!(attrs, {
           contract_variant: @model.contract&.source_url,
         })
-      end
-
-      # -- queries --
-      private def required?
-        return permit?(:edit_contract)
       end
 
       # -- queries/contract
