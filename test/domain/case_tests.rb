@@ -180,6 +180,12 @@ class CaseTests < ActiveSupport::TestCase
     assert(event.case_is_referred)
   end
 
+  test "deletes a case" do
+    kase = Case.stub
+    kase.delete
+    assert_equal(kase.condition, Case::Condition::Deleted)
+  end
+
   # -- commands/assignments
   test "doesn't assign a user if an assignment for that partner exists" do
     kase = Case.stub(

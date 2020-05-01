@@ -57,11 +57,12 @@ module Agent
       permit!(:destroy)
 
       @case = case_repo.find(params[:id])
-      case_repo.save_destroyed(@case)
+      @case.delete
+      case_repo.save_deleted(@case)
 
       redirect_to(
         cases_path,
-        notice: "Destroyed #{@case.recipient.profile.name}'s case."
+        notice: "Deleted #{@case.recipient.profile.name}'s case."
       )
     end
   end

@@ -330,8 +330,17 @@ class Case
       @domain_events.consume(referred.events)
     end
 
-    def save_destroyed(kase)
-      kase.record.destroy!
+    def save_deleted(kase)
+      case_rec = kase.record
+      assert(case_rec != nil, "case must be persisted")
+
+      # update the record
+      case_rec.assign_attributes(
+        condition: kase.condition.key,
+      )
+
+      # save the record
+      case_rec.save!
     end
 
     def save_destroyed_assignment(kase)

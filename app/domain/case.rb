@@ -108,6 +108,10 @@ class Case < ::Entity
     track_new_activity(false)
   end
 
+  def delete
+    @condition = Condition::Deleted
+  end
+
   # -- commands/referral
   def make_referral(program)
     if not @status.approved?
