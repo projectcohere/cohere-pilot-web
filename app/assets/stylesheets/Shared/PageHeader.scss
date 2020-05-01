@@ -25,11 +25,6 @@
     @extend %row;
   }
 
-  &-totals {
-    margin-left: $spacing4;
-    margin-bottom: 4px;
-  }
-
   &-row {
     @extend %row;
     margin-top: $spacing3;

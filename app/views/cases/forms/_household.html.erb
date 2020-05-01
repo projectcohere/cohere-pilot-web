@@ -33,7 +33,7 @@
 
     <% if permit?(:edit_household_income) %>
       <%= field_tag(:fpl, t(".fpl-percent.label"), class: "CaseForm-fplPercent Field--fixed") do %>
-        <%= field_value(view.household_fpl_percent, fallback: t(".fpl-percent.fallback")) %>
+        <%= field_value_tag(view.household_fpl_percent, fallback: t(".fpl-percent.fallback")) %>
       <% end %>
     <% end %>
   <% end %>
