@@ -28,6 +28,10 @@ class Case < ::Entity
 
   # -- factory --
   def self.open(program:, profile:, household:, enroller:, supplier_account: nil)
+    household ||= ::Recipient::Household.new(
+      proof_of_income: ::Recipient::ProofOfIncome::Dhs,
+    )
+
     recipient = Recipient.new(
       profile: profile,
       household: household,

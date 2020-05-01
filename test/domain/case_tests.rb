@@ -25,6 +25,23 @@ class CaseTests < ActiveSupport::TestCase
     assert_instances_of(kase.events, [Case::Events::DidOpen])
   end
 
+  test "opens a case with no household info" do
+    profile = Recipient::Profile.stub(
+      phone: Phone.stub(number: "1")
+    )
+
+    kase = Case.open(
+      program: :test_program,
+      profile: profile,
+      household: nil,
+      enroller: Partner.stub(id: 1),
+      supplier_account: :test_account,
+    )
+
+    assert(kase.recipient.household.proof_of_income.dhs?)
+    assert_instances_of(kase.events, [Case::Events::DidOpen])
+  end
+
   # -- commands --
   test "adds agent data" do
     kase = Case.stub(

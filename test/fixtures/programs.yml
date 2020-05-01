@@ -16,6 +16,8 @@ energy_0:
       - present
     supplier_account:
       - present
+    household:
+      - proof_of_income_dhs
 
 energy_c:
   name: "Energy (CARES)"

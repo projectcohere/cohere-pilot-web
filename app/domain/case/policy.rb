@@ -35,13 +35,15 @@ class Case
       when :edit_address_geography
         source?
       when :edit_household
-        agent? || source? || governor?
+        agent? || governor? || permit?(:edit_household_source)
+      when :edit_household_source
+        permit?(:edit_household_ownership) || permit?(:edit_household_proof_of_income)
       when :edit_household_size
         agent? || governor?
       when :edit_household_ownership
         (agent? || source?) && requirement?(&:household_ownership?)
       when :edit_household_proof_of_income
-        agent? || source?
+        (agent? || source?) && !requirement?(&:household_proof_of_income_dhs?)
       when :edit_household_dhs_number
         (agent? || governor?) && proof_of_income?(&:dhs?)
       when :edit_household_size
@@ -67,14 +69,16 @@ class Case
         agent? || enroller?
       when :view_details_enroller
         agent?
-      when :view_household_ownership
-        agent? && requirement?(&:household_ownership?)
       when :view_household_size
         agent? || enroller?
+      when :view_household_ownership
+        agent? && requirement?(&:household_ownership?)
+      when :view_household_proof_of_income
+        (agent? || enroller?) && !requirement?(&:household_proof_of_income_dhs?)
       when :view_household_dhs_number
-        (agent? || enroller?) && proof_of_income(&:dhs?)
+        (agent? || enroller?) && proof_of_income?(&:dhs?)
       when :view_household_income
-        (agent? || enroller?) && proof_of_income(&:dhs?)
+        (agent? || enroller?) && proof_of_income?(&:dhs?)
       when :view_supplier_account_active_service
         agent? && requirement?(&:supplier_account_active_service?)
       # actions

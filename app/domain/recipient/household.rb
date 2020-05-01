@@ -1,10 +1,10 @@
 module Recipient
   class Household < ::Value
     # -- props --
-    prop(:dhs_number)
-    prop(:size)
+    prop(:dhs_number, default: nil)
+    prop(:size, default: nil)
     prop(:proof_of_income)
-    prop(:income)
+    prop(:income, default: nil)
     prop(:ownership, default: Ownership::Unknown)
 
     # -- queries --

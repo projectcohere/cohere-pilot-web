@@ -12,6 +12,7 @@ class Program
 
     group(:household) do
       option(:ownership)
+      option(:proof_of_income_dhs)
     end
   end
 end

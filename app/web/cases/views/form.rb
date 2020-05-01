@@ -57,7 +57,7 @@ module Cases
       end
 
       def map_to_household
-        return household.map_to_household
+        return household&.map_to_household
       end
 
       # -- ApplicationForm --
