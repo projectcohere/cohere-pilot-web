@@ -15,11 +15,11 @@ class Case
     belongs_to(:referrer, record: :case, optional: true)
 
     # -- status --
-    enum(status: Status.all)
+    enum(status: Status.keys, condition: Condition.keys)
 
     # -- scopes --
     def self.visible
-      return where(deleted: false)
+      return where.not(condition: Condition::Deleted.key)
     end
 
     def self.join_recipient(references: false)

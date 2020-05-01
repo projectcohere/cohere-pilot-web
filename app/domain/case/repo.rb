@@ -370,6 +370,7 @@ class Case
       c = kase
       case_rec.assign_attributes(
         status: c.status,
+        condition: c.condition.key,
         completed_at: c.completed_at
       )
     end
@@ -479,8 +480,9 @@ class Case
       return Case.new(
         record: r,
         id: Id.new(r.id),
-        program: Program::Repo.map_record(r.program),
         status: r.status.to_sym,
+        condition: Condition.from_key(r.condition),
+        program: Program::Repo.map_record(r.program),
         recipient: map_recipient(r.recipient),
         enroller_id: r.enroller_id,
         supplier_account: map_supplier_account(r),

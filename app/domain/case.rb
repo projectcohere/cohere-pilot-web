@@ -6,6 +6,7 @@ class Case < ::Entity
   # -- props --
   prop(:id, default: Id::None)
   prop(:status)
+  prop(:condition, default: Condition::Active)
   prop(:program)
   prop(:recipient)
   prop(:enroller_id)

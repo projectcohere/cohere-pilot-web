@@ -10,47 +10,51 @@ class Case
     Removed = :removed
 
     # -- queries --
-    def self.all
-      @all ||= [
-        Opened,
-        Pending,
-        Submitted,
-        Approved,
-        Denied,
-        Removed
-      ]
-    end
+    class << self
+      def all
+        @all ||= [
+          Opened,
+          Pending,
+          Submitted,
+          Approved,
+          Denied,
+          Removed
+        ]
+      end
 
-    def self.opened?(status)
-      return status == Status::Opened
-    end
+      alias :keys :all
 
-    def self.pending?(status)
-      return status == Status::Pending
-    end
+      def opened?(status)
+        return status == Status::Opened
+      end
 
-    def self.submitted?(status)
-      return status == Status::Submitted
-    end
+      def pending?(status)
+        return status == Status::Pending
+      end
 
-    def self.approved?(status)
-      return status == Status::Approved
-    end
+      def submitted?(status)
+        return status == Status::Submitted
+      end
 
-    def self.denied?(status)
-      return status == Status::Denied
-    end
+      def approved?(status)
+        return status == Status::Approved
+      end
 
-    def self.removed?(status)
-      return status == Status::Removed
-    end
+      def denied?(status)
+        return status == Status::Denied
+      end
 
-    def self.active?(status)
-      return opened?(status) || pending?(status) || submitted?(status)
-    end
+      def removed?(status)
+        return status == Status::Removed
+      end
 
-    def self.complete?(status)
-      return status != nil && !active?(status)
+      def active?(status)
+        return opened?(status) || pending?(status) || submitted?(status)
+      end
+
+      def complete?(status)
+        return status != nil && !active?(status)
+      end
     end
   end
 end

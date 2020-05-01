@@ -25,6 +25,11 @@ class Option
     return @index
   end
 
+  # -- copying --
+  def clone
+    return self
+  end
+
   # -- statics --
   class << self
     include Enumerable
