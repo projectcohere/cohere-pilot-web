@@ -7,7 +7,7 @@ module Cases
       field(:program_id, :integer)
 
       # -- subforms --
-      subform(:details, Cases::Forms::Details)
+      subform(:contract, Cases::Forms::Contract)
       subform(:address, Cases::Forms::Address)
       subform(:contact, Cases::Forms::Contact)
       subform(:household, Cases::Forms::Household)
@@ -40,14 +40,6 @@ module Cases
       end
 
       # -- queries/transformation
-      def map_to_admin
-        return admin.status
-      end
-
-      def map_to_supplier_account
-        return supplier_account&.map_to_supplier_account
-      end
-
       def map_to_profile
         return Recipient::Profile.new(
           phone: contact.map_to_recipient_phone,
@@ -58,6 +50,18 @@ module Cases
 
       def map_to_household
         return household&.map_to_household
+      end
+
+      def map_to_supplier_account
+        return supplier_account&.map_to_supplier_account
+      end
+
+      def map_to_contract
+        return contract&.map_to_contract
+      end
+
+      def map_to_admin
+        return admin.status
       end
 
       # -- ApplicationForm --

@@ -1,23 +1,15 @@
-<%- form = form.details %>
-<%= f.fields_for(:details, form) do |f| %>
-  <%= section_tag("Details", class: "CaseForm-details") do %>
-    <%= field_tag(:status, class: "CaseForm-status Field--fixed") do %>
+<%= section_tag(t(".title"), class: "CaseForm-details") do %>
+  <div class="Panel-row">
+    <%= field_tag(:status, t(".status"), class: "CaseForm-status Field--fixed") do %>
       <%= view.status_name %>
     <%- end %>
 
-    <%= field_tag(:enroller, class: "CaseForm-enroller Field--fixed") do %>
+    <%= field_tag(:enroller, t(".enroller"), class: "CaseForm-enroller Field--fixed") do %>
       <%= view.enroller_name %>
     <%- end %>
 
-    <%= field_tag(:program, class: "CaseForm-program Field--fixed") do %>
+    <%= field_tag(:program, t(".program"), class: "CaseForm-program Field--fixed") do %>
       <%= view.program_name %>
     <%- end %>
-
-    <% if permit?(:edit_contract) %>
-      <%- disabled = form.contract_variant.present? %>
-      <%= f.field(:contract_variant, "Signed Contract?", disabled: disabled, class: "CaseForm-contract Field--select") do %>
-        <%= f.select(:contract_variant, form.contract_options, include_blank: "None") %>
-      <%- end %>
-    <% end %>
-  <% end %>
+  </div>
 <% end %>

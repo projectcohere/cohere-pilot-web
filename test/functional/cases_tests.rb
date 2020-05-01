@@ -446,8 +446,8 @@ class CasesTests < ActionDispatch::IntegrationTest
     act = ->() do
       patch(auth("/cases/#{case_rec.id}"), params: {
         case: {
-          details: {
-            contract_variant: :meap
+          contract: {
+            variant: :meap
           }
         }
       })

@@ -24,8 +24,6 @@ class Case
       # edit
       when :edit
         agent? || governor?
-      when :edit_details
-        agent?
       when :edit_contract
         agent? && requirement?(&:contract_present?)
       when :edit_address

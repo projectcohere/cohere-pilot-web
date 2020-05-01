@@ -28,9 +28,9 @@ module Agent
       )
 
       # sign the contract if necessary
-      selected_contract = form.details.selected_contract
-      if not selected_contract.nil?
-        @case.sign_contract(selected_contract)
+      contract = form.map_to_contract
+      if contract != nil
+        @case.sign_contract(contract)
       end
 
       # process actions if specified

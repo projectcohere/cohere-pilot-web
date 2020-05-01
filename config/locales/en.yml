@@ -31,10 +31,18 @@ en:
       hptap_pays: "HPTAP or PAYS"
       attested_income: "Income, Self-Attested"
       attested_no_income: "No Income, Self-Attested"
+
     ownership:
       rent: "Rent"
       own: "Own"
       unknown: ""
+
+  program:
+    contract:
+      meap: "MEAP"
+      wrap_3h: "WRAP ($300)"
+      wrap_1k: "WRAP ($1000"
+      unknown: "Unknown"
 
   # -- views --
   users:
@@ -89,6 +97,12 @@ en:
         title: "Contact"
         phone-number: "Phone #"
         address: "Primary Residential Address"
+
+      contract:
+        title: "Contract"
+        variant:
+          label: "Signed Contract?"
+          fallback: "None"
 
       supplier_account:
         title: "Utility Account"

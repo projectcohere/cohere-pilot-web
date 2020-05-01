@@ -23,7 +23,7 @@
 
     <div class="PageHeader-row PageHeader-filters">
       <nav class="Filters">
-        <%= filter_for(:profile, is_error: errors?(@form.details, @form.contact), is_selected: true) %>
+        <%= filter_for(:profile, is_error: errors?(@form.contact, @form.contract), is_selected: true) %>
         <%= filter_for(:household, is_error: errors?(@form.address, @form.household)) %>
 
         <% if permit?(:edit_supplier_account) %>
@@ -39,11 +39,15 @@
   <div class="CaseDetail CaseDetail--edit">
     <%- form_class = "CaseDetail-case" %>
     <%= form_for(@form, url: @case.update_path, html: { class: form_class }) do |f| %>
-      <% form_locals = { f: f, form: @form, view: @case, policy: policy } %>
+      <% form_locals = { f: f, form: @form, view: @case } %>
 
       <section id="profile" class="Panel-tab is-visible">
         <%= render(partial: "cases/forms/details", locals: form_locals) %>
         <%= render(partial: "cases/forms/contact", locals: form_locals) %>
+
+        <% if permit?(:edit_contract) %>
+          <%= render(partial: "cases/forms/contract", locals: form_locals) %>
+        <% end %>
       </section>
 
       <section id="household" class="Panel-tab">
