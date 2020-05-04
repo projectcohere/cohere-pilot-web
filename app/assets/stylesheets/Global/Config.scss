@@ -72,11 +72,14 @@ $color-agent: #b67ce6;
 $color-enroller: #e8ca64;
 
 // colors/feature
-$color-background: fade-out($brand-primary, 0.97);
+$color-bg: fade-out($brand-primary, 0.97);
+$color-accent: fade-out($brand-primary, 0.85);
 $color-field: fade-out($brand-primary, 0.90);
 $color-divider: fade-out($brand-primary, 0.7);
+
+$color-notice: $color-accent;
+$color-error: $brand-secondary2;
+$color-alert: lighten($brand-secondary1, 15%);
+
 $color-shadow: fade-out($brand-black, 0.92);
 $color-shadow2: fade-out($brand-black, 0.85);
-$color-error: $brand-secondary2;
-$color-notice: $color-field;
-$color-alert: lighten($brand-secondary1, 15%);

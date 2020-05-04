@@ -29,6 +29,14 @@
           )
         %>
       <% end %>
+
+      <% if @case.can_make_referral? %>
+        <%=
+          link_to(t(".actions.referral"), @case.select_referral_path,
+            class: "Button Button--action",
+          )
+        %>
+      <% end %>
     </div>
 
     <div class="PageHeader-row PageHeader-filters">
@@ -47,73 +55,80 @@
   </header>
 
   <div class="CaseDetail CaseDetail--edit">
-    <%- form_class = "CaseDetail-case" %>
-    <%= form_for(@form, url: @case.update_path, html: { class: form_class }) do |f| %>
-      <% form_locals = { f: f, form: @form, view: @case } %>
-
-      <section id="profile" class="Panel-tab is-visible">
-        <%= render(partial: "cases/forms/details", locals: form_locals) %>
-        <%= render(partial: "cases/forms/contact", locals: form_locals) %>
-
-        <% if permit?(:edit_contract) %>
-          <%= render(partial: "cases/forms/contract", locals: form_locals) %>
-        <% end %>
-      </section>
-
-      <section id="household" class="Panel-tab">
-        <%= render(partial: "cases/forms/address", locals: form_locals) %>
-        <%= render(partial: "cases/forms/household", locals: form_locals) %>
-      </section>
-
-      <% if permit?(:edit_supplier_account) %>
-        <section id="accounts" class="Panel-tab">
-          <%= render(partial: "cases/forms/supplier_account", locals: form_locals) %>
-        </section>
-      <% end %>
-
-      <section id="documents" class="Panel-tab">
-        <%= render(partial: "cases/documents", locals: { documents: @form.documents.all }) %>
-      </section>
-
-      <section id="admin" class="Panel-tab">
-        <%= render(partial: "cases/forms/admin", locals: form_locals) %>
-      </section>
-
-      <div class="Panel-actions">
-        <%= f.submit("Save", class: "Button Button--action") %>
-
-        <%- if @case.can_submit? %>
-          <%=
-            f.submit("Save & Submit to Enroller",
-              name: :submit,
-              class: "Button Button--secondary",
-              data: {
-                confirm: "Are you sure you want to submit this case?"
-              },
-            )
-          %>
-        <% elsif @case.can_complete? %>
-          <%=
-            f.submit("Save & Approve",
-              name: :approve,
-              class: "Button Button--secondary",
-              data: {
-                confirm: "Are you sure you want to approve this case?"
-              }
-            )
-          %>
-          <%=
-            f.submit("Save & Deny",
-              name: :deny,
-              class: "Button Button--destructive",
-              data: {
-                confirm: "Are you sure you want to deny this case?"
-              },
-            )
-          %>
-        <%- end %>
+    <article class="CaseDetail-case">
+      <div class="CaseDetail-bar">
+        <p class="CaseDetail-id">
+          <%= @case.id_text %>
+        </p>
       </div>
-    <% end %>
+
+      <%= form_for(@form, url: @case.update_path, html: { class: "CaseDetail-content" }) do |f| %>
+        <% form_locals = { f: f, form: @form, view: @case } %>
+
+        <section id="profile" class="Panel-tab is-visible">
+          <%= render(partial: "cases/forms/details", locals: form_locals) %>
+          <%= render(partial: "cases/forms/contact", locals: form_locals) %>
+
+          <% if permit?(:edit_contract) %>
+            <%= render(partial: "cases/forms/contract", locals: form_locals) %>
+          <% end %>
+        </section>
+
+        <section id="household" class="Panel-tab">
+          <%= render(partial: "cases/forms/address", locals: form_locals) %>
+          <%= render(partial: "cases/forms/household", locals: form_locals) %>
+        </section>
+
+        <% if permit?(:edit_supplier_account) %>
+          <section id="accounts" class="Panel-tab">
+            <%= render(partial: "cases/forms/supplier_account", locals: form_locals) %>
+          </section>
+        <% end %>
+
+        <section id="documents" class="Panel-tab">
+          <%= render(partial: "cases/documents", locals: { documents: @form.documents.all }) %>
+        </section>
+
+        <section id="admin" class="Panel-tab">
+          <%= render(partial: "cases/forms/admin", locals: form_locals) %>
+        </section>
+
+        <div class="Panel-actions">
+          <%= f.submit("Save", class: "Button Button--action") %>
+
+          <%- if @case.can_submit? %>
+            <%=
+              f.submit("Save & Submit to Enroller",
+                name: :submit,
+                class: "Button Button--secondary",
+                data: {
+                  confirm: "Are you sure you want to submit this case?"
+                },
+              )
+            %>
+          <% elsif @case.can_complete? %>
+            <%=
+              f.submit("Save & Approve",
+                name: :approve,
+                class: "Button Button--secondary",
+                data: {
+                  confirm: "Are you sure you want to approve this case?"
+                }
+              )
+            %>
+            <%=
+              f.submit("Save & Deny",
+                name: :deny,
+                class: "Button Button--destructive",
+                data: {
+                  confirm: "Are you sure you want to deny this case?"
+                },
+              )
+            %>
+          <%- end %>
+        </div>
+      <% end %>
+    </article>
 
     <%=
       render(partial: "agent/cases/chat", locals: {

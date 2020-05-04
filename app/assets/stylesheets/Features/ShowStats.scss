@@ -158,7 +158,7 @@
   box-shadow: 0px 0px 5px fade-out($brand-black, 0.7);
 
   &-tooltip {
-    @extend .u-panel;
+    @extend .u-panel-white;
 
     position: absolute;
     width: 162px;
@@ -169,7 +169,6 @@
     color: $black;
     line-height: 1.4;
     font-size: $font-size5;
-    background-color: $white;
     transition: opacity 0.1s;
   }
 

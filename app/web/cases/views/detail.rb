@@ -29,6 +29,10 @@ module Cases
       end
 
       # -- queries --
+      def id_text
+        return "##{@id}"
+      end
+
       def status_name
         return @status.to_s.capitalize
       end

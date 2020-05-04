@@ -1,10 +1,9 @@
 .BigField {
-  @extend .u-panel;
+  @extend .u-panel-white;
 
   display: flex;
   height: $height0;
   margin-top: $spacing5;
-  background-color: $white;
   overflow: hidden;
 
   &-input {

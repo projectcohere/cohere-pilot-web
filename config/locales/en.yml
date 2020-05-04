@@ -187,12 +187,12 @@ en:
       edit:
         actions:
           archive: "Archive"
+          referral: "Select Referral"
 
       show:
         <<: *case-single
         actions:
           back: "Back to Cases"
-          referral: "Select Referral"
           edit: "Edit"
 
     referrals:

@@ -7,7 +7,27 @@
   }
 
   &-case {
+    display: flex;
+    flex-direction: column;
     width: $width1;
+    overflow: hidden;
+  }
+
+  &-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: $height3;
+    padding: 0 $spacing1;
+    background-color: $color-accent;
+  }
+
+  &-id {
+    @extend .u-label;
+  }
+
+  &-content {
+    flex: 1;
   }
 
   &-phone {
@@ -18,13 +38,19 @@
 
   // -- variants --
   &--edit &-case {
-    @extend .u-panel-cozy;
-    @extend .CaseForm;
+    @extend .u-panel-white;
+  }
+
+  &--edit &-content {
     @extend .Panel;
+    @extend .CaseForm;
   }
 
   &--view &-case {
-    @extend .u-panel-cozy;
+    @extend .u-panel-white;
+  }
+
+  &--view &-content {
     @extend .Panel;
     @extend .Panel--read;
   }

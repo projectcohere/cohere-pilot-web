@@ -15,30 +15,31 @@
   </header>
 
   <div class="CaseDetail CaseDetail--edit">
-    <%- form_class = "CaseDetail-case" %>
-    <%= form_for(@form, url: @case.update_path, html: { class: form_class }) do |f| %>
-      <% form_locals = { f: f, form: @form, view: @case, policy: policy } %>
+    <article class="CaseDetail-case">
+      <%= form_for(@form, url: @case.update_path, html: { class: "CaseDetail-content" }) do |f| %>
+        <% form_locals = { f: f, form: @form, view: @case, policy: policy } %>
 
-      <div id="application" class="Panel-tab is-visible">
-        <%= section_tag("Contact", class: "ShowCase-contact") do %>
-          <%= field_tag("Primary Residential Address", class: "ShowCase-address") do %>
-            <% @case.address.each do |line| %>
-              <%= line %>
-              <br>
-            <% end %>
+        <div id="application" class="Panel-tab is-visible">
+          <%= section_tag("Contact", class: "ShowCase-contact") do %>
+            <%= field_tag("Primary Residential Address", class: "ShowCase-address") do %>
+              <% @case.address.each do |line| %>
+                <%= line %>
+                <br>
+              <% end %>
+            <%- end %>
           <%- end %>
-        <%- end %>
 
-        <%= render(partial: "cases/forms/household", locals: form_locals) %>
-      </div>
+          <%= render(partial: "cases/forms/household", locals: form_locals) %>
+        </div>
 
-      <div id="documents" class="Panel-tab">
-        <%= render(partial: "cases/documents", locals: { documents: @case.documents }) %>
-      </div>
+        <div id="documents" class="Panel-tab">
+          <%= render(partial: "cases/documents", locals: { documents: @case.documents }) %>
+        </div>
 
-      <div class="Panel-actions">
-        <%= f.submit("Save", class: "Button Button--action") %>
-      </div>
-    <%- end %>
+        <div class="Panel-actions">
+          <%= f.submit("Save", class: "Button Button--action") %>
+        </div>
+      <%- end %>
+    </article>
   </div>
 </main>

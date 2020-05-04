@@ -1,9 +1,8 @@
 .CaseCell {
-  @extend .u-panel;
+  @extend .u-panel-white;
 
   position: relative;
   overflow: hidden;
-  background-color: $white;
 
   // -- row --
   $padding: $spacing3;

@@ -2,7 +2,7 @@
 body {
   @extend .u-body;
   font-family: $font-family, system-ui, sans-serif;
-  background-color: $color-background;
+  background-color: $color-bg;
   -webkit-font-smoothing: auto;
   -moz-osx-font-smoothing: auto;
 }

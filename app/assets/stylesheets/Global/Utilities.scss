@@ -94,10 +94,14 @@
   box-shadow: 0px 0px 10px $color-shadow;
 }
 
-.u-panel-cozy {
+.u-panel-white {
   @extend .u-panel;
-  padding: $spacing3;
   background-color: $white;
+}
+
+.u-panel-cozy {
+  @extend .u-panel-white;
+  padding: $spacing3;
 }
 
 // -- breakpoints --
