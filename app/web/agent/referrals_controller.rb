@@ -39,7 +39,7 @@ module Agent
       end
 
       redirect_to(
-        @case.detail_path(save_form.case.status),
+        @case.detail_path(save_form.case),
         notice: "Created referral!"
       )
     end

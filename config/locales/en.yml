@@ -184,12 +184,16 @@ en:
       search:
         <<: *case-search
 
+      edit:
+        actions:
+          archive: "Archive"
+
       show:
         <<: *case-single
         actions:
           back: "Back to Cases"
-          edit: "Edit Case"
           referral: "Select Referral"
+          edit: "Edit"
 
     referrals:
       select:

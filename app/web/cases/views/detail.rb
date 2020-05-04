@@ -9,6 +9,7 @@ module Cases
       # -- props --
       prop(:id, default: Id::None)
       prop(:status)
+      prop(:condition)
       prop(:program)
       prop(:enroller_name)
       prop(:supplier_name)
@@ -107,6 +108,9 @@ module Cases
       def can_complete?
         return @status.submitted?
       end
+
+      # -- queries/condition
+      delegate(:archived?, to: :condition)
 
       # -- queries/referral
       def can_make_referral?

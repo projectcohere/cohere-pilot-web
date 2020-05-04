@@ -89,6 +89,9 @@ class Case
         agent?
       when :destroy_assignment
         agent?
+      # archive
+      when :archive
+        agent?
       else
         super
       end

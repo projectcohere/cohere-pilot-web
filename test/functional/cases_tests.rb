@@ -661,7 +661,7 @@ class CasesTests < ActionDispatch::IntegrationTest
       approve: :ignored
     })
 
-    assert_redirected_to("/cases/#{case_rec.id}")
+    assert_redirected_to("/cases/#{case_rec.id}/edit")
     assert_present(flash[:notice])
 
     assert_broadcast_on(case_activity_for(:agent_1), {
@@ -723,6 +723,6 @@ class CasesTests < ActionDispatch::IntegrationTest
     patch(auth("/cases/#{case_rec.id}/archive", as: user_rec))
 
     assert_redirected_to("/cases")
-    assert_present(flash[:notice])
+    assert_match(/Archived/, flash[:notice])
   end
 end

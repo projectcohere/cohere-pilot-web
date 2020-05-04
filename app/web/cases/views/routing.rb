@@ -9,8 +9,9 @@ module Cases
         return urls.new_case_path
       end
 
-      def detail_path(status = nil)
-        return (status || @status).complete? ? show_path : edit_path
+      def detail_path(other = nil)
+        kase = other || self
+        return kase.archived? ? show_path : edit_path
       end
 
       def show_path
@@ -43,6 +44,10 @@ module Cases
 
       def deny_path
         return urls.case_complete_path(@id, complete_action: :deny)
+      end
+
+      def archive_path
+        return urls.archive_case_path(@id)
       end
 
       def select_referral_path

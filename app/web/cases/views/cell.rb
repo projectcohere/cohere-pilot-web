@@ -9,6 +9,7 @@ module Cases
       prop(:scope)
       prop(:id, default: Id::None)
       prop(:status)
+      prop(:condition)
       prop(:new_activity, predicate: true)
       prop(:program)
       prop(:recipient_name)
@@ -34,6 +35,7 @@ module Cases
 
       # -- queries/details
       delegate(:approved?, to: :status)
+      delegate(:archived?, to: :condition)
 
       def status_name
         return @status.to_s.capitalize

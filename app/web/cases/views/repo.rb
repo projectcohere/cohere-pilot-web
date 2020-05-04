@@ -194,6 +194,7 @@ module Cases
         return Detail.new(
           id: Id.new(r.id),
           status: Case::Status.from_key(r.status),
+          condition: Case::Condition.from_key(r.condition),
           program: Program::Repo.map_record(r.program),
           supplier_name: r.supplier&.name,
           supplier_account: Case::Repo.map_supplier_account(r),
@@ -212,6 +213,7 @@ module Cases
         return Detail.new(
           id: e.id,
           status: e.status,
+          condition: e.condition,
           program: e.program,
           supplier_name: e.supplier_account&.supplier_id&.then { |i| find_partner_name(i) },
           supplier_account: e.supplier_account,
@@ -244,6 +246,7 @@ module Cases
           scope: scope,
           id: Id.new(r.id),
           status: Case::Status.from_key(r.status),
+          condition: Case::Condition.from_key(r.condition),
           new_activity: r.new_activity,
           program: Program::Repo.map_record(r.program),
           supplier_name: r.supplier&.name,

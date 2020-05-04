@@ -48,7 +48,7 @@ module Agent
       end
 
       redirect_to(
-        @case.detail_path(save_form.case.status),
+        @case.detail_path(save_form.case),
         notice: "Updated #{@case.recipient_name}'s case!"
       )
     end
