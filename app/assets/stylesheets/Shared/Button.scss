@@ -1,4 +1,5 @@
 %button {
+  @extend .u-action;
   @include prefix(moz webkit, (appearance: none));
 
   display: flex;

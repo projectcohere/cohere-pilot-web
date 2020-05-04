@@ -40,13 +40,15 @@ $width: 74px;
   }
 
   &-link {
-    @extend .u-label-hint;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-decoration: none;
     padding: $spacing4 $spacing6;
+    font-weight: $font-weight-medium;
+    font-size: $font-size7;
     text-align: center;
+    text-transform: uppercase;
     line-height: initial;
 
     &:hover {

@@ -65,7 +65,7 @@
   }
 
   &-status {
-    @extend .u-label-bold;
+    @extend .u-label;
 
     color: $brand-black;
     opacity: 0.85;
