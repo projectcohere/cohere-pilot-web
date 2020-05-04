@@ -140,7 +140,7 @@ Rails.application.routes.draw do
       get("/search",
         on: :collection,
         action: :search,
-        constraints: merge(c, query(scope: /^(all|open|completed)?$/)),
+        constraints: merge(c, query(scope: /^(all|active|archived)?$/)),
       )
 
       # -- cases/assignments

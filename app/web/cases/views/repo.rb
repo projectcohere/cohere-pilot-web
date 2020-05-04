@@ -103,10 +103,10 @@ module Cases
         q = case @scope
         when Scope::All
           q.by_updated_date
-        when Scope::Open
-          q.incomplete.by_updated_date
-        when Scope::Completed
-          q.complete.by_completed_date
+        when Scope::Active
+          q.active.by_updated_date
+        when Scope::Archived
+          q.archived.by_completed_date
         else
           assert(false, "#{@scope} is not allowed for search")
         end
@@ -116,7 +116,7 @@ module Cases
 
       def find_all_assigned(page:)
         case_query = make_query
-          .incomplete
+          .active
           .with_assigned_user(user.id.val)
           .by_updated_date
 
@@ -125,7 +125,7 @@ module Cases
 
       def find_all_queued(page:)
         case_query = make_query
-          .incomplete
+          .active
           .with_no_assignment_for_role(user_role)
           .by_updated_date
 

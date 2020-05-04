@@ -18,7 +18,7 @@ module Governor
     def search
       permit!(:list_search)
 
-      @scope = Cases::Scope::Open
+      @scope = Cases::Scope::Active
       @page, @cases = view_repo.find_all_for_search(params[:search], page: params[:page])
     end
 

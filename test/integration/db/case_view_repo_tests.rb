@@ -62,8 +62,8 @@ module Db
       case_repo = Cases::Views::Repo.new(nil)
 
       case_page, cases = case_repo.find_all_queued(page: 1)
-      assert_length(cases, 8)
-      assert_equal(case_page.count, 8)
+      assert_length(cases, 9)
+      assert_equal(case_page.count, 9)
     end
 
     test "finds a page of cases by recipient name for an agent" do
@@ -84,23 +84,23 @@ module Db
       assert_equal(case_page.count, 1)
     end
 
-    test "finds a page of open cases for an agent" do
+    test "finds a page of active cases for an agent" do
       stub_user(:agent_1)
-      case_repo = Cases::Views::Repo.new(Cases::Scope::Open)
+      case_repo = Cases::Views::Repo.new(Cases::Scope::Active)
 
       case_page, cases = case_repo.find_all_for_search(page: 1)
-      assert_length(cases, 9)
-      assert_equal(case_page.count, 9)
+      assert_length(cases, 10)
+      assert_equal(case_page.count, 10)
       assert(cases.any? { |c| c.assignee_email != nil })
     end
 
-    test "finds a page of completed cases for an agent" do
+    test "finds a page of archived cases for an agent" do
       stub_user(:agent_1)
-      case_repo = Cases::Views::Repo.new(Cases::Scope::Completed)
+      case_repo = Cases::Views::Repo.new(Cases::Scope::Archived)
 
       case_page, cases = case_repo.find_all_for_search(page: 1)
-      assert_length(cases, 2)
-      assert_equal(case_page.count, 2)
+      assert_length(cases, 1)
+      assert_equal(case_page.count, 1)
       assert(cases.any? { |c| c.assignee_email != nil })
     end
 
@@ -119,8 +119,8 @@ module Db
       case_repo = Cases::Views::Repo.new(nil)
 
       case_page, cases = case_repo.find_all_queued(page: 1)
-      assert_length(cases, 0)
-      assert_equal(case_page.count, 0)
+      assert_length(cases, 1)
+      assert_equal(case_page.count, 1)
     end
 
     test "finds a page of cases by recipient name for an enroller" do

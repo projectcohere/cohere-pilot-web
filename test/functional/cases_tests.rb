@@ -33,7 +33,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases/inbox", as: user_rec))
     assert_response(:success)
     assert_select(".PageHeader-title", text: /Inbox/)
-    assert_select(".CaseCell", 8)
+    assert_select(".CaseCell", 9)
   end
 
   test "can search cases as an agent" do
@@ -45,20 +45,20 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".CaseCell", 3)
   end
 
-  test "can search open cases as an agent" do
+  test "can search active cases as an agent" do
     user_rec = users(:agent_1)
 
-    get(auth("/cases/search?scope=open", as: user_rec))
+    get(auth("/cases/search?scope=active", as: user_rec))
     assert_response(:success)
-    assert_select(".CaseCell", 9)
+    assert_select(".CaseCell", 10)
   end
 
-  test "can search completed cases as an agent" do
+  test "can search archived cases as an agent" do
     user_rec = users(:agent_1)
 
-    get(auth("/cases/search?scope=completed", as: user_rec))
+    get(auth("/cases/search?scope=archived", as: user_rec))
     assert_response(:success)
-    assert_select(".CaseCell", 2)
+    assert_select(".CaseCell", 1)
   end
 
   test "can list my cases as a governor" do
@@ -103,10 +103,10 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases/inbox", as: user_rec))
     assert_response(:success)
     assert_select(".PageHeader-title", text: /Inbox/)
-    assert_select(".CaseCell", 0)
+    assert_select(".CaseCell", 1)
   end
 
-  test "can search completed cases as an enroller" do
+  test "can search archived cases as an enroller" do
     user_rec = users(:enroller_1)
 
     get(auth("/cases/search", as: user_rec))

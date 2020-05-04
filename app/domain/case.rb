@@ -80,6 +80,7 @@ class Case < ::Entity
   def remove_from_pilot
     @completed_at = Time.zone.now
     @status = Status::Removed
+    @condition = Condition::Archived
     @events.add(Events::DidComplete.from_entity(self))
 
     track_new_activity(false)
@@ -120,6 +121,7 @@ class Case < ::Entity
 
     # mark as referrer
     @referrer = true
+    @condition = Condition::Archived
     @events.add(Events::DidMakeReferral.from_entity(self,
       program: program
     ))
@@ -267,7 +269,7 @@ class Case < ::Entity
     :removed?,
     :active?,
     :complete?,
-    to: :status
+    to: :status,
   )
 
   alias :can_complete? :submitted?
@@ -275,6 +277,14 @@ class Case < ::Entity
   def can_submit?
     return opened? || pending?
   end
+
+  # -- queries/condition
+  delegate(
+    :active?,
+    :archived?,
+    :deleted?,
+    to: :condition,
+  )
 
   # -- queries/documents
   def documents

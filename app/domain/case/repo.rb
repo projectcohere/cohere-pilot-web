@@ -287,17 +287,19 @@ class Case
     end
 
     def save_referral(referral)
-      # start a new record for the referred
-      referred_rec = Case::Record.new
-      recipient_rec = referral.referred.recipient.record
+      assert(referral.referrer.record != nil, "referrer must be persisted")
+      assert(referral.referred.recipient.record != nil, "recipient must be persisted")
 
-      if recipient_rec.nil?
-        raise "recipient must be fetched from the db!"
-      end
+      # update the referrer record
+      referrer = referral.referrer
+      referrer_rec = referrer.record
+      assign_status(referrer, referrer_rec)
+
+      # start a new record for the referred
+      referred = referral.referred
+      referred_rec = Case::Record.new
 
       # update the referred record
-      referrer = referral.referrer
-      referred = referral.referred
       referred_rec.assign_attributes(
         recipient_id: referred.recipient.id.val,
         referrer_id: referrer.id.val
@@ -307,15 +309,19 @@ class Case
       assign_activity(referred, referred_rec)
       assign_partners(referred, referred_rec)
       assign_supplier_account(referred, referred_rec)
+
+      # update the recipient record
+      recipient_rec = referred.recipient.record
       assign_profile(referred, recipient_rec)
       assign_household(referred, recipient_rec)
 
-      # initialize a new assignment
+      # build the initial assignment
       assignment_rec = Case::Assignment::Record.new
       assign_new_assignment(referred, assignment_rec)
 
       # save the records
       transaction do
+        referrer_rec.save!
         referred_rec.save!
         referred_rec.assignments << assignment_rec
         recipient_rec.save!

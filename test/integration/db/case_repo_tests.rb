@@ -192,6 +192,8 @@ module Db
       assert_not_nil(kase.recipient.id.val)
 
       case_rec = kase.record
+      assert(case_rec.opened?)
+      assert(case_rec.active?)
       assert_equal(case_rec.program.id, program_rec.id)
 
       events = kase.events
@@ -528,9 +530,13 @@ module Db
       assert_not_nil(referred.id.val)
 
       referred_rec = referred.record
-      assert_equal(referred_rec.status, "opened")
+      assert(referred_rec.opened?)
+      assert(referred_rec.active?)
       assert_equal(referred_rec.program.id, program_rec.id)
       assert_equal(referred_rec.referrer_id, referrer.id.val)
+
+      referrer_rec = referrer.record.reload
+      assert(referrer_rec.archived?)
 
       document_recs = referred_rec.documents
       assert_same_elements(document_recs.map(&:classification), %w[contract unknown])

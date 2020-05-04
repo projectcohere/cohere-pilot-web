@@ -4,8 +4,8 @@ module Cases
     option(:assigned)
     option(:queued)
     option(:all)
-    option(:open)
-    option(:completed)
+    option(:active)
+    option(:archived)
 
     # -- queries --
     def title

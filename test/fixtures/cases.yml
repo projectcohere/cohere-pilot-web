@@ -127,6 +127,7 @@ approved_1:
 
 approved_2:
   status: approved
+  condition: archived
   program: energy_0
   recipient: recipient_3
   enroller: enroller_1

@@ -16,6 +16,8 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     assert(kase.new_activity?)
+    assert(kase.opened?)
+    assert(kase.active?)
     assert_equal(kase.program, :test_program)
     assert_equal(kase.recipient.profile, profile)
     assert_equal(kase.recipient.household, :test_household)
@@ -69,8 +71,8 @@ class CaseTests < ActiveSupport::TestCase
 
     kase.add_governor_data(:test_household)
     assert(kase.new_activity?)
+    assert(kase.pending?)
     assert_equal(kase.recipient.household, :test_household)
-    assert_equal(kase.status, Case::Status::Pending)
 
     assert_instances_of(kase.events, [
       Case::Events::DidBecomePending,
@@ -84,7 +86,7 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     kase.add_admin_data(Case::Status::Approved)
-    assert_equal(kase.status, Case::Status::Approved)
+    assert(kase.approved?)
     assert_not_nil(kase.completed_at)
   end
 
@@ -96,8 +98,8 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     kase.submit_to_enroller
+    assert(kase.submitted?)
     assert_not(kase.new_activity?)
-    assert_equal(kase.status, Case::Status::Submitted)
 
     assert_instances_of(kase.events, [
       Case::Events::DidSubmit,
@@ -112,8 +114,8 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     kase.complete(Case::Status::Approved)
+    assert(kase.approved?)
     assert_not(kase.new_activity?)
-    assert_equal(kase.status, Case::Status::Approved)
     assert_in_delta(Time.zone.now, kase.completed_at, 1.0)
 
     assert_instances_of(kase.events, [
@@ -129,8 +131,9 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     kase.remove_from_pilot
+    assert(kase.removed?)
+    assert(kase.archived?)
     assert_not(kase.new_activity?)
-    assert_equal(kase.status, Case::Status::Removed)
     assert_in_delta(Time.zone.now, kase.completed_at, 1.0)
 
     assert_instances_of(kase.events, [
@@ -162,10 +165,13 @@ class CaseTests < ActiveSupport::TestCase
 
     referrer = referral.referrer
     assert(referrer.referrer?)
+    assert(referrer.archived?)
 
     referred = referral.referred
     assert(referred.referred?)
     assert(referred.new_activity?)
+    assert(referred.opened?)
+    assert(referred.active?)
     assert_equal(referred.program, program)
 
     new_documents = referred.new_documents
@@ -183,7 +189,7 @@ class CaseTests < ActiveSupport::TestCase
   test "deletes a case" do
     kase = Case.stub
     kase.delete
-    assert_equal(kase.condition, Case::Condition::Deleted)
+    assert(kase.deleted?)
   end
 
   # -- commands/assignments

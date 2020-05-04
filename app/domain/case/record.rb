@@ -58,14 +58,6 @@ class Case
       return includes(:assignments)
     end
 
-    def self.incomplete
-      return where(completed_at: nil)
-    end
-
-    def self.complete
-      return where.not(completed_at: nil)
-    end
-
     def self.for_source(partner_id)
       scope = self
         .includes(:assignments)
