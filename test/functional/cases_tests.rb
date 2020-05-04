@@ -700,4 +700,29 @@ class CasesTests < ActionDispatch::IntegrationTest
       assert_match(/Did Complete/, events[0])
     end
   end
+
+  # -- archive --
+  test "can't archive a case if signed-out" do
+    assert_raises(ActionController::RoutingError) do
+      patch("/cases/3/archive")
+    end
+  end
+
+  test "can't archive a case without permission" do
+    user_rec = users(:source_1)
+
+    assert_raises(ActionController::RoutingError) do
+      patch(auth("/cases/3/archive", as: user_rec))
+    end
+  end
+
+  test "archive a case as an agent" do
+    user_rec = users(:agent_1)
+    case_rec = cases(:approved_1)
+
+    patch(auth("/cases/#{case_rec.id}/archive", as: user_rec))
+
+    assert_redirected_to("/cases")
+    assert_present(flash[:notice])
+  end
 end

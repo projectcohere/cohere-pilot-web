@@ -20,7 +20,7 @@ module Agent
       @case = case_repo.find_with_assignment(params[:case_id], params[:partner_id])
       email = @case.selected_assignment.user_email
       @case.remove_selected_assignment
-      case_repo.save_destroyed_assignment(@case)
+      case_repo.save_removed_assignment(@case)
 
       redirect_to(
         edit_case_path(@case),

@@ -200,6 +200,12 @@ class CaseTests < ActiveSupport::TestCase
     assert(kase.deleted?)
   end
 
+  test "archives a case" do
+    kase = Case.stub
+    kase.archive
+    assert(kase.archived?)
+  end
+
   # -- commands/assignments
   test "doesn't assign a user if an assignment for that partner exists" do
     kase = Case.stub(

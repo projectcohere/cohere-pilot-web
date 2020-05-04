@@ -347,10 +347,10 @@ class Case
     end
 
     def save_deleted(kase)
-      case_rec = kase.record
-      assert(case_rec != nil, "case must be persisted")
+      assert(kase.record != nil, "case must be persisted")
 
       # update the record
+      case_rec = kase.record
       case_rec.assign_attributes(
         condition: kase.condition.key,
       )
@@ -359,7 +359,20 @@ class Case
       case_rec.save!
     end
 
-    def save_destroyed_assignment(kase)
+    def save_archived(kase)
+      assert(kase.record != nil, "case must be persisted")
+
+      # update the record
+      case_rec = kase.record
+      case_rec.assign_attributes(
+        condition: kase.condition.key,
+      )
+
+      # save the record
+      case_rec.save!
+    end
+
+    def save_removed_assignment(kase)
       case_rec = kase.record
       if case_rec == nil
         raise "case must be fetched from the db!"

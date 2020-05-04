@@ -120,6 +120,10 @@ class Case < ::Entity
     @condition = Condition::Deleted
   end
 
+  def archive
+    @condition = Condition::Archived
+  end
+
   # -- commands/referral
   def make_referral(program)
     if not @status.approved?

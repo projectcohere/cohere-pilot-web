@@ -2,13 +2,19 @@ module Cases
   class BaseController < ApplicationController
     include Case::Policy::Context
 
+    # -- types --
+    class NotAuthorized < StandardError; end
+
+    # -- filters --
+    rescue_from(NotAuthorized, with: :deny_access)
+
     # -- view helpers --
     helper(BaseHelper)
 
     # -- commands --
     def permit!(key)
       if forbid?(key)
-        deny_access
+        raise NotAuthorized
       end
     end
 

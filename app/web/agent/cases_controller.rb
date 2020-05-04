@@ -65,5 +65,18 @@ module Agent
         notice: "Deleted #{@case.recipient.profile.name}'s case."
       )
     end
+
+    def archive
+      permit!(:archive)
+
+      @case = case_repo.find(params[:id])
+      @case.archive
+      case_repo.save_archived(@case)
+
+      redirect_to(
+        cases_path,
+        notice: "Archived #{@case.recipient.profile.name}'s case."
+      )
+    end
   end
 end

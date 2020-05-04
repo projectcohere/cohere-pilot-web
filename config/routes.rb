@@ -143,6 +143,12 @@ Rails.application.routes.draw do
         constraints: merge(c, query(scope: /^(all|active|archived)?$/)),
       )
 
+      patch("/archive",
+        on: :member,
+        action: :archive,
+        as: :archive,
+      )
+
       # -- cases/assignments
       resources(:assignments, only: %i[
         create

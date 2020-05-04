@@ -395,7 +395,7 @@ module Db
       assert_length(Events::DispatchAll.get.events, 1)
     end
 
-    test "saves a destroyed assignment" do
+    test "saves a removed assignment" do
       case_repo = Case::Repo.new
       case_rec = cases(:opened_1)
       case_assignment_rec = case_rec.assignments.first
@@ -405,7 +405,7 @@ module Db
       kase.remove_selected_assignment
 
       act = -> do
-        case_repo.save_destroyed_assignment(kase)
+        case_repo.save_removed_assignment(kase)
       end
 
       assert_difference(
@@ -545,6 +545,28 @@ module Db
       assert_length(referrer.events, 0)
       assert_length(referred.events, 0)
       assert_length(Events::DispatchAll.get.events, 4)
+    end
+
+    test "saves a deleted case" do
+      case_repo = Case::Repo.new
+      case_rec = cases(:opened_1)
+
+      kase = Case::Repo.map_record(case_rec)
+      kase.delete
+
+      case_repo.save_deleted(kase)
+      assert(case_rec.deleted?)
+    end
+
+    test "saves a archived case" do
+      case_repo = Case::Repo.new
+      case_rec = cases(:opened_1)
+
+      kase = Case::Repo.map_record(case_rec)
+      kase.archive
+
+      case_repo.save_archived(kase)
+      assert(case_rec.archived?)
     end
   end
 end
