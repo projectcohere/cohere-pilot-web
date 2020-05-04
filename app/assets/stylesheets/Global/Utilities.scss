@@ -26,6 +26,7 @@
 
 .u-name {
   font-size: $font-size3;
+  font-weight: $font-weight-medium;
   color: $brand-black;
 }
 
@@ -77,6 +78,14 @@
     opacity: $opacity-disabled;
     pointer-events: none;
   }
+}
+
+.u-link {
+  font-weight: $font-weight-medium;
+}
+
+%subtitle .u-link {
+  font-weight: $font-weight-regular;
 }
 
 // -- elements/panel
