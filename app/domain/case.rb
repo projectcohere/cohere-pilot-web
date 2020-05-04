@@ -102,8 +102,19 @@ class Case < ::Entity
       return
     end
 
-    @completed_at = Time.zone.now
+    # update status
     @status = status
+    @completed_at = Time.zone.now
+
+    # remove agent assignment
+    a_index = @assignments&.index { |a| a.role.agent? }
+    if a_index != nil
+      assignment = @assignments.delete_at(a_index)
+      assignment&.remove
+      @selected_assignment = assignment
+    end
+
+    # track events
     @events.add(Events::DidComplete.from_entity(self))
 
     track_new_activity(false)

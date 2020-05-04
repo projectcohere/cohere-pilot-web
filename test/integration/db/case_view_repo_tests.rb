@@ -53,8 +53,8 @@ module Db
       case_repo = Cases::Views::Repo.new(nil)
 
       case_page, cases = case_repo.find_all_assigned(page: 1)
-      assert_length(cases, 1)
-      assert_equal(case_page.count, 1)
+      assert_length(cases, 2)
+      assert_equal(case_page.count, 2)
     end
 
     test "finds a page of queued cases for an agent" do
@@ -62,8 +62,8 @@ module Db
       case_repo = Cases::Views::Repo.new(nil)
 
       case_page, cases = case_repo.find_all_queued(page: 1)
-      assert_length(cases, 9)
-      assert_equal(case_page.count, 9)
+      assert_length(cases, 8)
+      assert_equal(case_page.count, 8)
     end
 
     test "finds a page of cases by recipient name for an agent" do

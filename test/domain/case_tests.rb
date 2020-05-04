@@ -111,12 +111,19 @@ class CaseTests < ActiveSupport::TestCase
     kase = Case.stub(
       status: Case::Status::Submitted,
       new_activity: true,
+      assignments: [
+        Case::Assignment.stub(role: Role::Agent),
+      ],
     )
 
     kase.complete(Case::Status::Approved)
     assert(kase.approved?)
     assert_not(kase.new_activity?)
     assert_in_delta(Time.zone.now, kase.completed_at, 1.0)
+
+    assignments = kase.assignments
+    assert_empty(assignments)
+    assert(kase.selected_assignment&.removed?)
 
     assert_instances_of(kase.events, [
       Case::Events::DidComplete,

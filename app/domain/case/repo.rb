@@ -94,7 +94,7 @@ class Case
       return entity_from(case_rec)
     end
 
-    def find_with_documents_for_enroller(case_id, enroller_id)
+    def find_with_assosciations_for_enroller(case_id, enroller_id)
       case_rec = Case::Record
         .for_enroller(enroller_id)
         .find(case_id)
@@ -103,7 +103,7 @@ class Case
         .with_attached_file
         .where(case_id: case_id)
 
-      return entity_from(case_rec, documents: document_recs)
+      return entity_from(case_rec, assignments: case_rec.assignments, documents: document_recs)
     end
 
     def find_active_by_recipient(recipient_id)
@@ -273,14 +273,24 @@ class Case
     end
 
     def save_completed(kase)
-      case_rec = kase.record
+      assert(kase.record != nil, "case must be persisted")
 
-      # update records
+      # update case record
+      case_rec = kase.record
       assign_status(kase, case_rec)
       assign_activity(kase, case_rec)
 
+      # find assignment record to delete
+      assignment = kase.selected_assignment
+      assignment_rec = if assignment&.removed?
+        case_rec.assignments.find { |a| a.user_id == assignment.user_id }
+      end
+
       # save records
-      case_rec.save!
+      transaction do
+        case_rec.save!
+        assignment_rec&.destroy!
+      end
 
       # consume all entity events
       @domain_events.consume(kase.events)

@@ -43,9 +43,9 @@ module Db
     test "finds a case and assignment by id" do
       case_repo = Case::Repo.new
       case_rec = cases(:opened_1)
-      case_assignment_rec = case_assignments(:cohere_1)
+      partner_rec = partners(:cohere_1)
 
-      kase = case_repo.find_with_assignment(case_rec.id, case_assignment_rec.id)
+      kase = case_repo.find_with_assignment(case_rec.id, partner_rec.id)
       assert_equal(kase.id.val, case_rec.id)
 
       assignment = kase.selected_assignment
@@ -76,7 +76,7 @@ module Db
       case_repo = Case::Repo.new
       case_rec = cases(:submitted_1)
 
-      kase = case_repo.find_with_documents_for_enroller(case_rec.id, case_rec.enroller_id)
+      kase = case_repo.find_with_assosciations_for_enroller(case_rec.id, case_rec.enroller_id)
       assert_not_nil(kase)
       assert_equal(kase.status, Case::Status::Submitted)
     end
@@ -86,7 +86,7 @@ module Db
       case_rec = cases(:opened_1)
 
       assert_raises(ActiveRecord::RecordNotFound) do
-        case_repo.find_with_documents_for_enroller(case_rec.id, case_rec.enroller_id)
+        case_repo.find_with_assosciations_for_enroller(case_rec.id, case_rec.enroller_id)
       end
     end
 
@@ -96,7 +96,7 @@ module Db
       case_rec2 = cases(:submitted_2)
 
       assert_raises(ActiveRecord::RecordNotFound) do
-        case_repo.find_with_documents_for_enroller(case_rec1.id, case_rec2.enroller_id)
+        case_repo.find_with_assosciations_for_enroller(case_rec1.id, case_rec2.enroller_id)
       end
     end
 
@@ -487,15 +487,16 @@ module Db
       assert(document_rec.file.attached?)
     end
 
-    test "saves completed" do
+    test "saves a completed case" do
       case_repo = Case::Repo.new
       case_rec = cases(:submitted_1)
 
-      kase = Case::Repo.map_record(case_rec, documents: case_rec.documents)
+      kase = Case::Repo.map_record(case_rec, assignments: case_rec.assignments, documents: case_rec.documents)
       kase.complete(Case::Status::Approved)
 
       case_repo.save_completed(kase)
-      assert_equal(case_rec.status, "approved")
+      assert(case_rec.approved?)
+      assert_length(case_rec.assignments.reload, 1)
       assert_not_nil(case_rec.completed_at)
     end
 

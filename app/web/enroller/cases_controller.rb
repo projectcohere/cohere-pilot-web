@@ -31,7 +31,7 @@ module Enroller
     def complete
       permit!(:complete)
 
-      @case = case_repo.find_with_documents_for_enroller(params[:case_id], user_partner_id)
+      @case = case_repo.find_with_assosciations_for_enroller(params[:case_id], user_partner_id)
       save_case = SaveCompletedCase.new(@case, params[:complete_action].to_sym)
       save_case.()
 
