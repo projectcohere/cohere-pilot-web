@@ -402,7 +402,7 @@ module Db
 
       kase = Case::Repo.map_record(case_rec, assignments: [case_assignment_rec])
       kase.select_assignment(case_assignment_rec.partner_id)
-      kase.destroy_selected_assignment
+      kase.remove_selected_assignment
 
       act = -> do
         case_repo.save_destroyed_assignment(kase)

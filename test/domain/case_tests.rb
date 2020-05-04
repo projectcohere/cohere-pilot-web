@@ -126,6 +126,7 @@ class CaseTests < ActiveSupport::TestCase
     assert(kase.selected_assignment&.removed?)
 
     assert_instances_of(kase.events, [
+      Case::Events::DidUnassignUser,
       Case::Events::DidComplete,
       Case::Events::DidChangeActivity,
     ])
@@ -264,7 +265,7 @@ class CaseTests < ActiveSupport::TestCase
 
     kase.select_assignment(3)
 
-    kase.destroy_selected_assignment
+    kase.remove_selected_assignment
     assert_empty(kase.assignments)
     assert_instances_of(kase.events, [Case::Events::DidUnassignUser])
   end

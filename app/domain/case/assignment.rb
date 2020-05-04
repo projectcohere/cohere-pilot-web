@@ -1,5 +1,5 @@
 class Case
-  class Assignment < ::Entity
+  class Assignment < ::Value
     # -- props --
     prop(:role)
     prop(:user_id)

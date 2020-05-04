@@ -107,12 +107,8 @@ class Case < ::Entity
     @completed_at = Time.zone.now
 
     # remove agent assignment
-    a_index = @assignments&.index { |a| a.role.agent? }
-    if a_index != nil
-      assignment = @assignments.delete_at(a_index)
-      assignment&.remove
-      @selected_assignment = assignment
-    end
+    @selected_assignment = @assignments&.find { |a| a.role.agent? }
+    remove_selected_assignment
 
     # track events
     @events.add(Events::DidComplete.from_entity(self))
@@ -196,7 +192,12 @@ class Case < ::Entity
     end
   end
 
-  def destroy_selected_assignment
+  def remove_selected_assignment
+    if @selected_assignment == nil
+      return
+    end
+
+    @selected_assignment.remove
     @assignments.delete(@selected_assignment)
     @events.add(Events::DidUnassignUser.from_entity(self))
   end
