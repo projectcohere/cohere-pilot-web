@@ -13,7 +13,11 @@ enroller_1:
   membership: enroller
   programs:
     - energy_0
+    - energy_c
     - water_0
+    - water_c
+    - food_c
+    - housing_c
 
 enroller_2:
   name: "Test United"

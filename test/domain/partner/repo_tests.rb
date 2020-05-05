@@ -7,7 +7,7 @@ class Partner
       assert_not_nil(partner.id)
       assert_not_nil(partner.name)
       assert_not_nil(partner.membership)
-      assert_length(partner.programs, 2)
+      assert_length(partner.programs, 6)
     end
   end
 end

@@ -13,7 +13,7 @@ governor_1:
   remember_token: <%= SecureRandom.uuid %>
 
 enroller_1:
-  email: me@testmetro.org
+  email: enroll@testmetro.org
   encrypted_password: <%= password("password123$") %>
   role: enroller
   partner: enroller_1
@@ -34,8 +34,8 @@ source_2:
   remember_token: <%= SecureRandom.uuid %>
 
 source_3:
-  email: me@testunited.org
+  email: source@testmetro.org
   encrypted_password: <%= password("password123$") %>
   role: source
-  partner: enroller_2
+  partner: enroller_1
   remember_token: <%= SecureRandom.uuid %>

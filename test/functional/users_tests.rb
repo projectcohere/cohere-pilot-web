@@ -24,7 +24,7 @@ class UsersTests < ActionDispatch::IntegrationTest
   test "signs in as an enroller" do
     session_params = {
       session: {
-        email: "me@testmetro.org",
+        email: "enroll@testmetro.org",
         password: "password123$"
       }
     }
