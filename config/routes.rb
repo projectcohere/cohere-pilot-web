@@ -7,6 +7,9 @@ Rails.application.routes.draw do
   extend Routes::Constraints
   extend Routes::Fallback
 
+  # -- public --
+  get("/wrap", to: "chats/assets#wrap")
+
   # -- signed-out --
   signed_out do |c|
     # stats

@@ -1,5 +1,5 @@
 class Chat
-  class Macro < ::Entity
+  class Macro < ::Value
     prop(:name)
     prop(:body)
     prop(:file, default: nil)

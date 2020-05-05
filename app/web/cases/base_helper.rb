@@ -61,5 +61,43 @@ module Cases
         sender_tag + message_content
       end
     end
+
+    def chat_macros_json(groups)
+      data = groups.flat_map(&:list).map do |m|
+        next {
+          body: m.body,
+          attachment: m.file&.then { |f|
+            url = url_for(f.representation(resize: "400x400>"))
+            next {
+              id: f.id,
+              preview: {
+                name: f.filename.to_s,
+                url: url,
+                preview_url: url,
+              },
+            }
+          },
+        }
+      end
+
+      return data.to_json
+    end
+
+    def chat_macros_options(groups)
+      i = 0
+
+      options = groups.map do |g|
+        next [
+          g.name,
+          g.list.map { |m|
+            o = [m.name, i]
+            i += 1
+            next o
+          }
+        ]
+      end
+
+      return grouped_options_for_select(options)
+    end
   end
 end

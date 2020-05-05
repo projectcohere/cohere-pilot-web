@@ -17,7 +17,7 @@ class ChatTests < ActiveSupport::TestCase
     message = chat.messages[0]
     assert_length(chat.messages, 1)
     assert(message.status.queued?)
-    assert_match(/Hi there/, message.body)
+    assert_match(/Hello/, message.body)
 
     # TODO: how can we stub out repos so that we can return mock
     # macros in unit tests?

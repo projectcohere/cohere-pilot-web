@@ -11,11 +11,11 @@ class Chat
       # -- queries --
       # -- queries/one
       def find_initial
-        return store[0]
+        return store[0].list[0]
       end
 
       # -- queries/many
-      def find_all
+      def find_grouped
         return store
       end
 
@@ -28,25 +28,32 @@ class Chat
 
       private def build_store
         # load raw data
-        data_list = YAML.load_file("macros/all.yaml")
-        data_filenames = data_list.pluck("filename").compact.uniq
+        group_data = YAML.load_file("macros/groups.yaml")
+        files_data = group_data
+          .flat_map { |g| g["list"].pluck("file") }
+          .compact
 
         # index files by filename
         files = {}
-        @file_repo.find_all_by_filenames(data_filenames).each do |file|
+        @file_repo.find_all_by_filenames(files_data).each do |file|
           files[file.filename.to_s] = file
         end
 
-        # build entities
-        macros = data_list.map do |data|
-          Macro.new(
+        # map into values
+        groups = group_data.map do |data|
+          Macro::Group.new(
             name: data["name"],
-            body: data["body"],
-            file: files[data["filename"]],
+            list: data["list"].map { |data|
+              Macro.new(
+                name: data["name"],
+                body: data["body"],
+                file: files[data["file"]],
+              )
+            },
           )
         end
 
-        return macros
+        return groups
       end
     end
   end

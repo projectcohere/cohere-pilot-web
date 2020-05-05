@@ -1,36 +1,16 @@
-<%- macros = Chat::Macro::Repo.get.find_all %>
+<%- groups = Chat::Macro::Repo.get.find_grouped %>
 
 <%# -- json -- %>
-<%- macros_json = macros.map do |macro| %>
-<%-   next { %>
-<%-     body: macro.body, %>
-<%-     attachment: macro.file&.then { |f| %>
-<%-       next { %>
-<%-         id: f.id, %>
-<%-         preview: { %>
-<%-           name: f.filename.to_s, %>
-<%-           url: url_for(f.representation(resize: "400x400>")), %>
-<%-           preview_url: url_for(f.representation(resize: "400x400>")), %>
-<%-         }, %>
-<%-       } %>
-<%-     }, %>
-<%-   } %>
-<%- end %>
-
 <script id="chat-macros-json" type="application/json">
-  <%== macros_json.to_json %>
+  <%== chat_macros_json(groups) %>
 </script>
 
 <%# -- view -- %>
-<%- macro_options = macros.map.with_index do |macro, i| %>
-<%-   [macro.name, i] %>
-<%- end %>
-
 <%= field_tag("", class: "Chat-macros Field--input Field--select") do %>
   <%=
     select_tag(
       :macro,
-      options_for_select(macro_options),
+      chat_macros_options(groups),
       id: "chat-macro-input",
       include_blank: "Choose a Macro"
     )
