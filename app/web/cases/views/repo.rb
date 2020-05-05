@@ -140,10 +140,18 @@ module Cases
         case_recs = q.offset(case_page.offset).limit(case_page.items)
 
         case_cells = case_recs.map do |r|
-          self.class.map_cell(r, @scope, user_partner_id)
+          self.class.map_cell(r, @scope, find_role_assignment_rec(r))
         end
 
         return case_page, case_cells
+      end
+
+      private def find_role_assignment_rec(case_rec)
+        assignment_rec = case_rec.assignments.find do |r|
+          r.role == user_role.to_s && r.partner_id == user_partner_id
+        end
+
+        return assignment_rec
       end
 
       # -- queries/helpers
@@ -241,7 +249,7 @@ module Cases
       end
 
       # -- mapping/cell
-      def self.map_cell(r, scope, partner_id)
+      def self.map_cell(r, scope, assignment = nil)
         return Cell.new(
           scope: scope,
           id: Id.new(r.id),
@@ -252,22 +260,10 @@ module Cases
           supplier_name: r.supplier&.name,
           enroller_name: r.enroller.name,
           recipient_name: Recipient::Repo.map_name(r.recipient),
-          assignee_email: find_assignee_email(r, partner_id),
+          assignee_email: assignment&.user&.email,
           created_at: r.created_at,
           updated_at: r.updated_at,
         )
-      end
-
-      def self.find_assignee_email(r, partner_id)
-        if partner_id == nil
-          return nil
-        end
-
-        assignment = r.assignments.find do |r|
-          r.partner_id == partner_id
-        end
-
-        return assignment&.user&.email
       end
     end
   end

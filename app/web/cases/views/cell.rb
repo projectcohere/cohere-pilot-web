@@ -2,6 +2,7 @@ module Cases
   module Views
     # A Case read model for rendering a cell in a list of cases.
     class Cell < ::Value
+      include Case::Policy::Context::Shared
       include Routing
       include ActionView::Helpers::DateHelper
 
@@ -46,7 +47,13 @@ module Cases
       end
 
       def details_names
-        return [program_name, @supplier_name, @enroller_name].compact
+        names = [program_name, @supplier_name]
+
+        if permit?(:view_details_enroller)
+          names.push(@enroller_name)
+        end
+
+        return names.compact.join(", ")
       end
 
       # -- queries/assignment
@@ -56,6 +63,11 @@ module Cases
 
       def assignee_email
         return @assignee_email&.split("@")&.first
+      end
+
+      # -- Case::Policy::Context --
+      def case
+        return self
       end
     end
   end

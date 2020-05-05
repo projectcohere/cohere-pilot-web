@@ -24,7 +24,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases", as: user_rec))
     assert_response(:success)
     assert_select(".PageHeader-title", text: /My Cases/)
-    assert_select(".CaseCell", 2)
+    assert_select(".CaseCell", 3)
   end
 
   test "can list queued cases as an agent" do
@@ -33,7 +33,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases/inbox", as: user_rec))
     assert_response(:success)
     assert_select(".PageHeader-title", text: /Inbox/)
-    assert_select(".CaseCell", 8)
+    assert_select(".CaseCell", 7)
   end
 
   test "can search cases as an agent" do
@@ -104,6 +104,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_response(:success)
     assert_select(".PageHeader-title", text: /Inbox/)
     assert_select(".CaseCell", 1)
+    assert_select(".CaseCell-assign", 1)
   end
 
   test "can search archived cases as an enroller" do

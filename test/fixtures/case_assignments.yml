@@ -16,6 +16,12 @@ opened_1g:
   case: opened_1
   partner: governor_1
 
+submitted_1s:
+  role: source
+  user: source_3
+  case: submitted_1
+  partner: enroller_1
+
 submitted_1a:
   role: agent
   user: agent_1
@@ -27,6 +33,18 @@ submitted_1e:
   user: enroller_1
   case: submitted_1
   partner: enroller_1
+
+submitted_2s:
+  role: source
+  user: source_3
+  case: submitted_2
+  partner: enroller_1
+
+submitted_2a:
+  role: agent
+  user: agent_1
+  case: submitted_2
+  partner: cohere_1
 
 approved_2:
   role: agent

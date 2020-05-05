@@ -1,5 +1,6 @@
 module Cases
   module BaseHelper
+    include Logging
     include Case::Policy::Context::Shared
 
     # -- search --
@@ -63,6 +64,9 @@ module Cases
     end
 
     def chat_macros_json(groups)
+      log.debug { "#{self.class.name}:#{__LINE__} macros -- #{groups}"}
+
+      # transform groups into flat list of macros
       data = groups.flat_map(&:list).map do |m|
         next {
           body: m.body,

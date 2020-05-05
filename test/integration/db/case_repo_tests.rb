@@ -496,7 +496,7 @@ module Db
 
       case_repo.save_completed(kase)
       assert(case_rec.approved?)
-      assert_length(case_rec.assignments.reload, 1)
+      assert_length(case_rec.assignments.reload, 2)
       assert_not_nil(case_rec.completed_at)
     end
 

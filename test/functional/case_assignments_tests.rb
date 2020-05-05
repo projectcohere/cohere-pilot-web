@@ -60,7 +60,7 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "can't self-assign another enroller's case as an enroller user" do
+  test "can't self-assign another enroller's case as an enroller" do
     user_rec = users(:enroller_1)
     case_rec = cases(:submitted_2)
 
@@ -69,7 +69,7 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "self-assign a case as an enroller user" do
+  test "self-assign a case as an enroller" do
     user_rec = users(:enroller_1)
     case_rec = cases(:submitted_1)
     case_rec.assignments.destroy_all
