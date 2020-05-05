@@ -22,7 +22,7 @@ class ApplicationWorker
     Sidekiq::Cron::Job.create(
       name: "#{class_name} - #{name}",
       cron: cron,
-      class: class_name
+      class: class_name,
     )
   end
 end

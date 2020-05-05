@@ -17,9 +17,6 @@ gem "redis", "~> 4.1"
 gem "sass-rails", "~> 5"
 gem "sentry-raven", "~> 2.12"
 gem "sidekiq", "~> 6.0"
-# https://github.com/ondrejbartas/sidekiq-cron/issues/278
-gem "sidekiq-cron", "~> 1.1", require: false
-gem "sidekiq-unique-jobs", "~> 6.0"
 gem "skylight", "~> 4.2"
 gem "turbolinks", "~> 5"
 gem "webpacker", "~> 4.0"
