@@ -114,6 +114,10 @@ module Cases
       end
 
       # -- queries/condition
+      def can_archive?
+        return @condition.active? && @status.complete?
+      end
+
       delegate(:archived?, to: :condition)
 
       # -- queries/referral

@@ -7,24 +7,26 @@
     </h1>
 
     <div class="PageHeader-actions">
-      <%=
-        button_to(t(".actions.archive"), @case.archive_path,
-          method: :patch,
-          class: "Button Button--secondary",
-          data: {
-            confirm: "Are you sure you want to archive this case?"
-          },
-        )
-      %>
-
       <% if @case.can_remove? %>
         <%=
-          button_to("Remove from Pilot", @case.remove_path,
+          button_to(t(".actions.remove"), @case.remove_path,
             name: :remove,
             method: :patch,
             class: "Button Button--destructive",
             data: {
               confirm: "Are you sure you want to remove this case from the pilot?"
+            },
+          )
+        %>
+      <% end %>
+
+      <% if @case.can_archive? %>
+        <%=
+          button_to(t(".actions.archive"), @case.archive_path,
+            method: :patch,
+            class: "Button Button--secondary",
+            data: {
+              confirm: "Are you sure you want to archive this case?"
             },
           )
         %>

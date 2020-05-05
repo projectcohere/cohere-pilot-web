@@ -186,6 +186,7 @@ en:
 
       edit:
         actions:
+          remove: "Remove Case"
           archive: "Archive"
           referral: "Select Referral"
 
