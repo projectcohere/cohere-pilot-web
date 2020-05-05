@@ -6,8 +6,8 @@ module Events
     Unsaved = "Unsaved".freeze
 
     # -- lifetime --
-    def initialize(analytics_events: Service::Container.analytics_events)
-      @analytics_events = analytics_events
+    def initialize(analytics: ListQueue.new)
+      @analytics = analytics
     end
 
     # -- commands --
@@ -27,7 +27,7 @@ module Events
       when Case::Events::DidSubmit
         event.case_id.val
       when Cases::Events::DidViewEnrollerCase
-        event.case_id
+        event.case_id.val
       when Case::Events::DidComplete
         event.case_id.val
       when Case::Events::DidMakeReferral
@@ -35,51 +35,40 @@ module Events
       end
 
       # bail if we don't log this event
-      if id.nil?
+      if id == nil
         return
       end
 
       # determine event name
-      event_path = event.class.name.split("::")
-      event_name = event_path[2].titlecase
+      data = { name: event.class.name.demodulize }
 
       # determine event attrs
-      event_attrs = {}
       if event.respond_to?(:case_program)
-        event_attrs[:case_program] = event.case_program
+        data[:case_program] = event.case_program.id
       end
 
       if event.respond_to?(:case_is_referred)
-        event_attrs[:case_is_referred] = event.case_is_referred
+        data[:case_is_referred] = event.case_is_referred
       end
 
-      other_attrs = case event
+      case event
       when Case::Events::DidReceiveMessage
-        { is_first: event.is_first }
+        data[:is_first] = event.is_first
       when Case::Events::DidComplete
-        { case_status: event.case_status }
-      end
-
-      if not other_attrs.nil?
-        event_attrs.merge!(other_attrs)
+        data[:case_status] = event.case_status
       end
 
       # add user attrs if available
-      user&.tap do |u|
-        event_attrs.merge!(user_id: u.id.val)
+      if user != nil
+        data[:user_id] = user.id.val
       end
 
-      # track event
-      tracker.track(id, event_name, event_attrs)
+      # add event
+      @analytics.add(data)
     end
 
-    # -- helpers --
-    private def tracker
-      @tracker ||= begin
-        Mixpanel::Tracker.new(ENV["MIXPANEL_TOKEN"]) do |type, message|
-          @analytics_events.add([type, message].to_json)
-        end
-      end
+    def drain
+      return @analytics.drain
     end
   end
 end

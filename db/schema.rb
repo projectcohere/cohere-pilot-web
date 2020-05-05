@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_01_204411) do
+ActiveRecord::Schema.define(version: 2020_05_05_193456) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -109,6 +109,11 @@ ActiveRecord::Schema.define(version: 2020_05_01_204411) do
     t.integer "classification", default: 0
     t.index ["case_id"], name: "index_documents_on_case_id"
     t.index ["classification"], name: "index_documents_on_classification"
+  end
+
+  create_table "events", force: :cascade do |t|
+    t.json "data", null: false
+    t.datetime "created_at", null: false
   end
 
   create_table "partners", force: :cascade do |t|

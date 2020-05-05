@@ -156,10 +156,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases/new?program_id=#{program_rec.id}", as: user_rec))
     assert_response(:success)
     assert_select(".PageHeader-title", text: /Add a Case/)
-
-    assert_analytics_events(1) do |events|
-      assert_match(/Did View Supplier Form/, events[0])
-    end
+    assert_analytics_events(%w[DidViewSupplierForm])
   end
 
   test "views open case form as a non-supplier source" do
@@ -216,10 +213,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_present(flash[:notice])
     assert_redirected_to("/cases")
-
-    assert_analytics_events(1) do |events|
-      assert_match(/Did Open/, events[0])
-    end
+    assert_analytics_events(%w[DidOpen])
 
     assert_matching_broadcast_on(case_activity_for(:agent_1)) do |msg|
       assert_equal(msg["name"], "DID_ADD_QUEUED_CASE")
@@ -339,10 +333,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases/#{kase.id}", as: user_rec))
     assert_response(:success)
     assert_select(".PageHeader-title", text: /#{kase.recipient.profile.name}/)
-
-    assert_analytics_events(1) do |events|
-      assert_match(/Did View Enroller Case/, events[0])
-    end
+    assert_analytics_events(%w[DidViewEnrollerCase])
   end
 
   # -- edit --
@@ -368,10 +359,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases/#{case_rec.id}/edit", as: user_rec))
     assert_response(:success)
     assert_select(".PageHeader-title", text: /\w's case/)
-
-    assert_analytics_events(1) do |events|
-      assert_match(/Did View Governor Form/, events[0])
-    end
+    assert_analytics_events(%w[DidViewGovernorForm])
   end
 
   test "save an edited case as a governor" do
@@ -398,10 +386,7 @@ class CasesTests < ActionDispatch::IntegrationTest
         case_new_activity: true,
       }
     })
-
-    assert_analytics_events(1) do |events|
-      assert_match(/Did Become Pending/, events[0])
-    end
+    assert_analytics_events(%w[DidBecomePending])
   end
 
   test "edit a case as an agent" do
@@ -558,10 +543,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     #   assert_equal(msg["name"], "DID_ADD_QUEUED_CASE")
     #   assert_entry(msg["data"], "case_id")
     # end
-
-    assert_analytics_events(1) do |events|
-      assert_match(/Did Submit/, events[0])
-    end
+    assert_analytics_events(%w[DidSubmit])
   end
 
   test "submit a case that doesn't require a contract as an agent" do
@@ -648,10 +630,7 @@ class CasesTests < ActionDispatch::IntegrationTest
         case_new_activity: false,
       }
     })
-
-    assert_analytics_events(1) do |events|
-      assert_match(/Did Complete/, events[0])
-    end
+    assert_analytics_events(%w[DidComplete])
   end
 
   test "complete a case as an agent" do
@@ -672,10 +651,7 @@ class CasesTests < ActionDispatch::IntegrationTest
         case_new_activity: false,
       }
     })
-
-    assert_analytics_events(1) do |events|
-      assert_match(/Did Complete/, events[0])
-    end
+    assert_analytics_events(%w[DidComplete])
   end
 
   test "remove a case from the pilot as an agent" do
@@ -696,10 +672,7 @@ class CasesTests < ActionDispatch::IntegrationTest
         case_new_activity: false,
       }
     })
-
-    assert_analytics_events(1) do |events|
-      assert_match(/Did Complete/, events[0])
-    end
+    assert_analytics_events(%w[DidComplete])
   end
 
   # -- archive --

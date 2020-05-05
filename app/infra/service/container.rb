@@ -5,12 +5,9 @@ module Service
 
     # -- services --
     # -- services/web
-    single(:analytics_events) do
-      RedisQueue.new("analytics--events")
-    end
+    single(Events::DispatchAll)
 
     # -- services/domain
-    single(Events::DispatchAll)
     single(User::Repo)
     single(Partner::Repo)
 

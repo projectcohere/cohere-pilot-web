@@ -7,7 +7,6 @@ gem "aws-sdk-s3", "~> 1.52", require: false
 gem "bootsnap", ">= 1.4.2", require: false
 gem "clearance", "~> 1.17"
 gem "image_processing", "~> 1.9"
-gem "mixpanel-ruby", "~> 2.2"
 gem "openssl", "~> 2.1"
 gem "pagy", "~> 3.7"
 gem "pdfkit", "~> 0.8.4"

@@ -1,4 +1,4 @@
-class ArrayQueue
+class ListQueue
   include Enumerable
 
   # -- lifetime --
@@ -20,16 +20,22 @@ class ArrayQueue
     @queue.push(event)
   end
 
-  def drain(&block)
+  def drain
+    if not block_given?
+      current = @queue.clone
+      clear
+      return current
+    end
+
     @queue.reject! do |event|
-      block.(event)
+      yield(event)
       true
     end
   end
 
   def consume(other)
     other.drain do |event|
-      @queue << event
+      @queue.push(event)
     end
   end
 
@@ -52,5 +58,5 @@ class ArrayQueue
   end
 
   # -- constants --
-  Empty = ArrayQueue.new
+  Empty = ListQueue.new
 end

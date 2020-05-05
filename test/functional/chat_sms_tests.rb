@@ -123,10 +123,7 @@ class ChatSmsTests < ActionDispatch::IntegrationTest
     )
 
     assert_response(:no_content)
-
-    assert_analytics_events(1) do |events|
-      assert_match(/Did Receive Message/, events[0])
-    end
+    assert_analytics_events(%w[DidReceiveMessage])
   end
 
   # -- status --

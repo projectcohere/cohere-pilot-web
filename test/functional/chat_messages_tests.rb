@@ -115,6 +115,6 @@ class ChatMessagesTests < ActionCable::Channel::TestCase
       assert_not_nil(attachment["preview_url"])
     end
 
-    assert_analytics_events(0)
+    assert_analytics_events([])
   end
 end

@@ -1,6 +1,6 @@
 class Chat < Entity
   prop(:record, default: nil)
-  prop(:events, default: ArrayQueue::Empty)
+  prop(:events, default: ListQueue::Empty)
 
   # -- props --
   prop(:id, default: Id::None)
