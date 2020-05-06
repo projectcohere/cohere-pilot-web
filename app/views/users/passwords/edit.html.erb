@@ -20,14 +20,9 @@
       <%= form_for(:password_reset, url: form_url, html: { method: :patch, class: "SignIn-form Panel" }) do |f| %>
         <%= section_tag(class: "SignIn-credentials") do %>
           <%= f.field(:password, t("users.password.label"), class: "SignIn-password") do %>
-            <% f.password_field(:password) %>
+            <%= f.password_field(:password) %>
+            <%= check_box_tag(:show_password, 1, false, class: "SignIn-showPassword Icon Icon--eye") %>
           <% end %>
-
-          <div class="SignIn-helpers">
-            <%= f.field(:show_password, "Show Password?", class: "SignIn-showPassword Field--bare Field--checkbox") do %>
-              <%= check_box_tag(:show_password) %>
-            <% end %>
-          </div>
         <% end %>
 
         <%= section_tag(class: "SignIn-actions") do %>

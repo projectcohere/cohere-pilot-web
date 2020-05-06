@@ -1,0 +1,35 @@
+.Icon {
+  background-color: var(--icon-color);
+
+  @include prefix(webkit, (
+    mask-size: contain,
+    mask-position: center,
+    mask-repeat: no-repeat
+  ));
+
+  // -- variants --
+  &--eye {
+    @include prefix(webkit, (mask-image: image-url("eye.svg")));
+    @include prefix(webkit, (mask-position-y: 2px));
+  }
+
+  &--logo {
+    @include prefix(webkit, (mask-image: image-url("logo-icon-black.svg")));
+  }
+
+  &--cases {
+    @include prefix(webkit, (mask-image: image-url("cases.svg")));
+  }
+
+  &--queue {
+    @include prefix(webkit, (mask-image: image-url("queue.svg")));
+  }
+
+  &--search {
+    @include prefix(webkit, (mask-image: image-url("search.svg")));
+  }
+
+  &--profile {
+    @include prefix(webkit, (mask-image: image-url("profile.svg")));
+  }
+}

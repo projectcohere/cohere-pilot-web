@@ -141,6 +141,17 @@
     max-width: $width5;
   }
 
+  &-showPassword {
+    @include prefix(webkit moz, (appearance: none));
+
+    width: 20px;
+    height: 25px;
+
+    &:checked {
+      --icon-color: #{$brand-primary};
+    }
+  }
+
   /* SignIn-title */
   &-title {
     > h1 {

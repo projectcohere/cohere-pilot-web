@@ -43,7 +43,7 @@ module Helpers
 
     def navigation_icon_tag(key, name, width: 36)
       return tag.span(
-        class: "NavigationIcon is-#{key}",
+        class: "Navigation-icon Icon Icon--#{key}",
         alt: "#{name} Icon",
         width: width,
         height: 36,
