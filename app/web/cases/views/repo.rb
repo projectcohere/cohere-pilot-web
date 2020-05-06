@@ -40,12 +40,16 @@ module Cases
       end
 
       # -- queries/forms
-      def new_form(program_id, params: nil)
+      def new_form(temp_id, program_id, params: nil)
+        if temp_id.blank?
+          raise ActiveRecord::RecordNotFound
+        end
+
         program = @program_repo
           .find(program_id)
 
         return make_form(
-          self.class.map_pending(program),
+          self.class.map_pending(temp_id, program),
           params,
         )
       end
@@ -183,7 +187,7 @@ module Cases
       # -- mapping/program-picker
       def self.map_program_picker(r, programs)
         return ProgramPicker.new(
-          id: r != nil ? Id.new(r.id) : Id::None,
+          id: r != nil ? Id.new(r.id) : Id.new(SecureRandom.base58),
           recipient_id: r&.recipient_id,
           recipient_name: r&.recipient&.then { |r| Recipient::Repo.map_name(r) },
           programs: programs,
@@ -191,8 +195,9 @@ module Cases
       end
 
       # -- mapping/pending
-      def self.map_pending(program)
+      def self.map_pending(temp_id, program)
         return Pending.new(
+          temp_id: Id.new(temp_id),
           program: program,
         )
       end

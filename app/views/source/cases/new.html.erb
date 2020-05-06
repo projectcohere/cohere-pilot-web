@@ -12,6 +12,7 @@
       <%= form_for(@form, url: cases_path, html: { class: "CaseDetail-content" }) do |f| %>
         <%- form_locals = { f: f, form: @form, policy: policy } %>
         <%= f.hidden_field(:program_id) %>
+        <%= hidden_field_tag(:temp_id, @case.temp_id.val) %>
 
         <%= render(partial: "cases/forms/contact", locals: form_locals) %>
         <%= render(partial: "cases/forms/address", locals: form_locals) %>

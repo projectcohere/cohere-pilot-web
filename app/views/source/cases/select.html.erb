@@ -13,6 +13,8 @@
       <%= tag.p(t(".program.subtitle"), class: "PendingCase-subtitle") %>
 
       <%= form_tag(@case.new_path, method: :get, class: "PendingCase-field BigField") do %>
+        <%= hidden_field_tag(:temp_id, @case.id.val) %>
+
         <div class="BigField-input Select">
           <%=
             select_tag(

@@ -28,7 +28,7 @@ class Case < ::Entity
   attr(:selected_document)
 
   # -- factory --
-  def self.open(program:, profile:, household:, enroller:, supplier_account: nil)
+  def self.open(temp_id: nil, program:, profile:, household:, enroller:, supplier_account: nil)
     household ||= ::Recipient::Household.new(
       proof_of_income: ::Recipient::ProofOfIncome::Dhs,
     )
@@ -47,8 +47,11 @@ class Case < ::Entity
       new_activity: true,
     )
 
-    kase.events.add(Events::DidOpen.from_entity(kase))
-    kase
+    kase.events.add(
+      Events::DidOpen.from_entity(kase, temp_id: temp_id)
+    )
+
+    return kase
   end
 
   # -- commands --
@@ -156,7 +159,7 @@ class Case < ::Entity
     end
 
     referred.events.add(
-      Events::DidOpen.from_entity(referred)
+      Events::DidOpen.from_entity(referred, temp_id: nil)
     )
 
     # produce referral

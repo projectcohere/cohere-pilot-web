@@ -166,6 +166,7 @@ module Db
       )
 
       kase = Case.open(
+        temp_id: 9,
         program: Program::Repo.map_record(program_rec),
         profile: profile,
         household: household,
@@ -237,6 +238,7 @@ module Db
       )
 
       kase = Case.open(
+        temp_id: 9,
         program: Program::Repo.map_record(program_rec),
         profile: profile,
         household: household,

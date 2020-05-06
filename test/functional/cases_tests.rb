@@ -135,17 +135,18 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     get(auth("/cases/select", as: user_rec))
     assert_response(:success)
+    assert_analytics_events(%w[DidViewSourceForm])
   end
 
   test "can't view open case form if signed-out" do
-    get("/cases/new?program_id=3")
+    get("/cases/new?temp_id=9&program_id=3")
     assert_redirected_to("/sign-in")
   end
 
   test "can't view open case form without permission" do
     user_rec = users(:agent_1)
 
-    get(auth("/cases/new?program_id=3", as: user_rec))
+    get(auth("/cases/new?temp_id=9&program_id=3", as: user_rec))
     assert_redirected_to("/cases")
   end
 
@@ -153,17 +154,16 @@ class CasesTests < ActionDispatch::IntegrationTest
     user_rec = users(:source_1)
     program_rec = user_rec.partner.programs.first
 
-    get(auth("/cases/new?program_id=#{program_rec.id}", as: user_rec))
+    get(auth("/cases/new?temp_id=9&program_id=#{program_rec.id}", as: user_rec))
     assert_response(:success)
     assert_select(".PageHeader-title", text: /Add a Case/)
-    assert_analytics_events(%w[DidViewSupplierForm])
   end
 
   test "views open case form as a non-supplier source" do
     user_rec = users(:source_3)
     program_rec = user_rec.partner.programs.first
 
-    get(auth("/cases/new?program_id=#{program_rec.id}", as: user_rec))
+    get(auth("/cases/new?temp_id=9&program_id=#{program_rec.id}", as: user_rec))
     assert_response(:success)
     assert_select(".PageHeader-title", text: /Add a Case/)
   end
@@ -197,7 +197,8 @@ class CasesTests < ActionDispatch::IntegrationTest
     act = -> do
       VCR.use_cassette("chats--send-cohere-msg--attachments") do
         post(auth("/cases", as: user_rec), params: {
-          case: case_params
+          temp_id: 9,
+          case: case_params,
         })
       end
     end
@@ -255,7 +256,8 @@ class CasesTests < ActionDispatch::IntegrationTest
     act = -> do
       VCR.use_cassette("chats--send-cohere-msg--attachments") do
         post(auth("/cases", as: user_rec), params: {
-          case: case_params
+          temp_id: 9,
+          case: case_params,
         })
       end
     end
@@ -278,6 +280,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     program_rec = user_rec.partner.programs.first
 
     post(auth("/cases", as: user_rec), params: {
+      temp_id: 9,
       case: {
         program_id: program_rec.id,
         contact: {

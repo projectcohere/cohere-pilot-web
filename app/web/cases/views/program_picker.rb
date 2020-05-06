@@ -4,7 +4,7 @@ module Cases
       include Routing
 
       # -- fields --
-      prop(:id, default: Id::None)
+      prop(:id)
       prop(:recipient_id)
       prop(:recipient_name)
       prop(:programs)
