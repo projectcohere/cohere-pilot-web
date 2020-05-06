@@ -12,7 +12,7 @@ module Twilio
 
       # TODO: we should reserve assert for developer errors and create
       # different error types / helpers for behavioral errors.
-      assert(res.status == 204, "failed to delete media: #{media_url}")
+      assert(res.success?, "failed to delete media (#{res.status}): #{media_url}")
     end
   end
 end
