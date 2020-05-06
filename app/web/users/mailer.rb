@@ -4,7 +4,7 @@ module Users
       @user = User::Repo.get.find(user_id)
 
       mail(
-        subject: "You're invited to the Cohere Pilot!",
+        subject: "You're invited to Cohere!",
         to: @user.email
       )
     end
