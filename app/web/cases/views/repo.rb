@@ -72,16 +72,14 @@ module Cases
       end
 
       private def make_form(model, params)
-        # extract case params and set action, if any
-        attrs = {}
-        if params != nil
-          attrs = params.fetch(:case, {})
-          attrs[:action] = %i[submit approve deny remove].find { |k| params.key?(k) }
-        end
+        # extract action, if any
+        action = Action.find { |a| params&.key?(a.key) }
+        # extract attrs, if any
+        attrs = params&.fetch(:case, {}) || {}
 
         # build a form with permitted attrs
         form = policy.with_case(model) do |p|
-          Form.new(model, attrs) do |subform|
+          Form.new(model, action, attrs) do |subform|
             p.permit?(:"edit_#{subform}")
           end
         end

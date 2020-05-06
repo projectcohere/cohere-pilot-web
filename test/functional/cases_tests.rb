@@ -530,8 +530,9 @@ class CasesTests < ActionDispatch::IntegrationTest
       submit: :ignored
     })
 
-    assert_redirected_to("/cases/#{case_rec.id}/edit")
+    assert_redirected_to("/cases")
     assert_present(flash[:notice])
+    assert_analytics_events(%w[DidSubmit])
 
     assert_broadcast_on(case_activity_for(:agent_1), {
       name: "HAS_NEW_ACTIVITY",
@@ -546,7 +547,6 @@ class CasesTests < ActionDispatch::IntegrationTest
     #   assert_equal(msg["name"], "DID_ADD_QUEUED_CASE")
     #   assert_entry(msg["data"], "case_id")
     # end
-    assert_analytics_events(%w[DidSubmit])
   end
 
   test "submit a case that doesn't require a contract as an agent" do
@@ -557,7 +557,7 @@ class CasesTests < ActionDispatch::IntegrationTest
       submit: :ignored
     })
 
-    assert_redirected_to("/cases/#{case_rec.id}/edit")
+    assert_redirected_to("/cases")
     assert_present(flash[:notice])
   end
 
@@ -569,18 +569,18 @@ class CasesTests < ActionDispatch::IntegrationTest
       submit: :ignored
     })
 
-    assert_redirected_to("/cases/#{case_rec.id}/edit")
+    assert_redirected_to("/cases")
     assert_present(flash[:notice])
   end
 
-  # -- destroy --
-  test "can't destroy a case if signed-out" do
+  # -- delete --
+  test "can't delete a case if signed-out" do
     assert_raises(ActionController::RoutingError) do
       delete("/cases/3")
     end
   end
 
-  test "can't destroy a case without permission" do
+  test "can't delete a case without permission" do
     user_rec = users(:source_1)
 
     assert_raises(ActionController::RoutingError) do
@@ -588,7 +588,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "destroy a case" do
+  test "delete a case" do
     user_rec = users(:agent_1)
     case_rec = cases(:pending_1)
 
@@ -623,8 +623,9 @@ class CasesTests < ActionDispatch::IntegrationTest
     case_rec = cases(:submitted_1)
 
     patch(auth("/cases/#{case_rec.id}/deny", as: user_rec))
-    assert_redirected_to("/cases/#{case_rec.id}")
+    assert_redirected_to("/cases")
     assert_present(flash[:notice])
+    assert_analytics_events(%w[DidComplete])
 
     assert_broadcast_on(case_activity_for(:agent_1), {
       name: "HAS_NEW_ACTIVITY",
@@ -633,7 +634,6 @@ class CasesTests < ActionDispatch::IntegrationTest
         case_new_activity: false,
       }
     })
-    assert_analytics_events(%w[DidComplete])
   end
 
   test "complete a case as an agent" do
@@ -644,8 +644,9 @@ class CasesTests < ActionDispatch::IntegrationTest
       approve: :ignored
     })
 
-    assert_redirected_to("/cases/#{case_rec.id}/edit")
+    assert_redirected_to("/cases")
     assert_present(flash[:notice])
+    assert_analytics_events(%w[DidComplete])
 
     assert_broadcast_on(case_activity_for(:agent_1), {
       name: "HAS_NEW_ACTIVITY",
@@ -654,7 +655,6 @@ class CasesTests < ActionDispatch::IntegrationTest
         case_new_activity: false,
       }
     })
-    assert_analytics_events(%w[DidComplete])
   end
 
   test "remove a case from the pilot as an agent" do
@@ -665,8 +665,9 @@ class CasesTests < ActionDispatch::IntegrationTest
       remove: :ignored
     })
 
-    assert_redirected_to("/cases/#{case_rec.id}")
+    assert_redirected_to("/cases")
     assert_present(flash[:notice])
+    assert_analytics_events(%w[DidComplete])
 
     assert_broadcast_on(case_activity_for(:agent_1), {
       name: "HAS_NEW_ACTIVITY",
@@ -675,7 +676,6 @@ class CasesTests < ActionDispatch::IntegrationTest
         case_new_activity: false,
       }
     })
-    assert_analytics_events(%w[DidComplete])
   end
 
   # -- archive --

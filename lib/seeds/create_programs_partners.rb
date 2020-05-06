@@ -90,6 +90,14 @@ Partner::Record.create!(
 )
 
 Partner::Record.create!(
+  name: "WMS",
+  membership: M::Supplier.key,
+  programs: [
+    cares_energy,
+  ],
+)
+
+Partner::Record.create!(
   name: "DWSD",
   membership: M::Supplier.key,
   programs: [

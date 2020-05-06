@@ -95,6 +95,12 @@ en:
     single: &case-single
       title: "%{name}'s case"
 
+    action:
+      submit: "Submitted"
+      approve: "Approved"
+      deny: "Denied"
+      remove: "Removed"
+
     fields: &case-fields
       details:
         title: "Details"
@@ -190,11 +196,23 @@ en:
           archive: "Archive"
           referral: "Select Referral"
 
+      update:
+        flashes:
+          success: "Updated %{name}'s case."
+          failure: "Please check %{name}'s case for errors."
+          action: "%{action} %{name}'s case."
+
       show:
         <<: *case-single
         actions:
           back: "Back to Cases"
           edit: "Edit"
+
+      destroy:
+        flash: "Deleted %{name}'s case."
+
+      archive:
+        flash: "Archived %{name}'s case."
 
     referrals:
       select:
@@ -216,7 +234,6 @@ en:
         <<: *case-queue
       search:
         <<: *case-search
-
 
   # imagine this nested in users. clearance actions & root templates don't
   # respect standard pathing:

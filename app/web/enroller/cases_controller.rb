@@ -35,7 +35,7 @@ module Enroller
       save_case = SaveCompletedCase.new(@case, params[:complete_action].to_sym)
       save_case.()
 
-      redirect_to(case_path(@case),
+      redirect_to(cases_path,
         notice: "#{@case.status.to_s.capitalize} #{@case.recipient.profile.name}'s case!"
       )
     end

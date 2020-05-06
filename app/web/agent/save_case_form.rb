@@ -35,13 +35,13 @@ module Agent
 
       # process actions if specified
       case form.action
-      when :submit
+      when Cases::Action::Submit
         @case.submit_to_enroller
-      when :remove
+      when Cases::Action::Remove
         @case.remove_from_pilot
-      when :approve
+      when Cases::Action::Approve
         @case.complete(Case::Status::Approved)
-      when :deny
+      when Cases::Action::Deny
         @case.complete(Case::Status::Denied)
       end
 
