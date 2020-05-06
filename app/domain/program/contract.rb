@@ -1,11 +1,6 @@
 class Program
   class Contract < ::Value
-    prop(:program)
+    # -- props --
     prop(:variant)
-
-    # -- variants --
-    Meap = :meap
-    Wrap3h = :wrap_3h
-    Wrap1k = :wrap_1k
   end
 end

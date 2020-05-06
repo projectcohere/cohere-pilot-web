@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_02_144109) do
+ActiveRecord::Schema.define(version: 2020_05_05_193456) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_trgm"
   enable_extension "plpgsql"
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -40,9 +41,10 @@ ActiveRecord::Schema.define(version: 2020_04_02_144109) do
     t.bigint "user_id", null: false
     t.bigint "case_id", null: false
     t.bigint "partner_id", null: false
+    t.integer "role", null: false
     t.index ["case_id"], name: "index_case_assignments_on_case_id"
     t.index ["partner_id"], name: "index_case_assignments_on_partner_id"
-    t.index ["user_id", "case_id", "partner_id"], name: "by_natural_key", unique: true
+    t.index ["user_id", "role", "case_id", "partner_id"], name: "by_natural_key", unique: true
     t.index ["user_id"], name: "index_case_assignments_on_user_id"
   end
 
@@ -52,16 +54,19 @@ ActiveRecord::Schema.define(version: 2020_04_02_144109) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "enroller_id", null: false
-    t.integer "status", default: 0
-    t.bigint "supplier_id", null: false
+    t.integer "status", default: 0, null: false
+    t.bigint "supplier_id"
     t.string "supplier_account_number"
     t.integer "supplier_account_arrears_cents"
     t.datetime "received_message_at", precision: 6
-    t.integer "program", default: 0
-    t.bigint "referrer_id"
     t.boolean "supplier_account_active_service", default: true, null: false
-    t.boolean "has_new_activity", default: false, null: false
+    t.boolean "new_activity", default: false, null: false
+    t.bigint "referrer_id"
+    t.bigint "program_id", null: false
+    t.integer "condition", default: 0, null: false
+    t.index ["condition"], name: "index_cases_on_condition"
     t.index ["enroller_id"], name: "index_cases_on_enroller_id"
+    t.index ["program_id"], name: "index_cases_on_program_id"
     t.index ["recipient_id"], name: "index_cases_on_recipient_id"
     t.index ["referrer_id"], name: "index_cases_on_referrer_id"
     t.index ["status"], name: "index_cases_on_status"
@@ -84,7 +89,10 @@ ActiveRecord::Schema.define(version: 2020_04_02_144109) do
     t.bigint "chat_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "status", default: 0, null: false
+    t.string "remote_id"
     t.index ["chat_id"], name: "index_chat_messages_on_chat_id"
+    t.index ["remote_id"], name: "index_chat_messages_on_remote_id"
   end
 
   create_table "chats", force: :cascade do |t|
@@ -103,11 +111,32 @@ ActiveRecord::Schema.define(version: 2020_04_02_144109) do
     t.index ["classification"], name: "index_documents_on_classification"
   end
 
+  create_table "events", force: :cascade do |t|
+    t.json "data", null: false
+    t.datetime "created_at", null: false
+  end
+
   create_table "partners", force: :cascade do |t|
     t.string "name", null: false
     t.integer "membership", null: false
-    t.integer "programs", array: true
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["membership"], name: "index_partners_on_membership"
+  end
+
+  create_table "partners_programs", id: false, force: :cascade do |t|
+    t.bigint "partner_id", null: false
+    t.bigint "program_id", null: false
+    t.index ["partner_id"], name: "index_partners_programs_on_partner_id"
+    t.index ["program_id"], name: "index_partners_programs_on_program_id"
+  end
+
+  create_table "programs", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "contracts", default: [], null: false, array: true
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.json "requirements", default: {}, null: false
   end
 
   create_table "recipients", force: :cascade do |t|
@@ -125,7 +154,8 @@ ActiveRecord::Schema.define(version: 2020_04_02_144109) do
     t.integer "household_size"
     t.integer "household_income_cents"
     t.integer "household_ownership", default: 0, null: false
-    t.boolean "household_primary_residence", default: true, null: false
+    t.integer "household_proof_of_income", default: 0, null: false
+    t.index "((((first_name)::text || ' '::text) || (last_name)::text)) gin_trgm_ops", name: "recipients_by_full_name", using: :gin
     t.index ["phone_number"], name: "index_recipients_on_phone_number", unique: true
   end
 
@@ -137,6 +167,7 @@ ActiveRecord::Schema.define(version: 2020_04_02_144109) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "partner_id", null: false
+    t.integer "role", default: 0, null: false
     t.index ["email"], name: "index_users_on_email"
     t.index ["partner_id"], name: "index_users_on_partner_id"
     t.index ["remember_token"], name: "index_users_on_remember_token"

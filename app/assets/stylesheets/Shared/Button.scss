@@ -1,14 +1,13 @@
 %button {
+  @extend .u-action;
+  @include prefix(moz webkit, (appearance: none));
+
   display: flex;
   align-items: center;
   padding: 0 $spacing3;
   border-radius: 5px;
   text-decoration: none;
   cursor: pointer;
-
-  appearance: none;
-  -moz-appearance: none;
-  -webkit-appearance: none;
 }
 
 .Button {
@@ -19,6 +18,10 @@
 .ButtonSm {
   @extend %button;
   height: $height3;
+}
+
+.ButtonBase {
+  @extend %button;
 }
 
 .Button--action {

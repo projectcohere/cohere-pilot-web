@@ -1,5 +1,7 @@
 module Chats
   class AddSmsMessage < ::Command
+    include ::Logging
+
     # -- lifetime --
     def initialize(
       chat_repo: Chat::Repo.get,
@@ -10,17 +12,19 @@ module Chats
     end
 
     # -- command --
-    def call(incoming)
-      chat = @chat_repo.find_by_phone_number(incoming.phone_number)
-      if chat.nil?
-        raise "No case found for phone number #{incoming.phone_number}"
+    def call(sms)
+      chat = @chat_repo.find_by_phone_number(sms.phone_number)
+      if chat == nil
+        return log.info { "#{self.class.name}:#{__LINE__} -- received SMS from unknown phone number: #{sms.phone_number}"}
       end
 
       # add the message to the chat
       chat.add_message(
         sender: Chat::Sender::Recipient,
-        body: incoming.body,
-        files: incoming.media || [],
+        body: sms.body,
+        files: sms.media || [],
+        status: Chat::Message::Status::Received,
+        remote_id: sms.id,
       )
 
       # save aggregate

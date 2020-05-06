@@ -1,11 +1,12 @@
 opened_1:
   status: :opened
+  program: energy_0
   recipient: recipient_1
   enroller: enroller_1
   supplier: supplier_1
   supplier_account_number: A1
   supplier_account_arrears_cents: 1000_00
-  has_new_activity: false
+  new_activity: false
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now %>
   received_message_at: null
@@ -13,12 +14,13 @@ opened_1:
 
 opened_2:
   status: opened
+  program: energy_0
   recipient: recipient_1
   enroller: enroller_2
   supplier: supplier_1
   supplier_account_number: A1
   supplier_account_arrears_cents: 1000_00
-  has_new_activity: true
+  new_activity: true
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now - 1.hours %>
   received_message_at: null
@@ -26,12 +28,13 @@ opened_2:
 
 pending_1:
   status: pending
+  program: energy_0
   recipient: recipient_2
   enroller: enroller_2
   supplier: supplier_1
   supplier_account_number: A1
   supplier_account_arrears_cents: 1000_00
-  has_new_activity: true
+  new_activity: true
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now - 1.hours %>
   received_message_at: <%= Time.zone.now %>
@@ -39,25 +42,56 @@ pending_1:
 
 pending_2:
   status: pending
+  program: energy_0
   recipient: recipient_1
   enroller: enroller_2
   supplier: supplier_1
   supplier_account_number: A1
   supplier_account_arrears_cents: 1000_00
-  has_new_activity: false
+  new_activity: false
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now - 1.hours %>
   received_message_at: null
   completed_at: null
 
+pending_3:
+  status: pending
+  program: food_c
+  recipient: recipient_2
+  enroller: enroller_2
+  supplier: supplier_1
+  supplier_account_number: A1
+  supplier_account_arrears_cents: 1000_00
+  new_activity: false
+  created_at: <%= Time.zone.now - 1.days %>
+  updated_at: <%= Time.zone.now - 1.hours %>
+  received_message_at: <%= Time.zone.now %>
+  completed_at: null
+
+pending_4:
+  status: pending
+  condition: deleted
+  program: food_c
+  recipient: recipient_4
+  enroller: enroller_2
+  supplier: supplier_1
+  supplier_account_number: A1
+  supplier_account_arrears_cents: 1000_00
+  new_activity: false
+  created_at: <%= Time.zone.now - 1.days %>
+  updated_at: <%= Time.zone.now - 1.hours %>
+  received_message_at: <%= Time.zone.now %>
+  completed_at: null
+
 submitted_1:
   status: submitted
+  program: energy_0
   recipient: recipient_2
   enroller: enroller_1
   supplier: supplier_1
   supplier_account_number: A1
   supplier_account_arrears_cents: 1000_00
-  has_new_activity: true
+  new_activity: true
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now - 2.hours %>
   received_message_at: <%= Time.zone.now %>
@@ -65,12 +99,13 @@ submitted_1:
 
 submitted_2:
   status: submitted
+  program: energy_0
   recipient: recipient_2
   enroller: enroller_2
   supplier: supplier_1
   supplier_account_number: A1
   supplier_account_arrears_cents: 1000_00
-  has_new_activity: false
+  new_activity: false
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now - 2.hours %>
   received_message_at: <%= Time.zone.now %>
@@ -78,12 +113,13 @@ submitted_2:
 
 approved_1:
   status: approved
+  program: energy_0
   recipient: recipient_2
   enroller: enroller_1
   supplier: supplier_1
   supplier_account_number: A1
   supplier_account_arrears_cents: 1000_00
-  has_new_activity: false
+  new_activity: false
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now %>
   received_message_at: <%= Time.zone.now %>
@@ -91,12 +127,14 @@ approved_1:
 
 approved_2:
   status: approved
+  condition: archived
+  program: energy_0
   recipient: recipient_3
   enroller: enroller_1
   supplier: supplier_2
   supplier_account_number: A1
   supplier_account_arrears_cents: 1000_00
-  has_new_activity: true
+  new_activity: true
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now %>
   received_message_at: <%= Time.zone.now %>
@@ -104,13 +142,13 @@ approved_2:
 
 referral_1:
   status: pending
-  program: wrap
+  program: water_0
   recipient: recipient_2
   enroller: enroller_1
   supplier: supplier_3
   supplier_account_number: nil
   supplier_account_arrears_cents: nil
-  has_new_activity: false
+  new_activity: false
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now %>
   received_message_at: nil
@@ -118,13 +156,14 @@ referral_1:
   referrer: approved_2
 
 chattable_1:
-  status: :opened
+  status: opened
+  program: energy_0
   recipient: recipient_4
   enroller: enroller_2
   supplier: supplier_2
   supplier_account_number: A1
   supplier_account_arrears_cents: 1000_00
-  has_new_activity: false
+  new_activity: false
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now %>
   received_message_at: null

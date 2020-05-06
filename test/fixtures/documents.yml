@@ -8,6 +8,16 @@ document_p1_2:
   source_url: https://website.com/image.jpg
   case: pending_1
 
+document_p3_1:
+  classification: :unknown
+  source_url: https://website.com/image.jpg
+  case: pending_3
+
+document_p4_1:
+  classification: :unknown
+  source_url: https://website.com/image.jpg
+  case: pending_4
+
 document_s1_1:
   classification: :contract
   source_url: meap

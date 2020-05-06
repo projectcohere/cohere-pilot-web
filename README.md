@@ -12,7 +12,7 @@ If you don't use a tool to manage multiple ruby versions, please install one. We
 Once rbenv is installed, please install the project ruby:
 
 ```sh
-$ cat .ruby-version | xargs rbenv install
+$ rbenv install
 ```
 
 And then run the setup command.

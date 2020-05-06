@@ -16,26 +16,13 @@ module Cases
         raise "can't generate contract without a selected document"
       end
 
-      variant_path = case document.source_url&.to_sym
-      when Program::Contract::Meap
-        "programs/contracts/meap"
-      when Program::Contract::Wrap3h
-        "programs/contracts/wrap_3h"
-      when Program::Contract::Wrap1k
-        "programs/contracts/wrap_1k"
-      end
-
-      if variant_path.nil?
-        raise "can't generate contract with an invalid source_url: #{document}"
-      end
-
-      pdf_html = @render_html.(variant_path, {
-        date: Date.today,
-        kase: kase
+      html_path = "programs/contracts/#{document.source_url&.to_sym}"
+      html = @render_html.(html_path, {
+        view: Cases::Views::Repo.map_contract(kase),
       })
 
       return FileData.new(
-        data: @render_pdf.(pdf_html, kase.id.to_s),
+        data: @render_pdf.(html, kase.id.to_s),
         name: "contract.pdf",
         mime_type: "application/pdf"
       )

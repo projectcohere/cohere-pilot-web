@@ -1,21 +1,21 @@
 class Case < ::Entity
   # TODO: should these be generalized for entity/ar?
   prop(:record, default: nil)
-  prop(:events, default: ArrayQueue::Empty)
+  prop(:events, default: ListQueue::Empty)
 
   # -- props --
   prop(:id, default: Id::None)
   prop(:status)
+  prop(:condition, default: Condition::Active)
   prop(:program)
   prop(:recipient)
   prop(:enroller_id)
-  prop(:supplier_id)
   prop(:supplier_account)
   prop(:documents, default: nil)
   prop(:assignments, default: nil)
-  prop(:is_referrer, default: false)
-  prop(:is_referred, default: false)
-  prop(:has_new_activity, default: false)
+  prop(:referrer, default: false, predicate: true)
+  prop(:referred, default: false, predicate: true)
+  prop(:new_activity, default: false, predicate: true)
   prop(:received_message_at, default: nil)
   prop(:created_at, default: nil)
   prop(:updated_at, default: nil)
@@ -28,26 +28,32 @@ class Case < ::Entity
   attr(:selected_document)
 
   # -- factory --
-  def self.open(recipient_profile:, enroller:, supplier_user:, supplier_account:)
+  def self.open(program:, profile:, household:, enroller:, supplier_account: nil)
+    household ||= ::Recipient::Household.new(
+      proof_of_income: ::Recipient::ProofOfIncome::Dhs,
+    )
+
+    recipient = Recipient.new(
+      profile: profile,
+      household: household,
+    )
+
     kase = Case.new(
       status: Status::Opened,
-      program: Program::Name::Meap,
-      recipient: Recipient.new(profile: recipient_profile),
+      program: program,
+      recipient: recipient,
       enroller_id: enroller.id,
-      supplier_id: supplier_user.role.partner_id,
       supplier_account: supplier_account,
-      has_new_activity: true,
+      new_activity: true,
     )
 
     kase.events.add(Events::DidOpen.from_entity(kase))
-    kase.assign_user(supplier_user)
-
     kase
   end
 
   # -- commands --
-  def add_dhs_data(dhs_account)
-    @recipient.add_dhs_data(dhs_account)
+  def add_governor_data(household)
+    @recipient.add_governor_data(household)
 
     if @status == Status::Opened
       @status = Status::Pending
@@ -57,9 +63,9 @@ class Case < ::Entity
     track_new_activity(true)
   end
 
-  def add_cohere_data(supplier_account, profile, dhs_account)
+  def add_agent_data(supplier_account, profile, household)
     @supplier_account = supplier_account
-    @recipient.add_cohere_data(profile, dhs_account)
+    @recipient.add_agent_data(profile, household)
 
     track_new_activity(false)
   end
@@ -74,6 +80,7 @@ class Case < ::Entity
   def remove_from_pilot
     @completed_at = Time.zone.now
     @status = Status::Removed
+    @condition = Condition::Archived
     @events.add(Events::DidComplete.from_entity(self))
 
     track_new_activity(false)
@@ -95,20 +102,37 @@ class Case < ::Entity
       return
     end
 
-    @completed_at = Time.zone.now
+    # update status
     @status = status
+    @completed_at = Time.zone.now
+
+    # remove agent assignment
+    @selected_assignment = @assignments&.find { |a| a.role.agent? }
+    remove_selected_assignment
+
+    # track events
     @events.add(Events::DidComplete.from_entity(self))
 
     track_new_activity(false)
   end
 
-  def make_referral_to_program(program, supplier_id: nil)
-    if not can_make_referral?(program)
-      return nil
+  def delete
+    @condition = Condition::Deleted
+  end
+
+  def archive
+    @condition = Condition::Archived
+  end
+
+  # -- commands/referral
+  def make_referral(program)
+    if not @status.approved?
+      return
     end
 
     # mark as referrer
-    @is_referrer = true
+    @referrer = true
+    @condition = Condition::Archived
     @events.add(Events::DidMakeReferral.from_entity(self,
       program: program
     ))
@@ -119,11 +143,10 @@ class Case < ::Entity
       status: Status::Opened,
       recipient: recipient,
       enroller_id: enroller_id,
-      supplier_id: supplier_id,
       supplier_account: nil,
       documents: new_documents,
-      is_referred: true,
-      has_new_activity: true,
+      referred: true,
+      new_activity: true,
     )
 
     documents&.each do |d|
@@ -137,7 +160,7 @@ class Case < ::Entity
     )
 
     # produce referral
-    Referral.new(
+    return Referral.new(
       referrer: self,
       referred: referred
     )
@@ -147,19 +170,19 @@ class Case < ::Entity
   def assign_user(user)
     @assignments ||= []
 
-    has_assignment = @assignments.any? do |a|
-      a.partner_id == user.role.partner_id
+    assigned = @assignments.any? do |a|
+      a.role == user.role && a.partner_id == user.partner_id
     end
 
-    if has_assignment
+    if assigned
       return
     end
 
     @new_assignment = Assignment.new(
+      role: user.role,
       user_id: user.id,
       user_email: user.email,
-      partner_id: user.role.partner_id,
-      partner_membership: user.role.name,
+      partner_id: user.partner_id,
     )
 
     @assignments.push(@new_assignment)
@@ -173,7 +196,12 @@ class Case < ::Entity
     end
   end
 
-  def destroy_selected_assignment
+  def remove_selected_assignment
+    if @selected_assignment == nil
+      return
+    end
+
+    @selected_assignment.remove
     @assignments.delete(@selected_assignment)
     @events.add(Events::DidUnassignUser.from_entity(self))
   end
@@ -200,10 +228,6 @@ class Case < ::Entity
   # -- commands/documents
   def sign_contract(program_contract)
     if not contract_document.nil?
-      return
-    end
-
-    if program_contract.program != program
       return
     end
 
@@ -239,57 +263,30 @@ class Case < ::Entity
   end
 
   # -- commands/activity
-  private def track_new_activity(has_new_activity)
-    if @has_new_activity == has_new_activity
+  private def track_new_activity(new_activity)
+    if @new_activity == new_activity
       return
-    elsif has_new_activity && complete?
+    elsif new_activity && complete?
       return
     end
 
-    @has_new_activity = has_new_activity
+    @new_activity = new_activity
     @events.add_unique(Events::DidChangeActivity.from_entity(self))
   end
 
   # -- queries --
   # -- queries/status
-  alias :referrer? :is_referrer
-  alias :referral? :is_referred
-
-  def opened?
-    return @status == Status::Opened
-  end
-
-  def pending?
-    return @status == Status::Pending
-  end
-
-  def submitted?
-    return @status == Status::Submitted
-  end
-
-  def approved?
-    return @status == Status::Approved
-  end
-
-  def denied?
-    return @status == Status::Denied
-  end
-
-  def removed?
-    return @status == Status::Removed
-  end
-
-  def active?
-    return opened? || pending? || submitted?
-  end
-
-  def complete?
-    return !active?
-  end
-
-  def wrap?
-    return @program == Program::Name::Wrap
-  end
+  delegate(
+    :opened?,
+    :pending?,
+    :submitted?,
+    :approved?,
+    :denied?,
+    :removed?,
+    :active?,
+    :complete?,
+    to: :status,
+  )
 
   alias :can_complete? :submitted?
 
@@ -297,12 +294,13 @@ class Case < ::Entity
     return opened? || pending?
   end
 
-  def can_make_referral?(program)
-    approved? &&
-    @program != program &&
-    !@is_referred &&
-    !@is_referrer
-  end
+  # -- queries/condition
+  delegate(
+    :active?,
+    :archived?,
+    :deleted?,
+    to: :condition,
+  )
 
   # -- queries/documents
   def documents
@@ -319,32 +317,13 @@ class Case < ::Entity
     contract_document&.source_url&.to_sym
   end
 
-  # -- queries/household
-  def fpl_percentage
-    household = recipient&.dhs_account&.household
-    if household.nil?
-      return nil
-    end
-
-    hh_size = household.size
-    hh_month_cents = household.income_cents
-
-    if hh_size.nil? || hh_month_cents.nil?
-      return nil
-    end
-
-    hh_year_cents = hh_month_cents * 12
-
-    fpl_month_cents = 1580_00 + (hh_size - 1) * 540_00
-    fpl_year_cents = fpl_month_cents * 8
-    fpl_percentage = hh_year_cents * 100 / fpl_year_cents.to_f
-
-    fpl_percentage.round(0)
-  end
-
   # -- callbacks --
   def did_save(record)
     @id.set(record.id)
     @record = record
+  end
+
+  def did_save_assignment(record)
+    @new_assignment.did_save(record)
   end
 end

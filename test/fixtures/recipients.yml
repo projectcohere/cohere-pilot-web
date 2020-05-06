@@ -8,6 +8,7 @@ recipient_1:
   state: MI
   zip: 22222
   dhs_number: null
+  household_proof_of_income: dhs
 
 recipient_2:
   first_name: Johnice
@@ -19,12 +20,13 @@ recipient_2:
   state: MI
   zip: 44444
   dhs_number: 88888
+  household_proof_of_income: dhs
   household_size: 3
   household_income_cents: 300_00
 
 recipient_3:
-  first_name: Danice
-  last_name: Sample
+  first_name: Taylor
+  last_name: Test
   phone_number: 3334445555
   street: 123 Sample St.
   street2: Apt. 2
@@ -32,11 +34,12 @@ recipient_3:
   state: MI
   zip: 22222
   dhs_number: 99999
+  household_proof_of_income: dhs
   household_size: 2
   household_income_cents: 400_00
 
 recipient_4:
-  first_name: Chat
+  first_name: Balthazar
   last_name: Sample
   phone_number: 4445556666
   street: 8 Sample St.
@@ -45,5 +48,5 @@ recipient_4:
   state: MI
   zip: 22222
   dhs_number: 00000
-  household_size: 2
-  household_income_cents: 400_00
+  household_proof_of_income: uia
+  household_size: 3

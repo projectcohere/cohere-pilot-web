@@ -1,21 +1,21 @@
 module Support
   module Channels
     # -- queries --
-    def case_activity_for(partner_name)
-      partner_rec = partners(partner_name)
-      return Cases::ActivityChannel::broadcasting_for(partner_rec.id)
+    def case_activity_for(user_name)
+      user_rec = users(user_name)
+      return Cases::ActivityChannel.broadcasting_for("#{user_rec.role}@#{user_rec.partner_id}")
     end
 
     def chat_messages_for(chat_name)
       chat_rec = chats(chat_name)
-      return Chats::MessageChannel::broadcasting_for(chat_rec.id)
+      return Chats::MessagesChannel.broadcasting_for(chat_rec.id)
     end
 
     # -- asserts --
     def assert_matching_broadcast_on(stream)
       assert(block_given?, "expected a matching block for `assert_matching_broadcast_on")
 
-      messages = broadcasts(stream)
+      messages = broadcasts(broadcasting_for(stream))
       assert(messages.length > 0, "expected at least one broadcast")
 
       has_match = messages.any? do |msg|

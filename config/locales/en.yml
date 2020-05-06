@@ -2,12 +2,60 @@ en:
   flashes:
     failure_after_create: Your e-mail and password did not match.
     failure_after_update: Password did not meet requirements.
+
+  pages: &pages
+    cases: Cases
+    queue: Inbox
+    search: Search
+
   layouts:
-    header:
+    navigation:
+      <<: *pages
       logo: Cohere
       sign-out: Sign Out
+
+  # -- domain --
+  case:
+    status:
+      opened: "Opened"
+      pending: "Pending"
+      submitted: "Submitted"
+      approved: "Approved"
+      denied: "Denied"
+      removed: "Removed"
+
+  recipient:
+    proof_of_income:
+      dhs: "Active MDHHS Case"
+      wrap: "WRAP"
+      meap: "MEAP"
+      ec_program: "Early Childhood Program"
+      weatherization: "Weatherization"
+      uia: "UIA Benefit Letter or Application"
+      ssi_ssdi: "SSI or SSDI"
+      pension_retirement: "Pension or Retirement Benefits"
+      military: "Military Benefits"
+      paystubs: "Paystubs"
+      layoff: "Layoff or Reduced Hours Notice"
+      hptap_pays: "HPTAP or PAYS"
+      attested_income: "Income, Self-Attested"
+      attested_no_income: "No Income, Self-Attested"
+
+    ownership:
+      rent: "Rent"
+      own: "Own"
+      unknown: ""
+
+  program:
+    contract:
+      meap: "MEAP"
+      wrap_3h: "WRAP ($300)"
+      wrap_1k: "WRAP ($1000"
+      unknown: "Unknown"
+
+  # -- views --
   users:
-    # fields
+    # -- fields
     email:
       label: E-mail
       placeholder: "you@work.com"
@@ -15,7 +63,8 @@ en:
       label: Password
     password-confirmation:
       label: Confirm Password
-    # controllers
+
+    # -- controllers
     passwords:
       forgot:
         title: Forgot Your Password?
@@ -24,18 +73,165 @@ en:
       rules:
         - at least 12 characters
         - at least one letter, number, and symbol
+
+  cases:
+    # -- lists
+    index: &case-index
+      title: "My Cases"
+      fallback: "You've finished your cases. Check the %{cta} for more."
+      cta-link: "Inbox"
+
+    queue: &case-queue
+      title: "Inbox"
+      subtitle: "These cases are waiting to be claimed. Click 'Assign to Me' to add it to %{cta}."
+      fallback: "There are no cases left in the Inbox."
+      cta-link: "Your Cases"
+
+    search: &case-search
+      title: "Search Cases"
+      fallback: "There are no matching %{adj} cases."
+
+    # -- detail/forms
+    single: &case-single
+      title: "%{name}'s case"
+
+    fields: &case-fields
+      details:
+        title: "Details"
+        status: "Status"
+        program: "Program"
+        enroller: "Enroller"
+
+      contact:
+        title: "Contact"
+        phone-number: "Phone #"
+        address: "Primary Residential Address"
+
+      contract:
+        title: "Contract"
+        variant:
+          label: "Signed Contract?"
+          fallback: "None"
+
+      supplier_account:
+        title: "Utility Account"
+        supplier: "Supplier"
+        number: "Account #"
+        arrears: "Arrears"
+        active-service: "Active?"
+
+      dhs:
+        title: "MDHHS"
+
+      household:
+        title: "Household"
+        size: "Size"
+        ownership: "Rent or Own?"
+        primary-residence: "Primary Residence?"
+        proof-of-income: "Proof of Income"
+        dhs-number: "MDHHS Case #"
+        income: "Monthly Income"
+        fpl-percent:
+          label: "FPL"
+          fallback: "Unknown"
+
+    # -- partials
+    forms:
+      <<: *case-fields
+
+    detail:
+      <<: *case-fields
+
+    search:
+      prompt: "Enter an applicant's name or phone number to find their cases."
+      action: "Find Cases"
+
+  source:
+    cases:
+      index:
+        title: "%{name} Cases"
+        actions:
+          new: "Start a Case"
+        list:
+          fallback: "No cases added."
+
+      select:
+        title: "New Case"
+        actions:
+          back: "Back to Cases"
+          submit: "Start Case"
+
+        program:
+          title: "Start a New Case"
+          subtitle: "Please pick one of these programs to start a new application."
+          placeholder: "Select a Program"
+
+  governor:
+    cases:
+      index:
+        <<: *case-index
+      queue:
+        <<: *case-queue
+      search:
+        <<: *case-search
+
+  agent:
+    cases:
+      index:
+        <<: *case-index
+      queue:
+        <<: *case-queue
+      search:
+        <<: *case-search
+
+      edit:
+        actions:
+          remove: "Remove Case"
+          archive: "Archive"
+          referral: "Select Referral"
+
+      show:
+        <<: *case-single
+        actions:
+          back: "Back to Cases"
+          edit: "Edit"
+
+    referrals:
+      select:
+        <<: *case-single
+        actions:
+          back: "Back to Case Details"
+          submit: "Start Referral"
+
+        program:
+          title: "Start a New Referral"
+          subtitle: "Please pick one of these programs to start a new referral application."
+          placeholder: "Select a Program"
+
+  enroller:
+    cases:
+      index:
+        <<: *case-index
+      queue:
+        <<: *case-queue
+      search:
+        <<: *case-search
+
+
   # imagine this nested in users. clearance actions & root templates don't
   # respect standard pathing:
   # https://github.com/thoughtbot/clearance/pull/743
   sessions:
     new:
-      title: Welcome to the Cohere Pilot!
+      title: Welcome to Cohere!
       prompt: Thank you for participating, please sign in.
       forgot-password: Forgot your password?
+
   # see `sessions:` above
   passwords:
     create:
-      message: Thank you! If you're registered for the pilot, you'll receive an e-mail in the next few minutes with further instructions.
+      message: Thank you! If we find your account, you'll receive an e-mail in the next few minutes with further instructions.
+
     edit:
       invite:
         title: Create Your Password

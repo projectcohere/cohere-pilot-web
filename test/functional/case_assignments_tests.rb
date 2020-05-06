@@ -5,7 +5,7 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
 
   # -- create --
   test "can't self-assign a case without permission" do
-    user_rec = users(:supplier_1)
+    user_rec = users(:source_1)
 
     assert_raises(ActionController::RoutingError) do
       post("/cases/3/assignments")
@@ -16,8 +16,8 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "self-assign a case as a cohere user" do
-    user_rec = users(:cohere_1)
+  test "self-assign a case as an agent" do
+    user_rec = users(:agent_1)
     case_rec = cases(:opened_2)
 
     act = -> do
@@ -29,17 +29,17 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
       &act
     )
 
-    assert_redirected_to("/cases")
+    assert_redirected_to("/cases/inbox")
     assert_present(flash[:notice])
 
-    assert_matching_broadcast_on(case_activity_for(:cohere_1)) do |msg|
+    assert_matching_broadcast_on(case_activity_for(:agent_1)) do |msg|
       assert_equal(msg["name"], "DID_ASSIGN_USER")
       assert_entry(msg["data"], "case_id")
     end
   end
 
-  test "self-assign a case a dhs user" do
-    user_rec = users(:dhs_1)
+  test "self-assign a case a governor" do
+    user_rec = users(:governor_1)
     case_rec = cases(:opened_2)
 
     act = -> do
@@ -51,7 +51,7 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
       &act
     )
 
-    assert_redirected_to("/cases")
+    assert_redirected_to("/cases/inbox")
     assert_present(flash[:notice])
 
     assert_matching_broadcast_on(case_activity_for(:governor_1)) do |msg|
@@ -60,7 +60,7 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "can't self-assign another enroller's case as an enroller user" do
+  test "can't self-assign another enroller's case as an enroller" do
     user_rec = users(:enroller_1)
     case_rec = cases(:submitted_2)
 
@@ -69,7 +69,7 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "self-assign a case as an enroller user" do
+  test "self-assign a case as an enroller" do
     user_rec = users(:enroller_1)
     case_rec = cases(:submitted_1)
     case_rec.assignments.destroy_all
@@ -83,7 +83,7 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
       &act
     )
 
-    assert_redirected_to("/cases")
+    assert_redirected_to("/cases/inbox")
     assert_present(flash[:notice])
 
     assert_matching_broadcast_on(case_activity_for(:enroller_1)) do |msg|
@@ -94,7 +94,7 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
 
   # -- destroy --
   test "can't unassign a user without permission" do
-    user_rec = users(:supplier_1)
+    user_rec = users(:source_1)
 
     assert_raises(ActionController::RoutingError) do
       delete("/cases/3/assignments/1")
@@ -105,8 +105,8 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "unassign a user as a cohere user" do
-    user_rec = users(:cohere_1)
+  test "unassign a user as an agent" do
+    user_rec = users(:agent_1)
     case_rec = cases(:opened_1)
     case_assignment_rec = case_rec.assignments.first
 
@@ -122,7 +122,7 @@ class CaseAssignmentsTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases/#{case_rec.id}/edit")
     assert_present(flash[:notice])
 
-    assert_matching_broadcast_on(case_activity_for(:cohere_1)) do |msg|
+    assert_matching_broadcast_on(case_activity_for(:agent_1)) do |msg|
       assert_equal(msg["name"], "DID_UNASSIGN_USER")
       assert_entry(msg["data"], "case_id")
     end

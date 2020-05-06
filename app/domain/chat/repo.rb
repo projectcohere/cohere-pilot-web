@@ -4,11 +4,11 @@ class Chat
 
     # -- lifetime --
     def initialize(
-      domain_events: Service::Container.domain_events,
-      chat_message_repo: Chat::Message::Repo.get
+      domain_events: ::Events::DispatchAll.get.events,
+      message_repo: Chat::Message::Repo.get
     )
       @domain_events = domain_events
-      @chat_message_repo = chat_message_repo
+      @message_repo = message_repo
     end
 
     # -- queries --
@@ -57,35 +57,38 @@ class Chat
         .by_recipient(recipient_id)
         .first!
 
-      chat_messages = @chat_message_repo
-        .find_many_by_chat_with_attachments(chat_rec.id)
+      messages = @message_repo
+        .find_all_by_chat_with_attachments(chat_rec.id)
 
-      return entity_from(chat_rec, chat_messages)
+      return entity_from(chat_rec, messages)
     end
 
-    def find_by_selected_message(chat_message_id)
-      chat_message = @chat_message_repo
-        .find_with_attachments(chat_message_id)
+    def find_by_message_with_attachments(message_id)
+      message = @message_repo
+        .find_with_attachments(message_id)
 
-      chat_rec = Chat::Record
-        .find(chat_message.chat_id)
-
-      chat = entity_from(chat_rec, [chat_message])
-        .tap { |chat| chat.select_message(0) }
-
-      return chat
+      return find_with_message(message)
     end
 
-    def find_by_selected_attachment(attachment_id)
-      chat_message = @chat_message_repo
-        .find_by_selected_attachment(attachment_id)
+    def find_by_message_remote_id(message_remote_id)
+      message = @message_repo
+        .find_by_remote_id(message_remote_id)
 
-      chat_rec = Chat::Record
-        .find(chat_message.chat_id)
+      return find_with_message(message)
+    end
 
-      chat = entity_from(chat_rec, [chat_message])
-        .tap { |chat| chat.select_message(0) }
+    def find_by_attachment(attachment_id)
+      message = @message_repo
+        .find_by_attachment(attachment_id)
 
+      return find_with_message(message)
+    end
+
+    # -- queries/helpers
+    private def find_with_message(message)
+      chat_rec = Chat::Record.find(message.chat_id)
+      chat = entity_from(chat_rec, [message])
+      chat.select_message(0)
       return chat
     end
 
@@ -143,6 +146,21 @@ class Chat
       @domain_events.consume(chat.events)
     end
 
+    def save_message_sms(chat)
+      message = chat&.selected_message
+      assert(message.record != nil, "chat and message must be persisted")
+
+      # update the record
+      message_rec = message.record
+      assign_message_sms(message, message_rec)
+
+      # save the record
+      message_rec.save!
+
+      # consume all entity events
+      @domain_events.consume(chat.events)
+    end
+
     def save_uploaded_attachment(chat)
       attachment = chat.selected_attachment
       assert(attachment.record != nil, "selected attachment must be persisted")
@@ -177,6 +195,16 @@ class Chat
         sender: m.sender,
         body: m.body,
       })
+
+      assign_message_sms(message, message_rec)
+    end
+
+    private def assign_message_sms(message, message_rec)
+      m = message
+      message_rec.assign_attributes({
+        status: m.status.key,
+        remote_id: m.remote_id,
+      })
     end
 
     private def create_attachments!(message, message_rec)
@@ -200,9 +228,7 @@ class Chat
 
     private def create_file!(file)
       f = file
-
-      # TODO: change to create_and_upload! after upgrade to Rails 6.0.2
-      return ActiveStorage::Blob.create_after_upload!(
+      return ActiveStorage::Blob.create_and_upload!(
         io: f.data,
         filename: f.name,
         content_type: f.mime_type,
@@ -242,7 +268,8 @@ class Chat
 
     def self.by_phone_number(phone_number)
       scope = self
-        .left_joins(:recipient)
+        .includes(:recipient)
+        .references(:recipients)
         .where(recipients: { phone_number: phone_number })
 
       return scope

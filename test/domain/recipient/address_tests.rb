@@ -11,7 +11,7 @@ module Recipient
         zip: "48126"
       )
 
-      assert_equal(address.to_lines, [
+      assert_equal(address.lines, [
         "123 Sample St.",
         "Apt. 2",
         "Detroit, MI 48126"

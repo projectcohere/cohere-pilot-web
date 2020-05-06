@@ -1,16 +1,12 @@
 class Partner
   class Repo < ::Repo
-    include Service::Singleton
-
-    # -- lifetime --
-    def initialize(user_repo: User::Repo.get)
-      @user_repo = user_repo
-    end
+    include Service::Single
+    include User::Context
 
     # -- queries --
     # -- queries/one
     def find(id)
-      find_cached(id) do
+      return find_cached(id) do
         record = Partner::Record
           .find(id)
 
@@ -19,37 +15,27 @@ class Partner
     end
 
     def find_cohere
-      find_cached(:cohere) do
+      return find_cached(:cohere) do
         record = Partner::Record
-          .find_by!(membership: Membership::Cohere)
+          .find_by!(membership: Partner::Membership::Cohere.key)
 
         entity_from(record)
       end
     end
 
     def find_dhs
-      find_cached(:dhs) do
+      return find_cached(:dhs) do
         record = Partner::Record
-          .find_by!(membership: Membership::Governor)
+          .find_by!(membership: Partner::Membership::Governor.key)
 
         entity_from(record)
       end
     end
 
-    def find_current_supplier
-      current_user = @user_repo.find_current
-      if not current_user.role.supplier?
-        return nil
-      end
-
-      find(current_user.role.partner_id)
-    end
-
     def find_default_enroller
-      find_cached(:default_enroller) do
+      return find_cached(:default_enroller) do
         record = Partner::Record
-          .where(membership: Membership::Enroller)
-          .first
+          .find_by!(membership: Partner::Membership::Enroller.key)
 
         entity_from(record)
       end
@@ -59,7 +45,7 @@ class Partner
     def find_all_by_ids(ids)
       ids = ids.uniq
 
-      find_cached(ids.join(",")) do
+      return find_cached(ids.join(",")) do
         partner_recs = Partner::Record
           .where(id: ids)
 
@@ -67,20 +53,27 @@ class Partner
       end
     end
 
-    def find_all_suppliers_by_program(program)
-      partner_recs = Partner::Record
-        .where(membership: Membership::Supplier)
-        .where("programs @> '{?}'", ::Program::Name.index(program))
+    def find_all_suppliers_by_program(program_id)
+      partner_query = Partner::Record
+        .with_membership(Partner::Membership::Supplier)
+        .with_program(program_id)
 
-      partner_recs.map { |r| entity_from(r) }
+      # authorize by membership
+      q = partner_query
+      if user_partner&.membership&.supplier?
+        q = q.where(id: user_partner_id)
+      end
+
+      return q.map { |r| entity_from(r) }
     end
 
     # -- factories --
     def self.map_record(r)
-      Partner.new(
+      return Partner.new(
         id: r.id,
         name: r.name,
-        membership: r.membership&.to_sym
+        membership: Partner::Membership.from_key(r.membership),
+        programs: r.programs.map { |r| Program::Repo.map_record(r) },
       )
     end
   end

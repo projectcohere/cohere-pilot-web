@@ -12,43 +12,86 @@ class Case
       case action
       when :list
         true
+      when :list_queue
+        agent? || enroller? || governor?
+      when :list_search
+        agent? || enroller? || governor?
       # create
       when :create
-        supplier?
+        source?
       when :create_assignment
-        cohere? || enroller? || dhs?
+        agent? || enroller? || governor?
       # edit
       when :edit
-        cohere? || dhs?
+        agent? || governor?
+      when :edit_contract
+        agent? && requirement?(&:contract_present?)
+      when :edit_address
+        agent? || source?
+      when :edit_contact
+        agent? || source?
+      when :edit_address_geography
+        source?
+      when :edit_household
+        agent? || governor? || permit?(:edit_household_source)
+      when :edit_household_source
+        permit?(:edit_household_ownership) || permit?(:edit_household_proof_of_income)
+      when :edit_household_size
+        agent? || governor?
+      when :edit_household_ownership
+        (agent? || source?) && requirement?(&:household_ownership?)
+      when :edit_household_proof_of_income
+        (agent? || source?) && !requirement?(&:household_proof_of_income_dhs?)
+      when :edit_household_dhs_number
+        (agent? || governor?) && proof_of_income?(&:dhs?)
+      when :edit_household_size
+        agent? || governor?
+      when :edit_household_income
+        (agent? || governor?) && proof_of_income?(&:dhs?)
+      when :edit_supplier_account
+        (agent? || source?) && requirement?(&:supplier_account_present?)
       when :edit_supplier
-        cohere?
-      when :edit_ownership
-        cohere? && wrap?
-      when :edit_is_primary_residence
-        cohere? && wrap?
-      when :edit_has_active_service
-        cohere? && wrap?
+        agent? || (source? && !supplier?)
+      when :edit_supplier_account_active_service
+        agent? && requirement?(&:supplier_account_active_service?)
+      when :edit_documents
+        agent?
+      when :edit_admin
+        agent?
       # view
       when :view
-        cohere? || enroller?
+        agent? || enroller?
+      when :view_supplier_account
+        (agent? || enroller?) && requirement?(&:supplier_account_present?)
       when :view_fpl
-        cohere? || enroller?
-      when :view_ownership
-        cohere? && wrap?
-      when :view_is_primary_residence
-        cohere? && wrap?
-      when :view_has_active_service
-        cohere? && wrap?
+        agent? || enroller?
+      when :view_details_enroller
+        agent?
+      when :view_household_size
+        agent? || enroller?
+      when :view_household_ownership
+        agent? && requirement?(&:household_ownership?)
+      when :view_household_proof_of_income
+        (agent? || enroller?) && !requirement?(&:household_proof_of_income_dhs?)
+      when :view_household_dhs_number
+        (agent? || enroller?) && proof_of_income?(&:dhs?)
+      when :view_household_income
+        (agent? || enroller?) && proof_of_income?(&:dhs?)
+      when :view_supplier_account_active_service
+        agent? && requirement?(&:supplier_account_active_service?)
       # actions
       when :referral
-        cohere?
+        agent?
       when :complete
-        cohere? || enroller?
+        agent? || enroller?
       # destroy
       when :destroy
-        cohere?
+        agent?
       when :destroy_assignment
-        cohere?
+        agent?
+      # archive
+      when :archive
+        agent?
       else
         super
       end
@@ -63,18 +106,18 @@ class Case
     def with_case(kase)
       previous = @case
       @case = kase
-      result = yield
+      result = yield(self)
       @case = previous
       result
     end
 
     # -- queries --
-    private def meap?
-      @case.program == Program::Name::Meap
+    private def requirement?(&predicate)
+      return @case.program.requirements.any?(&predicate)
     end
 
-    private def wrap?
-      @case.program == Program::Name::Wrap
+    private def proof_of_income?(&predicate)
+      return predicate.(@case.household.proof_of_income)
     end
   end
 end

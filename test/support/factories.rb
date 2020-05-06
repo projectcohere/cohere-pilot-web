@@ -1,19 +1,19 @@
 module Support
   module Factories
     def self.stub_all
+      # TODO: search for all types to stub in domain
       types_to_stub = [
+        Role,
         User,
-        User::Role,
+        User::Invitation,
         Partner,
+        Program,
+        Program::Contract,
         Case,
         Case::Account,
         Case::Recipient,
         Case::Assignment,
         Recipient::Profile,
-        Recipient::Name,
-        Recipient::Address,
-        Recipient::Phone,
-        Recipient::DhsAccount,
         Recipient::Household,
         Document,
         Chat,
@@ -28,6 +28,9 @@ module Support
         Stats::Durations,
         Stats::Duration,
         Stats::Quantity,
+        Name,
+        Address,
+        Phone,
       ]
 
       types_to_stub.each do |type_to_stub|

@@ -43,9 +43,9 @@ module Db
     test "finds a case and assignment by id" do
       case_repo = Case::Repo.new
       case_rec = cases(:opened_1)
-      case_assignment_rec = case_assignments(:cohere_1)
+      partner_rec = partners(:cohere_1)
 
-      kase = case_repo.find_with_assignment(case_rec.id, case_assignment_rec.id)
+      kase = case_repo.find_with_assignment(case_rec.id, partner_rec.id)
       assert_equal(kase.id.val, case_rec.id)
 
       assignment = kase.selected_assignment
@@ -69,14 +69,14 @@ module Db
       kase = case_repo.find_with_associations(case_rec.id)
       assert_equal(kase.id.val, case_rec.id)
       assert_length(kase.documents, 2)
-      assert(kase.is_referrer)
+      assert(kase.referrer?)
     end
 
     test "finds a submitted case by id for an enroller" do
       case_repo = Case::Repo.new
       case_rec = cases(:submitted_1)
 
-      kase = case_repo.find_with_documents_for_enroller(case_rec.id, case_rec.enroller_id)
+      kase = case_repo.find_with_assosciations_for_enroller(case_rec.id, case_rec.enroller_id)
       assert_not_nil(kase)
       assert_equal(kase.status, Case::Status::Submitted)
     end
@@ -86,7 +86,7 @@ module Db
       case_rec = cases(:opened_1)
 
       assert_raises(ActiveRecord::RecordNotFound) do
-        case_repo.find_with_documents_for_enroller(case_rec.id, case_rec.enroller_id)
+        case_repo.find_with_assosciations_for_enroller(case_rec.id, case_rec.enroller_id)
       end
     end
 
@@ -96,25 +96,27 @@ module Db
       case_rec2 = cases(:submitted_2)
 
       assert_raises(ActiveRecord::RecordNotFound) do
-        case_repo.find_with_documents_for_enroller(case_rec1.id, case_rec2.enroller_id)
+        case_repo.find_with_assosciations_for_enroller(case_rec1.id, case_rec2.enroller_id)
       end
     end
 
-    test "finds an opened case by id for a dhs user" do
+    test "finds an opened case by id for a governor" do
       case_repo = Case::Repo.new
       case_rec = cases(:opened_1)
+      user_rec = users(:governor_1)
 
-      kase = case_repo.find_with_documents_for_dhs(case_rec.id)
+      kase = case_repo.find_with_documents_for_governor(case_rec.id, user_rec.partner_id)
       assert_not_nil(kase)
       assert_equal(kase.status, Case::Status::Opened)
     end
 
-    test "can't find an submitted case by id for a dhs user" do
+    test "can't find a submitted case by id for a governor" do
       case_repo = Case::Repo.new
       case_rec = cases(:submitted_1)
+      user_rec = users(:governor_1)
 
       assert_raises(ActiveRecord::RecordNotFound) do
-        case_repo.find_with_documents_for_dhs(case_rec.id)
+        case_repo.find_with_documents_for_governor(case_rec.id, user_rec.partner_id)
       end
     end
 
@@ -127,105 +129,24 @@ module Db
       assert_equal(kase.recipient.id.val, case_recipient_rec.id)
     end
 
-    test "finds a page of assigned cases" do
-      case_repo = Case::Repo.new
-      user_rec = users(:cohere_1)
-
-      case_page, cases = case_repo.find_all_assigned_by_user(Id.new(user_rec.id), page: 1)
-      assert_length(cases, 1)
-      assert_equal(case_page.count, 1)
-    end
-
-    test "finds a page of opened cases for a cohere user" do
-      case_repo = Case::Repo.new
-      user_rec = users(:cohere_1)
-
-      case_page, cases = case_repo.find_all_opened_for_cohere(user_rec.partner_id, page: 1)
-      assert_length(cases, 8)
-      assert_equal(case_page.count, 8)
-      assert(cases.any? { |c| c.selected_assignment != nil })
-    end
-
-    test "finds a page of completed cases for a cohere user" do
-      case_repo = Case::Repo.new
-      user_rec = users(:cohere_1)
-
-      case_page, cases = case_repo.find_all_completed_for_cohere(user_rec.partner_id, page: 1)
-      assert_length(cases, 2)
-      assert_equal(case_page.count, 2)
-      assert(cases.any? { |c| c.selected_assignment != nil })
-    end
-
-    test "finds a page of queued cases for a cohere user" do
-      case_repo = Case::Repo.new
-      user_rec = users(:cohere_1)
-
-      case_page, cases = case_repo.find_all_queued_for_cohere(user_rec.partner_id, page: 1)
-      assert_length(cases, 7)
-      assert_equal(case_page.count, 7)
-    end
-
-    test "finds a page of opened cases for a supplier" do
-      case_repo = Case::Repo.new
-      partner_rec = partners(:supplier_1)
-
-      case_page, cases = case_repo.find_all_opened_for_supplier(partner_rec.id, page: 1)
-      assert_length(cases, 7)
-      assert_equal(case_page.count, 7)
-      assert(cases.any? { |c| c.selected_assignment != nil })
-    end
-
-    test "finds a page of queued cases for a dhs partner" do
-      case_repo = Case::Repo.new
-      partner_rec = partners(:governor_1)
-
-      case_page, cases = case_repo.find_all_queued_for_dhs(partner_rec.id, page: 1)
-      assert_length(cases, 4)
-      assert_equal(case_page.count, 4)
-    end
-
-    test "finds a page of opened cases for a dhs partner" do
-      case_repo = Case::Repo.new
-      partner_rec = partners(:governor_1)
-
-      case_page, cases = case_repo.find_all_opened_for_dhs(partner_rec.id, page: 1)
-      assert_length(cases, 5)
-      assert_equal(case_page.count, 5)
-      assert(cases.any? { |c| c.selected_assignment != nil })
-    end
-
-    test "finds a page of queued cases for an enroller" do
-      case_repo = Case::Repo.new
-      partner_rec = partners(:enroller_1)
-
-      case_page, cases = case_repo.find_all_queued_for_enroller(partner_rec.id, page: 1)
-      assert_length(cases, 0)
-      assert_equal(case_page.count, 0)
-    end
-
-    test "finds a page of submitted cases for an enroller" do
-      case_repo = Case::Repo.new
-      partner_rec = partners(:enroller_1)
-
-      case_page, cases = case_repo.find_all_submitted_for_enroller(partner_rec.id, page: 1)
-      assert_length(cases, 3)
-      assert_equal(case_page.count, 3)
-      assert(cases.any? { |c| c.selected_assignment != nil })
-    end
-
     # -- test/save
     test "saves an opened case" do
       case_repo = Case::Repo.new
 
-      recipient_profile = Recipient::Profile.stub(
-        phone: Recipient::Phone.stub(
+      user_rec = users(:source_2)
+      supplier_rec = user_rec.partner
+      program_rec = supplier_rec.programs.first
+      enroller_rec = partners(:enroller_1)
+
+      profile = Recipient::Profile.stub(
+        phone: Phone.stub(
           number: Faker::PhoneNumber.phone_number
         ),
-        name: Recipient::Name.stub(
+        name: Name.stub(
           first: "Janice",
           last: "Sample"
         ),
-        address: Recipient::Address.stub(
+        address: Address.stub(
           street: "123 Test St.",
           city: "Testburg",
           state: "Testissippi",
@@ -233,17 +154,26 @@ module Db
         )
       )
 
+      household = Recipient::Household.stub(
+        proof_of_income: Recipient::ProofOfIncome::Weatherization,
+        ownership: Recipient::Ownership::Own,
+      )
+
       supplier_account = Case::Account.stub(
+        supplier_id: supplier_rec.id,
         number: "12345",
-        arrears_cents: 1000_00
+        arrears: Money.cents(1000_00),
       )
 
       kase = Case.open(
-        recipient_profile: recipient_profile,
-        enroller: Partner::Repo.map_record(partners(:enroller_1)),
-        supplier_user: User::Repo.map_record(users(:supplier_1)),
+        program: Program::Repo.map_record(program_rec),
+        profile: profile,
+        household: household,
+        enroller: Partner::Repo.map_record(enroller_rec),
         supplier_account: supplier_account,
       )
+
+      kase.assign_user(User::Repo.map_record(user_rec))
 
       act = -> do
         case_repo.save_opened(kase)
@@ -261,23 +191,33 @@ module Db
       assert_not_nil(kase.recipient.record)
       assert_not_nil(kase.recipient.id.val)
 
+      case_rec = kase.record
+      assert(case_rec.opened?)
+      assert(case_rec.active?)
+      assert_equal(case_rec.program.id, program_rec.id)
+
       events = kase.events
       assert_length(events, 0)
-      assert_length(Service::Container.domain_events, 2)
+      assert_length(Events::DispatchAll.get.events, 2)
     end
 
     test "saves an opened case for an existing recipient" do
       case_repo = Case::Repo.new
 
-      recipient_profile = Recipient::Profile.new(
-        phone: Recipient::Phone.new(
+      user_rec = users(:source_1)
+      enroller_rec = partners(:enroller_1)
+      supplier_rec = user_rec.partner
+      program_rec = supplier_rec.programs.first
+
+      profile = Recipient::Profile.new(
+        phone: Phone.new(
           number: "1112223333"
         ),
-        name: Recipient::Name.new(
+        name: Name.new(
           first: "Janice",
           last: "Sample"
         ),
-        address: Recipient::Address.new(
+        address: Address.new(
           street: "123 Test St.",
           city: "Testburg",
           state: "Testissippi",
@@ -285,17 +225,26 @@ module Db
         )
       )
 
+      household = Recipient::Household.stub(
+        proof_of_income: Recipient::ProofOfIncome::Uia,
+        ownership: Recipient::Ownership::Rent,
+      )
+
       supplier_account = Case::Account.new(
+        supplier_id: supplier_rec.id,
         number: "12345",
-        arrears_cents: 1000_00
+        arrears: Money.cents(1000_00),
       )
 
       kase = Case.open(
-        recipient_profile: recipient_profile,
-        enroller: Partner::Repo.map_record(partners(:enroller_1)),
-        supplier_user: User::Repo.map_record(users(:supplier_1)),
+        program: Program::Repo.map_record(program_rec),
+        profile: profile,
+        household: household,
+        enroller: Partner::Repo.map_record(enroller_rec),
         supplier_account: supplier_account,
       )
+
+      kase.assign_user(User::Repo.map_record(user_rec))
 
       act = -> do
         case_repo.save_opened(kase)
@@ -315,28 +264,24 @@ module Db
 
       events = kase.events
       assert_length(events, 0)
-      assert_length(Service::Container.domain_events, 2)
+      assert_length(Events::DispatchAll.get.events, 2)
     end
 
     test "saves a dhs contribution" do
       case_rec = cases(:opened_1)
 
       kase = Case::Repo.map_record(case_rec)
-      kase.add_dhs_data(
-        Recipient::DhsAccount.new(
-          number: "11111",
-          household: Recipient::Household.stub(
-            size: 3,
-            income_cents: 999_00
-          )
-        )
-      )
+      kase.add_governor_data(Recipient::Household.stub(
+        dhs_number: "11111",
+        size: 3,
+        income: Money.cents(999_00),
+      ))
 
       case_repo = Case::Repo.new
-      case_repo.save_dhs_contribution(kase)
+      case_repo.save_governor_data(kase)
 
       case_rec = kase.record
-      assert(case_rec.has_new_activity)
+      assert(case_rec.new_activity)
       assert_equal(case_rec.status, "pending")
 
       recipient_rec = case_rec.recipient
@@ -345,24 +290,25 @@ module Db
       assert_equal(recipient_rec.household_income_cents, 999_00)
     end
 
-    test "saves a cohere contribution" do
+    test "saves agent data" do
       case_repo = Case::Repo.new
       case_rec = cases(:opened_2)
 
       supplier_account = Case::Account.new(
+        supplier_id: case_rec.supplier_id,
         number: "12345",
-        arrears_cents: 1000_00
+        arrears: Money.cents(1000_00),
       )
 
-      recipient_profile = Recipient::Profile.new(
-        phone: Recipient::Phone.new(
+      profile = Recipient::Profile.new(
+        phone: Phone.new(
           number: "1112223333"
         ),
-        name: Recipient::Name.new(
+        name: Name.new(
           first: "Janice",
           last: "Sample"
         ),
-        address: Recipient::Address.new(
+        address: Address.new(
           street: "123 Test St.",
           city: "Testburg",
           state: "Testissippi",
@@ -370,26 +316,25 @@ module Db
         )
       )
 
-      dhs_account = Recipient::DhsAccount.new(
-        number: "11111",
-        household: Recipient::Household.stub(
-          size: 3,
-          income_cents: 999_00
-        )
+      household = Recipient::Household.new(
+        size: 3,
+        proof_of_income: Recipient::ProofOfIncome::Uia,
+        income: Money.cents(999_00),
+        dhs_number: "11111",
+        ownership: Recipient::Ownership::Rent,
       )
 
       contract = Program::Contract.new(
-        program: Program::Name::Meap,
-        variant: Program::Contract::Meap
+        variant: :wrap_1k
       )
 
       kase = Case::Repo.map_record(case_rec)
-      kase.add_cohere_data(supplier_account, recipient_profile, dhs_account)
+      kase.add_agent_data(supplier_account, profile, household)
       kase.sign_contract(contract)
       kase.submit_to_enroller
       kase.complete(Case::Status::Approved)
 
-      case_repo.save_cohere_contribution(kase)
+      case_repo.save_agent_data(kase)
 
       c = kase.record
       assert_equal(c.status, "approved")
@@ -407,21 +352,24 @@ module Db
       assert_equal(r.zip, "12345")
       assert_equal(r.dhs_number, "11111")
       assert_equal(r.household_size, 3)
+      assert_equal(r.household_proof_of_income, "uia")
       assert_equal(r.household_income_cents, 999_00)
+      assert_equal(r.household_ownership, "rent")
 
       d = kase.new_documents[0].record
       assert_not_nil(d)
       assert_equal(d.classification, "contract")
+      assert_equal(d.source_url, "wrap_1k")
 
       events = kase.events
       assert_length(events, 0)
-      assert_length(Service::Container.domain_events, 4)
+      assert_length(Events::DispatchAll.get.events, 4)
     end
 
     test "saves a new assignment" do
       case_repo = Case::Repo.new
       case_rec = cases(:opened_2)
-      user_rec = users(:cohere_1)
+      user_rec = users(:agent_1)
 
       kase = Case::Repo.map_record(case_rec)
       user = User::Repo.map_record(user_rec)
@@ -444,20 +392,20 @@ module Db
 
       events = kase.events
       assert_length(events, 0)
-      assert_length(Service::Container.domain_events, 1)
+      assert_length(Events::DispatchAll.get.events, 1)
     end
 
-    test "saves a destroyed assignment" do
+    test "saves a removed assignment" do
       case_repo = Case::Repo.new
       case_rec = cases(:opened_1)
       case_assignment_rec = case_rec.assignments.first
 
       kase = Case::Repo.map_record(case_rec, assignments: [case_assignment_rec])
       kase.select_assignment(case_assignment_rec.partner_id)
-      kase.destroy_selected_assignment
+      kase.remove_selected_assignment
 
       act = -> do
-        case_repo.save_destroyed_assignment(kase)
+        case_repo.save_removed_assignment(kase)
       end
 
       assert_difference(
@@ -470,7 +418,7 @@ module Db
 
       events = kase.events
       assert_length(events, 0)
-      assert_length(Service::Container.domain_events, 1)
+      assert_length(Events::DispatchAll.get.events, 1)
     end
 
     test "saves a new message" do
@@ -510,7 +458,7 @@ module Db
 
       events = kase.events
       assert_length(events, 0)
-      assert_length(Service::Container.domain_events, 1)
+      assert_length(Events::DispatchAll.get.events, 1)
     end
 
     test "saves the selected attachment" do
@@ -539,34 +487,32 @@ module Db
       assert(document_rec.file.attached?)
     end
 
-    test "saves completed" do
+    test "saves a completed case" do
       case_repo = Case::Repo.new
       case_rec = cases(:submitted_1)
 
-      kase = Case::Repo.map_record(case_rec, documents: case_rec.documents)
+      kase = Case::Repo.map_record(case_rec, assignments: case_rec.assignments, documents: case_rec.documents)
       kase.complete(Case::Status::Approved)
 
       case_repo.save_completed(kase)
-      assert_equal(case_rec.status, "approved")
+      assert(case_rec.approved?)
+      assert_length(case_rec.assignments.reload, 2)
       assert_not_nil(case_rec.completed_at)
     end
 
     test "saves a referral" do
       case_repo = Case::Repo.new
       case_rec = cases(:approved_1)
+      program_rec = programs(:water_0)
       supplier_rec = partners(:supplier_3)
+      user_rec = users(:agent_1)
 
       referrer = Case::Repo.map_record(case_rec, documents: case_rec.documents)
-      referral = referrer.make_referral_to_program(
-        Program::Name::Wrap,
-        supplier_id: supplier_rec.id
-      )
+      referral = referrer.make_referral(Program::Repo.map_record(program_rec))
 
       referred = referral.referred
-      referred.sign_contract(Program::Contract.new(
-        program: Program::Name::Wrap,
-        variant: Program::Contract::Wrap3h
-      ))
+      referred.assign_user(User::Repo.map_record(user_rec))
+      referred.sign_contract(Program::Contract.new(variant: :wrap_3h))
 
       act = -> do
         case_repo.save_referral(referral)
@@ -574,6 +520,7 @@ module Db
 
       assert_difference(
         -> { Case::Record.count } => 1,
+        -> { Case::Assignment::Record.count } => 1,
         -> { Document::Record.count } => 2,
         -> { ActiveStorage::Attachment.count } => 1,
         -> { ActiveStorage::Blob.count } => 0,
@@ -584,16 +531,42 @@ module Db
       assert_not_nil(referred.id.val)
 
       referred_rec = referred.record
-      assert_equal(referred_rec.status, "opened")
-      assert_equal(referred_rec.program, "wrap")
+      assert(referred_rec.opened?)
+      assert(referred_rec.active?)
+      assert_equal(referred_rec.program.id, program_rec.id)
       assert_equal(referred_rec.referrer_id, referrer.id.val)
+
+      referrer_rec = referrer.record.reload
+      assert(referrer_rec.archived?)
 
       document_recs = referred_rec.documents
       assert_same_elements(document_recs.map(&:classification), %w[contract unknown])
 
       assert_length(referrer.events, 0)
       assert_length(referred.events, 0)
-      assert_length(Service::Container.domain_events, 3)
+      assert_length(Events::DispatchAll.get.events, 4)
+    end
+
+    test "saves a deleted case" do
+      case_repo = Case::Repo.new
+      case_rec = cases(:opened_1)
+
+      kase = Case::Repo.map_record(case_rec)
+      kase.delete
+
+      case_repo.save_deleted(kase)
+      assert(case_rec.deleted?)
+    end
+
+    test "saves a archived case" do
+      case_repo = Case::Repo.new
+      case_rec = cases(:opened_1)
+
+      kase = Case::Repo.map_record(case_rec)
+      kase.archive
+
+      case_repo.save_archived(kase)
+      assert(case_rec.archived?)
     end
   end
 end

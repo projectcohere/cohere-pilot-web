@@ -95,8 +95,7 @@ module Partners
 
         # filter out cases that don't have a determination
         intervals = intervals_by_case_id.values.filter do |i|
-          i.case_status == ::Case::Status::Approved ||
-          i.case_status == ::Case::Status::Denied
+          i.case_status.approved? || i.case_status.denied?
         end
 
         # save new durations

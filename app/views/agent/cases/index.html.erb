@@ -1,0 +1,15 @@
+<main class="Page">
+  <header class="PageHeader">
+    <%= tag.h1(t(".title"), class: "PageHeader-title") %>
+  </header>
+
+  <ul id="case-list" class="CaseList">
+    <% if @cases&.blank? %>
+      <%= tag.p(t(".fallback", cta: link_to(t(".cta-link"), queue_cases_path)).html_safe, class: "CaseList-fallback") %>
+    <% else %>
+      <%= render(partial: "agent/cases/cell", collection: @cases) %>
+    <% end %>
+  </ul>
+
+  <%= pager_for(@page, of: "cases") %>
+</main>

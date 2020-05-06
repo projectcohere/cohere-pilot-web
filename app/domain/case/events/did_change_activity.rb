@@ -3,7 +3,7 @@ class Case
     class DidChangeActivity < ::Value
       # -- props --
       prop(:case_id)
-      prop(:case_has_new_activity)
+      prop(:case_new_activity, predicate: true)
 
       # -- equality --
       def ==(other)
@@ -14,7 +14,7 @@ class Case
       def self.from_entity(kase)
         DidChangeActivity.new(
           case_id: kase.id,
-          case_has_new_activity: kase.has_new_activity,
+          case_new_activity: kase.new_activity?,
         )
       end
     end

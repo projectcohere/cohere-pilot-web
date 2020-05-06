@@ -2,42 +2,42 @@ module Enroller
   class CasesController < Cases::BaseController
     # -- actions --
     def index
-      if policy.forbid?(:list)
-        return deny_access
-      end
+      permit!(:list)
 
-      @scope = Cases::Scope.from_key(params[:scope])
-      @page, @cases = case @scope
-      when Cases::Scope::Queued
-        case_repo.find_all_queued_for_enroller(partner_id, page: params[:page])
-      when Cases::Scope::Assigned
-        case_repo.find_all_assigned_by_user(user.id, page: params[:page])
-      when Cases::Scope::Submitted
-        case_repo.find_all_submitted_for_enroller(partner_id, page: params[:page])
-      end
+      @scope = Cases::Scope::Assigned
+      @page, @cases = view_repo.find_all_assigned(page: params[:page])
+    end
+
+    def queue
+      permit!(:list_queue)
+
+      @scope = Cases::Scope::Queued
+      @page, @cases = view_repo.find_all_queued(page: params[:page])
+    end
+
+    def search
+      permit!(:list_search)
+
+      @scope = Cases::Scope::All
+      @page, @cases = view_repo.find_all_for_search(params[:search], page: params[:page])
+    end
+
+    def show
+      permit!(:view)
+      @case = view_repo.find_detail(params[:id])
+      events.add(Cases::Events::DidViewEnrollerCase.from_entity(@case))
     end
 
     def complete
-      @case = case_repo.find_with_documents_for_enroller(params[:case_id], partner_id)
-      if policy.forbid?(:complete)
-        return deny_access
-      end
+      permit!(:complete)
 
+      @case = case_repo.find_with_assosciations_for_enroller(params[:case_id], user_partner_id)
       save_case = SaveCompletedCase.new(@case, params[:complete_action].to_sym)
       save_case.()
 
       redirect_to(case_path(@case),
         notice: "#{@case.status.to_s.capitalize} #{@case.recipient.profile.name}'s case!"
       )
-    end
-
-    def show
-      @case = case_repo.find_with_documents_for_enroller(params[:id], partner_id)
-      if policy.forbid?(:view)
-        return deny_access
-      end
-
-      events.add(Cases::Events::DidViewEnrollerCase.from_entity(@case))
     end
   end
 end

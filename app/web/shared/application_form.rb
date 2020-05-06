@@ -1,23 +1,46 @@
 # A form model for an entity. It expects to be nested inside of the entity
 # as a namespace.
 class ApplicationForm
+  # for form objects, it's useful to have attribute assignment and validation
+  include ActiveModel::Model
+  include ActiveModel::Attributes
+
   # -- attrs --
   attr(:model)
 
   # -- lifetime --
-  def initialize(model = nil, attrs = {})
+  def initialize(model = nil, attrs = {}, &permit)
     @model = model
 
-    # set initial values
-    initialize_attrs(attrs)
+    # filter list of permitted subforms
+    sf_names = self.class.subform_map&.keys
 
-    # initialize subforms
-    self.class.subform_map&.each do |sf_name, sf_class|
-      sf_attrs = attrs.delete(sf_name) || {}
-      instance_variable_set("@#{sf_name}", sf_class.new(model, sf_attrs))
+    if block_given?
+      shape = self.class.params_shape(&permit)
+
+      # whitelist attrs if permittable
+      if attrs.respond_to?(:permit) && !attrs.permitted?
+        attrs = attrs.permit(shape)
+      end
+
+      sf_names &= shape.last.keys
     end
 
+    # extract nested attrs for permitted subforms
+    sf_attrs = sf_names&.each_with_object({}) do |sf_name, memo|
+      memo[sf_name] = attrs.delete(sf_name) || {}
+    end
+
+    # assign local attrs
+    initialize_attrs(attrs)
     super(attrs)
+
+    # create permitted subforms
+    sf_attrs&.each do |sf_name, sf_attrs|
+      sf_class = self.class.subform_map[sf_name]
+      subform = sf_class.new(model, sf_attrs.stringify_keys)
+      instance_variable_set("@#{sf_name}", subform)
+    end
   end
 
   # -- lifecycle --
@@ -34,17 +57,7 @@ class ApplicationForm
     attribute(name, type)
 
     if validations.present?
-      # add context-dependent validations
-      by_context = validations.delete(:on)
-      by_context&.each do |context, validations|
-        validations[:on] = context
-        validates(name, validations)
-      end
-
-      # add context-independent validations
-      if validations.present?
-        validates(name, validations)
-      end
+      validates(name, validations)
     end
   end
 
@@ -74,6 +87,10 @@ class ApplicationForm
   # -- forms/validators
   class ChildValidator < ActiveModel::EachValidator
     def validate_each(record, attribute, value)
+      if value == nil
+        return true
+      end
+
       if not value.valid?(record.validation_context)
         record.errors.merge!(value.errors)
       end
@@ -81,35 +98,32 @@ class ApplicationForm
   end
 
   # -- queries --
-  def self.params_shape
+  def self.params_shape(&permit)
     # find local form params
-    params = attribute_names.map(&:to_sym)
+    shape = attribute_names.map(&:to_sym)
 
     # join subform params
-    nested_params = @subform_map&.each_with_object({}) do |(sf_name, sf_class), memo|
-      memo[sf_name] = sf_class.params_shape
+    if subform_map != nil
+      sf_shape = subform_map.each_with_object({}) do |(sf_name, sf_class), memo|
+        if !block_given? || permit.(sf_name)
+          memo[sf_name] = sf_class.params_shape
+        end
+      end
+
+      shape.push(sf_shape)
     end
 
-    if nested_params != nil
-      params.push(nested_params)
-    end
-
-    return params
+    return shape
   end
 
   # -- ActiveModel --
   # -- ActiveModel::Model
-  # for form objects, it's helpful to have full attribute assignment and
-  # validation
-  include ActiveModel::Model
-  include ActiveModel::Attributes
-
   def id
     @model&.id
   end
 
   def persisted?
-    id&.val != nil
+    return id.is_a?(Id) ? id&.val != nil : id != nil
   end
 
   # -- ActiveModel::Naming
@@ -138,6 +152,7 @@ class ApplicationForm
   def assign_defaults!(attrs, defaults)
     defaults.each do |key, value|
       key = key.to_s
+
       if attrs[key].nil?
         attrs[key] = value
       end

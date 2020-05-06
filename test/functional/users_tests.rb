@@ -24,7 +24,7 @@ class UsersTests < ActionDispatch::IntegrationTest
   test "signs in as an enroller" do
     session_params = {
       session: {
-        email: "me@testmetro.org",
+        email: "enroll@testmetro.org",
         password: "password123$"
       }
     }
@@ -34,7 +34,7 @@ class UsersTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases")
   end
 
-  test "signs in as a supplier" do
+  test "signs in as a source" do
     session_params = {
       session: {
         email: "me@testenergy.com",
@@ -47,7 +47,7 @@ class UsersTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases")
   end
 
-  test "signs in as a dhs user" do
+  test "signs in as a governor" do
     session_params = {
       session: {
         email: "me@michigan.gov",
@@ -75,7 +75,7 @@ class UsersTests < ActionDispatch::IntegrationTest
   end
 
   test "sends a password reset email" do
-    user_rec = users(:cohere_1)
+    user_rec = users(:agent_1)
     password_params = {
       password: {
         email: user_rec.email
@@ -106,7 +106,7 @@ class UsersTests < ActionDispatch::IntegrationTest
   end
 
   test "follows the reset password link" do
-    user_rec = users(:cohere_1)
+    user_rec = users(:agent_1)
     user_rec.forgot_password! # this generates a confirmation token
     reset_params = {
       token: user_rec.confirmation_token
@@ -121,7 +121,7 @@ class UsersTests < ActionDispatch::IntegrationTest
   end
 
   test "can't view the reset password page if it wasn't requested" do
-    user_rec = users(:cohere_1)
+    user_rec = users(:agent_1)
 
     get("/user/#{user_rec.id}/password/edit", params: { token: nil })
     assert_response(:success)
@@ -129,7 +129,7 @@ class UsersTests < ActionDispatch::IntegrationTest
   end
 
   test "resets the password" do
-    user_rec = users(:cohere_1)
+    user_rec = users(:agent_1)
     user_rec.forgot_password! # this generates a confirmation token
 
     reset_params = {
@@ -140,7 +140,7 @@ class UsersTests < ActionDispatch::IntegrationTest
     }
 
     patch("/user/#{user_rec.id}/password", params: reset_params)
-    assert_redirected_to(root_path)
+    assert_redirected_to("/")
   end
 
   # -- invitation --
@@ -149,11 +149,12 @@ class UsersTests < ActionDispatch::IntegrationTest
     Rake.application.rake_require("tasks/users")
 
     input = <<-CSV.strip_heredoc
-      email,parter_id
-      test@cohere.org,#{partners(:cohere_1).id}
-      test@michigan.gov,#{partners(:governor_1).id}
-      test@testenergy.org,#{partners(:supplier_1).id}
-      test@testmetro.org,#{partners(:enroller_1).id}
+      email,partner_id,role
+      test@cohere.org,#{partners(:cohere_1).id},
+      test@michigan.gov,#{partners(:governor_1).id},
+      test@testenergy.org,#{partners(:supplier_1).id},
+      test@testmetro.org,#{partners(:enroller_1).id},
+      best@testmetro.org,#{partners(:enroller_1).id},source
     CSV
 
     act = -> do
@@ -163,11 +164,11 @@ class UsersTests < ActionDispatch::IntegrationTest
     end
 
     assert_difference(
-      -> { User::Record.count } => 4,
+      -> { User::Record.count } => 5,
       &act
     )
 
-    assert_send_emails(4) do
+    assert_send_emails(5) do
       assert_select("a", text: /create a password/) do |el|
         assert_match(%r[#{ENV["HOST"]}/user/\d+/password/edit\?invited=true&token=\w+], el[0][:href])
       end
@@ -175,7 +176,7 @@ class UsersTests < ActionDispatch::IntegrationTest
   end
 
   test "follows the create password link" do
-    user_rec = users(:cohere_1)
+    user_rec = users(:agent_1)
     user_rec.forgot_password! # this generates a confirmation token
     reset_params = {
       token: user_rec.confirmation_token,

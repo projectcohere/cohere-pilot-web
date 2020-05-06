@@ -10,17 +10,18 @@ module Chats
     end
 
     # -- command --
-    def call(chat, sender, incoming)
+    def call(chat, sender, inbound)
       # find all attachments, if necessary
-      attachments = if incoming.attachment_ids.present?
-        @file_repo.find_all_by_ids(incoming.attachment_ids)
+      attachments = if inbound.attachment_ids.present?
+        @file_repo.find_all_by_ids(inbound.attachment_ids)
       end
 
       # add the message to the chat
       chat.add_message(
         sender: sender,
-        body: incoming.body,
+        body: inbound.body,
         files: attachments || [],
+        status: Chat::Message::Status::Queued,
       )
 
       # save aggregate

@@ -11,7 +11,7 @@ module Service
       end
 
       # -- definition --
-      def singleton(name_or_type, &factory)
+      def single(name_or_type, &factory)
         name = name_from(name_or_type)
 
         # define CurrentAttributes.attribute
@@ -32,7 +32,11 @@ module Service
 
       # -- helpers --
       private def name_from(name_or_type)
-        return name_or_type.is_a?(Module) ? name_or_type.name.underscore : name_or_type
+        if not name_or_type.is_a?(Module)
+          return name_or_type
+        end
+
+        return name_or_type.name.underscore.gsub("/", "_")
       end
     end
   end

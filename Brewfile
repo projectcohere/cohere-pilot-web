@@ -1,5 +1,5 @@
 # underlying database; it's the app db
-brew "postgresql"
+brew "postgresql@11"
 
 # in-memory store; required for sidekiq
 brew "redis"

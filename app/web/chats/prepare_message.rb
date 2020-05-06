@@ -9,8 +9,8 @@ module Chats
 
     ## -- command --
     def call(message_id)
-      chat = @chat_repo.find_by_selected_message(message_id)
-      chat.prepare_selected_message
+      chat = @chat_repo.find_by_message_with_attachments(message_id)
+      chat.prepare_message
       @chat_repo.save_prepared_message(chat)
     end
   end

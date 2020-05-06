@@ -1,0 +1,93 @@
+{
+  "entries": {
+    "brew": {
+      "postgresql@11": {
+        "version": "11.7",
+        "bottle": {
+          "cellar": "/usr/local/Cellar",
+          "prefix": "/usr/local",
+          "files": {
+            "catalina": {
+              "url": "https://homebrew.bintray.com/bottles/postgresql@11-11.7.catalina.bottle.1.tar.gz",
+              "sha256": "c12eff2a53b44e15ced27e8d63a53a648bd89ba63b52c6893d14c80cb1d2bcea"
+            },
+            "mojave": {
+              "url": "https://homebrew.bintray.com/bottles/postgresql@11-11.7.mojave.bottle.1.tar.gz",
+              "sha256": "290dced7cbf937c3b8fe38ea70857509cb2580044cee9ce687011e44c2a140d4"
+            },
+            "high_sierra": {
+              "url": "https://homebrew.bintray.com/bottles/postgresql@11-11.7.high_sierra.bottle.1.tar.gz",
+              "sha256": "e7304315a0c5b591118b6568699cb86fb504db2ff6beeb9bc00c96ed48f85ba6"
+            }
+          }
+        }
+      },
+      "redis": {
+        "version": "5.0.8",
+        "bottle": {
+          "cellar": ":any_skip_relocation",
+          "prefix": "/usr/local",
+          "files": {
+            "catalina": {
+              "url": "https://homebrew.bintray.com/bottles/redis-5.0.8.catalina.bottle.tar.gz",
+              "sha256": "6dd79cce0a271a736f17a9c0e72fd8e5288b135426f5746d25496ab5048e0059"
+            },
+            "mojave": {
+              "url": "https://homebrew.bintray.com/bottles/redis-5.0.8.mojave.bottle.tar.gz",
+              "sha256": "c72def1c78f6c24c02d47de80a0b5ae5ef67640a42a38d040c503429eb02d3b1"
+            },
+            "high_sierra": {
+              "url": "https://homebrew.bintray.com/bottles/redis-5.0.8.high_sierra.bottle.tar.gz",
+              "sha256": "819c9292b32c8bdc90f51a7301cb44ffba8fa97fa8cf0db0e64e6ab5b0e41b9f"
+            }
+          }
+        }
+      },
+      "yarn": {
+        "version": "1.22.4",
+        "bottle": false
+      },
+      "poppler": {
+        "version": "0.87.0",
+        "bottle": {
+          "cellar": "/usr/local/Cellar",
+          "prefix": "/usr/local",
+          "files": {
+            "catalina": {
+              "url": "https://homebrew.bintray.com/bottles/poppler-0.87.0.catalina.bottle.tar.gz",
+              "sha256": "3a65e7c9e1066882c8d37158f54e8ad998d3db5dbd40d41b3a83d77c70753afd"
+            },
+            "mojave": {
+              "url": "https://homebrew.bintray.com/bottles/poppler-0.87.0.mojave.bottle.tar.gz",
+              "sha256": "d83dd3e16516b27784a8410a6d47f637a6c7af87b01835261f9f2dc44a310646"
+            },
+            "high_sierra": {
+              "url": "https://homebrew.bintray.com/bottles/poppler-0.87.0.high_sierra.bottle.tar.gz",
+              "sha256": "ebf7730079b09d038dd9347357232629a60828fe9a686c9946f4077b1213bca6"
+            }
+          }
+        }
+      }
+    },
+    "cask": {
+      "wkhtmltopdf": {
+        "version": "0.12.5",
+        "options": {
+          "full_name": "wkhtmltopdf"
+        }
+      }
+    }
+  },
+  "system": {
+    "macos": {
+      "mojave": {
+        "HOMEBREW_VERSION": "2.2.11",
+        "HOMEBREW_PREFIX": "/usr/local",
+        "Homebrew/homebrew-core": "ca173c85d4734c1a083f5d7c9d545f49eaee6399",
+        "CLT": "10.3.0.0.1.1562985497",
+        "Xcode": "11.3.1",
+        "macOS": "10.14.6"
+      }
+    }
+  }
+}

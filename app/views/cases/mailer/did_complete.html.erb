@@ -1,5 +1,0 @@
-<%- view = Cases::View.new(@case) %>
-<p>
-  A case was <%= view.status.downcase %> for
-  <%= link_to(view.recipient_name, case_url(@case)) %>.
-</p>

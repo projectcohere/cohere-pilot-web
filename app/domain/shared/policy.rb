@@ -7,29 +7,25 @@ class Policy
   # -- queries --
   # checks if the given user / scope is allowed to perform an action.
   def permit?(action)
-    false
+    return false
   end
 
   # checks if the given user / scope is forbidden from performing
   # an action
   def forbid?(action)
-    not permit?(action)
+    return !permit?(action)
   end
 
   # -- queries --
-  protected def cohere?
-    return @user.role.cohere?
+  protected def role
+    return @user.role
   end
 
-  protected def dhs?
-    return @user.role.dhs?
+  delegate(:source?, :governor?, :agent?, :enroller?, to: :role)
+
+  protected def membership
+    return @user.partner.membership
   end
 
-  protected def supplier?
-    return @user.role.supplier?
-  end
-
-  protected def enroller?
-    return @user.role.enroller?
-  end
+  delegate(:supplier?, to: :membership)
 end

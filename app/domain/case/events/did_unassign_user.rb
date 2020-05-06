@@ -3,17 +3,16 @@ class Case
     class DidUnassignUser < ::Value
       # -- props --
       prop(:case_id)
-      prop(:partner_id)
-      prop(:partner_membership)
+      prop(:assignment_role)
+      prop(:assignment_partner_id)
 
       # -- factories --
       def self.from_entity(kase)
-        assignment = kase.selected_assignment
-
+        a = kase.selected_assignment
         DidUnassignUser.new(
           case_id: kase.id,
-          partner_id: assignment.partner_id,
-          partner_membership: assignment.partner_membership,
+          assignment_role: a.role,
+          assignment_partner_id: a.partner_id,
         )
       end
     end

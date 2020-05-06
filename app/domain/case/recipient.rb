@@ -5,16 +5,16 @@ class Case
     # -- props --
     prop(:id, default: Id::None)
     prop(:profile)
-    prop(:dhs_account, default: nil)
+    prop(:household)
 
     # -- commands --
-    def add_dhs_data(dhs_account)
-      @dhs_account = dhs_account
+    def add_governor_data(household)
+      @household = household
     end
 
-    def add_cohere_data(profile, dhs_account)
+    def add_agent_data(profile, household)
       @profile = profile
-      @dhs_account = dhs_account
+      @household = household
     end
 
     # -- events --

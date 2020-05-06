@@ -1,8 +1,19 @@
 class Case
   class Assignment < ::Value
+    # -- props --
+    prop(:role)
     prop(:user_id)
     prop(:user_email)
     prop(:partner_id)
-    prop(:partner_membership)
+
+    # -- commands --
+    def remove
+      @removed = true
+    end
+
+    # -- queries --
+    def removed?
+      return @removed
+    end
   end
 end

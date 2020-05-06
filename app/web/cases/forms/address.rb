@@ -5,22 +5,22 @@ module Cases
       field(:street, :string, presence: true)
       field(:street2, :string)
       field(:city, :string, presence: true)
-      field(:zip, :string,
-        presence: true, numericality: true
-      )
+      field(:zip, :string, presence: true, numericality: true)
+      field(:geography, :boolean, presence: true)
 
       # -- lifecycle --
       protected def initialize_attrs(attrs)
-        if @model.nil?
+        if not @model.respond_to?(:profile)
           return
         end
 
-        a = @model.recipient.profile.address
+        a = @model.profile.address
         assign_defaults!(attrs, {
           street: a.street,
           street2: a.street2,
           city: a.city,
           zip: a.zip,
+          geography: true,
         })
       end
 
@@ -47,7 +47,7 @@ module Cases
 
       # -- queries --
       def map_to_recipient_address
-        Recipient::Address.new(
+        return ::Address.new(
           street: street,
           street2: street2,
           city: city,

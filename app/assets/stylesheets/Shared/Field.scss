@@ -75,7 +75,7 @@
 
   &--input.is-error:hover &-errors {
     position: absolute;
-    transform: translateX(4px);
+    transform: translateX(5px);
   }
 
   // .Field-input/inputs
@@ -104,13 +104,34 @@
   }
 
   // .Field--checkbox
+  &--checkbox {
+    // TODO: refactor base Field to impose less style, delegate
+    // that to variants, and then remove the following [overloads]
+    // [overloads]
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
   &--checkbox &-hint {
+    // [overloads]
+    font-size: initial;
+    text-transform: initial;
+    letter-spacing: initial;
+    margin-bottom: 0;
+  }
+
+  &--checkbox &-errors {
     visibility: hidden;
   }
 
   &--checkbox &-value {
     border: none;
     background: none;
+
+    // [overloads]
+    padding-right: 0;
 
     &:hover {
       background-color: inherit;
@@ -119,10 +140,7 @@
 
   &--checkbox input[type="checkbox"] {
     @extend .Checkbox;
-
-    appearance: none;
-    -moz-appearance: none;
-    -webkit-appearance: none;
+    @include prefix(moz webkit, (appearance: none));
 
     &:checked {
       @include u-checkmark;
@@ -131,6 +149,14 @@
 
   &--checkbox:hover input[type="checkbox"] {
     background-color: fade-out($brand-primary, 0.85);
+  }
+
+  &--checkbox.is-error input[type="checkbox"] {
+    background-color: fade-out($color-error, 0.75);
+  }
+
+  &--checkbox:hover.is-error input[type="checkbox"] {
+    background-color: fade-out($color-error, 0.70);
   }
 
   // .Field--bare
@@ -145,41 +171,6 @@
 
   // .Field--select
   &--select &-value {
-    position: relative;
-
-    &::before, &::after {
-      content: "";
-      pointer-events: none;
-      position: absolute;
-      right: 0;
-      width: 10px;
-      height: 2px;
-      background-color: $brand-black;
-    }
-
-    &:before {
-      transform: translateX(-$spacing5 - 6px) rotate(45deg);
-    }
-
-    &:after {
-      transform: translateX(-$spacing5) rotate(-45deg);
-    }
-
-    &:focus-within {
-      &::before, &::after {
-        background-color: $brand-primary;
-      }
-    }
-  }
-
-  // .Field-select/select
-  &--select select {
-    width: 100%;
-    border: none;
-    background: none;
-    appearance: none;
-    -moz-appearance: none;
-    -webkit-appearance: none;
-    cursor: pointer;
+    @extend .Select;
   }
 }

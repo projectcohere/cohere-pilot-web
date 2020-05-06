@@ -1,24 +1,30 @@
 module Cases
   class BaseController < ApplicationController
+    include Case::Policy::Context
+
+    # -- types --
+    class NotAuthorized < StandardError; end
+
+    # -- filters --
+    rescue_from(NotAuthorized, with: :deny_access)
+
+    # -- view helpers --
     helper(BaseHelper)
-    helper_method(:policy)
-    helper_method(:partner_id)
+
+    # -- commands --
+    def permit!(key)
+      if forbid?(key)
+        raise NotAuthorized
+      end
+    end
 
     # -- queries --
     protected def case_repo
       return Case::Repo.get
     end
 
-    protected def user
-      return User::Repo.get.find_current
-    end
-
-    protected def partner_id
-      return user.role.partner_id
-    end
-
-    protected def policy
-      return Case::Policy.new(user, @case)
+    protected def view_repo
+      return Cases::Views::Repo.get(@scope)
     end
   end
 end

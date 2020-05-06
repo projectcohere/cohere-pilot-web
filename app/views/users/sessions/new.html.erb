@@ -1,9 +1,9 @@
-<main class="SignIn Main">
+<main class="SignIn">
   <div class="SignIn-panel">
     <div class="SignIn-left">
       <%= image_tag("logo-large-full.svg", height: 67, class: "SignIn-logo", alt: "Cohere Logo") %>
 
-      <%= form_for(:session, url: sessions_path, html: { class: "SignIn-form Panel--empty Panel" }) do |f| %>
+      <%= form_for(:session, url: sessions_path, html: { class: "SignIn-form Panel" }) do |f| %>
         <%= section_tag(class: "SignIn-credentials") do %>
           <%= f.field(:email, t("users.email.label"), class: "SignIn-email") do %>
             <% f.text_field(:email, type: "email", placeholder: t("users.email.placeholder")) %>
@@ -14,8 +14,8 @@
           <% end %>
 
           <div class="SignIn-helpers">
-            <%= field_tag(:show_password, class: "SignIn-showPassword Field--bare Field--checkbox") do %>
-              <%= check_box_tag(:show_password) %> Show Password?
+            <%= field_tag(:show_password, "Show Password", class: "SignIn-showPassword Field--checkbox") do %>
+              <%= check_box_tag(:show_password) %>
             <% end %>
 
             <%= link_to(t(".forgot-password"), forgot_passwords_path, class: "SignIn-redirectLink") %>

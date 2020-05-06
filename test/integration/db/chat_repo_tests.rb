@@ -18,13 +18,11 @@ module Db
     test "tests if a chat exists for a recipient" do
       chat_repo = Chat::Repo.new
 
-      chat_recipient_rec = chats(:idle_1).recipient
-      chat_exists = chat_repo.any_by_recipient?(chat_recipient_rec.id)
-      assert(chat_exists)
+      recipient_rec = chats(:idle_1).recipient
+      assert(chat_repo.any_by_recipient?(recipient_rec.id))
 
-      chat_recipient_rec = recipients(:recipient_3)
-      chat_exists = chat_repo.any_by_recipient?(chat_recipient_rec.id)
-      assert_not(chat_exists)
+      recipient_rec = recipients(:recipient_4)
+      assert_not(chat_repo.any_by_recipient?(recipient_rec.id))
     end
 
     test "finds a chat by recipient with messages" do
@@ -52,7 +50,7 @@ module Db
       chat_repo = Chat::Repo.new
       chat_message_rec = chat_messages(:message_i1_1)
 
-      chat = chat_repo.find_by_selected_message(chat_message_rec.id)
+      chat = chat_repo.find_by_message_with_attachments(chat_message_rec.id)
       assert_not_nil(chat)
       assert_not_nil(chat.selected_message)
       assert_present(chat.selected_message.attachments)
@@ -60,7 +58,7 @@ module Db
 
     # -- commands --
     test "saves an opened chat" do
-      recipient_rec = recipients(:recipient_3)
+      recipient_rec = recipients(:recipient_4)
       chat_recipient = Chat::Repo.map_recipient(recipient_rec)
       chat = Chat.open(chat_recipient)
       chat_repo = Chat::Repo.new
@@ -71,6 +69,9 @@ module Db
 
       assert_difference(
         -> { Chat::Record.count } => 1,
+        -> { Chat::Message::Record.count } => 1,
+        -> { Chat::Attachment::Record.count } => 1,
+        -> { ActiveStorage::Blob.count } => 0,
         &act
       )
 
@@ -87,7 +88,8 @@ module Db
       chat.add_message(
         sender: Chat::Sender.automated,
         body: "Test.",
-        files: [blob_rec]
+        files: [blob_rec],
+        status: Chat::Message::Status::Queued,
       )
 
       act = -> do
@@ -106,6 +108,7 @@ module Db
       message_rec = chat_rec.messages.find { |r| r.id == chat.new_message.id.val }
       assert_equal(message_rec.sender, Chat::Sender.automated)
       assert_equal(message_rec.body, "Test.")
+      assert_equal(message_rec.status, "queued")
 
       attachment_rec = message_rec.attachments[0]
       assert_not_nil(attachment_rec)
@@ -113,17 +116,20 @@ module Db
 
       events = chat.events
       assert_length(events, 0)
-      assert_length(Service::Container.domain_events, 1)
+      assert_length(Events::DispatchAll.get.events, 1)
     end
 
-    test "saves a new message with a remote attachment" do
+    test "saves a new message with remote attachments" do
       chat_repo = Chat::Repo.new
       chat_rec = chats(:idle_1)
+
       chat = Chat::Repo.map_record(chat_rec)
       chat.add_message(
         sender: Chat::Sender.recipient,
         body: "Test.",
-        files: [Sms::Media.new(url: "http://website.com/image.jpg")]
+        files: [Sms::Media.new(url: "http://website.com/image.jpg")],
+        status: Chat::Message::Status::Received,
+        remote_id: "SM1239",
       )
 
       act = -> do
@@ -138,6 +144,8 @@ module Db
 
       message_rec = chat_rec.messages.find { |r| r.id == chat.new_message.id.val }
       assert_equal(message_rec.sender, Chat::Sender.recipient)
+      assert_equal(message_rec.status, "received")
+      assert_equal(message_rec.remote_id, "SM1239")
 
       attachment_rec = message_rec.attachments[0]
       assert_not_nil(attachment_rec)

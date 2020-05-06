@@ -1,0 +1,75 @@
+<main class="EditCase Page">
+  <header class="PageHeader">
+    <%= link_to("Back to Cases", :back, class: "PageHeader-back") %>
+
+    <h1 class="PageHeader-title">
+      <%= @case.recipient_name %>'s case
+    </h1>
+
+    <div class="PageHeader-row PageHeader-filters">
+      <nav class="Filters">
+        <%= filter_for(:profile, is_error: errors?(@form.contact, @form.contract), is_selected: true) %>
+        <%= filter_for(:household, is_error: errors?(@form.address, @form.household)) %>
+
+        <% if permit?(:edit_supplier_account) %>
+          <%= filter_for(:accounts, is_error: errors?(@form.supplier_account)) %>
+        <% end %>
+
+        <%= filter_for(:documents, is_error: errors?(@form.documents)) %>
+      </nav>
+    </div>
+  </header>
+
+  <div class="CaseDetail CaseDetail--edit">
+    <article class="CaseDetail-case">
+      <%= form_for(@form, url: case_referrals_path, html: { class: "CaseDetail-content" }) do |f| %>
+        <% form_locals = { f: f, form: @form, view: @case } %>
+        <%= f.hidden_field(:program_id) %>
+
+        <section id="profile" class="Panel-tab is-visible">
+          <%= render(partial: "cases/forms/details", locals: form_locals) %>
+          <%= render(partial: "cases/forms/contact", locals: form_locals) %>
+
+          <% if permit?(:edit_contract) %>
+            <%= render(partial: "cases/forms/contract", locals: form_locals) %>
+          <% end %>
+        </section>
+
+        <section id="household" class="Panel-tab">
+          <%= render(partial: "cases/forms/address", locals: form_locals) %>
+          <%= render(partial: "cases/forms/household", locals: form_locals) %>
+        </section>
+
+        <% if permit?(:edit_supplier_account) %>
+          <section id="accounts" class="Panel-tab">
+            <%= render(partial: "cases/forms/supplier_account", locals: form_locals) %>
+          </section>
+        <% end %>
+
+        <section id="documents" class="Panel-tab">
+          <%= render(partial: "cases/documents", locals: { documents: @form.documents.all }) %>
+        </section>
+
+        <div class="Panel-actions">
+          <%= f.submit("Save", class: "Button Button--action") %>
+          <%=
+            f.submit("Save & Submit to Enroller",
+              name: :submit,
+              class: "Button Button--secondary",
+              data: {
+                confirm: "Are you sure you want to submit this case?"
+              },
+            )
+          %>
+        </div>
+      <% end %>
+    </article>
+
+    <%=
+      render(partial: "agent/cases/chat", locals: {
+        chat: @case.chat,
+        recevier: @case.recipient_first_name
+      })
+    %>
+  </div>
+</main>

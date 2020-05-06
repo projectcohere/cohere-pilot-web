@@ -1,0 +1,15 @@
+<%= section_tag(t(".title"), class: "ShowCase-details") do %>
+  <%= field_tag(t(".status"), class: "ShowCase-status") do %>
+    <%= view.status_name %>
+  <%- end %>
+
+  <%= field_tag(t(".program"), class: "ShowCase-program") do %>
+    <%= view.program_name %>
+  <%- end %>
+
+  <% if permit?(:view_details_enroller) %>
+    <%= field_tag(t(".enroller"), class: "ShowCase-enroller") do %>
+      <%= view.enroller_name %>
+    <%- end %>
+  <% end %>
+<%- end %>

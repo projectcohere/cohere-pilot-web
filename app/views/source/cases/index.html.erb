@@ -1,0 +1,25 @@
+<main class="Page">
+  <header class="PageHeader">
+    <h1 class="PageHeader-title">
+      <%= t(".title", name: @scope.name) %>
+    </h1>
+
+    <div class="PageHeader-actions">
+      <%=
+        link_to(t(".actions.new"), select_cases_path,
+          class: "Button Button--action"
+        )
+      %>
+    </div>
+  </header>
+
+  <ul class="CaseList">
+    <% if @cases.blank? %>
+      <%= tag.h2(t(".list.fallback"), class: "CaseList-fallback") %>
+    <% else %>
+      <%= render(partial: "source/cases/cell", collection: @cases) %>
+    <% end %>
+  </ul>
+
+  <%= pager_for(@page, of: "cases") %>
+</main>

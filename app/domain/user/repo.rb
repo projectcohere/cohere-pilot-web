@@ -1,9 +1,9 @@
 class User
   class Repo < ::Repo
-    include Service::Singleton
+    include Service::Single
 
     # -- lifetime --
-    def initialize(domain_events: Service::Container.domain_events)
+    def initialize(domain_events: ::Events::DispatchAll.get.events)
       @domain_events = domain_events
     end
 
@@ -27,45 +27,27 @@ class User
       entity_from(user_rec)
     end
 
-    # -- queries/many
-    def find_all_for_opened_case
-      user_recs = User::Record
-        .by_membership(Partner::Membership::Cohere, Partner::Membership::Governor)
-
-      user_recs.map { |r| entity_from(r) }
-    end
-
-    def find_all_for_submitted_case(kase)
-      user_recs = User::Record
-        .where(partner_id: kase.enroller_id)
-
-      user_recs.map { |r| entity_from(r) }
-    end
-
-    def find_all_for_completed_case
-      user_recs = User::Record
-        .by_membership(Partner::Membership::Cohere)
-
-      user_recs.map { |r| entity_from(r) }
-    end
-
     # -- commands --
-    def current=(user)
-      @current = user
+    def sign_in(user_rec)
+      if @current&.id&.val != user_rec&.id
+        @current = user_rec != nil ? entity_from(user_rec) : nil
+      end
     end
 
     def save_invited(user)
       user_rec = User::Record.new
 
       # update record
+      u = user
       user_rec.assign_attributes(
-        email: user.email,
+        email: u.email,
+        role: u.role.index,
         password: SecureRandom.uuid
       )
 
-      r = user.role
+      p = u.partner
       user_rec.assign_attributes(
-        partner_id: r.partner_id,
+        partner_id: p.id,
       )
 
       # save record
@@ -85,28 +67,10 @@ class User
       return User.new(
         id: Id.new(r.id),
         email: r.email,
-        role: map_role(r),
+        role: Role.from_key(r.role),
+        partner: Partner::Repo.map_record(r.partner),
         confirmation_token: r.confirmation_token
       )
-    end
-
-    def self.map_role(r)
-      return Role.new(
-        name: r.partner.membership&.to_sym,
-        partner_id: r.partner.id,
-      )
-    end
-  end
-
-  class Record
-    # -- scopes --
-    def self.by_membership(*membership)
-      scope = self
-        .includes(:partner)
-        .references(:partners)
-        .where(partners: { membership: membership })
-
-      return scope
     end
   end
 end

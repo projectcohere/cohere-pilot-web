@@ -1,0 +1,45 @@
+<main class="EditCase Page">
+  <header class="PageHeader">
+    <%= link_to("Back to Cases", :back, class: "PageHeader-back") %>
+
+    <h1 class="PageHeader-title">
+      <%= @case.recipient_name %>'s case
+    </h1>
+
+    <div class="PageHeader-row PageHeader-filters">
+      <nav class="Filters">
+        <%= filter_for(:application, is_error: errors?(@form.household), is_selected: true) %>
+        <%= filter_for(:documents) %>
+      </nav>
+    </div>
+  </header>
+
+  <div class="CaseDetail CaseDetail--edit">
+    <article class="CaseDetail-case">
+      <%= form_for(@form, url: @case.update_path, html: { class: "CaseDetail-content" }) do |f| %>
+        <% form_locals = { f: f, form: @form, view: @case, policy: policy } %>
+
+        <div id="application" class="Panel-tab is-visible">
+          <%= section_tag("Contact", class: "ShowCase-contact") do %>
+            <%= field_tag("Primary Residential Address", class: "ShowCase-address") do %>
+              <% @case.address.each do |line| %>
+                <%= line %>
+                <br>
+              <% end %>
+            <%- end %>
+          <%- end %>
+
+          <%= render(partial: "cases/forms/household", locals: form_locals) %>
+        </div>
+
+        <div id="documents" class="Panel-tab">
+          <%= render(partial: "cases/documents", locals: { documents: @case.documents }) %>
+        </div>
+
+        <div class="Panel-actions">
+          <%= f.submit("Save", class: "Button Button--action") %>
+        </div>
+      <%- end %>
+    </article>
+  </div>
+</main>

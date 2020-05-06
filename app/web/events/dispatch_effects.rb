@@ -12,56 +12,46 @@ module Events
           Chats::OpenChat.(
             event.case_recipient_id.val,
           )
-
-          deliver(Cases::Mailer.did_open(
-            event.case_id.val,
-          ))
         end
 
-        Cohere::PublishQueuedCase.perform_async(
+        Agent::PublishQueuedCase.perform_async(
           event.case_id.val,
         )
 
-        Dhs::PublishQueuedCase.perform_async(
+        Governor::PublishQueuedCase.perform_async(
           event.case_id.val,
         )
       when Case::Events::DidAssignUser
-        if event.partner_membership != Partner::Membership::Supplier
+        if not event.assignment_role.source?
           Cases::PublishAssignUser.perform_async(
             event.case_id.val,
-            event.partner_id,
+            event.assignment_partner_id,
+            event.assignment_role.key,
           )
         end
       when Case::Events::DidUnassignUser
-        if event.partner_membership != Partner::Membership::Supplier
+        if not event.assignment_role.source?
           Cases::PublishUnassignUser.perform_async(
             event.case_id.val,
-            event.partner_id,
+            event.assignment_partner_id,
+            event.assignment_role.key,
           )
         end
       when Case::Events::DidSubmit
-        deliver(Cases::Mailer.did_submit(
-          event.case_id.val,
-        ))
-
         Enroller::PublishQueuedCase.perform_async(
           event.case_id.val,
         )
       when Case::Events::DidComplete
-        if event.case_status != Case::Status::Removed
-          deliver(Cases::Mailer.did_complete(
-            event.case_id.val,
-          ))
-        end
+        return
       when Case::Events::DidSignContract
         Cases::AttachContract.perform_async(
           event.case_id.val,
           event.document_id.val,
         )
       when Case::Events::DidChangeActivity
-        Cohere::PublishActivity.perform_async(
+        Agent::PublishActivity.perform_async(
           event.case_id.val,
-          event.case_has_new_activity,
+          event.case_new_activity,
         )
       when Chat::Events::DidAddRemoteAttachment
         Chats::UploadRemoteAttachment.perform_async(
@@ -76,7 +66,7 @@ module Events
           event.attachment_url,
         )
       when Chat::Events::DidPrepareMessage
-        Chats::SendWebMessage.perform_async(
+        Chats::PublishMessage.perform_async(
           event.message_id.val,
         )
 
@@ -88,6 +78,10 @@ module Events
 
         Cases::AddChatMessage.perform_async(
           event.message_id.val,
+        )
+      when Chat::Events::DidChangeMessageStatus
+        Chats::PublishMessageStatus.perform_async(
+          event.message_id.val
         )
       end
     end

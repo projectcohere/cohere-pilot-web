@@ -1,0 +1,65 @@
+<main class="ShowCase Page">
+  <header class="PageHeader">
+    <%= link_to(t(".actions.back"), :back, class: "PageHeader-back") %>
+
+    <h1 class="PageHeader-title">
+      <%= t(".title", name: @case.recipient_name) %>
+    </h1>
+
+    <div class="PageHeader-actions">
+      <%=
+        link_to(t(".actions.edit"), @case.edit_path,
+          class: "Button Button--secondary",
+          data: { "turbolinks-action": "replace" },
+        )
+      %>
+    </div>
+
+    <div class="PageHeader-row PageHeader-filters">
+      <nav class="Filters">
+        <%= filter_for(:application, is_selected: true) %>
+        <%= filter_for(:documents) %>
+      </nav>
+    </div>
+  </header>
+
+  <div class="CaseDetail CaseDetail--view">
+    <article class="CaseDetail-case">
+      <div class="CaseDetail-bar">
+        <p class="CaseDetail-id">
+          <%= @case.id_text %>
+        </p>
+      </div>
+
+      <div class="CaseDetail-content">
+        <section id="application" class="Panel-tab is-visible">
+          <%- locals = { view: @case } %>
+
+          <%= render(partial: "cases/detail/details", locals: locals) %>
+          <%= render(partial: "cases/detail/contact", locals: locals) %>
+
+          <% if permit?(:view_supplier_account) %>
+            <%= render(partial: "cases/detail/supplier_account", locals: locals) %>
+          <% end %>
+
+          <%= render(partial: "cases/detail/household", locals: locals) %>
+        </section>
+
+        <section id="documents" class="Panel-tab">
+          <%=
+            render(partial: "cases/documents", locals: {
+              documents: @case.documents
+            })
+          %>
+        </section>
+      </div>
+    </article>
+
+    <%=
+      render(partial: "agent/cases/chat", locals: {
+        chat: @case.chat,
+        recevier: @case.recipient_first_name
+      })
+    %>
+  </div>
+</main>

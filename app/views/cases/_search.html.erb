@@ -1,0 +1,14 @@
+<div class="CaseSearch">
+  <%= tag.p(t(".prompt"), class: "CaseSearch-prompt") %>
+
+  <%= form_tag(cases_search_path, method: :get, class: "CaseSearch-field BigField") do %>
+    <%- params = cases_search_params %>
+    <%= text_field_tag(:search, params[:search], class: "BigField-input") %>
+
+    <%- params.without(:search).each do |k, v| %>
+      <%= hidden_field_tag(k, v) %>
+    <%- end %>
+
+    <%= submit_tag(t(".action"), name: nil, class: "BigField-action") %>
+  <%- end %>
+</div>

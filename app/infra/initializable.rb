@@ -6,13 +6,23 @@ module Initializable
 
   # -- definition --
   class_methods do
-    def read(name)
+    def prop(name, default: Required, predicate: false)
+      props[name] = default
+
+      define_reader(name)
+      if predicate
+        define_predicate(name)
+      end
+    end
+
+    def define_reader(name)
       attr_reader(name)
     end
 
-    def prop(name, default: Required)
-      props[name] = default
-      read(name)
+    def define_predicate(name)
+      define_method("#{name}?") do
+        instance_variable_get("@#{name}")
+      end
     end
 
     # -- definition/storage

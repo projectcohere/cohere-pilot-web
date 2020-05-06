@@ -2,10 +2,10 @@
   <%= styles("contract.css") %>
 </style>
 
-<%- view = Cases::View.new(kase) %>
 <article class="Contract">
   <section class="Contract-meapAgreement ContractSection">
     <%= title("MEAP Agreement") %>
+
     <div class="ContractSection-body">
       <ul class="ContractSection-terms">
         <li class="ContractSection-term">
@@ -16,6 +16,7 @@
           outlined in this plan/agreement are required in order to receive any
           additional energy assistance benefits.
         </li>
+
         <li class="ContractSection-term">
           I authorize the assisting agency or provider to release my name and address
           to the local weatherization operator as part of the Weatherization Referral
@@ -25,10 +26,12 @@
           the Low Income Home Energy Assistance Program (LIHEAP) and the Michigan
           Energy Assistance Program (MEAP).
         </li>
+
         <li class="ContractSection-term">
           I authorize my energy company to release by phone, fax, email or their
           computer web site all available information about my account.
         </li>
+
         <li class="ContractSection-term">
           UNDER PENALTIES OF PERJURY, I SWEAR OR AFFIRM THAT THIS APPLICATION HAS BEEN
           EXAMINED BY OR READ TO ME. IF I AM A THIRD PARTY APPLYING ON BEHALF OF
@@ -41,29 +44,35 @@
     <div class="ContractSection-fields">
       <div class="ContractSection-fieldRow">
         <%= field("Name", view.recipient_name, class: "Contract-applicantName") %>
-        <%= field("Phone Number", "+1 #{number_to_phone(view.phone_number)}", class: "Contract-phoneNumber") %>
+        <%= field("Phone Number", view.phone_number, class: "Contract-phoneNumber") %>
       </div>
+
       <div class="ContractSection-fieldRow">
         <%= field("Address", view.address, class: "Contract-address") %>
       </div>
+
       <div class="Contract-meapSignatures ContractSection-fieldRow">
         <%= field("Signature of Applicant or Head-of-household", view.recipient_name, class: "Contract-signature ContractField--signature") %>
-        <%= field("Date", date, class: "Contract-date ContractField--tall") %>
+        <%= field("Date", view.date, class: "Contract-date ContractField--tall") %>
       </div>
+
       <div class="ContractSection-fieldRow">
         <%= field("Signature of Agency Representative", class: "Contract-signature ContractField--signature") %>
         <%= field("Date", class: "Contract-date ContractField--tall") %>
       </div>
     </div>
   </section>
+
   <section class="Contract-affordablePaymentPlan ContractSection u-break">
     <%= title("Affordable Payment Plan") %>
+
     <div class="ContractSection-body">
       <ul class="ContractSection-terms">
         <li class="ContractSection-term">
           I have been informed if my energy provider offers APP and understand
           whether or not I am eligible
         </li>
+
         <li class="ContractSection-term">
           I agree to the terms and conditions of the Affordable Payment Plan
           offered by my energy provider and have received a list of the terms and
@@ -71,15 +80,18 @@
         </li>
       </ul>
     </div>
+
     <div class="ContractSection-fields">
       <div class="ContractSection-fieldRow">
         <%= field("Signature of Applicant or Head-of-household", view.recipient_name, class: "Contract-signature ContractField--signature") %>
-        <%= field("Date", date, class: "Contract-date ContractField--tall") %>
+        <%= field("Date", view.date, class: "Contract-date ContractField--tall") %>
       </div>
     </div>
   </section>
+
   <section class="Contract-internalUse ContractSection">
     <%= title("Internal Use Only") %>
+
     <div class="ContractSection-fields">
       <div class="ContractSection-fieldRow">
         <%= field("Signature of Agency Representative", class: "Contract-signature ContractField--signature") %>

@@ -1,4 +1,6 @@
 .Filter {
+  @extend .u-action;
+
   display: flex;
   align-items: center;
   position: relative;

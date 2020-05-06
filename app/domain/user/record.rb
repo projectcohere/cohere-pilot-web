@@ -1,13 +1,12 @@
 class User
-  class Record < ::ApplicationRecord
+  class Record < ApplicationRecord
     include Clearance::User
 
-    # -- config --
-    set_table_name!
-
     # -- associations --
-    belongs_to(:partner, class_name: "::Partner::Record")
-    belongs_to(:organization, polymorphic: true, optional: true)
+    belongs_to(:partner)
+
+    # -- roles --
+    enum(role: Role.keys)
 
     # -- validations --
     validate(:check_password_requirements, unless: :skip_password_validation?)
@@ -29,6 +28,15 @@ class User
       if not password.match?(/[!@#$%^&*_=+-]/)
         errors.add(:password, "must have at least one symbol")
       end
+    end
+
+    # -- scopes --
+    def self.by_membership(*membership)
+      scope = self
+        .includes(:partner)
+        .where(partners: { membership: membership.map(&:key) })
+
+      return scope
     end
   end
 end

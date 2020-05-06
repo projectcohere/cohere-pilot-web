@@ -1,0 +1,44 @@
+.PageHeader {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-bottom: $spacing3;
+
+  // -- elements --
+  %row {
+    width: 100%;
+  }
+
+  &-back {
+    position: absolute;
+    top: -30px;
+    font-size: 12px;
+  }
+
+  &-title {
+    color: $brand-black;
+    font-size: $font-size0;
+  }
+
+  &-subtitle {
+    @extend %row;
+  }
+
+  &-row {
+    @extend %row;
+    margin-top: $spacing3;
+  }
+
+  &-filters {
+    padding: 0 $spacing6;
+  }
+
+  &-actions {
+    display: flex;
+
+    > * {
+      margin-left: $spacing3;
+    }
+  }
+}

@@ -1,9 +1,8 @@
 .CaseCell {
-  @extend .u-panel;
+  @extend .u-panel-white;
 
   position: relative;
   overflow: hidden;
-  background-color: $white;
 
   // -- row --
   $padding: $spacing3;
@@ -24,9 +23,10 @@
   }
 
   &-name {
+    @extend .u-name;
+
     display: flex;
     align-items: center;
-    font-size: $font-size3;
   }
 
   &-activity {
@@ -64,7 +64,7 @@
   }
 
   &-status {
-    @extend .u-label-bold;
+    @extend .u-label;
 
     color: $brand-black;
     opacity: 0.85;

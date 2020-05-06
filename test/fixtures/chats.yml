@@ -5,3 +5,7 @@ idle_1:
 idle_2:
   recipient: recipient_2
   updated_at: <%= Time.zone.now - 15.minutes %>
+
+idle_3:
+  recipient: recipient_3
+  updated_at: <%= Time.zone.now %>

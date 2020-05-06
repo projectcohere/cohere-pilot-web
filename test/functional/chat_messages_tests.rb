@@ -1,13 +1,13 @@
 require "test_helper"
 
 class ChatMessagesTests < ActionCable::Channel::TestCase
-  tests(Chats::MessageChannel)
+  tests(Chats::MessagesChannel)
 
   # -- tests --
-  test "subscribe a cohere user" do
+  test "subscribe an agent" do
     chat_rec = chats(:idle_1)
     chat = Chat::Repo.map_record(chat_rec)
-    user_rec = users(:cohere_1)
+    user_rec = users(:agent_1)
     user = User::Repo.map_record(user_rec)
     stub_connection(chat_user_id: user)
 
@@ -15,29 +15,29 @@ class ChatMessagesTests < ActionCable::Channel::TestCase
     assert_has_stream_for(chat)
   end
 
-  test "receive and publish a message from a cohere user" do
-    chat_message_timestamp = 7
-
+  test "receive and publish a message from an agent" do
     chat_rec = chats(:idle_1)
 
     case_rec = chat_rec.recipient.cases.order(updated_at: :desc).first
-    case_rec.has_new_activity = true
+    case_rec.new_activity = true
     case_rec.save!
 
     chat = Chat::Repo.map_record(chat_rec)
-    stub_connection(chat_user_id: "test-id")
+    stub_connection(chat_user_id: "test-sender")
     subscribe(chat: chat_rec.id)
 
     act = -> do
-      Time.stub(:now, Time.at(chat_message_timestamp)) do
-        VCR.use_cassette("chats--send-cohere-message") do
-          perform(:receive, {
+      VCR.use_cassette("chats--send-cohere-message") do
+        perform(:receive, {
+          "name" => "ADD_MESSAGE",
+          "data" => {
             "chat" => chat_rec.id,
             "message" => {
+              "client_id" => "test-id",
               "body" => "Test from Cohere.",
             },
-          })
-        end
+          },
+        })
       end
     end
 
@@ -46,39 +46,53 @@ class ChatMessagesTests < ActionCable::Channel::TestCase
       &act
     )
 
-    assert_broadcast_on(chat, {
-      sender: Chat::Sender.cohere("test-id"),
-      message: {
-        body: "Test from Cohere.",
-        timestamp: chat_message_timestamp,
-        attachments: [],
-      },
-    })
+    transmissions[0].tap do |msg|
+      assert_not_nil(msg)
+      assert_equal(msg.name, "DID_SAVE_MESSAGE")
+      assert_equal(msg.data[:client_id], "test-id")
+      assert_not_nil(msg.data[:id])
+    end
 
-    assert_broadcast_on(case_activity_for(:cohere_1), {
+    assert_matching_broadcast_on(chat) do |msg|
+      assert_equal(msg["name"], "DID_ADD_MESSAGE")
+
+      msg = msg["data"]
+      assert_not_nil(msg["id"])
+      assert_equal(msg["sender"], "test-sender")
+      assert_equal(msg["body"], "Test from Cohere.")
+      assert_not_nil(msg["status"])
+      assert_not_nil(msg["timestamp"])
+      assert_length(msg["attachments"], 0)
+    end
+
+    assert_broadcast_on(case_activity_for(:agent_1), {
       name: "HAS_NEW_ACTIVITY",
       data: {
         case_id: case_rec.id,
-        case_has_new_activity: false,
+        case_new_activity: false,
       }
     })
   end
 
-  test "receive and publish attachments from a cohere user" do
+  test "receive and publish attachments from an agent" do
     chat_rec = chats(:idle_1)
     blob_rec = active_storage_blobs(:blob_1)
 
     chat = Chat::Repo.map_record(chat_rec)
-    stub_connection(chat_user_id: "test-id")
+    stub_connection(chat_user_id: "test-sender")
     subscribe(chat: chat_rec.id)
 
     act = -> do
       VCR.use_cassette("chats--send-cohere-message--attachments") do
         perform(:receive, {
-          "chat" => chat_rec.id,
-          "message" => {
-            "body" => "Test with attachments.",
-            "attachment_ids" => [blob_rec.id]
+          "name" => "ADD_MESSAGE",
+          "data" => {
+            "chat" => chat_rec.id,
+            "message" => {
+              "client_id" => "test-id",
+              "body" => "Test with attachments.",
+              "attachment_ids" => [blob_rec.id]
+            },
           },
         })
       end
@@ -91,13 +105,16 @@ class ChatMessagesTests < ActionCable::Channel::TestCase
       &act
     )
 
-    assert_broadcasts_on(chat, 1) do |broadcasts|
-      attachments = broadcasts[0]["message"]["attachments"]
+    assert_matching_broadcast_on(chat) do |msg|
+      attachments = msg["data"]["attachments"]
       assert_length(attachments, 1)
-      assert_not_nil(attachments[0]["name"])
-      assert_not_nil(attachments[0]["url"])
+
+      attachment = attachments[0]
+      assert_not_nil(attachment["name"])
+      assert_not_nil(attachment["url"])
+      assert_not_nil(attachment["preview_url"])
     end
 
-    assert_analytics_events(0)
+    assert_analytics_events([])
   end
 end

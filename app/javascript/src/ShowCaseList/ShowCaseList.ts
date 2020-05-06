@@ -2,11 +2,8 @@ import { IComponent, kConsumer } from "../Core"
 
 // -- constants --
 const kChannelActivity = "Cases::ActivityChannel"
-
-const kScopeQueued = "queued"
-
+const kPathQueue = "/cases/inbox"
 const kIdCaseList = "case-list"
-const kIdQueuedFilter = `filter-${kScopeQueued}`
 const kClassIsActive = "is-active"
 
 // -- types --
@@ -18,7 +15,7 @@ type ActivityEvent
 
 interface IHasNewActivity {
   case_id: string
-  case_has_new_activity: boolean
+  case_new_activity: boolean
 }
 
 interface IHasQueueChange {
@@ -67,33 +64,24 @@ export class ShowCaseList implements IComponent {
     const $case = document.getElementById(`case-${data.case_id}`)
 
     if ($case != null) {
-      $case.classList.toggle(kClassIsActive, data.case_has_new_activity)
+      $case.classList.toggle(kClassIsActive, data.case_new_activity)
     }
   }
 
   private showQueuedCase(data: IHasQueueChange) {
-    const scope = document.location.pathname.split("/").pop()
-
-    if (scope == kScopeQueued) {
-      this.addCaseToQueue(data)
-    } else {
-      this.showQueueActivity()
+    if (this.isLocationQueue()) {
+      this.addCaseToQueue(data);
     }
   }
 
   private hideQueuedCase(data: IHasQueueChange) {
-    const scope = document.location.pathname.split("/").pop()
-
-    if (scope == kScopeQueued) {
-      this.removeCaseFromQueue(data)
-    } else {
-      this.showQueueActivity()
+    if (this.isLocationQueue()) {
+      this.removeCaseFromQueue(data);
     }
   }
 
   private addCaseToQueue(data: IHasQueueChange) {
     const $case = document.getElementById(`case-${data.case_id}`)
-
     if ($case == null) {
       document.location.reload(true)
     }
@@ -101,15 +89,9 @@ export class ShowCaseList implements IComponent {
 
   private removeCaseFromQueue(data: IHasQueueChange) {
     const $case = document.getElementById(`case-${data.case_id}`)
-
     if ($case != null) {
       document.location.reload(true)
     }
-  }
-
-  private showQueueActivity() {
-    const $filter = document.getElementById(kIdQueuedFilter)!
-    $filter.classList.toggle(kClassIsActive, true)
   }
 
   // -- events --
@@ -126,5 +108,10 @@ export class ShowCaseList implements IComponent {
       case "DID_UNASSIGN_USER":
         this.showQueuedCase(event.data); break
     }
+  }
+
+  // -- queries --
+  private isLocationQueue(): boolean {
+    return document.location.pathname === kPathQueue
   }
 }

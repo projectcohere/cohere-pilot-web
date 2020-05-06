@@ -1,12 +1,18 @@
 module Cases
   class ActivityChannel < ApplicationCable::Channel
-    # -- ActionCable::Channel::Base
+    # -- ActionCable::Channel::Base --
     def subscribed
-      stream_for(find_partner_id)
+      stream_for(user_stream)
     end
 
-    private def find_partner_id
-      return connection.user.role.partner_id
+    # -- helpers --
+    def user_stream
+      user = connection.user
+      return self.class.role_stream(user.role, user.partner_id)
+    end
+
+    def self.role_stream(role, partner_id)
+      return "#{role}@#{partner_id}"
     end
   end
 end

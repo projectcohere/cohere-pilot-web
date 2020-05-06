@@ -1,14 +1,14 @@
 .ShowCase {
   &-status {
-    grid-column: 1 / 9;
+    grid-area: auto / span 2;
   }
 
   &-program {
-    grid-column: 1 / 4;
+    grid-area: auto / span 3;
   }
 
   &-enroller {
-    grid-column: 4 / 8;
+    grid-area: 3 / span 4;
   }
 
   /* ShowCase-contact */
@@ -37,29 +37,32 @@
     grid-column: 4 / 7;
   }
 
-  /* ShowCase-dhs */
-  &-dhsNumber {
-    grid-column: 1 / 4;
-  }
-
   /* ShowCase-household */
   &-size {
-    grid-column: 1 / 2;
-  }
-
-  &-monthlyIncome {
-    grid-column: 2 / 5;
+    grid-area: 2 / auto;
   }
 
   &-ownership {
-    grid-column: 1 / 4;
+    grid-area: auto / span 3;
   }
 
-  &-isPrimaryResidence {
-    grid-column: 4 / 9;
+  &-residence {
+    grid-area: auto / span 4;
   }
 
-  &-fpl {
-    grid-column: 1 / 4;
+  &-proofOfIncome {
+    grid-area: auto / span 8;
+  }
+
+  &-dhsNumber {
+    grid-area: auto / span 3;
+  }
+
+  &-monthlyIncome {
+    grid-area: auto / span 4;
+  }
+
+  &-fplPercent {
+    grid-area: auto / span 10;
   }
 }

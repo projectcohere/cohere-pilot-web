@@ -1,9 +1,7 @@
 class Chat
-  class Record < ::ApplicationRecord
-    set_table_name!
-
+  class Record < ApplicationRecord
     # -- associations --
-    has_many(:messages, foreign_key: "chat_id", class_name: "::Chat::Message::Record", dependent: :destroy)
-    belongs_to(:recipient, class_name: "::Recipient::Record")
+    has_many(:messages, child: true, dependent: :destroy)
+    belongs_to(:recipient)
   end
 end

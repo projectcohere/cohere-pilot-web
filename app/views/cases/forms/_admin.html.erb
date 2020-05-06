@@ -15,9 +15,9 @@
             <%= assignment.user_email %>
           </p>
 
-          <% if assignment.partner_membership != Partner::Membership::Supplier %>
+          <% if not assignment.role.source? %>
             <%=
-              link_to("Unassign", destroy_case_assignments_path(form.model, assignment.partner_id),
+              link_to("Unassign", destroy_case_assignments_path(view.id, assignment.partner_id),
                 method: :delete,
                 class: "CaseFormAssignments-unassign Link--destructive",
                 data: {
@@ -37,7 +37,7 @@
     </p>
 
     <%=
-      link_to("Delete Case", form.model,
+      link_to("Delete Case", @case.delete_path,
         method: :delete,
         class: "CaseFormDanger-delete Button Button--destructive",
         data: {

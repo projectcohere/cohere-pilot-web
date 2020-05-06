@@ -1,0 +1,46 @@
+food_c:
+  name: "Food (CARES)"
+
+housing_c:
+  name: "Housing (CARES)"
+  requirements:
+    household:
+      - ownership
+
+energy_0:
+  name: "NRG"
+  contracts:
+    - meap
+  requirements:
+    contract:
+      - present
+    supplier_account:
+      - present
+    household:
+      - proof_of_income_dhs
+
+energy_c:
+  name: "Energy (CARES)"
+  requirements:
+    supplier_account:
+      - present
+
+water_0:
+  name: "WTR"
+  contracts:
+    - wrap_3h
+    - wrap_1k
+  requirements:
+    contract:
+      - present
+    supplier_account:
+      - present
+      - active_service
+    household:
+      - ownership
+
+water_c:
+  name: "Water (CARES)"
+  requirements:
+    supplier_account:
+      - present

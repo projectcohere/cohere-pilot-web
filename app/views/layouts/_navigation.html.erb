@@ -1,0 +1,29 @@
+<header class="Navigation">
+  <%=
+    link_to(cases_path, class: "Navigation-logo") do
+      navigation_icon_tag(:logo, t(".logo"), width: 54)
+    end
+  %>
+
+  <nav class="Navigation-links">
+    <%= navigation_link_tags %>
+  </nav>
+
+  <% if signed_in? %>
+    <div class="NavigationProfile">
+      <%= navigation_icon_tag(:profile, "Profile") %>
+
+      <div class="NavigationProfile-popup">
+        <div class="NavigationProfile-links">
+          <%= current_user.email %>
+          <%=
+            button_to(t(".sign-out"), sign_out_path,
+              method: :delete,
+              class: "Link"
+            )
+          %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</header>

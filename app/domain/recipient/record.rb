@@ -1,12 +1,11 @@
 module Recipient
-  class Record < ::ApplicationRecord
-    set_table_name!
-
+  class Record < ApplicationRecord
     # -- associations --
-    has_many(:cases, foreign_key: "recipient_id", class_name: "::Case::Record", dependent: :destroy)
-    has_one(:chat, foreign_key: "recipient_id", class_name: "::Chat::Record", dependent: :destroy)
+    has_one(:chat, dependent: :destroy)
+    has_many(:cases, dependent: :destroy)
 
-    # -- household ownership --
-    enum(household_ownership: Household::Ownership.all)
+    # -- household --
+    enum(household_ownership: Ownership.keys)
+    enum(household_proof_of_income: ProofOfIncome.keys)
   end
 end

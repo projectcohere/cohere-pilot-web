@@ -15,7 +15,7 @@ class Case
           case_recipient_id: kase.recipient.id,
           case_recipient_phone_number: kase.recipient.profile.phone.number,
           case_program: kase.program,
-          case_is_referred: kase.referral?
+          case_is_referred: kase.referred?
         )
       end
     end

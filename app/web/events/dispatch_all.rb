@@ -1,14 +1,19 @@
 module Events
   class DispatchAll < ::Command
-    include Service::Singleton
+    include Service::Single
+
+    # -- props --
+    attr(:events)
 
     # -- lifetime --
     def initialize(
-      events: Service::Container.domain_events,
-      dispatchers: [DispatchEffects.get, DispatchAnalytics.get]
+      events: ListQueue.new,
+      dispatch_effects: Events::DispatchEffects.get,
+      dispatch_analytics: Events::DispatchAnalytics.get
     )
       @events = events
-      @dispatchers = dispatchers
+      @dispatch_effects = dispatch_effects
+      @dispatch_analytics = dispatch_analytics
     end
 
     # -- command --
@@ -21,10 +26,16 @@ module Events
 
       @dispatching = true
 
+      # process all the events
       @events.drain do |event|
-        @dispatchers.each do |dispatch|
-          dispatch.(event)
-        end
+        @dispatch_effects.(event)
+        @dispatch_analytics.(event)
+      end
+
+      # commit analytics records
+      analytics = @dispatch_analytics.drain
+      if analytics.length != 0
+        Record.insert_all(analytics.map { |d| { data: d, created_at: Time.now } })
       end
 
       @dispatching = false

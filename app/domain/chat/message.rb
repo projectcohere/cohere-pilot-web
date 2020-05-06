@@ -1,17 +1,31 @@
 class Chat
   class Message < ::Entity
+    prop(:record, default: nil)
+
     # -- props --
     prop(:id, default: Id::None)
     prop(:sender)
     prop(:body)
+    prop(:status)
     prop(:timestamp)
     prop(:attachments, default: []) # IO | Sms::Media | ActiveStorage::Blob
     prop(:chat_id)
+    prop(:remote_id, default: nil)
 
     # -- props/temporary
     attr(:selected_attachment)
 
     # -- commands --
+    def attach_sms(sms)
+      @remote_id = sms.id
+    end
+
+    def change_status(status)
+      if status != nil && @status != status
+        @status = status
+      end
+    end
+
     def select_attachment(attachment_id)
       @selected_attachment = @attachments.find do |m|
         m.id.val == attachment_id
@@ -39,6 +53,8 @@ class Chat
     # -- callbacks --
     def did_save(record)
       @id.set(record.id)
+      @record = record
+
       @attachments.each_with_index do |a, i|
         a.did_save(record.attachments[i])
       end

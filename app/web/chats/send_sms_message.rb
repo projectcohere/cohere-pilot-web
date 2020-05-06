@@ -13,15 +13,22 @@ module Chats
     def call(message_id)
       Files::Host.set_current!
 
-      chat = @chat_repo.find_by_selected_message(message_id)
+      # find the message
+      chat = @chat_repo.find_by_message_with_attachments(message_id)
 
+      # send the message as sms
       m = chat.selected_message
       p = chat.recipient.profile.phone
-
-      @send_sms.(p.number,
+      sms = @send_sms.(p.number,
         body: m.body,
         media_urls: m.attachments.map { |a| a.file.service_url },
       )
+
+      # update message with the sms
+      if sms != nil
+        chat.attach_sms_to_message(sms)
+        @chat_repo.save_message_sms(chat)
+      end
     end
   end
 end

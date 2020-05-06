@@ -2,12 +2,7 @@ module Cases
   module Forms
     class Documents < ApplicationForm
       # -- fields --
-      field(:all, :object,
-        on: {
-          submitted: { presence: true },
-          completed: { presence: true },
-        },
-      )
+      field(:all, :object, presence: { on: :submitted })
 
       # -- lifecycle --
       protected def initialize_attrs(attrs)

@@ -4,58 +4,75 @@ class CaseTests < ActiveSupport::TestCase
   # -- creation --
   test "opens a case" do
     profile = Recipient::Profile.stub(
-      phone: Recipient::Phone.stub(number: "1")
+      phone: Phone.stub(number: "1")
     )
 
     kase = Case.open(
-      recipient_profile: profile,
+      program: :test_program,
+      profile: profile,
+      household: :test_household,
       enroller: Partner.stub(id: 1),
-      supplier_user: User.stub(id: 3, role: User::Role.stub(partner_id: 2)),
       supplier_account: :test_account,
     )
 
-    assert(kase.has_new_activity)
+    assert(kase.new_activity?)
+    assert(kase.opened?)
+    assert(kase.active?)
+    assert_equal(kase.program, :test_program)
     assert_equal(kase.recipient.profile, profile)
+    assert_equal(kase.recipient.household, :test_household)
     assert_equal(kase.supplier_account, :test_account)
     assert_equal(kase.enroller_id, 1)
-    assert_equal(kase.supplier_id, 2)
-    assert_not_nil(kase.new_assignment)
 
-    assert_instances_of(kase.events, [
-      Case::Events::DidOpen,
-      Case::Events::DidAssignUser,
-    ])
+    assert_instances_of(kase.events, [Case::Events::DidOpen])
+  end
+
+  test "opens a case with no household info" do
+    profile = Recipient::Profile.stub(
+      phone: Phone.stub(number: "1")
+    )
+
+    kase = Case.open(
+      program: :test_program,
+      profile: profile,
+      household: nil,
+      enroller: Partner.stub(id: 1),
+      supplier_account: :test_account,
+    )
+
+    assert(kase.recipient.household.proof_of_income.dhs?)
+    assert_instances_of(kase.events, [Case::Events::DidOpen])
   end
 
   # -- commands --
-  test "adds cohere data" do
+  test "adds agent data" do
     kase = Case.stub(
       recipient: Case::Recipient.stub,
-      has_new_activity: true,
+      new_activity: true,
     )
 
-    kase.add_cohere_data(
+    kase.add_agent_data(
       Case::Account.stub,
       Recipient::Profile.stub,
-      Recipient::DhsAccount.stub,
+      Recipient::Household.stub,
     )
 
     assert_not_nil(kase.supplier_account)
     assert_not_nil(kase.recipient.profile)
-    assert_not_nil(kase.recipient.dhs_account)
-    assert_not(kase.has_new_activity)
+    assert_not_nil(kase.recipient.household)
+    assert_not(kase.new_activity?)
   end
 
-  test "adds dhs data" do
+  test "adds governor data" do
     kase = Case.stub(
       status: Case::Status::Opened,
       recipient: Case::Recipient.stub,
     )
 
-    kase.add_dhs_data(:test_account)
-    assert(kase.has_new_activity)
-    assert_equal(kase.recipient.dhs_account, :test_account)
-    assert_equal(kase.status, Case::Status::Pending)
+    kase.add_governor_data(:test_household)
+    assert(kase.new_activity?)
+    assert(kase.pending?)
+    assert_equal(kase.recipient.household, :test_household)
 
     assert_instances_of(kase.events, [
       Case::Events::DidBecomePending,
@@ -69,7 +86,7 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     kase.add_admin_data(Case::Status::Approved)
-    assert_equal(kase.status, Case::Status::Approved)
+    assert(kase.approved?)
     assert_not_nil(kase.completed_at)
   end
 
@@ -77,12 +94,12 @@ class CaseTests < ActiveSupport::TestCase
     kase = Case.stub(
       status: Case::Status::Pending,
       recipient: Case::Recipient.stub,
-      has_new_activity: true,
+      new_activity: true,
     )
 
     kase.submit_to_enroller
-    assert_not(kase.has_new_activity)
-    assert_equal(kase.status, Case::Status::Submitted)
+    assert(kase.submitted?)
+    assert_not(kase.new_activity?)
 
     assert_instances_of(kase.events, [
       Case::Events::DidSubmit,
@@ -93,15 +110,23 @@ class CaseTests < ActiveSupport::TestCase
   test "completes a submitted case" do
     kase = Case.stub(
       status: Case::Status::Submitted,
-      has_new_activity: true,
+      new_activity: true,
+      assignments: [
+        Case::Assignment.stub(role: Role::Agent),
+      ],
     )
 
     kase.complete(Case::Status::Approved)
-    assert_not(kase.has_new_activity)
-    assert_equal(kase.status, Case::Status::Approved)
+    assert(kase.approved?)
+    assert_not(kase.new_activity?)
     assert_in_delta(Time.zone.now, kase.completed_at, 1.0)
 
+    assignments = kase.assignments
+    assert_empty(assignments)
+    assert(kase.selected_assignment&.removed?)
+
     assert_instances_of(kase.events, [
+      Case::Events::DidUnassignUser,
       Case::Events::DidComplete,
       Case::Events::DidChangeActivity,
     ])
@@ -110,12 +135,13 @@ class CaseTests < ActiveSupport::TestCase
   test "removes a case from the pilot" do
     kase = Case.stub(
       status: Case::Status::Pending,
-      has_new_activity: true,
+      new_activity: true,
     )
 
     kase.remove_from_pilot
-    assert_not(kase.has_new_activity)
-    assert_equal(kase.status, Case::Status::Removed)
+    assert(kase.removed?)
+    assert(kase.archived?)
+    assert_not(kase.new_activity?)
     assert_in_delta(Time.zone.now, kase.completed_at, 1.0)
 
     assert_instances_of(kase.events, [
@@ -127,7 +153,6 @@ class CaseTests < ActiveSupport::TestCase
   test "makes a referral to a new program" do
     kase = Case.stub(
       status: Case::Status::Approved,
-      program: Program::Name::Meap,
       documents: [
         Document.stub(
           classification: :unknown
@@ -136,76 +161,66 @@ class CaseTests < ActiveSupport::TestCase
       recipient: Case::Recipient.stub(
         id: 3,
         profile: Recipient::Profile.stub(
-          phone: Recipient::Phone.stub(number: "1")
+          phone: Phone.stub(number: "1")
         )
       ),
     )
 
-    referral = kase.make_referral_to_program(Program::Name::Wrap)
+    program = Program.stub(id: 1)
+
+    referral = kase.make_referral(program)
     assert_not_nil(referral)
 
     referrer = referral.referrer
-    assert(referral.referrer.referrer?)
+    assert(referrer.referrer?)
+    assert(referrer.archived?)
 
     referred = referral.referred
-    assert(referred.referral?)
-    assert(referred.has_new_activity)
-    assert_equal(referred.program, Program::Name::Wrap)
+    assert(referred.referred?)
+    assert(referred.new_activity?)
+    assert(referred.opened?)
+    assert(referred.active?)
+    assert_equal(referred.program, program)
 
     new_documents = referred.new_documents
     assert_length(new_documents, referrer.documents.length)
 
     event = referrer.events[0]
     assert_instances_of(referrer.events, [Case::Events::DidMakeReferral])
-    assert_equal(event.case_program, Program::Name::Wrap)
+    assert_equal(event.case_program, program)
 
     event = referred.events[0]
     assert_instances_of(referred.events, [Case::Events::DidOpen])
     assert(event.case_is_referred)
   end
 
-  test "does not make a referral to the same program" do
-    kase = Case.stub(
-      status: Case::Status::Approved,
-      program: Program::Name::Meap,
-      is_referrer: false
-    )
-
-    referral = kase.make_referral_to_program(Program::Name::Meap)
-    assert_nil(referral)
+  test "deletes a case" do
+    kase = Case.stub
+    kase.delete
+    assert(kase.deleted?)
   end
 
-  test "does not make a second referral" do
-    kase = Case.stub(
-      status: Case::Status::Approved,
-      program: Program::Name::Meap,
-      is_referrer: true
-    )
-
-    referral = kase.make_referral_to_program(Program::Name::Wrap)
-    assert_nil(referral)
-
-    kase = Case.stub(
-      status: Case::Status::Approved,
-      program: Program::Name::Wrap,
-      is_referred: true
-    )
-
-    referral = kase.make_referral_to_program(Program::Name::Meap)
-    assert_nil(referral)
+  test "archives a case" do
+    kase = Case.stub
+    kase.archive
+    assert(kase.archived?)
   end
 
   # -- commands/assignments
   test "doesn't assign a user if an assignment for that partner exists" do
     kase = Case.stub(
       assignments: [
-        Case::Assignment.stub(partner_id: 3)
+        Case::Assignment.stub(
+          role: Role::Agent,
+          partner_id: 3
+        )
       ]
     )
 
     user = User.stub(
       id: Id.new(3),
-      role: User::Role.stub(partner_id: 3),
+      role: Role::Agent,
+      partner: Partner.stub(id: 3),
     )
 
     kase.assign_user(user)
@@ -218,9 +233,10 @@ class CaseTests < ActiveSupport::TestCase
     user = User.stub(
       id: Id.new(3),
       email: :test_email,
-      role: User::Role.stub(
-        name: :cohere,
-        partner_id: 5,
+      role: Role::Agent,
+      partner: Partner.stub(
+        id: 5,
+        membership: Partner::Membership::Cohere,
       ),
     )
 
@@ -255,7 +271,7 @@ class CaseTests < ActiveSupport::TestCase
 
     kase.select_assignment(3)
 
-    kase.destroy_selected_assignment
+    kase.remove_selected_assignment
     assert_empty(kase.assignments)
     assert_instances_of(kase.events, [Case::Events::DidUnassignUser])
   end
@@ -264,7 +280,7 @@ class CaseTests < ActiveSupport::TestCase
   def stub_recipient_with_phone_number(phone_number)
     return Case::Recipient.stub(
       profile: Recipient::Profile.stub(
-        phone: Recipient::Phone.stub(
+        phone: Phone.stub(
           number: phone_number,
         ),
       ),
@@ -281,7 +297,7 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     kase.add_chat_message(message)
-    assert(kase.has_new_activity)
+    assert(kase.new_activity?)
     assert_not_nil(kase.received_message_at)
 
     events = kase.events
@@ -306,7 +322,7 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     kase.add_chat_message(message)
-    assert(kase.has_new_activity)
+    assert(kase.new_activity?)
 
     documents = kase.new_documents
     assert_length(documents, 1)
@@ -325,10 +341,10 @@ class CaseTests < ActiveSupport::TestCase
     assert_not(event.is_first)
   end
 
-  test "adds a cohere message" do
+  test "adds an agent message" do
     kase = Case.stub(
       status: Case::Status::Opened,
-      has_new_activity: true,
+      new_activity: true,
     )
 
     message = Chat::Message.stub(
@@ -336,27 +352,21 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     kase.add_chat_message(message)
-    assert_not(kase.has_new_activity)
+    assert_not(kase.new_activity?)
 
     events = kase.events
     assert_instances_of(events, [Case::Events::DidChangeActivity])
   end
 
   test "signs a contract" do
-    kase = Case.stub(
-      program: Program::Name::Wrap
-    )
-
-    contract = Program::Contract.new(
-      program: Program::Name::Wrap,
-      variant: Program::Contract::Wrap3h
-    )
+    kase = Case.stub
+    contract = Program::Contract.stub
 
     kase.sign_contract(contract)
 
-    documents = kase.new_documents
-    assert_length(documents, 1)
-    assert_equal(documents[0].classification, :contract)
+    document = kase.new_documents[0]
+    assert_length(kase.new_documents, 1)
+    assert_equal(document.classification, :contract)
 
     events = kase.events
     assert_instances_of(events, [Case::Events::DidSignContract])
@@ -370,21 +380,6 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     kase.sign_contract(nil)
-    assert_nil(kase.new_documents)
-    assert_empty(kase.events)
-  end
-
-  test "doesn't sign a contract for the wrong program" do
-    kase = Case.stub(
-      program: Program::Name::Meap
-    )
-
-    contract = Program::Contract.new(
-      program: Program::Name::Wrap,
-      variant: Program::Contract::Wrap1k
-    )
-
-    kase.sign_contract(contract)
     assert_nil(kase.new_documents)
     assert_empty(kase.events)
   end
@@ -425,7 +420,7 @@ class CaseTests < ActiveSupport::TestCase
   test "doesn't add redundant activity events" do
     kase = Case.stub(
       status: Case::Status::Opened,
-      has_new_activity: false,
+      new_activity: false,
     )
 
     s = Chat::Sender
@@ -439,49 +434,10 @@ class CaseTests < ActiveSupport::TestCase
     ])
 
     event = kase.events[1]
-    assert_not(event.case_has_new_activity)
+    assert_not(event.case_new_activity?)
   end
 
   # -- queries --
-  test "has an fpl percentage with a household" do
-    household = Recipient::Household.stub(
-      size: 5,
-      income_cents: 2493_33
-    )
-
-    kase = Case.stub(
-      recipient: Case::Recipient.stub(
-        dhs_account: Recipient::DhsAccount.stub(
-          household: household
-        )
-      )
-    )
-
-    assert_equal(kase.fpl_percentage, 100)
-  end
-
-  test "has no fpl percentage without a household" do
-    kase = Case.stub
-    assert_nil(kase.fpl_percentage)
-  end
-
-  test "has no fpl percentage with an incomplete household" do
-    household = Recipient::Household.stub(
-      size: nil,
-      income_cents: 2493_33
-    )
-
-    kase = Case.stub(
-      recipient: Case::Recipient.stub(
-        dhs_account: Recipient::DhsAccount.stub(
-          household: household
-        )
-      )
-    )
-
-    assert_nil(kase.fpl_percentage)
-  end
-
   test "has a contract document" do
     kase = Case.stub(
       documents: [Document.stub(classification: :contract)]

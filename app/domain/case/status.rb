@@ -1,23 +1,20 @@
 class Case
-  module Status
+  class Status < ::Option
     # -- options --
-    Opened = :opened
-    Pending = :pending
-    Submitted = :submitted
-    Approved = :approved
-    Denied = :denied
-    Removed = :removed
+    option(:opened)
+    option(:pending)
+    option(:submitted)
+    option(:approved)
+    option(:denied)
+    option(:removed)
 
     # -- queries --
-    def self.all
-      @all ||= [
-        Opened,
-        Pending,
-        Submitted,
-        Approved,
-        Denied,
-        Removed
-      ]
+    def active?
+      return opened? || pending? || submitted?
+    end
+
+    def complete?
+      return !active?
     end
   end
 end

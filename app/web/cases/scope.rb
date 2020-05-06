@@ -1,21 +1,42 @@
 module Cases
-  class Scope
-    include ::Options
-
+  class Scope < ::Option
     # -- options --
-    option("queued")
-    option("assigned")
-    option("open")
-    option("submitted")
-    option("completed")
+    option(:assigned)
+    option(:queued)
+    option(:all)
+    option(:active)
+    option(:archived)
 
     # -- queries --
-    def path
-      return @key
+    def title
+      return case self
+      when Assigned
+        "My Cases"
+      when Queued
+        "Available Cases"
+      else
+        "#{@key.capitalize} Cases"
+      end
     end
 
     def name
-      return @key.capitalize
+      return case self
+      when Assigned
+        "My Cases"
+      when Queued
+        "Queue"
+      else
+        "#{@key.capitalize}"
+      end
+    end
+
+    def adjective
+      return case self
+      when All
+        nil
+      else
+        @key
+      end
     end
   end
 end

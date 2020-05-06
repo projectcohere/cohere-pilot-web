@@ -1,0 +1,41 @@
+.Select {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  // -- input --
+  select {
+    @include prefix(moz webkit, (appearance: none));
+
+    width: 100%;
+    border: none;
+    background: none;
+    cursor: pointer;
+  }
+
+  // -- arrow --
+  &::before, &::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    width: 10px;
+    height: 2px;
+    background-color: $brand-black;
+  }
+
+  &:before {
+    transform: translateX(-$spacing5 - 6px) rotate(45deg);
+  }
+
+  &:after {
+    transform: translateX(-$spacing5) rotate(-45deg);
+  }
+
+  &:focus-within {
+    &::before, &::after {
+      background-color: $brand-primary;
+    }
+  }
+
+}

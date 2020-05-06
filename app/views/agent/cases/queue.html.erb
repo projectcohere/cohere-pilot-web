@@ -1,0 +1,19 @@
+<main class="Page">
+  <header class="PageHeader">
+    <%= tag.h1(t(".title"), class: "PageHeader-title") %>
+  </header>
+
+  <ul id="case-list" class="CaseList">
+    <%= tag.p(class: "CaseList-prompt") do %>
+      <%= t(".subtitle", cta: link_to(t(".cta-link"), cases_path)).html_safe %>
+    <%- end %>
+
+    <% if @cases&.blank? %>
+      <%= tag.p(t(".fallback"), class: "CaseList-fallback") %>
+    <% else %>
+      <%= render(partial: "agent/cases/cell", collection: @cases) %>
+    <% end %>
+  </ul>
+
+  <%= pager_for(@page, of: "cases") %>
+</main>

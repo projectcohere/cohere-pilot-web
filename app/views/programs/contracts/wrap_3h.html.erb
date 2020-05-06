@@ -2,10 +2,10 @@
   <%= styles("contract.css") %>
 </style>
 
-<%- view = Cases::View.new(kase) %>
 <article class="Contract">
   <section class="Contract-meapAgreement ContractSection">
     <%= title("WRAP Participant Agreement") %>
+
     <div class="ContractSection-body">
       <ul class="ContractSection-terms">
         <li class="ContractSection-term">
@@ -16,6 +16,7 @@
           signing this agreement and fully understand and agree to comply with
           all guidelines stated herein.
         </li>
+
         <li class="ContractSection-term">
           I understand that the WRAP Program is a program that consists of a
           combination of supportive services and financial assistance. The
@@ -24,6 +25,7 @@
           assistance per household, per year is up to $300.00 based on
           eligibility. Maximum participation in the WRAP is up to 2 YEARS.
         </li>
+
         <li class="ContractSection-term">
           I understand that I must meet eligibility requirements, to qualify for
           WRAP assistance. I agree to provide all required documentation to
@@ -31,12 +33,14 @@
           required documentation at intake, I understand that entry into the
           program cannot be completed.
         </li>
+
         <li class="ContractSection-term">
           I understand that financial assistance for water bill payment is
           limited to $25 per month, per household ($300 annually). I agree to
           pay the water bill amount issued by my city/municipality minus the
           WRAP financial assistance credit paid toward my/our water bill.
         </li>
+
         <li class="ContractSection-term">
           I understand that if I am eligible for a WRAP Home Water Conservation
           Audit, I must schedule the Home Water Conservation Audit and be
@@ -46,12 +50,14 @@
           Only) for home water conservation measures (water audit and minor
           plumbing repairs) is $1,000 based on audit determination.
         </li>
+
         <li class="ContractSection-term">
           I agree that if I receive Subsidized Housing Assistance, I must report
           WRAP Assistance as income to my designated Housing Authority. I
           understand that failure to report may put my Housing Assistance in
           jeopardy with said Authority.
         </li>
+
         <li class="ContractSection-term">
           I understand that if I miss two payments (partial payments and late
           payments are considered missed payments) at any point in time within
@@ -61,6 +67,7 @@
           municipality. I understand that I may request an appeal of the
           decision in writing within thirty days (30) of written notice date.
         </li>
+
         <li class="ContractSection-term">
           I understand that voluntary supportive services will be offered to
           assist me in making on-time water bill payments. The supportive
@@ -70,6 +77,7 @@
           support my progress. I agree to keep my Case Manager informed of my
           bill payment compliance and other issues and needs as requested.
         </li>
+
         <li class="ContractSection-term">
           I understand and agree to adhere to all WRAP guidelines stated herein
           which have been fully discussed with me. I agree to report honestly
@@ -79,18 +87,22 @@
         </li>
       </ul>
     </div>
+
     <div class="ContractSection-fields u-break">
       <div class="ContractSection-fieldRow">
         <%= field("Name", view.recipient_name, class: "Contract-applicantName") %>
-        <%= field("Phone Number", "+1 #{number_to_phone(view.phone_number)}", class: "Contract-phoneNumber") %>
+        <%= field("Phone Number", view.phone_number, class: "Contract-phoneNumber") %>
       </div>
+
       <div class="ContractSection-fieldRow">
         <%= field("Address", view.address, class: "Contract-address") %>
       </div>
+
       <div class="Contract-meapSignatures ContractSection-fieldRow">
         <%= field("Signature of Applicant or Head-of-household", view.recipient_name, class: "Contract-signature ContractField--signature") %>
-        <%= field("Date", date, class: "Contract-date ContractField--tall") %>
+        <%= field("Date", view.date, class: "Contract-date ContractField--tall") %>
       </div>
+
       <div class="ContractSection-fieldRow">
         <%= field("Signature of Agency Representative", class: "Contract-signature ContractField--signature") %>
         <%= field("Date", class: "Contract-date ContractField--tall") %>

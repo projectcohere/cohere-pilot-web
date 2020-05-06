@@ -81,7 +81,7 @@ module Twilio
     end
 
     def json
-      if success? && body != nil
+      if success? && body != nil && content_type == "application/json"
         return @json ||= ActiveSupport::JSON.decode(body)
       end
     end

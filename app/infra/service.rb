@@ -3,8 +3,8 @@ module Service
 
   class_methods do
     # provide an accessor that returns a transient instance of this service
-    def get
-      return self.new
+    def get(*args)
+      return self.new(*args)
     end
   end
 end

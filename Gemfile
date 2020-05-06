@@ -7,7 +7,6 @@ gem "aws-sdk-s3", "~> 1.52", require: false
 gem "bootsnap", ">= 1.4.2", require: false
 gem "clearance", "~> 1.17"
 gem "image_processing", "~> 1.9"
-gem "mixpanel-ruby", "~> 2.2"
 gem "openssl", "~> 2.1"
 gem "pagy", "~> 3.7"
 gem "pdfkit", "~> 0.8.4"
@@ -18,9 +17,6 @@ gem "redis", "~> 4.1"
 gem "sass-rails", "~> 5"
 gem "sentry-raven", "~> 2.12"
 gem "sidekiq", "~> 6.0"
-# https://github.com/ondrejbartas/sidekiq-cron/issues/278
-gem "sidekiq-cron", "~> 1.1", require: false
-gem "sidekiq-unique-jobs", "~> 6.0"
 gem "skylight", "~> 4.2"
 gem "turbolinks", "~> 5"
 gem "webpacker", "~> 4.0"

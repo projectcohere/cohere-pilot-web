@@ -1,0 +1,11 @@
+.CaseSearch {
+  max-width: $width2;
+
+  &-prompt {
+    @extend .u-prompt;
+  }
+
+  &-field {
+    margin-top: $spacing5;
+  }
+}

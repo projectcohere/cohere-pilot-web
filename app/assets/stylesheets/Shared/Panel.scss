@@ -33,7 +33,7 @@
   }
 
   &-sectionTitle {
-    @extend .u-section-name;
+    @extend .u-section;
 
     grid-column: 1 / 10;
     margin-bottom: $spacing6;
@@ -53,6 +53,15 @@
         height: 3px;
         background-color: $color-divider;
       }
+    }
+  }
+
+  &-row {
+    display: flex;
+    grid-area: auto / span 8;
+
+    > * + * {
+      margin-left: $spacing3;
     }
   }
 

@@ -3,20 +3,26 @@ module Twilio
     include ::Logging
 
     # -- lifetime --
-    def initialize(twilio: Client.get)
+    def initialize(decode: DecodeSms.get, twilio: Client.get)
+      @decode = decode
       @twilio = twilio
     end
 
     # -- command --
     def call(phone_number, body:, media_urls:)
-      @twilio.post("/Messages.json", {
+      res = @twilio.post("/Messages.json", {
         "To" => "+1#{phone_number}",
         "From" => ENV["TWILIO_API_PHONE_NUMBER"],
         "Body" => body,
         "MediaUrl" => media_urls,
+        "StatusCallback" => "#{ENV["HOST"]}/chats/sms/status",
       })
 
-      return nil
+      if not res.success?
+        return nil
+      end
+
+      return @decode.(res.json)
     end
   end
 end

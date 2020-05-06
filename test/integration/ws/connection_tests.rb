@@ -18,7 +18,7 @@ module Ws
 
     # -- tests --
     test "connect a user by remember token" do
-      user_rec = users(:cohere_1)
+      user_rec = users(:agent_1)
       cookies[:remember_token] = user_rec.remember_token
 
       connect
@@ -27,7 +27,7 @@ module Ws
     end
 
     test "connect by a user with a chat id by remember token" do
-      user_rec = users(:cohere_1)
+      user_rec = users(:agent_1)
       cookies[:remember_token] = user_rec.remember_token
       cookies.signed[:chat_user_id] = "test-id"
 

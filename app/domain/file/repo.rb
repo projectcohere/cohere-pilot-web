@@ -22,8 +22,7 @@ class File
     def save_uploaded_files(files)
       transaction do
         files.map do |file|
-          # TODO: change to create_and_upload! after upgrade to Rails 6.0.2
-          blob = ActiveStorage::Blob.create_after_upload!(
+          blob = ActiveStorage::Blob.create_and_upload!(
             io: file.tempfile,
             filename: file.original_filename,
             content_type: file.content_type,

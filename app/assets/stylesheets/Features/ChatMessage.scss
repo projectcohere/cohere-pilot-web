@@ -1,6 +1,7 @@
+$chat-message-margin: 12px;
+
 .ChatMessage {
   $r: ".ChatMessage";
-  $chat-message-margin: 12px;
 
   border-radius: $radius-chat;
   max-width: 80%;
@@ -14,49 +15,42 @@
     font-size: $font-size7;
   }
 
-  &-attachment {
-    border-radius: $radius-field;
-  }
 
   &-body {
     margin: $chat-message-margin;
-    margin-bottom: 0;
   }
 
-  &-timestamp {
-    display: block;
-    margin: $chat-message-margin;
-    margin-top: $spacing6;
-    font-size: $font-size7;
+  &-attachment {
+    border-radius: $radius-chat - 2px;
   }
 
-  // -- variants --
-  &--sent {
+  // -- states --
+  &.is-sent {
     align-self: flex-end;
     background-color: $color-alert;
   }
 
-  &--received {
+  &.is-received {
     align-self: flex-start;
     background-color: $color-field;
   }
 
   // shrink margin between sequential messages
-  &--sent + &--sent, &--received + &--received {
+  &.is-sent + &.is-sent, &.is-received + &.is-received {
     margin-top: $spacing6;
   }
 
   // style the first message in each group
-  *:not(&--sent) + &--sent, &--sent:first-child {
+  *:not(.is-sent) + &.is-sent, &.is-sent:first-child {
     border-top-right-radius: $radius-field;
   }
 
-  *:not(&--received) + &--received, &--received:first-child {
+  *:not(.is-received) + &.is-received, &.is-received:first-child {
     border-top-left-radius: $radius-field;
   }
 
-  *:not(&--sent) + &--sent, &--sent:first-child,
-  *:not(&--received) + &--received, &--received:first-child {
+  *:not(.is-sent) + &.is-sent, &.is-sent:first-child,
+  *:not(.is-received) + &.is-received, &.is-received:first-child {
     #{$r}-sender {
       display: block;
     }
@@ -68,5 +62,63 @@
     #{$r}-body {
       margin-top: 0;
     }
+  }
+}
+
+.ChatMessageInfo {
+  display: flex;
+  align-items: center;
+  margin-top: $spacing6;
+  margin-bottom: $chat-message-margin;
+  padding-right: $spacing6;
+
+  // -- elements --
+  &-timestamp {
+    font-size: $font-size7;
+  }
+
+  &-status {
+    width: 14px;
+    height: 14px;
+    fill: none;
+  }
+
+  &-queued {
+    stroke: $gray0;
+    stroke-dasharray: 30 30;
+    animation: is-queued 2s linear forwards;
+    animation-iteration-count: 5; // spin for 10 seconds, then give up
+
+    @keyframes is-queued {
+      to {
+        stroke-dashoffset: 60;
+      }
+    }
+  }
+
+  &-success {
+    stroke: $black;
+  }
+
+  &-failure {
+    stroke: $color-error;
+  }
+
+  // -- states --
+  &.is-sent {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+  }
+
+  &.is-sent &-status {
+    margin-left: $spacing6;
+  }
+
+  &.is-received {
+    align-self: flex-start;
+  }
+
+  &.is-received &-timestamp {
+    margin-left: $spacing6;
   }
 }

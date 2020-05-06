@@ -1,31 +1,52 @@
 module Cases
   module Forms
     class Household < ApplicationForm
+      include Case::Policy::Context::Shared
+      include ActionView::Helpers::TranslationHelper
+
       # -- fields --
-      field(:size, :string,
-        numericality: { allow_blank: true },
-        on: { submitted: { presence: true } }
+      field(:proof_of_income, :symbol, presence: true)
+
+      field(:size, :string, numericality: { allow_blank: true },
+        presence: {
+          on: :submitted,
+        },
       )
 
-      field(:income, :string,
-        numericality: { allow_blank: true },
-        on: { submitted: { presence: true } }
+      field(:dhs_number, :string,
+        presence: {
+          on: :submitted,
+          if: -> { permit?(:edit_dhs_number) }
+        }
       )
 
-      field(:ownership, :string,
-        on: { submitted: { presence: true } }
+      field(:income, :string, numericality: { allow_blank: true },
+        presence: {
+          on: :submitted,
+          if: -> { permit?(:edit_household_income) },
+        },
       )
 
-      field(:is_primary_residence, :boolean)
+      field(:ownership, :symbol,
+        inclusion: {
+          in: Recipient::Ownership.valid.map(&:key),
+          if: -> { permit?(:edit_household_ownership) },
+        },
+      )
 
       # -- lifecycle --
       protected def initialize_attrs(attrs)
-        h = @model.recipient.dhs_account&.household
+        if not @model.respond_to?(:household)
+          return
+        end
+
+        h = @model.household
         assign_defaults!(attrs, {
+          dhs_number: h&.dhs_number,
           size: h&.size&.to_s,
-          income: h&.income_dollars&.to_s,
-          ownership: h&.ownership,
-          is_primary_residence: h&.is_primary_residence
+          proof_of_income: h&.proof_of_income,
+          income: h&.income&.dollars&.to_s,
+          ownership: h&.ownership&.to_sym,
         })
       end
 
@@ -34,21 +55,32 @@ module Cases
         super(value&.gsub(/[^\d\.]+/, ""))
       end
 
-      # -- queries --
-      def ownership_options
-        Recipient::Household::Ownership.all.map do |o|
-          [o.to_s.titlecase, o]
+      # -- queries/options
+      def proof_of_income_options
+        return Recipient::ProofOfIncome.map do |o|
+          [t("recipient.proof_of_income.#{o}"), o.key]
         end
       end
 
-      def map_to_recipient_household
-        Recipient::Household.new(
+      def ownership_options
+        return Recipient::Ownership.map do |o|
+          [t("recipient.ownership.#{o}"), o.key]
+        end
+      end
+
+      # -- transformation --
+      def map_to_household
+        return Recipient::Household.new(
           size: size.to_i,
-          income_cents: (income.to_f * 100.0).to_i,
-          ownership: ownership.nil? ? Recipient::Household::Ownership::Unknown : ownership,
-          is_primary_residence: is_primary_residence.nil? ? true : is_primary_residence
+          proof_of_income: Recipient::ProofOfIncome.from_key(proof_of_income),
+          dhs_number: dhs_number,
+          income: Money.dollars(income),
+          ownership: Recipient::Ownership.from_key(ownership),
         )
       end
+
+      # -- Case::Policy::Context --
+      alias :case :model
     end
   end
 end

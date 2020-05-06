@@ -11,7 +11,8 @@ class ApplicationController < ActionController::Base
   after_action(:dispatch_events)
 
   # -- helpers --
-  helper_method(:header?)
+  helper_method(:user_role)
+  helper_method(:shows_navigation?)
 
   # -- config --
   private def set_file_host
@@ -19,17 +20,17 @@ class ApplicationController < ActionController::Base
   end
 
   # -- helpers --
-  def show_header!
-    @is_header_visible = true
+  def show_navigation!
+    @navigation_visible = true
   end
 
-  def header?
-    signed_in? || @is_header_visible
+  def shows_navigation?
+    signed_in? || @navigation_visible
   end
 
   # -- events --
   protected def events
-    Service::Container.domain_events
+    Events::DispatchAll.get.events
   end
 
   protected def dispatch_events

@@ -1,0 +1,16 @@
+<div class="CaseDetail-phone Phone-frame">
+  <%=
+    render(partial: "chats/chat", locals: {
+      chat: chat,
+      sender: Chat::Sender.agent(cookies.signed[:chat_user_id]),
+      receiver: recevier,
+      data: {
+        id: chat.id.val,
+      },
+    })
+  %>
+
+  <div class="Chat-agent">
+    <%= render(partial: "chats/macros") %>
+  </div>
+</div>

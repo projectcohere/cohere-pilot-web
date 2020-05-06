@@ -1,0 +1,142 @@
+$width: 74px;
+
+.Navigation {
+  --icon-width: 36px;
+  --icon-color: #{$black};
+
+  display: flex;
+  flex-direction: column;
+  width: $width;
+  background-color: $white;
+  box-shadow: 0px 4px 4px $color-shadow2;
+  z-index: 1;
+
+  .Link, a {
+    text-decoration-color: var(--role-color);
+
+    &:hover {
+      color: var(--role-color);
+    }
+  }
+
+  &-logo {
+    --icon-width: 54px;
+
+    position: relative;
+    display: flex;
+    justify-content: center;
+    width: $width;
+    padding: $spacing3 0;
+
+    &:hover {
+      --icon-color: var(--role-color);
+    }
+  }
+
+  &-links {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    padding: $spacing4 $spacing6;
+    font-weight: $font-weight-medium;
+    font-size: $font-size7;
+    text-align: center;
+    text-transform: uppercase;
+    line-height: initial;
+
+    &:hover {
+      --icon-color: var(--role-color);
+    }
+
+    &.is-active {
+      position: relative;
+      background-color: var(--role-color-bg);
+
+      &::after {
+        content: "";
+        position: absolute;
+        height: 100%;
+        width: 3px;
+        top: 0;
+        right: 0px;
+        background-color: var(--role-color);
+      }
+    }
+  }
+}
+
+// -- NavigationProfile --
+.NavigationProfile {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: $spacing3 0;
+
+  &:hover {
+    --icon-color: var(--role-color);
+  }
+
+  &-popup {
+    position: absolute;
+    left: $width;
+    bottom: 0;
+    visibility: hidden;
+  }
+
+  &:hover &-popup {
+    visibility: visible;
+  }
+
+  &-links {
+    display: flex;
+    flex-direction: column;
+    padding: $spacing5;
+    margin-left: $spacing4;
+    margin-bottom: $spacing4;
+    background-color: $white;
+    border-radius: $radius;
+    box-shadow: 0px 0px 10px $color-shadow2;
+  }
+}
+
+// -- NavigationIcon --
+.NavigationIcon {
+  width: var(--icon-width);
+  height: 36px;
+  background-color: var(--icon-color);
+
+  @include prefix(webkit, (
+    mask-size: contain,
+    mask-position: center,
+    mask-repeat: no-repeat
+  ));
+
+  // -- variants --
+  &.is-logo {
+    @include prefix(webkit, (mask-image: image-url("logo-icon-black.svg")));
+  }
+
+  &.is-cases {
+    @include prefix(webkit, (mask-image: image-url("cases.svg")));
+  }
+
+  &.is-queue {
+    @include prefix(webkit, (mask-image: image-url("queue.svg")));
+  }
+
+  &.is-search {
+    @include prefix(webkit, (mask-image: image-url("search.svg")));
+  }
+
+  &.is-profile {
+    @include prefix(webkit, (mask-image: image-url("profile.svg")));
+  }
+}
