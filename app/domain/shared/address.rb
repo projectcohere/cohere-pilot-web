@@ -8,7 +8,7 @@ class Address < ::Value
 
   # -- queries --
   def lines
-    return [
+    lines = [
       "#{@street}",
       "#{@street2}",
       "#{@city}, #{@state} #{@zip}"

@@ -8,8 +8,8 @@ module Events
     # -- lifetime --
     def initialize(
       events: ListQueue.new,
-      dispatch_effects: DispatchEffects.get,
-      dispatch_analytics: DispatchAnalytics.get
+      dispatch_effects: Events::DispatchEffects.get,
+      dispatch_analytics: Events::DispatchAnalytics.get
     )
       @events = events
       @dispatch_effects = dispatch_effects
