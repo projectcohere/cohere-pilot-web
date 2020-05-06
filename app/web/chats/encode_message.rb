@@ -35,12 +35,7 @@ module Chats
         m.body,
         m.status.index,
         m.timestamp,
-        m.attachments.map { |a|
-          if a.file == nil
-            next nil
-          end
-
-          f = a.file
+        m.attachments.map(&:file).compact.map { |f|
           Attachment.new(
             f.filename,
             f.service_url,
