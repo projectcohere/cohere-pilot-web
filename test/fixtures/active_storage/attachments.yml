@@ -1,9 +1,24 @@
-document_s2_1:
+document_p1_i:
   name: file
-  record: document_s1_1 (Document::Record)
+  record: document_p1_i (Document::Record)
   blob: blob_1
 
-document_a1_2:
+document_p3_i:
   name: file
-  record: document_a1_2 (Document::Record)
+  record: document_p3_i (Document::Record)
+  blob: blob_1
+
+document_p4_i:
+  name: file
+  record: document_p4_i (Document::Record)
+  blob: blob_1
+
+document_a1_i:
+  name: file
+  record: document_a1_i (Document::Record)
+  blob: blob_1
+
+document_a2_i:
+  name: file
+  record: document_a2_i (Document::Record)
   blob: blob_1

@@ -14,7 +14,7 @@ module Events
     def call(event)
       # add event attrs
       id = case event
-      when Cases::Events::DidViewSupplierForm
+      when Cases::Events::DidViewSourceForm
         Unsaved
       when Case::Events::DidOpen
         event.case_id.val
@@ -43,6 +43,10 @@ module Events
       data = { name: event.class.name.demodulize }
 
       # determine event attrs
+      if event.respond_to?(:temp_id) && event.temp_id&.val != nil
+        data[:temp_id] = event.temp_id.val
+      end
+
       if event.respond_to?(:case_program)
         data[:case_program] = event.case_program.id
       end

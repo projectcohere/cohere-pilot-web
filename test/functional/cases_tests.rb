@@ -135,17 +135,18 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     get(auth("/cases/select", as: user_rec))
     assert_response(:success)
+    assert_analytics_events(%w[DidViewSourceForm])
   end
 
   test "can't view open case form if signed-out" do
-    get("/cases/new?program_id=3")
+    get("/cases/new?temp_id=9&program_id=3")
     assert_redirected_to("/sign-in")
   end
 
   test "can't view open case form without permission" do
     user_rec = users(:agent_1)
 
-    get(auth("/cases/new?program_id=3", as: user_rec))
+    get(auth("/cases/new?temp_id=9&program_id=3", as: user_rec))
     assert_redirected_to("/cases")
   end
 
@@ -153,24 +154,23 @@ class CasesTests < ActionDispatch::IntegrationTest
     user_rec = users(:source_1)
     program_rec = user_rec.partner.programs.first
 
-    get(auth("/cases/new?program_id=#{program_rec.id}", as: user_rec))
+    get(auth("/cases/new?temp_id=9&program_id=#{program_rec.id}", as: user_rec))
     assert_response(:success)
     assert_select(".PageHeader-title", text: /Add a Case/)
-    assert_analytics_events(%w[DidViewSupplierForm])
   end
 
   test "views open case form as a non-supplier source" do
     user_rec = users(:source_3)
     program_rec = user_rec.partner.programs.first
 
-    get(auth("/cases/new?program_id=#{program_rec.id}", as: user_rec))
+    get(auth("/cases/new?temp_id=9&program_id=#{program_rec.id}", as: user_rec))
     assert_response(:success)
     assert_select(".PageHeader-title", text: /Add a Case/)
   end
 
   test "opens a case as a source" do
     user_rec = users(:source_1)
-    program_rec = user_rec.partner.programs.first
+    program_rec = programs(:energy_c)
 
     case_params = {
       program_id: program_rec.id,
@@ -188,16 +188,13 @@ class CasesTests < ActionDispatch::IntegrationTest
       household: {
         proof_of_income: "dhs",
       },
-      supplier_account: {
-        account_number: "22222",
-        arrears: "1000.00"
-      }
     }
 
     act = -> do
       VCR.use_cassette("chats--send-cohere-msg--attachments") do
         post(auth("/cases", as: user_rec), params: {
-          case: case_params
+          temp_id: 9,
+          case: case_params,
         })
       end
     end
@@ -228,7 +225,8 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "opens a case a non-supplier source" do
     user_rec = users(:source_3)
-    program_rec = user_rec.partner.programs.find { |p| p.requirements.blank? }
+    supplier_rec = partners(:supplier_1)
+    program_rec = programs(:energy_c)
 
     case_params = {
       program_id: program_rec.id,
@@ -247,15 +245,17 @@ class CasesTests < ActionDispatch::IntegrationTest
         proof_of_income: "dhs",
       },
       supplier_account: {
-        account_number: "22222",
-        arrears: "1000.00"
-      }
+        supplier_id: supplier_rec.id,
+        account_number: "1234",
+        arrears: "4443",
+      },
     }
 
     act = -> do
       VCR.use_cassette("chats--send-cohere-msg--attachments") do
         post(auth("/cases", as: user_rec), params: {
-          case: case_params
+          temp_id: 9,
+          case: case_params,
         })
       end
     end
@@ -278,6 +278,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     program_rec = user_rec.partner.programs.first
 
     post(auth("/cases", as: user_rec), params: {
+      temp_id: 9,
       case: {
         program_id: program_rec.id,
         contact: {
@@ -299,11 +300,42 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "can't view a case without permission" do
-    user_rec = users(:source_1)
+    user_rec = users(:governor_1)
     case_rec = cases(:submitted_1)
 
     get(auth("/cases/#{case_rec.id}", as: user_rec))
     assert_redirected_to("/cases")
+  end
+
+  test "view a case as a source" do
+    user_rec = users(:source_1)
+    case_rec = cases(:opened_1)
+    name = Recipient::Repo.map_name(case_rec.recipient)
+
+    get(auth("/cases/#{case_rec.id}", as: user_rec))
+    assert_response(:success)
+    assert_select(".PageHeader-title", text: /#{name}/)
+  end
+
+  test "view a case as an agent" do
+    user_rec = users(:agent_1)
+    case_rec = cases(:approved_1)
+    name = Recipient::Repo.map_name(case_rec.recipient)
+
+    get(auth("/cases/#{case_rec.id}", as: user_rec))
+    assert_response(:success)
+    assert_select(".PageHeader-title", text: /#{name}/)
+  end
+
+  test "view a case as an enroller" do
+    user_rec = users(:enroller_1)
+    case_rec = cases(:submitted_1)
+    name = Recipient::Repo.map_name(case_rec.recipient)
+
+    get(auth("/cases/#{case_rec.id}", as: user_rec))
+    assert_response(:success)
+    assert_select(".PageHeader-title", text: /#{name}/)
+    assert_analytics_events(%w[DidViewEnrollerCase])
   end
 
   test "can't view another enroller's case as an enroller" do
@@ -313,27 +345,6 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_raises(ActiveRecord::RecordNotFound) do
       get(auth("/cases/#{case_rec.id}", as: user_rec))
     end
-  end
-
-  test "view a case as an agent" do
-    user_rec = users(:agent_1)
-    case_rec = cases(:approved_1)
-    kase = Case::Repo.map_record(case_rec)
-
-    get(auth("/cases/#{kase.id}", as: user_rec))
-    assert_response(:success)
-    assert_select(".PageHeader-title", text: /#{kase.recipient.profile.name}/)
-  end
-
-  test "view a case as an enroller" do
-    user_rec = users(:enroller_1)
-    case_rec = cases(:submitted_1)
-    kase = Case::Repo.map_record(case_rec)
-
-    get(auth("/cases/#{kase.id}", as: user_rec))
-    assert_response(:success)
-    assert_select(".PageHeader-title", text: /#{kase.recipient.profile.name}/)
-    assert_analytics_events(%w[DidViewEnrollerCase])
   end
 
   # -- edit --
@@ -348,7 +359,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     user_rec = users(:source_1)
     case_rec = cases(:submitted_1)
 
-    get(auth("/cases/#{case_rec.id}", as: user_rec))
+    get(auth("/cases/#{case_rec.id}/edit", as: user_rec))
     assert_redirected_to("/cases")
   end
 
@@ -527,8 +538,9 @@ class CasesTests < ActionDispatch::IntegrationTest
       submit: :ignored
     })
 
-    assert_redirected_to("/cases/#{case_rec.id}/edit")
+    assert_redirected_to("/cases")
     assert_present(flash[:notice])
+    assert_analytics_events(%w[DidSubmit])
 
     assert_broadcast_on(case_activity_for(:agent_1), {
       name: "HAS_NEW_ACTIVITY",
@@ -543,7 +555,6 @@ class CasesTests < ActionDispatch::IntegrationTest
     #   assert_equal(msg["name"], "DID_ADD_QUEUED_CASE")
     #   assert_entry(msg["data"], "case_id")
     # end
-    assert_analytics_events(%w[DidSubmit])
   end
 
   test "submit a case that doesn't require a contract as an agent" do
@@ -554,7 +565,7 @@ class CasesTests < ActionDispatch::IntegrationTest
       submit: :ignored
     })
 
-    assert_redirected_to("/cases/#{case_rec.id}/edit")
+    assert_redirected_to("/cases")
     assert_present(flash[:notice])
   end
 
@@ -566,18 +577,18 @@ class CasesTests < ActionDispatch::IntegrationTest
       submit: :ignored
     })
 
-    assert_redirected_to("/cases/#{case_rec.id}/edit")
+    assert_redirected_to("/cases")
     assert_present(flash[:notice])
   end
 
-  # -- destroy --
-  test "can't destroy a case if signed-out" do
+  # -- delete --
+  test "can't delete a case if signed-out" do
     assert_raises(ActionController::RoutingError) do
       delete("/cases/3")
     end
   end
 
-  test "can't destroy a case without permission" do
+  test "can't delete a case without permission" do
     user_rec = users(:source_1)
 
     assert_raises(ActionController::RoutingError) do
@@ -585,7 +596,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "destroy a case" do
+  test "delete a case" do
     user_rec = users(:agent_1)
     case_rec = cases(:pending_1)
 
@@ -620,8 +631,9 @@ class CasesTests < ActionDispatch::IntegrationTest
     case_rec = cases(:submitted_1)
 
     patch(auth("/cases/#{case_rec.id}/deny", as: user_rec))
-    assert_redirected_to("/cases/#{case_rec.id}")
+    assert_redirected_to("/cases")
     assert_present(flash[:notice])
+    assert_analytics_events(%w[DidComplete])
 
     assert_broadcast_on(case_activity_for(:agent_1), {
       name: "HAS_NEW_ACTIVITY",
@@ -630,7 +642,6 @@ class CasesTests < ActionDispatch::IntegrationTest
         case_new_activity: false,
       }
     })
-    assert_analytics_events(%w[DidComplete])
   end
 
   test "complete a case as an agent" do
@@ -641,8 +652,9 @@ class CasesTests < ActionDispatch::IntegrationTest
       approve: :ignored
     })
 
-    assert_redirected_to("/cases/#{case_rec.id}/edit")
+    assert_redirected_to("/cases")
     assert_present(flash[:notice])
+    assert_analytics_events(%w[DidComplete])
 
     assert_broadcast_on(case_activity_for(:agent_1), {
       name: "HAS_NEW_ACTIVITY",
@@ -651,7 +663,6 @@ class CasesTests < ActionDispatch::IntegrationTest
         case_new_activity: false,
       }
     })
-    assert_analytics_events(%w[DidComplete])
   end
 
   test "remove a case from the pilot as an agent" do
@@ -662,8 +673,9 @@ class CasesTests < ActionDispatch::IntegrationTest
       remove: :ignored
     })
 
-    assert_redirected_to("/cases/#{case_rec.id}")
+    assert_redirected_to("/cases")
     assert_present(flash[:notice])
+    assert_analytics_events(%w[DidComplete])
 
     assert_broadcast_on(case_activity_for(:agent_1), {
       name: "HAS_NEW_ACTIVITY",
@@ -672,7 +684,6 @@ class CasesTests < ActionDispatch::IntegrationTest
         case_new_activity: false,
       }
     })
-    assert_analytics_events(%w[DidComplete])
   end
 
   # -- archive --

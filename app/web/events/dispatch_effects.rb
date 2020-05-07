@@ -6,7 +6,7 @@ module Events
       when User::Events::DidInvite
         deliver(Users::Mailer.did_invite(
           event.user_id.val,
-        ))
+        ), now: true)
       when Case::Events::DidOpen
         if not event.case_is_referred
           Chats::OpenChat.(
@@ -87,8 +87,12 @@ module Events
     end
 
     # -- command/helpers
-    private def deliver(mail)
-      mail.deliver_later
+    private def deliver(mail, now: false)
+      if now
+        mail.deliver_now
+      else
+        mail.deliver_later
+      end
     end
   end
 end

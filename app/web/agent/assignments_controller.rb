@@ -24,7 +24,7 @@ module Agent
 
       redirect_to(
         edit_case_path(@case),
-        notice: "You've unassigned #{email} from #{@case.recipient.profile.name}'s case."
+        notice: "Unassigned #{email} from #{@case.recipient.profile.name}'s case."
       )
     end
   end

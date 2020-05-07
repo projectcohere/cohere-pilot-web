@@ -5,22 +5,6 @@
     <h1 class="PageHeader-title">
       <%= t(".title", name: @case.recipient_name) %>
     </h1>
-
-    <div class="PageHeader-actions">
-      <%=
-        link_to(t(".actions.edit"), @case.edit_path,
-          class: "Button Button--secondary",
-          data: { "turbolinks-action": "replace" },
-        )
-      %>
-    </div>
-
-    <div class="PageHeader-row PageHeader-filters">
-      <nav class="Filters">
-        <%= filter_for(:application, is_selected: true) %>
-        <%= filter_for(:documents) %>
-      </nav>
-    </div>
   </header>
 
   <div class="CaseDetail CaseDetail--view">
@@ -44,22 +28,7 @@
 
           <%= render(partial: "cases/detail/household", locals: locals) %>
         </section>
-
-        <section id="documents" class="Panel-tab">
-          <%=
-            render(partial: "cases/documents", locals: {
-              documents: @case.documents
-            })
-          %>
-        </section>
       </div>
     </article>
-
-    <%=
-      render(partial: "agent/cases/chat", locals: {
-        chat: @case.chat,
-        recevier: @case.recipient_first_name
-      })
-    %>
   </div>
 </main>

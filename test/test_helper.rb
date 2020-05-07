@@ -14,8 +14,7 @@ end
 class ActiveSupport::TestCase
   # parallelize tests
   parallelize_setup do |worker|
-    # copy activestorage tmp files into
-    FileUtils.cp_r("./test/fixtures/files/storage", "./tmp")
+    require "seeds/create_test_files"
   end
 
   parallelize(workers: ENV["PRY_RESCUE"] ? 1 : :number_of_processors)

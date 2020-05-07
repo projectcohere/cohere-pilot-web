@@ -5,6 +5,7 @@ module Cases
       include Case::Policy::Context::Shared
       include Routing
       include ActionView::Helpers::DateHelper
+      include ActionView::Helpers::TranslationHelper
 
       # -- props --
       prop(:scope)
@@ -35,11 +36,10 @@ module Cases
       end
 
       # -- queries/details
-      delegate(:approved?, to: :status)
       delegate(:archived?, to: :condition)
 
       def status_name
-        return @status.to_s.capitalize
+        return t("case.status.#{@status.key}")
       end
 
       def program_name

@@ -1,4 +1,8 @@
 .Layout {
+  // -- variables --
+  --icon-color: #{$black};
+
+  // -- media --
   @include desktop {
     display: flex;
     height: 100vh;

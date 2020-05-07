@@ -12,28 +12,27 @@ module Source
       permit!(:create)
 
       @case = view_repo.new_program_picker(user_partner_id)
+      events.add(Cases::Events::DidViewSourceForm.from_entity(@case))
     end
 
     def new
       permit!(:create)
 
-      program_id = params[:program_id]
-      if program_id.blank?
-        return redirect_to(select_cases_path)
-      end
-
-      @form = view_repo.new_form(program_id)
+      @form = view_repo.new_form(params[:temp_id], params[:program_id])
       @case = @form.model
-
-      events.add(Cases::Events::DidViewSupplierForm.new)
+    rescue ActiveRecord::RecordNotFound
+      redirect_to(select_cases_path)
     end
 
     def create
       permit!(:create)
 
-      program_id = params.dig(:case, :program_id)
+      @form = view_repo.new_form(
+        params[:temp_id],
+        params.dig(:case, :program_id),
+        params: params
+      )
 
-      @form = view_repo.new_form(program_id, params: params)
       @case = @form.model
 
       if not SaveCaseForm.(@form)
@@ -42,6 +41,14 @@ module Source
       end
 
       redirect_to(cases_path, notice: "Created case!")
+    rescue ActiveRecord::RecordNotFound
+      redirect_to(select_cases_path)
+    end
+
+    def show
+      permit!(:view)
+
+      @case = view_repo.find_detail(params[:id])
     end
   end
 end

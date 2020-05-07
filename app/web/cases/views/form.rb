@@ -2,8 +2,12 @@ module Cases
   module Views
     # A Case form object for modifying any writeable information.
     class Form < ApplicationForm
+      include ActionView::Helpers::TranslationHelper
+
+      # -- props --
+      attr(:action)
+
       # -- fields --
-      field(:action, :symbol)
       field(:program_id, :integer)
 
       # -- subforms --
@@ -16,6 +20,11 @@ module Cases
       subform(:admin, Cases::Forms::Admin)
 
       # -- lifetime --
+      def initialize(model, action, attrs = {}, &permit)
+        @action = action
+        super(model, attrs, &permit)
+      end
+
       protected def initialize_attrs(attrs)
         assign_defaults!(attrs, {
           program_id: @model.program.id,
@@ -23,12 +32,16 @@ module Cases
       end
 
       # -- queries --
+      def action_text
+        return @action != nil ? t("cases.action.#{@action.key}") : nil
+      end
+
       # -- queries/validation
       def valid?
         scopes = []
 
         status = @admin&.map_to_status || @model.try(:status)
-        if action == :submit || status&.submitted? || action == :complete || status&.complete?
+        if @action&.submit? || status&.submitted? || @action&.complete? || status&.complete?
           scopes.push(:submitted)
         end
 

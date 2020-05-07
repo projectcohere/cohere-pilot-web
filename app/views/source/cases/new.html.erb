@@ -1,10 +1,7 @@
 <main class="EditCase Page">
   <header class="PageHeader">
-    <%= link_to("Back to Cases", :back, class: "PageHeader-back") %>
-
-    <h1 class="PageHeader-title">
-      Add a Case
-    </h1>
+    <%= back_link_tag %>
+    <%= tag.h1(t(".title"), class: "PageHeader-title") %>
   </header>
 
   <div class="CaseDetail CaseDetail--edit">
@@ -12,6 +9,7 @@
       <%= form_for(@form, url: cases_path, html: { class: "CaseDetail-content" }) do |f| %>
         <%- form_locals = { f: f, form: @form, policy: policy } %>
         <%= f.hidden_field(:program_id) %>
+        <%= hidden_field_tag(:temp_id, @case.temp_id.val) %>
 
         <%= render(partial: "cases/forms/contact", locals: form_locals) %>
         <%= render(partial: "cases/forms/address", locals: form_locals) %>

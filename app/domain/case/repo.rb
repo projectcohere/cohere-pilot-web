@@ -203,6 +203,7 @@ class Case
         case_rec.save!
         recipient_rec.save!
         create_documents!(kase.id.val, kase.new_documents)
+        destroy_removed_assignment!(kase)
       end
 
       # consume all entity events
@@ -280,16 +281,10 @@ class Case
       assign_status(kase, case_rec)
       assign_activity(kase, case_rec)
 
-      # find assignment record to delete
-      assignment = kase.selected_assignment
-      assignment_rec = if assignment&.removed?
-        case_rec.assignments.find { |a| a.user_id == assignment.user_id }
-      end
-
       # save records
       transaction do
         case_rec.save!
-        assignment_rec&.destroy!
+        destroy_removed_assignment!(kase)
       end
 
       # consume all entity events
@@ -507,6 +502,19 @@ class Case
       document_recs.each_with_index do |r, i|
         documents[i].did_save(r)
       end
+    end
+
+    private def destroy_removed_assignment!(kase)
+      assignment = kase.selected_assignment
+      if assignment&.removed? != true
+        return
+      end
+
+      assignment_rec = kase.record.assignments.find do |a|
+        a.user_id == assignment.user_id
+      end
+
+      assignment_rec&.destroy!
     end
 
     private def transaction(&block)

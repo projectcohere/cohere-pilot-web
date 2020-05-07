@@ -35,7 +35,7 @@ module Events
       # commit analytics records
       analytics = @dispatch_analytics.drain
       if analytics.length != 0
-        Record.insert_all(analytics.map { |d| { data: d, created_at: Time.now } })
+        Events::Record.insert_all(analytics.map { |d| { data: d, created_at: Time.now } })
       end
 
       @dispatching = false

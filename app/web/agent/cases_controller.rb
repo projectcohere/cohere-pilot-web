@@ -43,14 +43,21 @@ module Agent
 
       save_form = SaveCaseForm.new
       if not save_form.(@form)
-        flash.now[:alert] = "Please check #{@case.recipient_name}'s case for errors."
+        flash.now[:alert] = t(".flashes.failure", name: @case.recipient_name)
         return render(:edit)
       end
 
-      redirect_to(
-        @case.detail_path(save_form.case),
-        notice: "Updated #{@case.recipient_name}'s case!"
-      )
+      if @form.action == nil
+        redirect_to(
+          @case.detail_path(save_form.case),
+          notice: t(".flashes.success", name: @case.recipient_name),
+        )
+      else
+        redirect_to(
+          @case.list_path,
+          notice: t(".flashes.action", action: @form.action_text, name: @case.recipient_name),
+        )
+      end
     end
 
     def destroy
@@ -62,7 +69,7 @@ module Agent
 
       redirect_to(
         cases_path,
-        notice: "Deleted #{@case.recipient.profile.name}'s case."
+        notice: t(".flash", name: @case.recipient.profile.name)
       )
     end
 
@@ -75,7 +82,7 @@ module Agent
 
       redirect_to(
         cases_path,
-        notice: "Archived #{@case.recipient.profile.name}'s case."
+        notice: t(".flash", name: @case.recipient.profile.name)
       )
     end
   end

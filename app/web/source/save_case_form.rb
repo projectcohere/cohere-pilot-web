@@ -17,11 +17,10 @@ module Source
         return false
       end
 
-      program = form.model.program
-
       # open a new case for the recipient
       @case = Case.open(
-        program: program,
+        temp_id: form.model.temp_id,
+        program: form.model.program,
         profile: form.map_to_profile,
         household: form.map_to_household,
         enroller: @partner_repo.find_default_enroller,

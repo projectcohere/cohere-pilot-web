@@ -19,7 +19,7 @@ gem "sentry-raven", "~> 2.12"
 gem "sidekiq", "~> 6.0"
 gem "skylight", "~> 4.2"
 gem "turbolinks", "~> 5"
-gem "webpacker", "~> 4.0"
+gem "webpacker", "~> 5"
 
 group :development do
   gem "letter_opener", "~> 1.7"

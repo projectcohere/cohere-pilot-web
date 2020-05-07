@@ -30,7 +30,7 @@ module Db
     test "finds a case and document by id" do
       case_repo = Case::Repo.new
       case_rec = cases(:submitted_1)
-      document_rec = documents(:document_s1_1)
+      document_rec = documents(:document_s1_c)
 
       kase = case_repo.find_with_document(case_rec.id, document_rec.id)
       assert_equal(kase.id.val, case_rec.id)
@@ -55,7 +55,7 @@ module Db
     test "can't find a case and document if the case id does not match" do
       case_repo = Case::Repo.new
       case_rec = cases(:submitted_2)
-      document_rec = documents(:document_s1_1)
+      document_rec = documents(:document_s1_c)
 
       assert_raises(ActiveRecord::RecordNotFound) do
         case_repo.find_with_document(case_rec.id, document_rec.id)
@@ -166,6 +166,7 @@ module Db
       )
 
       kase = Case.open(
+        temp_id: 9,
         program: Program::Repo.map_record(program_rec),
         profile: profile,
         household: household,
@@ -237,6 +238,7 @@ module Db
       )
 
       kase = Case.open(
+        temp_id: 9,
         program: Program::Repo.map_record(program_rec),
         profile: profile,
         household: household,

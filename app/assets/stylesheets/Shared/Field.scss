@@ -79,14 +79,10 @@
   }
 
   // .Field-input/inputs
-  &--input input {
+  &--input input:first-child {
     flex: 1;
     width: 0;
     min-width: 0;
-
-    &:focus {
-      outline: none;
-    }
 
     &::placeholder {
       color: $gray1;

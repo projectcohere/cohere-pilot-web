@@ -5,6 +5,10 @@ class Program
     has_and_belongs_to_many(:partners)
 
     # -- scopes --
+    def self.active
+      return where.not(priority: -1)
+    end
+
     def self.for_partner(partner_id)
       query = self
         .includes(:partners)
@@ -21,6 +25,10 @@ class Program
       SQL
 
       return where("NOT EXISTS (#{query})", recipient_id)
+    end
+
+    def self.by_priority
+      return order(priority: :asc)
     end
   end
 end

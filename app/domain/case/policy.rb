@@ -60,17 +60,19 @@ class Case
         agent?
       # view
       when :view
-        agent? || enroller?
-      when :view_supplier_account
-        (agent? || enroller?) && requirement?(&:supplier_account_present?)
-      when :view_fpl
+        agent? || source? || enroller?
+      when :view_details
+        permit?(:view)
+      when :view_details_status
         agent? || enroller?
       when :view_details_enroller
         agent?
+      when :view_supplier_account
+        permit?(:view) && requirement?(&:supplier_account_present?)
       when :view_household_size
-        agent? || enroller?
+        (agent? || enroller?)
       when :view_household_ownership
-        agent? && requirement?(&:household_ownership?)
+        permit?(:view) && requirement?(&:household_ownership?)
       when :view_household_proof_of_income
         (agent? || enroller?) && !requirement?(&:household_proof_of_income_dhs?)
       when :view_household_dhs_number
@@ -78,7 +80,7 @@ class Case
       when :view_household_income
         (agent? || enroller?) && proof_of_income?(&:dhs?)
       when :view_supplier_account_active_service
-        agent? && requirement?(&:supplier_account_active_service?)
+        (agent? || enroller?) && requirement?(&:supplier_account_active_service?)
       # actions
       when :referral
         agent?

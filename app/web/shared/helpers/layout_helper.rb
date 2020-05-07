@@ -31,6 +31,14 @@ module Helpers
       return models.any? { |m| m&.errors&.present? }
     end
 
+    # -- links --
+    def back_link_tag
+      return link_to(
+        t(".back"),
+        "javascript:history.back()",
+        class: "PageHeader-back"
+      )
+    end
 
     # -- lists --
     def pager_for(page, of:)

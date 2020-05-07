@@ -1,6 +1,6 @@
 <main class="PendingCase Page">
   <header class="PageHeader">
-    <%= link_to(t(".actions.back"), :back, class: "PageHeader-back") %>
+    <%= back_link_tag %>
 
     <h1 class="PageHeader-title">
       <%= t(".title", name: @case.recipient_name) %>
@@ -13,6 +13,8 @@
       <%= tag.p(t(".program.subtitle"), class: "PendingCase-subtitle") %>
 
       <%= form_tag(@case.new_path, method: :get, class: "PendingCase-field BigField") do %>
+        <%= hidden_field_tag(:temp_id, @case.id.val) %>
+
         <div class="BigField-input Select">
           <%=
             select_tag(

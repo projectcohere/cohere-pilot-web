@@ -8,6 +8,7 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     kase = Case.open(
+      temp_id: :test_id,
       program: :test_program,
       profile: profile,
       household: :test_household,
@@ -33,6 +34,7 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     kase = Case.open(
+      temp_id: :test_id,
       program: :test_program,
       profile: profile,
       household: nil,
