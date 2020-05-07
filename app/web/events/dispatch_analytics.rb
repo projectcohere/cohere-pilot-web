@@ -20,13 +20,15 @@ module Events
         event.case_id.val
       when Cases::Events::DidViewGovernorForm
         event.case_id.val
-      when Case::Events::DidBecomePending
+      when Cases::Events::DidSaveGovernorForm
         event.case_id.val
       when Case::Events::DidReceiveMessage
         event.case_id.val
-      when Case::Events::DidSubmit
+      when Case::Events::DidSubmitToEnroller
         event.case_id.val
       when Cases::Events::DidViewEnrollerCase
+        event.case_id.val
+      when Case::Events::DidReturnToAgent
         event.case_id.val
       when Case::Events::DidComplete
         event.case_id.val

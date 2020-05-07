@@ -389,6 +389,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
+    assert_analytics_events(%w[DidSaveGovernorForm])
 
     assert_broadcast_on(case_activity_for(:agent_1), {
       name: "HAS_NEW_ACTIVITY",
@@ -539,7 +540,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
-    assert_analytics_events(%w[DidSubmit])
+    assert_analytics_events(%w[DidSubmitToEnroller])
 
     assert_broadcast_on(case_activity_for(:agent_1), {
       name: "HAS_NEW_ACTIVITY",
@@ -638,7 +639,7 @@ class CasesTests < ActionDispatch::IntegrationTest
       name: "HAS_NEW_ACTIVITY",
       data: {
         case_id: case_rec.id,
-        case_new_activity: false,
+        case_new_activity: true,
       }
     })
   end
@@ -659,7 +660,7 @@ class CasesTests < ActionDispatch::IntegrationTest
       name: "HAS_NEW_ACTIVITY",
       data: {
         case_id: case_rec.id,
-        case_new_activity: false,
+        case_new_activity: true,
       }
     })
   end

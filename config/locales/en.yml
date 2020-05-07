@@ -18,8 +18,8 @@ en:
   case:
     status:
       opened: "Opened"
-      pending: "Pending"
       submitted: "Submitted"
+      returned: "Returned"
       approved: "Approved"
       denied: "Denied"
       removed: "Removed"

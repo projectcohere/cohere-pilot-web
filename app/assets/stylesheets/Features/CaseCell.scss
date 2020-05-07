@@ -104,7 +104,7 @@
     @include progress(33%);
   }
 
-  &-pending &-footer {
+  &-returned &-footer {
     @include alert;
   }
 

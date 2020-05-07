@@ -91,7 +91,7 @@ submitted_1:
   supplier: supplier_1
   supplier_account_number: A1
   supplier_account_arrears_cents: 1000_00
-  new_activity: true
+  new_activity: false
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now - 2.hours %>
   received_message_at: <%= Time.zone.now %>

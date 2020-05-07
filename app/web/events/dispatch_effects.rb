@@ -37,7 +37,7 @@ module Events
             event.assignment_role.key,
           )
         end
-      when Case::Events::DidSubmit
+      when Case::Events::DidSubmitToEnroller
         Enroller::PublishQueuedCase.perform_async(
           event.case_id.val,
         )

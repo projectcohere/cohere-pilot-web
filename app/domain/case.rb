@@ -96,9 +96,24 @@ class Case < ::Entity
     end
 
     @status = Status::Submitted
-    @events.add(Events::DidSubmit.from_entity(self))
+    @events.add(Events::DidSubmitToEnroller.from_entity(self))
 
     track_new_activity(false)
+  end
+
+  def return_to_agent
+    if not submitted?
+      return
+    end
+
+    # update status
+    @status = Status::Returned
+    @events.add(Events::DidReturnToAgent.from_entity(self))
+
+    # remove agent assignment
+    remove_agent_assignment
+
+    track_new_activity(true)
   end
 
   def complete(status)
@@ -112,10 +127,9 @@ class Case < ::Entity
     @events.add(Events::DidComplete.from_entity(self))
 
     # remove agent assignment
-    @selected_assignment = @assignments&.find { |a| a.role.agent? }
-    remove_selected_assignment
+    remove_agent_assignment
 
-    track_new_activity(false)
+    track_new_activity(true)
   end
 
   def delete
@@ -206,6 +220,11 @@ class Case < ::Entity
     @selected_assignment.remove
     @assignments.delete(@selected_assignment)
     @events.add(Events::DidUnassignUser.from_entity(self))
+  end
+
+  private def remove_agent_assignment
+    @selected_assignment = @assignments&.find { |a| a.role.agent? }
+    remove_selected_assignment
   end
 
   # -- commands/messages

@@ -102,7 +102,31 @@ class CaseTests < ActiveSupport::TestCase
     assert_not(kase.new_activity?)
 
     assert_instances_of(kase.events, [
-      Case::Events::DidSubmit,
+      Case::Events::DidSubmitToEnroller,
+      Case::Events::DidChangeActivity,
+    ])
+  end
+
+  test "returns a case to the agent" do
+    kase = Case.stub(
+      status: Case::Status::Submitted,
+      new_activity: false,
+      assignments: [
+        Case::Assignment.stub(role: Role::Agent),
+      ],
+    )
+
+    kase.return_to_agent
+    assert(kase.returned?)
+    assert(kase.new_activity?)
+
+    assignments = kase.assignments
+    assert_empty(assignments)
+    assert(kase.selected_assignment&.removed?)
+
+    assert_instances_of(kase.events, [
+      Case::Events::DidReturnToAgent,
+      Case::Events::DidUnassignUser,
       Case::Events::DidChangeActivity,
     ])
   end
@@ -110,7 +134,7 @@ class CaseTests < ActiveSupport::TestCase
   test "completes a case" do
     kase = Case.stub(
       status: Case::Status::Submitted,
-      new_activity: true,
+      new_activity: false,
       assignments: [
         Case::Assignment.stub(role: Role::Agent),
       ],
@@ -118,7 +142,7 @@ class CaseTests < ActiveSupport::TestCase
 
     kase.complete(Case::Status::Approved)
     assert(kase.approved?)
-    assert_not(kase.new_activity?)
+    assert(kase.new_activity?)
     assert_in_delta(Time.zone.now, kase.completed_at, 1.0)
 
     assignments = kase.assignments
@@ -132,7 +156,7 @@ class CaseTests < ActiveSupport::TestCase
     ])
   end
 
-  test "removes a case from the pilot" do
+  test "removes a case" do
     kase = Case.stub(
       status: Case::Status::Opened,
       new_activity: true,

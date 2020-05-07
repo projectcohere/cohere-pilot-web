@@ -43,6 +43,8 @@ module Governor
         return render(:edit)
       end
 
+      events.add(Cases::Events::DidSaveGovernorForm.from_entity(@case))
+
       redirect_to(cases_path, notice: "Case updated!")
     end
   end
