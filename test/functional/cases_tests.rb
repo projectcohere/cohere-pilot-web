@@ -397,7 +397,6 @@ class CasesTests < ActionDispatch::IntegrationTest
         case_new_activity: true,
       }
     })
-    assert_analytics_events(%w[DidBecomePending])
   end
 
   test "edit a case as an agent" do

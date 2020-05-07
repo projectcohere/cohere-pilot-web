@@ -57,19 +57,12 @@ class Case < ::Entity
   # -- commands --
   def add_governor_data(household)
     @recipient.add_governor_data(household)
-
-    if @status == Status::Opened
-      @status = Status::Pending
-      events.add(Events::DidBecomePending.from_entity(self))
-    end
-
     track_new_activity(true)
   end
 
   def add_agent_data(supplier_account, profile, household)
     @supplier_account = supplier_account
     @recipient.add_agent_data(profile, household)
-
     track_new_activity(false)
   end
 
@@ -88,9 +81,9 @@ class Case < ::Entity
     end
   end
 
-  def remove_from_pilot
-    @completed_at = Time.zone.now
+  def remove
     @status = Status::Removed
+    @completed_at = Time.zone.now
     @condition = Condition::Archived
     @events.add(Events::DidComplete.from_entity(self))
 
@@ -98,7 +91,7 @@ class Case < ::Entity
   end
 
   def submit_to_enroller
-    if not can_submit?
+    if not (opened? || pending?)
       return
     end
 
@@ -109,20 +102,18 @@ class Case < ::Entity
   end
 
   def complete(status)
-    if not can_complete?
+    if not submitted?
       return
     end
 
     # update status
     @status = status
     @completed_at = Time.zone.now
+    @events.add(Events::DidComplete.from_entity(self))
 
     # remove agent assignment
     @selected_assignment = @assignments&.find { |a| a.role.agent? }
     remove_selected_assignment
-
-    # track events
-    @events.add(Events::DidComplete.from_entity(self))
 
     track_new_activity(false)
   end
@@ -137,7 +128,7 @@ class Case < ::Entity
 
   # -- commands/referral
   def make_referral(program)
-    if not @status.approved?
+    if not approved?
       return
     end
 
@@ -294,16 +285,9 @@ class Case < ::Entity
     :approved?,
     :denied?,
     :removed?,
-    :active?,
     :complete?,
     to: :status,
   )
-
-  alias :can_complete? :submitted?
-
-  def can_submit?
-    return opened? || pending?
-  end
 
   # -- queries/condition
   delegate(

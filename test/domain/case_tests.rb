@@ -73,11 +73,9 @@ class CaseTests < ActiveSupport::TestCase
 
     kase.add_governor_data(:test_household)
     assert(kase.new_activity?)
-    assert(kase.pending?)
     assert_equal(kase.recipient.household, :test_household)
 
     assert_instances_of(kase.events, [
-      Case::Events::DidBecomePending,
       Case::Events::DidChangeActivity,
     ])
   end
@@ -92,7 +90,7 @@ class CaseTests < ActiveSupport::TestCase
     assert_not_nil(kase.completed_at)
   end
 
-  test "submits a pending case to an enroller" do
+  test "submits a case to the enroller" do
     kase = Case.stub(
       status: Case::Status::Pending,
       recipient: Case::Recipient.stub,
@@ -109,7 +107,7 @@ class CaseTests < ActiveSupport::TestCase
     ])
   end
 
-  test "completes a submitted case" do
+  test "completes a case" do
     kase = Case.stub(
       status: Case::Status::Submitted,
       new_activity: true,
@@ -128,8 +126,8 @@ class CaseTests < ActiveSupport::TestCase
     assert(kase.selected_assignment&.removed?)
 
     assert_instances_of(kase.events, [
-      Case::Events::DidUnassignUser,
       Case::Events::DidComplete,
+      Case::Events::DidUnassignUser,
       Case::Events::DidChangeActivity,
     ])
   end
@@ -140,7 +138,7 @@ class CaseTests < ActiveSupport::TestCase
       new_activity: true,
     )
 
-    kase.remove_from_pilot
+    kase.remove
     assert(kase.removed?)
     assert(kase.archived?)
     assert_not(kase.new_activity?)

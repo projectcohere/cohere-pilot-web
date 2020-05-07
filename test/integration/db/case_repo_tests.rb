@@ -269,7 +269,7 @@ module Db
       assert_length(Events::DispatchAll.get.events, 2)
     end
 
-    test "saves a dhs contribution" do
+    test "saves governor data" do
       case_rec = cases(:opened_1)
 
       kase = Case::Repo.map_record(case_rec)
@@ -284,7 +284,6 @@ module Db
 
       case_rec = kase.record
       assert(case_rec.new_activity)
-      assert_equal(case_rec.status, "pending")
 
       recipient_rec = case_rec.recipient
       assert_equal(recipient_rec.dhs_number, "11111")

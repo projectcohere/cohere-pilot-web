@@ -107,6 +107,9 @@ class Case
     end
 
     def find_active_by_recipient(recipient_id)
+      # NEXT: find_by_chat_recipient? is this query correct? do we always want to
+      # add a message to _some_ case (e.g. the most recently created for a recipient)?
+      # maybe not, since this only syncs documents
       case_rec = Case::Record
         .active
         .order(updated_at: :desc)
