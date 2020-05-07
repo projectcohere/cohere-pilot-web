@@ -15,7 +15,7 @@
     <%= t("recipient.proof_of_income.#{view.household_proof_of_income}") %>
   <%- end %>
 
-  <% if permit?(:view_household_field) %>
+  <% if permit?(:view_household_dhs_number) %>
     <%= field_tag(t(".dhs-number"), class: "ShowCase-dhsNumber") do %>
       <%= view.household_dhs_number %>
     <%- end %>

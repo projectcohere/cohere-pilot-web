@@ -44,5 +44,11 @@ module Source
     rescue ActiveRecord::RecordNotFound
       redirect_to(select_cases_path)
     end
+
+    def show
+      permit!(:view)
+
+      @case = view_repo.find_detail(params[:id])
+    end
   end
 end

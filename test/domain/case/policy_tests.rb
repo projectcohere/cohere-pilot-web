@@ -54,13 +54,6 @@ class Case
       assert(policy.forbid?(:view))
     end
 
-    test "forbids suppliers from viewing a case" do
-      user = stub_user(:source)
-      kase = cases(:opened_1)
-      policy = Case::Policy.new(user, kase)
-      assert(policy.forbid?(:view))
-    end
-
     # -- edit --
     test "permits agents to edit a case" do
       user = stub_user(:agent)

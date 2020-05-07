@@ -1,0 +1,34 @@
+<main class="ShowCase Page">
+  <header class="PageHeader">
+    <%= back_link_tag %>
+
+    <h1 class="PageHeader-title">
+      <%= t(".title", name: @case.recipient_name) %>
+    </h1>
+  </header>
+
+  <div class="CaseDetail CaseDetail--view">
+    <article class="CaseDetail-case">
+      <div class="CaseDetail-bar">
+        <p class="CaseDetail-id">
+          <%= @case.id_text %>
+        </p>
+      </div>
+
+      <div class="CaseDetail-content">
+        <section id="application" class="Panel-tab is-visible">
+          <%- locals = { view: @case } %>
+
+          <%= render(partial: "cases/detail/details", locals: locals) %>
+          <%= render(partial: "cases/detail/contact", locals: locals) %>
+
+          <% if permit?(:view_supplier_account) %>
+            <%= render(partial: "cases/detail/supplier_account", locals: locals) %>
+          <% end %>
+
+          <%= render(partial: "cases/detail/household", locals: locals) %>
+        </section>
+      </div>
+    </article>
+  </div>
+</main>

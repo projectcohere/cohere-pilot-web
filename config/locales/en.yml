@@ -179,6 +179,9 @@ en:
         actions:
           submit: "Save"
 
+      show:
+        <<: *case-detail
+
   governor:
     cases:
       index:

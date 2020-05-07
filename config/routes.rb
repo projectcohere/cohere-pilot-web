@@ -61,6 +61,7 @@ Rails.application.routes.draw do
       index
       new
       create
+      show
     ]) do
       get("/select",
         on: :collection,

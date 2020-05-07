@@ -302,11 +302,42 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "can't view a case without permission" do
-    user_rec = users(:source_1)
+    user_rec = users(:governor_1)
     case_rec = cases(:submitted_1)
 
     get(auth("/cases/#{case_rec.id}", as: user_rec))
     assert_redirected_to("/cases")
+  end
+
+  test "view a case as a source" do
+    user_rec = users(:source_1)
+    case_rec = cases(:opened_1)
+    name = Recipient::Repo.map_name(case_rec.recipient)
+
+    get(auth("/cases/#{case_rec.id}", as: user_rec))
+    assert_response(:success)
+    assert_select(".PageHeader-title", text: /#{name}/)
+  end
+
+  test "view a case as an agent" do
+    user_rec = users(:agent_1)
+    case_rec = cases(:approved_1)
+    name = Recipient::Repo.map_name(case_rec.recipient)
+
+    get(auth("/cases/#{case_rec.id}", as: user_rec))
+    assert_response(:success)
+    assert_select(".PageHeader-title", text: /#{name}/)
+  end
+
+  test "view a case as an enroller" do
+    user_rec = users(:enroller_1)
+    case_rec = cases(:submitted_1)
+    name = Recipient::Repo.map_name(case_rec.recipient)
+
+    get(auth("/cases/#{case_rec.id}", as: user_rec))
+    assert_response(:success)
+    assert_select(".PageHeader-title", text: /#{name}/)
+    assert_analytics_events(%w[DidViewEnrollerCase])
   end
 
   test "can't view another enroller's case as an enroller" do
@@ -316,27 +347,6 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_raises(ActiveRecord::RecordNotFound) do
       get(auth("/cases/#{case_rec.id}", as: user_rec))
     end
-  end
-
-  test "view a case as an agent" do
-    user_rec = users(:agent_1)
-    case_rec = cases(:approved_1)
-    kase = Case::Repo.map_record(case_rec)
-
-    get(auth("/cases/#{kase.id}", as: user_rec))
-    assert_response(:success)
-    assert_select(".PageHeader-title", text: /#{kase.recipient.profile.name}/)
-  end
-
-  test "view a case as an enroller" do
-    user_rec = users(:enroller_1)
-    case_rec = cases(:submitted_1)
-    kase = Case::Repo.map_record(case_rec)
-
-    get(auth("/cases/#{kase.id}", as: user_rec))
-    assert_response(:success)
-    assert_select(".PageHeader-title", text: /#{kase.recipient.profile.name}/)
-    assert_analytics_events(%w[DidViewEnrollerCase])
   end
 
   # -- edit --
@@ -351,7 +361,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     user_rec = users(:source_1)
     case_rec = cases(:submitted_1)
 
-    get(auth("/cases/#{case_rec.id}", as: user_rec))
+    get(auth("/cases/#{case_rec.id}/edit", as: user_rec))
     assert_redirected_to("/cases")
   end
 
