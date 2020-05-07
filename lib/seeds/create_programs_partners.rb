@@ -78,41 +78,6 @@ Partner::Record.create!(
 )
 
 Partner::Record.create!(
-  name: "DTE",
-  membership: M::Supplier.key,
-  programs: [
-    meap,
-    cares_energy,
-  ],
-)
-
-Partner::Record.create!(
-  name: "Consumers Energy",
-  membership: M::Supplier.key,
-  programs: [
-    meap,
-    cares_energy,
-  ],
-)
-
-Partner::Record.create!(
-  name: "WMS",
-  membership: M::Supplier.key,
-  programs: [
-    cares_energy,
-  ],
-)
-
-Partner::Record.create!(
-  name: "DWSD",
-  membership: M::Supplier.key,
-  programs: [
-    wrap,
-    cares_water,
-  ],
-)
-
-Partner::Record.create!(
   name: "Wayne Metro",
   membership: M::Enroller.key,
   programs: [
@@ -124,3 +89,82 @@ Partner::Record.create!(
     cares_housing,
   ],
 )
+
+# -- partners/energy
+suppliers = [
+  "DTE",
+  "Consumers Energy",
+  "WMS",
+]
+
+suppliers.each do |name|
+  Partner::Record.create!(
+    name: name,
+    membership: M::Supplier.key,
+    programs: [
+      meap,
+      cares_energy,
+    ],
+  )
+end
+
+# -- partners/water
+suppliers = [
+  "DWSD",
+  "Brownstown Township",
+  "Canton Township",
+  "City of Allen Park",
+  "City of Belleville",
+  "City of Dearborn",
+  "City of Dearborn Heights",
+  "City of Detroit",
+  "City of Ecorse",
+  "City of Flat Rock",
+  "City of Garden City",
+  "City of Gibraltar",
+  "City of Grosse Pointe Farms",
+  "City of Grosse Pointe Park",
+  "City of Grosse Pointe Woods",
+  "City of Hamtramck",
+  "City of Harper Woods",
+  "City of Highland Park",
+  "City of Inkster",
+  "City of Lincoln Park",
+  "City of Livonia",
+  "City of Melvindale",
+  "City of Northville",
+  "City of Plymouth",
+  "City of River Rouge",
+  "City of Riverview",
+  "City of Rockwood",
+  "City of Romulus",
+  "City of Southgate",
+  "City of Taylor",
+  "City of Trenton",
+  "City of Wayne",
+  "City of Westland",
+  "City of Woodhaven",
+  "City of Wyandotte",
+  "Great Lakes Water Authority",
+  "Grosse Ile Township",
+  "Grosse Pointe City",
+  "Grosse Pointe Township",
+  "Huron Charter Township",
+  "Northville Township",
+  "Plymouth Charter Township",
+  "Redford Charter Township",
+  "Sumpter Township",
+  "Van Buren Township",
+  "Village of Grosse Pointe Shores",
+]
+
+suppliers.each do |name|
+  Partner::Record.create!(
+    name: name,
+    membership: M::Supplier.key,
+    programs: [
+      wrap,
+      cares_water,
+    ],
+  )
+end
