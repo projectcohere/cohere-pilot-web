@@ -78,17 +78,34 @@
   }
 
   // -- variants --
+  $color-progress: #edfff2;
+  $color-alert: #ffe2df;
+
   @mixin progress($percent) {
-    --progress-color: #f0fbf3;
-    background: linear-gradient(to right, var(--progress-color) 0%, var(--progress-color) $percent, transparent $percent), $gray2;
+    background: linear-gradient(
+      to right,
+      $color-progress 0%,
+      $color-progress $percent,
+      $gray2 $percent
+    );
+  }
+
+  @mixin alert() {
+    background: repeating-linear-gradient(
+      -45deg,
+      $gray2,
+      $gray2 10px,
+      $color-alert 10px,
+      $color-alert 20px
+    );
   }
 
   &-opened &-footer, &-removed &-footer {
-    background-color: $gray2;
+    @include progress(33%);
   }
 
   &-pending &-footer {
-    @include progress(33%);
+    @include alert;
   }
 
   &-submitted &-footer {
@@ -96,11 +113,11 @@
   }
 
   &-approved &-footer {
-    background-color: #f0fbf3;
+    @include progress(100%);
   }
 
   &-denied &-footer {
-    background-color: #fbf0f0;
+    background-color: $color-alert;
   }
 
   // -- states --
