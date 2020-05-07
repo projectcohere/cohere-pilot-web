@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_05_193456) do
+ActiveRecord::Schema.define(version: 2020_05_07_183131) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -137,6 +137,8 @@ ActiveRecord::Schema.define(version: 2020_05_05_193456) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.json "requirements", default: {}, null: false
+    t.integer "priority", default: 0, null: false
+    t.index ["priority"], name: "index_programs_on_priority"
   end
 
   create_table "recipients", force: :cascade do |t|

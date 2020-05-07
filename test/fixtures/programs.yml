@@ -1,14 +1,17 @@
 food_c:
+  priority: 0
   name: "Food (CARES)"
 
 housing_c:
   name: "Housing (CARES)"
+  priority: 3
   requirements:
     household:
       - ownership
 
 energy_0:
   name: "NRG"
+  priority: -1
   contracts:
     - meap
   requirements:
@@ -21,12 +24,14 @@ energy_0:
 
 energy_c:
   name: "Energy (CARES)"
+  priority: 1
   requirements:
     supplier_account:
       - present
 
 water_0:
   name: "WTR"
+  priority: 4
   contracts:
     - wrap_3h
     - wrap_1k
@@ -41,6 +46,7 @@ water_0:
 
 water_c:
   name: "Water (CARES)"
+  priority: 2
   requirements:
     supplier_account:
       - present

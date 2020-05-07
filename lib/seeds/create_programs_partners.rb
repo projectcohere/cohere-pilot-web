@@ -4,6 +4,7 @@ M = Partner::Membership
 # -- partners --
 meap = Program::Record.create!(
   name: "MEAP",
+  priority: -1,
   contracts: %i[
     meap
   ]
@@ -11,6 +12,7 @@ meap = Program::Record.create!(
 
 wrap = Program::Record.create!(
   name: "WRAP",
+  priority: 4,
   contracts: %i[
     wrap_3h
     wrap_1k
@@ -28,10 +30,12 @@ wrap = Program::Record.create!(
 
 cares_food = Program::Record.create!(
   name: "Food (CARES)",
+  priority: 0,
 )
 
 cares_energy = Program::Record.create!(
   name: "Energy (CARES)",
+  priority: 1,
   requirements: {
     supplier_account: %i[
       present
@@ -41,6 +45,7 @@ cares_energy = Program::Record.create!(
 
 cares_water = Program::Record.create!(
   name: "Water (CARES)",
+  priority: 2,
   requirements: {
     supplier_account: %i[
       present
@@ -50,6 +55,7 @@ cares_water = Program::Record.create!(
 
 cares_housing = Program::Record.create!(
   name: "Housing (CARES)",
+  priority: 3,
   requirements: {
     household: %i[
       ownership
