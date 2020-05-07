@@ -74,9 +74,17 @@ class Case < ::Entity
   end
 
   def add_admin_data(status)
-    if status != @status
-      @status = status
-      @completed_at = complete? ? Time.zone.now : nil
+    if @status == status
+      return
+    end
+
+    @status = status
+
+    if complete?
+      @completed_at = Time.zone.now
+    else
+      @condition = Condition::Active
+      @completed_at = nil
     end
   end
 
