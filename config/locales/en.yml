@@ -92,8 +92,9 @@ en:
       fallback: "There are no matching %{adj} cases."
 
     # -- detail/forms
-    single: &case-single
+    detail: &case-detail
       title: "%{name}'s case"
+      back: "Back to Cases"
 
     action:
       submit: "Submitted"
@@ -162,15 +163,21 @@ en:
           fallback: "No cases added."
 
       select:
+        <<: *case-detail
         title: "New Case"
         actions:
-          back: "Back to Cases"
           submit: "Start Case"
 
         program:
           title: "Start a New Case"
           subtitle: "Please pick one of these programs to start a new application."
           placeholder: "Select a Program"
+
+      new:
+        <<: *case-detail
+        title: "Add a Case"
+        actions:
+          submit: "Save"
 
   governor:
     cases:
@@ -180,6 +187,8 @@ en:
         <<: *case-queue
       search:
         <<: *case-search
+      edit:
+        <<: *case-detail
 
   agent:
     cases:
@@ -191,6 +200,7 @@ en:
         <<: *case-search
 
       edit:
+        <<: *case-detail
         actions:
           remove: "Remove Case"
           archive: "Archive"
@@ -203,9 +213,8 @@ en:
           action: "%{action} %{name}'s case."
 
       show:
-        <<: *case-single
+        <<: *case-detail
         actions:
-          back: "Back to Cases"
           edit: "Edit"
 
       destroy:
@@ -216,15 +225,19 @@ en:
 
     referrals:
       select:
-        <<: *case-single
+        <<: *case-detail
+        back: "Back to Case Details"
         actions:
-          back: "Back to Case Details"
           submit: "Start Referral"
 
         program:
           title: "Start a New Referral"
           subtitle: "Please pick one of these programs to start a new referral application."
           placeholder: "Select a Program"
+
+      new:
+        <<: *case-detail
+        back: "Back to Select Referral"
 
   enroller:
     cases:
@@ -234,6 +247,8 @@ en:
         <<: *case-queue
       search:
         <<: *case-search
+      show:
+        <<: *case-detail
 
   # imagine this nested in users. clearance actions & root templates don't
   # respect standard pathing:

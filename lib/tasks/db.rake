@@ -2,6 +2,7 @@ namespace :db do
   namespace :seed do
     desc "Loads development seeds"
     task dev: :environment do
+      require "seeds/create_test_files"
       require "seeds/create_chat_macros"
     end
 

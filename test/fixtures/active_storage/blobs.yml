@@ -1,5 +1,5 @@
 blob_1:
-  key: aabbWNGW1VrxZ8Eu4zmyw13A
+  key: 00aaWNGW1VrxZ8Eu4zmyw13A
   filename: test.png
   content_type: image/png
   metadata: '{"identified":true,"analyzed":true}'
@@ -7,7 +7,7 @@ blob_1:
   checksum: OUT/Y4YGuimmBmvUFYIN4Q==
 
 blob_2:
-  key: aabbXNGW1VrxZ8Eu4zmyw13A
+  key: 00aaXNGW1VrxZ8Eu4zmyw13A
   filename: introduction-welcome.png
   content_type: image/png
   metadata: '{"identified":true,"analyzed":true}'
