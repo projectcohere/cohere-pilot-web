@@ -120,11 +120,11 @@ module Db
       end
     end
 
-    test "finds an active case by recipient id" do
+    test "finds a case by chat recipient" do
       case_repo = Case::Repo.new
       case_recipient_rec = recipients(:recipient_1)
 
-      kase = case_repo.find_active_by_recipient(case_recipient_rec.id)
+      kase = case_repo.find_by_chat_recipient(case_recipient_rec.id)
       assert_not_nil(kase)
       assert_equal(kase.recipient.id.val, case_recipient_rec.id)
     end
@@ -424,7 +424,7 @@ module Db
 
     test "saves a new message" do
       case_repo = Case::Repo.new
-      case_rec = cases(:pending_1)
+      case_rec = cases(:opened_3)
 
       kase = Case::Repo.map_record(case_rec)
       kase.add_chat_message(Chat::Message.stub(

@@ -365,7 +365,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "edit a case as a governor" do
     user_rec = users(:governor_1)
-    case_rec = cases(:pending_1)
+    case_rec = cases(:opened_3)
 
     get(auth("/cases/#{case_rec.id}/edit", as: user_rec))
     assert_response(:success)
@@ -409,7 +409,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "save an edited case as an agent" do
-    case_rec = cases(:pending_1)
+    case_rec = cases(:opened_3)
 
     patch(auth("/cases/#{case_rec.id}"), params: {
       case: {
@@ -437,7 +437,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "save a signed contract" do
-    case_rec = cases(:pending_2)
+    case_rec = cases(:opened_4)
 
     act = ->() do
       patch(auth("/cases/#{case_rec.id}"), params: {
@@ -464,7 +464,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "doesn't save a duplicate contract" do
-    case_rec = cases(:pending_1)
+    case_rec = cases(:opened_3)
 
     act = ->() do
       patch(auth("/cases/#{case_rec.id}"), params: {
@@ -485,7 +485,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "show errors when saving an invalid case as an agent" do
-    case_rec = cases(:pending_1)
+    case_rec = cases(:opened_3)
 
     patch(auth("/cases/#{case_rec.id}"), params: {
       case: {
@@ -519,7 +519,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "show errors submitting an invalid case as an agent" do
-    case_rec = cases(:pending_2)
+    case_rec = cases(:opened_4)
 
     patch(auth("/cases/#{case_rec.id}"), params: {
       submit: :ignored
@@ -531,7 +531,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "submit a case as an agent" do
     user_rec = users(:agent_1)
-    case_rec = cases(:pending_1)
+    case_rec = cases(:opened_3)
 
     patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
       submit: :ignored
@@ -558,7 +558,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "submit a case that doesn't require a contract as an agent" do
     user_rec = users(:agent_1)
-    case_rec = cases(:pending_3)
+    case_rec = cases(:opened_5)
 
     patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
       submit: :ignored
@@ -570,7 +570,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "submit a case that doesn't require dhs income as an agent" do
     user_rec = users(:agent_1)
-    case_rec = cases(:pending_4)
+    case_rec = cases(:opened_6)
 
     patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
       submit: :ignored
@@ -597,7 +597,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "delete a case" do
     user_rec = users(:agent_1)
-    case_rec = cases(:pending_1)
+    case_rec = cases(:opened_3)
 
     delete(auth("/cases/#{case_rec.id}", as: user_rec))
 
@@ -666,7 +666,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "remove a case from the pilot as an agent" do
     user_rec = users(:agent_1)
-    case_rec = cases(:pending_1)
+    case_rec = cases(:opened_3)
 
     patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
       remove: :ignored

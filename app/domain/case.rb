@@ -91,7 +91,7 @@ class Case < ::Entity
   end
 
   def submit_to_enroller
-    if not (opened? || pending?)
+    if not (opened? || returned?)
       return
     end
 
@@ -280,8 +280,8 @@ class Case < ::Entity
   # -- queries/status
   delegate(
     :opened?,
-    :pending?,
     :submitted?,
+    :returned?,
     :approved?,
     :denied?,
     :removed?,

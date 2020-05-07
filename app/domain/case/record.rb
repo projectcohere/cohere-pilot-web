@@ -75,7 +75,7 @@ class Case
       scope = self
         .includes(program: :partners)
         .where(
-          status: [Status::Opened.key, Status::Pending.key],
+          status: [Status::Opened.key],
           programs: {
             partners_programs: {
               partner_id: partner_id,

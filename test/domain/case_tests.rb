@@ -92,7 +92,7 @@ class CaseTests < ActiveSupport::TestCase
 
   test "submits a case to the enroller" do
     kase = Case.stub(
-      status: Case::Status::Pending,
+      status: Case::Status::Opened,
       recipient: Case::Recipient.stub,
       new_activity: true,
     )
@@ -134,7 +134,7 @@ class CaseTests < ActiveSupport::TestCase
 
   test "removes a case from the pilot" do
     kase = Case.stub(
-      status: Case::Status::Pending,
+      status: Case::Status::Opened,
       new_activity: true,
     )
 
