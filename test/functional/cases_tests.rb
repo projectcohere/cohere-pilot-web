@@ -170,7 +170,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "opens a case as a source" do
     user_rec = users(:source_1)
-    program_rec = user_rec.partner.programs.first
+    program_rec = programs(:energy_c)
 
     case_params = {
       program_id: program_rec.id,
@@ -188,10 +188,6 @@ class CasesTests < ActionDispatch::IntegrationTest
       household: {
         proof_of_income: "dhs",
       },
-      supplier_account: {
-        account_number: "22222",
-        arrears: "1000.00"
-      }
     }
 
     act = -> do
@@ -229,7 +225,8 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "opens a case a non-supplier source" do
     user_rec = users(:source_3)
-    program_rec = user_rec.partner.programs.find { |p| p.requirements.blank? }
+    supplier_rec = partners(:supplier_1)
+    program_rec = programs(:energy_c)
 
     case_params = {
       program_id: program_rec.id,
@@ -248,9 +245,10 @@ class CasesTests < ActionDispatch::IntegrationTest
         proof_of_income: "dhs",
       },
       supplier_account: {
-        account_number: "22222",
-        arrears: "1000.00"
-      }
+        supplier_id: supplier_rec.id,
+        account_number: "1234",
+        arrears: "4443",
+      },
     }
 
     act = -> do

@@ -5,7 +5,7 @@ module Users
 
       mail(
         subject: "You're invited to Cohere!",
-        to: @user.email
+        to: @user.email,
       )
     end
   end

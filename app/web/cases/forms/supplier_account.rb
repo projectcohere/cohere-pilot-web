@@ -2,9 +2,9 @@ module Cases
   module Forms
     class SupplierAccount < ApplicationForm
       # -- fields --
-      field(:supplier_id, :integer, presence: { if: :required? })
-      field(:account_number, :string, presence: { if: :required? })
-      field(:arrears, :string, presence: { if: :required? }, numericality: { allow_blank: true })
+      field(:supplier_id, :integer, presence: { on: :submitted })
+      field(:account_number, :string, presence: { on: :submitted })
+      field(:arrears, :string, presence: { on: :submitted }, numericality: { allow_blank: true })
       field(:active_service, :boolean)
 
       # -- fields/validation
@@ -34,11 +34,6 @@ module Cases
       # -- santization --
       def arrears=(value)
         super(value&.gsub(/[^\d\.]+/, "")) # strip non-decimal characters
-      end
-
-      # -- queries --
-      private def required?
-        return validation_context&.include?(:new_referral) != true
       end
 
       # -- queries/suppliers
