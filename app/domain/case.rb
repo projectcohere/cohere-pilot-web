@@ -13,6 +13,7 @@ class Case < ::Entity
   prop(:supplier_account)
   prop(:documents, default: nil)
   prop(:assignments, default: nil)
+  prop(:notes, default: nil)
   prop(:referrer, default: false, predicate: true)
   prop(:referred, default: false, predicate: true)
   prop(:new_activity, default: false, predicate: true)
@@ -24,6 +25,7 @@ class Case < ::Entity
   # -- props/temporary
   attr(:new_assignment)
   attr(:selected_assignment)
+  attr(:selected_note)
   attr(:new_documents)
   attr(:selected_document)
 
@@ -220,6 +222,18 @@ class Case < ::Entity
   private def remove_assignment(role)
     @selected_assignment = @assignments&.find { |a| a.role == role }
     remove_selected_assignment
+  end
+
+  # -- commands/notes
+  def add_note(body, user)
+    @notes ||= []
+
+    @selected_note = Note.new(
+      body: body,
+      user_id: user.id,
+    )
+
+    @notes.push(@selected_note)
   end
 
   # -- commands/messages

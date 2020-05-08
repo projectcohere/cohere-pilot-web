@@ -396,6 +396,35 @@ module Db
       assert_length(Events::DispatchAll.get.events, 1)
     end
 
+    test "saves a new note" do
+      case_repo = Case::Repo.new
+      case_rec = cases(:opened_2)
+      user_rec = users(:agent_1)
+
+      kase = Case::Repo.map_record(case_rec)
+      user = User::Repo.map_record(user_rec)
+      kase.add_note("Test note.", user)
+
+      act = -> do
+        case_repo.save_new_note(kase)
+      end
+
+      assert_difference(
+        -> { Case::Note::Record.count } => 1,
+        &act
+      )
+
+      note_rec = case_rec.notes.first
+      assert_not_nil(note_rec)
+      assert_equal(note_rec.body, "Test note.")
+      assert_equal(note_rec.user_id, user_rec.id)
+      assert_equal(note_rec.case_id, case_rec.id)
+
+      events = kase.events
+      assert_length(events, 0)
+      assert_length(Events::DispatchAll.get.events, 0)
+    end
+
     test "saves a removed assignment" do
       case_repo = Case::Repo.new
       case_rec = cases(:opened_1)

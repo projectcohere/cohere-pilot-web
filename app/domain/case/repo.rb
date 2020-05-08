@@ -232,6 +232,17 @@ class Case
       @domain_events.consume(kase.events)
     end
 
+    def save_new_note(kase)
+      assert(kase.record != nil, "case must be persisted.")
+      assert(kase.selected_note != nil, "case has no new note")
+
+      # create records
+      create_new_note!(kase)
+
+      # consume all entity events
+      @domain_events.consume(kase.events)
+    end
+
     def save_new_message(kase)
       assert(kase.record != nil, "case must be persisted.")
 
@@ -502,6 +513,24 @@ class Case
       document_recs.each_with_index do |r, i|
         documents[i].did_save(r)
       end
+    end
+
+    private def create_new_note!(kase)
+      note = kase.selected_note
+      if note == nil
+        return
+      end
+
+      # initialize record
+      note_rec = Case::Note::Record.new
+      note_rec.assign_attributes(
+        body: note.body,
+        case_id: kase.id.val,
+        user_id: note.user_id.val,
+      )
+
+      # save record
+      note_rec.save!
     end
 
     private def destroy_removed_assignment!(kase)

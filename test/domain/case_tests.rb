@@ -308,6 +308,20 @@ class CaseTests < ActiveSupport::TestCase
     assert_instances_of(kase.events, [Case::Events::DidUnassignUser])
   end
 
+  # -- commands/notes
+  test "adds a note" do
+    kase = Case.stub
+    user = User.stub(id: Id.new(3))
+
+    kase.add_note("Test note.", user)
+    assert_length(kase.notes, 1)
+
+    note = kase.selected_note
+    assert_not_nil(note)
+    assert_equal(note.body, "Test note.")
+    assert_equal(note.user_id.val, 3)
+  end
+
   # -- commands/messages
   def stub_recipient_with_phone_number(phone_number)
     return Case::Recipient.stub(

@@ -7,8 +7,9 @@ class Case
     belongs_to(:supplier, record: :partner, optional: true)
 
     # -- associations/children
-    has_many(:documents, dependent: :destroy)
     has_many(:assignments, child: true, dependent: :destroy)
+    has_many(:notes, child: true, dependent: :destroy)
+    has_many(:documents, dependent: :destroy)
 
     # -- associations/referrals
     has_one(:referred, record: :case, foreign_key: "referrer_id")
