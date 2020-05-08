@@ -337,8 +337,8 @@ module Db
 
       case_repo.save_agent_data(kase)
 
-      c = kase.record
-      assert_equal(c.status, "approved")
+      c = case_rec
+      assert(c.approved?)
       assert_equal(c.supplier_account_number, "12345")
       assert_equal(c.supplier_account_arrears_cents, 1000_00)
       assert_not_nil(c.completed_at)
@@ -359,7 +359,7 @@ module Db
 
       d = kase.new_documents[0].record
       assert_not_nil(d)
-      assert_equal(d.classification, "contract")
+      assert(d.contract?)
       assert_equal(d.source_url, "wrap_1k")
 
       events = kase.events
@@ -488,10 +488,24 @@ module Db
       assert(document_rec.file.attached?)
     end
 
+    test "saves a returned case" do
+      case_repo = Case::Repo.new
+      case_rec = cases(:submitted_1)
+      kase = Case::Repo.map_record(case_rec, assignments: case_rec.assignments)
+      kase.return_to_agent
+
+      case_repo.save_returned(kase)
+      assert(case_rec.returned?)
+      assert_length(case_rec.assignments.reload, 2)
+
+      events = kase.events
+      assert_length(events, 0)
+      assert_length(Events::DispatchAll.get.events, 3)
+    end
+
     test "saves a completed case" do
       case_repo = Case::Repo.new
       case_rec = cases(:submitted_1)
-
       kase = Case::Repo.map_record(case_rec, assignments: case_rec.assignments, documents: case_rec.documents)
       kase.complete(Case::Status::Approved)
 
@@ -499,6 +513,38 @@ module Db
       assert(case_rec.approved?)
       assert_length(case_rec.assignments.reload, 2)
       assert_not_nil(case_rec.completed_at)
+
+      events = kase.events
+      assert_length(events, 0)
+      assert_length(Events::DispatchAll.get.events, 3)
+    end
+
+    test "saves a deleted case" do
+      case_repo = Case::Repo.new
+      case_rec = cases(:opened_1)
+      kase = Case::Repo.map_record(case_rec)
+      kase.delete
+
+      case_repo.save_deleted(kase)
+      assert(case_rec.deleted?)
+
+      events = kase.events
+      assert_length(events, 0)
+      assert_length(Events::DispatchAll.get.events, 0)
+    end
+
+    test "saves an archived case" do
+      case_repo = Case::Repo.new
+      case_rec = cases(:opened_1)
+      kase = Case::Repo.map_record(case_rec)
+      kase.archive
+
+      case_repo.save_archived(kase)
+      assert(case_rec.archived?)
+
+      events = kase.events
+      assert_length(events, 0)
+      assert_length(Events::DispatchAll.get.events, 0)
     end
 
     test "saves a referral" do
@@ -546,28 +592,6 @@ module Db
       assert_length(referrer.events, 0)
       assert_length(referred.events, 0)
       assert_length(Events::DispatchAll.get.events, 4)
-    end
-
-    test "saves a deleted case" do
-      case_repo = Case::Repo.new
-      case_rec = cases(:opened_1)
-
-      kase = Case::Repo.map_record(case_rec)
-      kase.delete
-
-      case_repo.save_deleted(kase)
-      assert(case_rec.deleted?)
-    end
-
-    test "saves a archived case" do
-      case_repo = Case::Repo.new
-      case_rec = cases(:opened_1)
-
-      kase = Case::Repo.map_record(case_rec)
-      kase.archive
-
-      case_repo.save_archived(kase)
-      assert(case_rec.archived?)
     end
   end
 end

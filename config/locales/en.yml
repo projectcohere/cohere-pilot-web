@@ -250,8 +250,25 @@ en:
         <<: *case-queue
       search:
         <<: *case-search
+
       show:
         <<: *case-detail
+        actions:
+          approve:
+            name: "Approve"
+            confirm: "Are you sure you want to approve this case?"
+          deny:
+            name: "Deny"
+            confirm: "Are you sure you want to deny this case?"
+          return:
+            name: "Return to Agent"
+            confirm: "Are you sure you want to return this case to the agent?"
+
+      return:
+        flash: "Returned %{name}'s case."
+
+      complete:
+        flash: "%{action} %{name}'s case."
 
   # imagine this nested in users. clearance actions & root templates don't
   # respect standard pathing:

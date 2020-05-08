@@ -95,13 +95,21 @@ class CaseTests < ActiveSupport::TestCase
       status: Case::Status::Opened,
       recipient: Case::Recipient.stub,
       new_activity: true,
+      assignments: [
+        Case::Assignment.stub(role: Role::Enroller),
+      ],
     )
 
     kase.submit_to_enroller
     assert(kase.submitted?)
     assert_not(kase.new_activity?)
 
+    assignments = kase.assignments
+    assert_empty(assignments)
+    assert(kase.selected_assignment&.removed?)
+
     assert_instances_of(kase.events, [
+      Case::Events::DidUnassignUser,
       Case::Events::DidSubmitToEnroller,
       Case::Events::DidChangeActivity,
     ])
@@ -125,8 +133,8 @@ class CaseTests < ActiveSupport::TestCase
     assert(kase.selected_assignment&.removed?)
 
     assert_instances_of(kase.events, [
-      Case::Events::DidReturnToAgent,
       Case::Events::DidUnassignUser,
+      Case::Events::DidReturnToAgent,
       Case::Events::DidChangeActivity,
     ])
   end
@@ -150,8 +158,8 @@ class CaseTests < ActiveSupport::TestCase
     assert(kase.selected_assignment&.removed?)
 
     assert_instances_of(kase.events, [
-      Case::Events::DidComplete,
       Case::Events::DidUnassignUser,
+      Case::Events::DidComplete,
       Case::Events::DidChangeActivity,
     ])
   end

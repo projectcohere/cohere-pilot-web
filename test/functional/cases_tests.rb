@@ -601,17 +601,47 @@ class CasesTests < ActionDispatch::IntegrationTest
     case_rec = cases(:opened_3)
 
     delete(auth("/cases/#{case_rec.id}", as: user_rec))
-
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
   end
 
+  # -- return --
+  test "can't return a case if signed out" do
+    assert_raises(ActionController::RoutingError) do
+      patch("/cases/0/return")
+    end
+  end
+
+  test "return a case to the agent as an enroller" do
+    user_rec = users(:enroller_1)
+    case_rec = cases(:submitted_1)
+
+    patch(auth("/cases/#{case_rec.id}/return", as: user_rec))
+    assert_redirected_to("/cases")
+    assert_present(flash[:notice])
+    assert_analytics_events(%w[DidReturnToAgent])
+
+    assert_broadcast_on(case_activity_for(:agent_1), {
+      name: "HAS_NEW_ACTIVITY",
+      data: {
+        case_id: case_rec.id,
+        case_new_activity: true,
+      }
+    })
+  end
+
   # -- complete --
+  test "can't complete a case if signed out" do
+    assert_raises(ActionController::RoutingError) do
+      patch("/cases/1/complete/approved")
+    end
+  end
+
   test "can't complete a case with an unknown status as an enroller" do
     user_rec = users(:enroller_1)
 
     assert_raises(ActionController::RoutingError) do
-      patch(auth("/cases/0/remove", as: user_rec))
+      patch(auth("/cases/1/complete/removed", as: user_rec))
     end
   end
 
@@ -620,9 +650,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     case_rec = cases(:submitted_2)
 
     assert_raises(ActiveRecord::RecordNotFound) do
-      patch(auth("/cases/#{case_rec.id}/approve", as: user_rec), params: {
-        deny: :ignored
-      })
+      patch(auth("/cases/#{case_rec.id}/complete/approved", as: user_rec))
     end
   end
 
@@ -630,7 +658,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     user_rec = users(:enroller_1)
     case_rec = cases(:submitted_1)
 
-    patch(auth("/cases/#{case_rec.id}/deny", as: user_rec))
+    patch(auth("/cases/#{case_rec.id}/complete/denied", as: user_rec))
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
     assert_analytics_events(%w[DidComplete])

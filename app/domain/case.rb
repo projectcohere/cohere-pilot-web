@@ -96,6 +96,7 @@ class Case < ::Entity
     end
 
     @status = Status::Submitted
+    remove_assignment(Role::Enroller)
     @events.add(Events::DidSubmitToEnroller.from_entity(self))
 
     track_new_activity(false)
@@ -106,12 +107,9 @@ class Case < ::Entity
       return
     end
 
-    # update status
     @status = Status::Returned
+    remove_assignment(Role::Agent)
     @events.add(Events::DidReturnToAgent.from_entity(self))
-
-    # remove agent assignment
-    remove_agent_assignment
 
     track_new_activity(true)
   end
@@ -121,13 +119,10 @@ class Case < ::Entity
       return
     end
 
-    # update status
     @status = status
     @completed_at = Time.zone.now
+    remove_assignment(Role::Agent)
     @events.add(Events::DidComplete.from_entity(self))
-
-    # remove agent assignment
-    remove_agent_assignment
 
     track_new_activity(true)
   end
@@ -222,8 +217,8 @@ class Case < ::Entity
     @events.add(Events::DidUnassignUser.from_entity(self))
   end
 
-  private def remove_agent_assignment
-    @selected_assignment = @assignments&.find { |a| a.role.agent? }
+  private def remove_assignment(role)
+    @selected_assignment = @assignments&.find { |a| a.role == role }
     remove_selected_assignment
   end
 

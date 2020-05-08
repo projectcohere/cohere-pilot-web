@@ -161,16 +161,15 @@ class Case
     end
 
     def save_governor_data(kase)
-      case_rec = kase.record
-      recipient_rec = kase.recipient.record
-
-      if case_rec.nil? || recipient_rec.nil?
-        raise "case and recipient must be fetched from the db!"
-      end
+      assert(kase.record != nil, "case must be persisted.")
+      assert(kase.recipient.record != nil, "recipient must be persisted.")
 
       # update records
+      case_rec = kase.record
       assign_status(kase, case_rec)
       assign_activity(kase, case_rec)
+
+      recipient_rec = kase.recipient.record
       assign_household(kase, recipient_rec)
 
       # save records
@@ -184,17 +183,16 @@ class Case
     end
 
     def save_agent_data(kase)
-      case_rec = kase.record
-      recipient_rec = kase.recipient.record
-
-      if case_rec.nil? || recipient_rec.nil?
-        raise "case and recipient must be fetched from the db!"
-      end
+      assert(kase.record != nil, "case must be persisted.")
+      assert(kase.recipient.record != nil, "recipient must be persisted.")
 
       # update records
+      case_rec = kase.record
       assign_status(kase, case_rec)
       assign_activity(kase, case_rec)
       assign_supplier_account(kase, case_rec)
+
+      recipient_rec = kase.recipient.record
       assign_profile(kase, recipient_rec)
       assign_household(kase, recipient_rec)
 
@@ -211,10 +209,7 @@ class Case
     end
 
     def save_new_assignment(kase)
-      case_rec = kase.record
-      if case_rec == nil
-        raise "case must be fetched from the db!"
-      end
+      assert(kase.record != nil, "case must be persisted.")
 
       # initialize record
       assignment_rec = Assignment::Record.new
@@ -227,11 +222,20 @@ class Case
       @domain_events.consume(kase.events)
     end
 
+    def save_removed_assignment(kase)
+      assert(kase.record != nil, "case must be persisted.")
+
+      # destroy record
+      destroy_removed_assignment!(kase)
+
+      # consume all entity events
+      @domain_events.consume(kase.events)
+    end
+
     def save_new_message(kase)
+      assert(kase.record != nil, "case must be persisted.")
+
       case_rec = kase.record
-      if case_rec.nil?
-        raise "case must be fetched from the db!"
-      end
 
       # update records
       assign_activity(kase, case_rec)
@@ -248,17 +252,13 @@ class Case
 
     def save_selected_document(kase)
       document = kase.selected_document
-      if document.nil?
-        raise "no document was selected"
-      end
+      assert(document != nil, "case has no selected document")
 
       document_rec = document.record
-      if document_rec.nil?
-        raise "unsaved document can't be updated with a new file"
-      end
+      assert(document_rec != nil, "document must be persisted")
 
       new_file = document.new_file
-      if new_file.nil?
+      if new_file == nil
         return
       end
 
@@ -286,6 +286,52 @@ class Case
         case_rec.save!
         destroy_removed_assignment!(kase)
       end
+
+      # consume all entity events
+      @domain_events.consume(kase.events)
+    end
+
+    def save_returned(kase)
+      assert(kase.record != nil, "case must be persisted")
+
+      # update the record
+      case_rec = kase.record
+      assign_status(kase, case_rec)
+      assign_activity(kase, case_rec)
+
+      # save the record
+      transaction do
+        case_rec.save!
+        destroy_removed_assignment!(kase)
+      end
+
+      # consume all entity events
+      @domain_events.consume(kase.events)
+    end
+
+    def save_archived(kase)
+      assert(kase.record != nil, "case must be persisted")
+
+      # update the record
+      case_rec = kase.record
+      assign_status(kase, case_rec)
+
+      # save the record
+      case_rec.save!
+
+      # consume all entity events
+      @domain_events.consume(kase.events)
+    end
+
+    def save_deleted(kase)
+      assert(kase.record != nil, "case must be persisted")
+
+      # update the record
+      case_rec = kase.record
+      assign_status(kase, case_rec)
+
+      # save the record
+      case_rec.save!
 
       # consume all entity events
       @domain_events.consume(kase.events)
@@ -341,50 +387,6 @@ class Case
       @domain_events.consume(referred.events)
     end
 
-    def save_deleted(kase)
-      assert(kase.record != nil, "case must be persisted")
-
-      # update the record
-      case_rec = kase.record
-      case_rec.assign_attributes(
-        condition: kase.condition.key,
-      )
-
-      # save the record
-      case_rec.save!
-    end
-
-    def save_archived(kase)
-      assert(kase.record != nil, "case must be persisted")
-
-      # update the record
-      case_rec = kase.record
-      case_rec.assign_attributes(
-        condition: kase.condition.key,
-      )
-
-      # save the record
-      case_rec.save!
-    end
-
-    def save_removed_assignment(kase)
-      case_rec = kase.record
-      if case_rec == nil
-        raise "case must be fetched from the db!"
-      end
-
-      # find record
-      assignment_rec = case_rec.assignments.find do |a|
-        a.partner_id == kase.selected_assignment.partner_id
-      end
-
-      # save record
-      assignment_rec.destroy!
-
-      # consume all entity events
-      @domain_events.consume(kase.events)
-    end
-
     # -- commands/helpers
     private def assign_partners(kase, case_rec)
       c = kase
@@ -418,9 +420,7 @@ class Case
 
     private def assign_new_assignment(kase, assignment_rec)
       assignment = kase.new_assignment
-      if assignment == nil
-        raise "case has no new assignment"
-      end
+      assert(assignment != nil, "case has no new assignment")
 
       c = kase
       a = assignment

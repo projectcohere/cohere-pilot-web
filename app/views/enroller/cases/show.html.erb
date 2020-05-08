@@ -3,27 +3,32 @@
     <%= back_link_tag %>
 
     <h1 class="PageHeader-title">
-      <%= @case.recipient_name %>'s case
+      <%= t(".title", name: @case.recipient_name) %>
     </h1>
 
     <div class="PageHeader-actions">
       <% if @case.can_complete? %>
         <%=
-          button_to("Approve Case", @case.approve_path,
+          button_to(t(".actions.approve.name"), @case.approve_path,
             method: :patch,
             class: "Button Button--action",
-            data: {
-              confirm: "Are you sure you want to approve this case?"
-            }
+            data: { confirm: t(".actions.approve.confirm") },
           )
         %>
+
         <%=
-          button_to("Deny Case", @case.deny_path,
+          button_to(t(".actions.deny.name"), @case.deny_path,
             method: :patch,
             class: "Button Button--destructive",
-            data: {
-              confirm: "Are you sure you want to deny this case?"
-            }
+            data: { confirm: t(".actions.deny.confirm") },
+          )
+        %>
+
+        <%=
+          button_to(t(".actions.return.name"), @case.return_path,
+            method: :patch,
+            class: "Button Button--secondary",
+            data: { confirm: t(".actions.return.confirm") },
           )
         %>
       <% end %>

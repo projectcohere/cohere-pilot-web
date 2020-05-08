@@ -112,10 +112,15 @@ Rails.application.routes.draw do
         action: :search,
       )
 
-      patch("/:complete_action",
+      patch("/return",
+        as: :return,
+        action: :return,
+      )
+
+      patch("/complete/:status",
         as: :complete,
         action: :complete,
-        constraints: { complete_action: /approve|deny/ }
+        constraints: { status: /approved|denied/ }
       )
 
       resources(:assignments, only: %i[
