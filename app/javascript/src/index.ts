@@ -1,9 +1,9 @@
 export { start } from "./Core"
 
 // -- layout --
-export { Viewport } from "./Viewport"
-export { Flash } from "./Flash"
-export { TabControl } from "./TabControl"
+export { Viewport } from "./Shared/Viewport"
+export { Flash } from "./Shared/Flash"
+export { TabControl } from "./Shared/TabControl"
 
 // -- scenes --
 export { ShowCaseList } from "./ShowCaseList"

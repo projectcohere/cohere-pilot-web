@@ -1,10 +1,10 @@
 import { IComponent, kConsumer } from "../Core"
+import { kClassActive } from "../Shared/Constants"
 
 // -- constants --
 const kChannelActivity = "Cases::ActivityChannel"
 const kPathQueue = "/cases/inbox"
 const kIdCaseList = "case-list"
-const kClassIsActive = "is-active"
 
 // -- types --
 type ActivityEvent
@@ -64,7 +64,7 @@ export class ShowCaseList implements IComponent {
     const $case = document.getElementById(`case-${data.case_id}`)
 
     if ($case != null) {
-      $case.classList.toggle(kClassIsActive, data.case_new_activity)
+      $case.classList.toggle(kClassActive, data.case_new_activity)
     }
   }
 

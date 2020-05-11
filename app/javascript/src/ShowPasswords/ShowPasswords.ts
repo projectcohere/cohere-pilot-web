@@ -1,5 +1,11 @@
 import { IComponent } from "../Core"
 
+// -- constants --
+const kIdShowPassword = "show_password"
+const kIdPassword = "session_password"
+const kIdResetPassword = "password_reset_password"
+
+// -- impls --
 export class ShowPasswords implements IComponent {
   isOnLoad = true
 
@@ -13,7 +19,7 @@ export class ShowPasswords implements IComponent {
       return
     }
 
-    const $showPassword = document.getElementById("show_password")
+    const $showPassword = document.getElementById(kIdShowPassword)
     $showPassword!.addEventListener("change", this.didChangeShowPassword.bind(this))
   }
 
@@ -23,12 +29,7 @@ export class ShowPasswords implements IComponent {
 
   // -- queries --
   private findPasswordInput(): HTMLInputElement | null {
-    let $password = document.getElementById("session_password")
-
-    if ($password == null) {
-      $password = document.getElementById("password_reset_password")
-    }
-
+    const $password = document.getElementById(kIdPassword) || document.getElementById(kIdResetPassword)
     return $password as HTMLInputElement
   }
 
@@ -36,7 +37,6 @@ export class ShowPasswords implements IComponent {
   private didChangeShowPassword(event: Event) {
     const $showPassword = event.target as HTMLInputElement
     const inputType = $showPassword.checked ? "text" : "password"
-
     this.$password!.setAttribute("type", inputType)
   }
 }
