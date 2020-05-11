@@ -1,4 +1,4 @@
-import { IComponent } from "../Core"
+import { IComponent } from "../../Core"
 import { IAttachment } from "./Files"
 
 // -- constants --

@@ -1,9 +1,9 @@
 import { Files, IPreview } from "./Files"
 import { Macros, IMacro } from "./Macros"
 import { UploadFiles } from "./UploadFiles"
-import { IComponent, kConsumer, Id } from "../Core"
-import { kClassLoaded } from "../Shared/Constants"
-import { getReadableTimeSince } from "../Shared/Time"
+import { IComponent, kConsumer, Id } from "../../Core"
+import { kClassLoaded } from "../../Shared/Constants"
+import { getReadableTimeSince } from "../../Shared/Time"
 
 // -- constants --
 const kChannelChat = "Chats::MessagesChannel"

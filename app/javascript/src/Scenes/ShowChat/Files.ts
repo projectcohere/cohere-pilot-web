@@ -1,5 +1,5 @@
-import { IComponent } from "../Core"
-import { kClassEmpty } from "../Shared/Constants"
+import { IComponent } from "../../Core"
+import { kClassEmpty } from "../../Shared/Constants"
 
 // -- constants --
 const kIdFileList = "chat-files"

@@ -6,7 +6,7 @@ export { Flash } from "./Shared/Flash"
 export { TabControl } from "./Shared/TabControl"
 
 // -- scenes --
-export { ShowCaseList } from "./ShowCaseList"
-export { ShowChat } from "./ShowChat"
-export { ShowPasswords } from "./ShowPasswords"
-export { ShowStats } from "./ShowStats"
+export { ShowCaseList } from "./Scenes/ShowCaseList"
+export { ShowChat } from "./Scenes/ShowChat"
+export { ShowPasswords } from "./Scenes/ShowPasswords"
+export { ShowStats } from "./Scenes/ShowStats"
