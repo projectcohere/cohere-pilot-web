@@ -108,7 +108,7 @@ class Case
 
     def find_active_by_recipient(recipient_id)
       case_rec = Case::Record
-        .where(status: [Status::Opened.key, Status::Pending.key, Status::Submitted.key])
+        .active
         .order(updated_at: :desc)
         .find_by!(recipient_id: recipient_id)
 
