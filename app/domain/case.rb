@@ -277,7 +277,7 @@ class Case < ::Entity
   private def track_new_activity(new_activity)
     if @new_activity == new_activity
       return
-    elsif new_activity && complete?
+    elsif new_activity && archived?
       return
     end
 
