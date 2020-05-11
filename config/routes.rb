@@ -165,6 +165,11 @@ Rails.application.routes.draw do
         delete("/:partner_id", on: :collection, action: :destroy, as: :destroy)
       end
 
+      # -- cases/notes
+      resources(:notes, only: %i[
+        create
+      ])
+
       # -- cases/referrals
       resources(:referrals, only: %i[
         new

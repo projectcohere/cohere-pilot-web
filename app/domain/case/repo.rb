@@ -561,8 +561,8 @@ class Case
         recipient: map_recipient(r.recipient),
         enroller_id: r.enroller_id,
         supplier_account: map_supplier_account(r),
-        documents: documents&.map { |r| map_document(r) },
         assignments: assignments&.map { |r| map_assignment(r) },
+        documents: documents&.map { |r| map_document(r) },
         referred: r.referrer_id != nil,
         referrer: r.referred != nil,
         new_activity: r.new_activity,
@@ -597,6 +597,14 @@ class Case
         user_id: r.user.id,
         user_email: r.user.email,
         partner_id: r.partner_id,
+      )
+    end
+
+    def self.map_note(r)
+      return Note.new(
+        id: Id.new(r.id),
+        body: r.body,
+        user_id: r.user_id,
       )
     end
 

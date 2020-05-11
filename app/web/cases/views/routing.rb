@@ -34,6 +34,10 @@ module Cases
         return urls.case_assignments_path(@id)
       end
 
+      def add_note_path
+        return urls.case_notes_path(@id)
+      end
+
       def remove_path
         return urls.case_path(@id)
       end

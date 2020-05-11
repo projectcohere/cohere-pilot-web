@@ -149,6 +149,19 @@ en:
     detail:
       <<: *case-fields
 
+    documents:
+      title: "Documents"
+      list:
+        fallback: "This case has no documents yet."
+      document:
+        processing: "This file is being processed."
+        action: "View Document"
+
+    notes:
+      title: "Notes"
+      list:
+        fallback: "This case has no notes yet."
+
     search:
       prompt: "Enter an applicant's name or phone number to find their cases."
       action: "Find Cases"

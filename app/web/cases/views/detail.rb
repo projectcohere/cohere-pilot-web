@@ -21,6 +21,7 @@ module Cases
       prop(:referred, predicate: true)
       prop(:documents)
       prop(:assignments)
+      prop(:notes)
 
       # -- lifetime --
       def initialize(chat_repo: Chat::Repo.get, **props)

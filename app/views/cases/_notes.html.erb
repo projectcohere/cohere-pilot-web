@@ -1,0 +1,13 @@
+<%= section_tag(t(".title"), class: "CaseNotes") do %>
+  <ul class="CaseNotes-list">
+    <% if notes.blank? %>
+      <%= tag.p(t(".list.fallback"), class: "CaseNotes-fallback") %>
+    <% else %>
+      <% notes.each do |note| %>
+        <li class="CaseNote">
+          <%= note.body %>
+        </li>
+      <% end %>
+    <% end %>
+  </ul>
+<% end %>

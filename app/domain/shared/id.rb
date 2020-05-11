@@ -14,12 +14,12 @@ class Id
 
   # -- queries --
   def to_s
-    @val.to_s
+    return @val.to_s
   end
 
   # -- equality --
   def ==(id)
-    id.is_a?(Id) && val == id.val
+    return id.is_a?(Id) && val == id.val
   end
 
   # -- constants --

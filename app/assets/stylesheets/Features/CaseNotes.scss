@@ -1,0 +1,18 @@
+.CaseNotes {
+  &-list {
+    grid-area: auto / span 8;
+  }
+
+  &-fallback {
+    font-size: $font-size5;
+    font-style: italic;
+  }
+}
+
+.CaseNote {
+
+}
+
+.CaseNoteForm {
+
+}

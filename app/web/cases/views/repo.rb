@@ -216,6 +216,7 @@ module Cases
           referrer: r.referred != nil,
           referred: r.referrer_id != nil,
           assignments: r.assignments.map { |r| Case::Repo.map_assignment(r) },
+          notes: r.notes.map { |r| Case::Repo.map_note(r) },
           documents: r.documents&.map { |r| Case::Repo.map_document(r) },
         )
       end
@@ -235,6 +236,7 @@ module Cases
           referrer: e.referrer?,
           referred: e.referred?,
           assignments: e.assignments,
+          notes: e.notes,
           documents: e.documents,
         )
       end

@@ -51,6 +51,7 @@
         <% end %>
 
         <%= filter_for(:documents, is_error: errors?(@form.documents)) %>
+        <%= filter_for(:notes) %>
         <%= filter_for(:admin) %>
       </nav>
     </div>
@@ -89,6 +90,10 @@
 
         <section id="documents" class="Panel-tab">
           <%= render(partial: "cases/documents", locals: { documents: @form.documents.all }) %>
+        </section>
+
+        <section id="notes" class="Panel-tab">
+          <%= render(partial: "cases/notes", locals: { notes: @form.model.notes }) %>
         </section>
 
         <section id="admin" class="Panel-tab">
@@ -130,6 +135,8 @@
           <%- end %>
         </div>
       <% end %>
+
+      <%= render(partial: "cases/forms/note", locals: { case: @case, form: @form.note }) %>
     </article>
 
     <%=

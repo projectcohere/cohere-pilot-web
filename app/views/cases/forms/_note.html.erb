@@ -1,0 +1,6 @@
+<%- kase = local_assigns[:case] %>
+<%= form_for(form, url: kase.add_note_path, remote: true, class: "CaseNoteForm") do |f| %>
+  <%= f.field(:body, class: "CaseNoteForm-body") do %>
+    <%= f.text_field(:body) %>
+  <% end %>
+<%- end %>
