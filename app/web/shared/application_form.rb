@@ -119,7 +119,7 @@ class ApplicationForm
   # -- ActiveModel --
   # -- ActiveModel::Model
   def id
-    @model&.id
+    return @model&.id
   end
 
   def persisted?

@@ -1,6 +1,29 @@
-<%- kase = local_assigns[:case] %>
-<%= form_for(form, url: kase.add_note_path, remote: true, class: "CaseNoteForm") do |f| %>
-  <%= f.field(:body, class: "CaseNoteForm-body") do %>
-    <%= f.text_field(:body) %>
-  <% end %>
-<%- end %>
+<% kase = local_assigns[:case] %>
+
+<% content_for(:modals) do  %>
+  <div id="add-note-form" class="Modal">
+    <%= form_for(form, url: kase.add_note_path, remote: true, html: { class: "CaseNoteForm Modal-view" }) do |f| %>
+      <%= tag.h3("Add a Case Note", class: "Modal-title") %>
+
+      <%= f.hidden_field(:body) %>
+      <div class="TextArea TextArea--field">
+        <span id="add-note-body" class="TextArea-input" contenteditable="true"></span>
+        <span class="TextArea-placeholder">Enter your note...</span>
+      </div>
+
+      <div class="Modal-actions">
+        <%=
+          f.submit("Save Note",
+            class: "Modal-confirm Button Button--action",
+          )
+        %>
+
+        <%=
+          f.button("Cancel",
+            class: "Modal-cancel Button Button--secondary",
+          )
+        %>
+      </div>
+    <%- end %>
+  </div>
+<% end %>

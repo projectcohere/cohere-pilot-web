@@ -74,40 +74,12 @@
   }
 
   // -- elements/field
-  $field-spacing: $spacing5;
-
   &-field {
-    flex: 1;
-    position: relative;
-    display: flex;
-    align-items: flex-end;
-    background-color: $color-field;
     border-radius: $form-controls-height / 2;
   }
 
   &-input {
-    flex: 1;
-    box-sizing: content-box;
-    display: block;
-    padding: $field-spacing;
     min-height: $form-controls-height - $form-controls-spacing * 2;
-    overflow-wrap: anywhere;
-
-    &:focus {
-      outline: none;
-    }
-  }
-
-  &-placeholder {
-    position: absolute;
-    top: $field-spacing;
-    left: $field-spacing;
-    color: $gray1;
-    pointer-events: none;
-  }
-
-  &-input:not(:empty) + &-placeholder {
-    display: none;
   }
 
   &-addFile {
