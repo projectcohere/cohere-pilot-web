@@ -25,12 +25,14 @@ class Case
 
     def self.join_recipient(references: false)
       scope = includes(:recipient)
-
       if references
         scope = scope.references(:recipients)
       end
-
       return scope
+    end
+
+    def self.join_assignments
+      return includes(:assignments)
     end
 
     def self.with_recipient_name(name)
@@ -53,10 +55,6 @@ class Case
         .where(recipients: { phone_number: phone_number })
 
       return scope
-    end
-
-    def self.join_assignments
-      return includes(:assignments)
     end
 
     def self.for_source(partner_id)

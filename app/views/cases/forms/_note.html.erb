@@ -1,4 +1,4 @@
-<% kase = local_assigns[:case] %>
+<% form = Cases::Forms::Note.new(kase) %>
 
 <% content_for(:modals) do  %>
   <div id="add-note-form" class="Modal">

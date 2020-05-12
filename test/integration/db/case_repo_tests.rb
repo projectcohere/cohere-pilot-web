@@ -72,31 +72,36 @@ module Db
       assert(kase.referrer?)
     end
 
-    test "finds a submitted case by id for an enroller" do
+    test "finds a submitted case as an enroller" do
       case_repo = Case::Repo.new
       case_rec = cases(:submitted_1)
+      user_rec = users(:enroller_1)
+      User::Repo.get.sign_in(user_rec)
 
-      kase = case_repo.find_with_assosciations_for_enroller(case_rec.id, case_rec.enroller_id)
+      kase = case_repo.find_with_associations(case_rec.id)
       assert_not_nil(kase)
       assert_equal(kase.status, Case::Status::Submitted)
     end
 
-    test "can't find a unsubmitted case for an enroller" do
+    test "can't find a unsubmitted case as an enroller" do
       case_repo = Case::Repo.new
       case_rec = cases(:opened_1)
+      user_rec = users(:enroller_1)
+      User::Repo.get.sign_in(user_rec)
 
       assert_raises(ActiveRecord::RecordNotFound) do
-        case_repo.find_with_assosciations_for_enroller(case_rec.id, case_rec.enroller_id)
+        case_repo.find_with_associations(case_rec.id)
       end
     end
 
-    test "can't find another enroller's case" do
+    test "can't find another enroller's case as an enroller" do
       case_repo = Case::Repo.new
-      case_rec1 = cases(:submitted_1)
-      case_rec2 = cases(:submitted_2)
+      case_rec = cases(:submitted_2)
+      user_rec = users(:enroller_1)
+      User::Repo.get.sign_in(user_rec)
 
       assert_raises(ActiveRecord::RecordNotFound) do
-        case_repo.find_with_assosciations_for_enroller(case_rec1.id, case_rec2.enroller_id)
+        case_repo.find_with_associations(case_rec.id)
       end
     end
 
@@ -104,8 +109,9 @@ module Db
       case_repo = Case::Repo.new
       case_rec = cases(:opened_1)
       user_rec = users(:governor_1)
+      User::Repo.get.sign_in(user_rec)
 
-      kase = case_repo.find_with_documents_for_governor(case_rec.id, user_rec.partner_id)
+      kase = case_repo.find_with_associations(case_rec.id)
       assert_not_nil(kase)
       assert_equal(kase.status, Case::Status::Opened)
     end
@@ -114,9 +120,10 @@ module Db
       case_repo = Case::Repo.new
       case_rec = cases(:submitted_1)
       user_rec = users(:governor_1)
+      User::Repo.get.sign_in(user_rec)
 
       assert_raises(ActiveRecord::RecordNotFound) do
-        case_repo.find_with_documents_for_governor(case_rec.id, user_rec.partner_id)
+        case_repo.find_with_associations(case_rec.id)
       end
     end
 

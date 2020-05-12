@@ -17,13 +17,24 @@ module Helpers
 
     # -- filters --
     def filter_for(id, is_selected: false, is_error: false)
-      link_to(id.to_s.titlecase, "##{id}",
+      return link_to(id.to_s.titlecase, "##{id}",
         class: cx(
           "Filter",
           "is-selected" => is_selected,
           "is-active" => is_error
         ),
         data: { turbolinks: false }
+      )
+    end
+
+    def filter_panel_tag(id, visible: false, &children)
+      return tag.section(
+        id: id,
+        class: cx(
+          "Panel-tab",
+          "is-visible" => visible,
+        ),
+        &children
       )
     end
 

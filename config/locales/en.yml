@@ -164,8 +164,6 @@ en:
     notes:
       title: "Notes"
       action: "Add a new note..."
-      list:
-        fallback: "This case has no notes yet."
 
     search:
       prompt: "Enter an applicant's name or phone number to find their cases."

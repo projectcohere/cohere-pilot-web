@@ -1,26 +1,19 @@
-<%= section_tag(t(".title"), class: "CaseNotes") do %>
-  <ul id="note-list" class="CaseNotes-list">
-    <% if notes.blank? %>
-      <%= tag.p(t(".list.fallback"), class: "CaseNotes-fallback") %>
-    <% else %>
-      <li class="CaseNote">
-        <%=
-          button_tag(t(".action"),
-            id: "add-note",
-            class: "CaseNotes-addNote Link"
-          )
-        %>
-      </li>
+<% notes = kase.notes %>
 
-      <% notes.each do |note| %>
-        <li class="CaseNote">
-          <p><%= note.body %></p>
-          <p class="CaseNote-metadata">
-            <%= tag.span(note.user_email, class: "CaseNote-user") %>
-            <%= time_tag(note.created_at, class: "CaseNote-timestamp") %>
-          </p>
-        </li>
-      <% end %>
+<%= section_tag(t(".title"), class: "CaseNotes") do %>
+  <%= button_tag(t(".action"), id: "add-note", class: "CaseNotes-addNote Link") %>
+
+  <ul id="note-list" class="CaseNotes-list">
+    <% notes.each do |note| %>
+      <li class="CaseNote">
+        <p><%= note.body %></p>
+        <p class="CaseNote-metadata">
+          <%= tag.span(note.user_email, class: "CaseNote-user") %>
+          <%= time_tag(note.created_at, class: "CaseNote-timestamp") %>
+        </p>
+      </li>
     <% end %>
   </ul>
 <% end %>
+
+<%= render(partial: "cases/forms/note", object: kase, as: :kase) %>

@@ -167,7 +167,7 @@ module Cases
         # inlcude associations
         q = q.includes(:program, :recipient, :enroller, :supplier, assignments: :user)
         if detail
-          q = q.includes(:notes, documents: { file_attachment: :blob })
+          q = q.includes(notes: :user, documents: { file_attachment: :blob })
         end
 
         # filter by role

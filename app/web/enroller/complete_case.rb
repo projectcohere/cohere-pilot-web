@@ -6,9 +6,11 @@ module Enroller
     end
 
     # -- command --
-    def call(kase, status)
+    def call(id, status)
+      kase = @case_repo.find_with_associations(id)
       kase.complete(Case::Status.from_key(status))
       @case_repo.save_completed(kase)
+      return kase
     end
   end
 end

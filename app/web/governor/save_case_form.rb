@@ -1,7 +1,5 @@
 module Governor
   class SaveCaseForm < ::Command
-    include User::Context
-
     # -- lifetime --
     def initialize(case_repo: Case::Repo.get)
       @case_repo = case_repo
@@ -16,7 +14,7 @@ module Governor
       case_id = form.model.id.val
 
       # add governor data to the case
-      @case = @case_repo.find_with_documents_for_governor(case_id, user_partner_id)
+      @case = @case_repo.find_with_associations(case_id)
       @case.add_governor_data(form.map_to_household)
 
       # save the case

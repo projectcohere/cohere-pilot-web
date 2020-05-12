@@ -64,7 +64,7 @@ export class ShowEditCase implements IComponent {
   private didConfirmAddNote() {
     const body = this.getBody()
     this.$addNoteField!.setAttribute("value", body)
-    this.$notes!.firstElementChild!.insertAdjacentHTML("afterend", this.renderNote(body, new Date()));
+    this.$notes!.insertAdjacentHTML("afterbegin", this.renderNote(body, new Date()));
   }
 
   // -- view --

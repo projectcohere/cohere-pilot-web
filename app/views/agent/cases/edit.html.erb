@@ -68,37 +68,37 @@
       <%= form_for(@form, url: @case.update_path, html: { class: "CaseDetail-content" }) do |f| %>
         <% form_locals = { f: f, form: @form, view: @case } %>
 
-        <section id="profile" class="Panel-tab is-visible">
+        <%= filter_panel_tag(:profile, visible: true) do %>
           <%= render(partial: "cases/forms/details", locals: form_locals) %>
           <%= render(partial: "cases/forms/contact", locals: form_locals) %>
 
           <% if permit?(:edit_contract) %>
             <%= render(partial: "cases/forms/contract", locals: form_locals) %>
           <% end %>
-        </section>
+        <%- end %>
 
-        <section id="household" class="Panel-tab">
+        <%= filter_panel_tag(:household) do %>
           <%= render(partial: "cases/forms/address", locals: form_locals) %>
           <%= render(partial: "cases/forms/household", locals: form_locals) %>
-        </section>
+        <%- end %>
 
         <% if permit?(:edit_supplier_account) %>
-          <section id="accounts" class="Panel-tab">
+          <%= filter_panel_tag(:accounts) do %>
             <%= render(partial: "cases/forms/supplier_account", locals: form_locals) %>
-          </section>
+          <%- end %>
         <% end %>
 
-        <section id="documents" class="Panel-tab">
+        <%= filter_panel_tag(:documents) do %>
           <%= render(partial: "cases/documents", locals: { documents: @form.documents.all }) %>
-        </section>
+        <%- end %>
 
-        <section id="notes" class="Panel-tab">
-          <%= render(partial: "cases/notes", locals: { notes: @form.model.notes }) %>
-        </section>
+        <%= filter_panel_tag(:notes) do %>
+          <%= render(partial: "cases/notes", object: @case, as: :kase) %>
+        <%- end %>
 
-        <section id="admin" class="Panel-tab">
+        <%= filter_panel_tag(:admin) do %>
           <%= render(partial: "cases/forms/admin", locals: form_locals) %>
-        </section>
+        <%- end %>
 
         <div class="Panel-actions">
           <%= f.submit("Save", class: "Button Button--action") %>
@@ -133,12 +133,8 @@
               )
             %>
           <%- end %>
-
-          <%= content_for(:actions) %>
         </div>
       <% end %>
-
-      <%= render(partial: "cases/forms/note", locals: { case: @case, form: @form.note }) %>
     </article>
 
     <%=

@@ -6,9 +6,11 @@ module Enroller
     end
 
     # -- command --
-    def call(kase)
+    def call(id)
+      kase = @case_repo.find_with_associations(id)
       kase.return_to_agent
       @case_repo.save_returned(kase)
+      return kase
     end
   end
 end

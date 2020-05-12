@@ -98,6 +98,7 @@ Rails.application.routes.draw do
   end
 
   signed_in(role: Role::Enroller) do |c|
+    # -- cases --
     resources(:cases, id: /\d+/, only: %i[
       index
       show
@@ -123,7 +124,13 @@ Rails.application.routes.draw do
         constraints: { status: /approved|denied/ }
       )
 
+      # -- cases/assignments
       resources(:assignments, only: %i[
+        create
+      ])
+
+      # -- cases/notes
+      resources(:notes, only: %i[
         create
       ])
     end

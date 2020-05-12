@@ -1,14 +1,17 @@
 .CaseNotes {
   &-list {
-    grid-area: auto / span 8;
-  }
-
-  &-fallback {
-    font-size: $font-size5;
-    font-style: italic;
+    grid-area: auto / span 7;
   }
 
   &-addNote {
+    grid-area: auto / span 9;
+    text-align: left;
+    font-style: italic;
+  }
+
+  &-fallback {
+    grid-area: auto / span 9;
+    font-size: $font-size5;
     font-style: italic;
   }
 }

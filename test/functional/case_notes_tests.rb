@@ -32,23 +32,18 @@ class CaseNotesTests < ActionDispatch::IntegrationTest
 
   test "can't add a case note to another enroller's case as an enroller" do
     user_rec = users(:enroller_1)
-    case_rec = cases(:opened_2)
+    case_rec = cases(:submitted_2)
 
-    act = -> do
+    assert_raises(ActiveRecord::RecordNotFound) do
       post(auth("/cases/#{case_rec.id}/notes", as: user_rec), params: {
         case_note: { body: "Ignored." },
       })
     end
-
-    assert_difference(
-      -> { Case::Note::Record.count } => 0,
-      &act
-    )
   end
 
   test "add a case note as an enroller" do
     user_rec = users(:enroller_1)
-    case_rec = cases(:opened_1)
+    case_rec = cases(:submitted_1)
 
     act = -> do
       post(auth("/cases/#{case_rec.id}/notes", as: user_rec), params: {

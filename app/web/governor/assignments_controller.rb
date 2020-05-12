@@ -4,7 +4,7 @@ module Governor
     def create
       permit!(:create_assignment)
 
-      @case = case_repo.find_for_governor(params[:case_id], user_partner_id)
+      @case = case_repo.find(params[:case_id])
       @case.assign_user(user)
       case_repo.save_new_assignment(@case)
 

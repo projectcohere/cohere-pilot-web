@@ -38,6 +38,7 @@
       <nav class="Filters">
         <%= filter_for(:application, is_selected: true) %>
         <%= filter_for(:documents) %>
+        <%= filter_for(:notes) %>
       </nav>
     </div>
   </header>
@@ -51,9 +52,8 @@
       </div>
 
       <div class="CaseDetail-content">
-        <section id="application" class="Panel-tab is-visible">
+        <%= filter_panel_tag(:application, visible: true) do %>
           <%- locals = { view: @case } %>
-
           <%= render(partial: "cases/detail/details", locals: locals) %>
           <%= render(partial: "cases/detail/contact", locals: locals) %>
 
@@ -62,11 +62,15 @@
           <% end %>
 
           <%= render(partial: "cases/detail/household", locals: locals) %>
-        </section>
+        <%- end %>
 
-        <section id="documents" class="Panel-tab">
+        <%= filter_panel_tag(:notes) do %>
+          <%= render(partial: "cases/notes", object: @case, as: :kase) %>
+        <%- end %>
+
+        <%= filter_panel_tag(:documents) do %>
           <%= render(partial: "cases/documents", locals: { documents: @case.documents }) %>
-        </section>
+        <%- end %>
       </div>
     </article>
   </div>

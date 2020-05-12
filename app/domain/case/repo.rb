@@ -1,6 +1,7 @@
 class Case
   class Repo < ::Repo
     include Service
+    include Case::Policy::Context
 
     # -- lifetime --
     def initialize(
@@ -14,14 +15,14 @@ class Case
     # -- queries --
     # -- queries/one
     def find(case_id)
-      case_rec = Case::Record
+      case_rec = make_query
         .find(case_id)
 
       return entity_from(case_rec)
     end
 
     def find_by_phone_number(phone_number)
-      case_rec = Case::Record
+      case_rec = make_query
         .join_recipient
         .find_by(recipients: { phone_number: phone_number })
 
@@ -55,48 +56,8 @@ class Case
     end
 
     def find_with_associations(case_id)
-      case_rec = Case::Record
+      case_rec = make_query
         .join_assignments
-        .find(case_id)
-
-      document_recs = Document::Record
-        .with_attached_file
-        .where(case_id: case_id)
-
-      return entity_from(case_rec, assignments: case_rec.assignments, documents: document_recs)
-    end
-
-    def find_for_governor(case_id, partner_id)
-      case_rec = Case::Record
-        .for_governor(partner_id)
-        .find(case_id)
-
-      return entity_from(case_rec)
-    end
-
-    def find_with_documents_for_governor(case_id, partner_id)
-      case_rec = Case::Record
-        .for_governor(partner_id)
-        .find(case_id)
-
-      document_recs = Document::Record
-        .with_attached_file
-        .where(case_id: case_id)
-
-      return entity_from(case_rec, documents: document_recs)
-    end
-
-    def find_for_enroller(case_id, enroller_id)
-      case_rec = Case::Record
-        .for_enroller(enroller_id)
-        .find(case_id)
-
-      return entity_from(case_rec)
-    end
-
-    def find_with_assosciations_for_enroller(case_id, enroller_id)
-      case_rec = Case::Record
-        .for_enroller(enroller_id)
         .find(case_id)
 
       document_recs = Document::Record
@@ -122,6 +83,25 @@ class Case
         .where(id: case_ids)
 
       return case_recs.map { |r| entity_from(r) }
+    end
+
+    # -- queries/helpers
+    private def make_query
+      q = Case::Record
+
+      # filter by role
+      q = case user_role
+      when Role::Source
+        q.for_source(user_partner_id)
+      when Role::Governor
+        q.for_governor(user_partner_id)
+      when Role::Enroller
+        q.for_enroller(user_partner_id)
+      else
+        q
+      end
+
+      return q
     end
 
     # -- commands --
