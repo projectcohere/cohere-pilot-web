@@ -1,10 +1,9 @@
-import { IComponent } from "./Core"
+import { IComponent } from "../Core"
+import { kClassSelected, kClassVisible } from "./Constants"
 
 // -- constants --
 const kQueryFilters = ".Filter"
 const kQueryTabs = ".Panel-tab"
-const kClassSelected = "is-selected"
-const kClassVisible = "is-visible"
 
 // -- impls --
 export class TabControl implements IComponent {

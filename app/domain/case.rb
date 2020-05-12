@@ -13,6 +13,7 @@ class Case < ::Entity
   prop(:supplier_account)
   prop(:documents, default: nil)
   prop(:assignments, default: nil)
+  prop(:notes, default: nil)
   prop(:referrer, default: false, predicate: true)
   prop(:referred, default: false, predicate: true)
   prop(:new_activity, default: false, predicate: true)
@@ -24,6 +25,7 @@ class Case < ::Entity
   # -- props/temporary
   attr(:new_assignment)
   attr(:selected_assignment)
+  attr(:selected_note)
   attr(:new_documents)
   attr(:selected_document)
 
@@ -57,19 +59,12 @@ class Case < ::Entity
   # -- commands --
   def add_governor_data(household)
     @recipient.add_governor_data(household)
-
-    if @status == Status::Opened
-      @status = Status::Pending
-      events.add(Events::DidBecomePending.from_entity(self))
-    end
-
     track_new_activity(true)
   end
 
   def add_agent_data(supplier_account, profile, household)
     @supplier_account = supplier_account
     @recipient.add_agent_data(profile, household)
-
     track_new_activity(false)
   end
 
@@ -88,9 +83,9 @@ class Case < ::Entity
     end
   end
 
-  def remove_from_pilot
-    @completed_at = Time.zone.now
+  def remove
     @status = Status::Removed
+    @completed_at = Time.zone.now
     @condition = Condition::Archived
     @events.add(Events::DidComplete.from_entity(self))
 
@@ -98,33 +93,40 @@ class Case < ::Entity
   end
 
   def submit_to_enroller
-    if not can_submit?
+    if not (opened? || returned?)
       return
     end
 
     @status = Status::Submitted
-    @events.add(Events::DidSubmit.from_entity(self))
+    remove_assignment(Role::Enroller)
+    @events.add(Events::DidSubmitToEnroller.from_entity(self))
 
     track_new_activity(false)
   end
 
-  def complete(status)
-    if not can_complete?
+  def return_to_agent
+    if not submitted?
       return
     end
 
-    # update status
+    @status = Status::Returned
+    remove_assignment(Role::Agent)
+    @events.add(Events::DidReturnToAgent.from_entity(self))
+
+    track_new_activity(true)
+  end
+
+  def complete(status)
+    if not submitted?
+      return
+    end
+
     @status = status
     @completed_at = Time.zone.now
-
-    # remove agent assignment
-    @selected_assignment = @assignments&.find { |a| a.role.agent? }
-    remove_selected_assignment
-
-    # track events
+    remove_assignment(Role::Agent)
     @events.add(Events::DidComplete.from_entity(self))
 
-    track_new_activity(false)
+    track_new_activity(true)
   end
 
   def delete
@@ -137,7 +139,7 @@ class Case < ::Entity
 
   # -- commands/referral
   def make_referral(program)
-    if not @status.approved?
+    if not approved?
       return
     end
 
@@ -217,6 +219,24 @@ class Case < ::Entity
     @events.add(Events::DidUnassignUser.from_entity(self))
   end
 
+  private def remove_assignment(role)
+    @selected_assignment = @assignments&.find { |a| a.role == role }
+    remove_selected_assignment
+  end
+
+  # -- commands/notes
+  def add_note(body, user)
+    @notes ||= []
+
+    @selected_note = Note.new(
+      body: body,
+      user_id: user.id,
+      user_email: user.email,
+    )
+
+    @notes.push(@selected_note)
+  end
+
   # -- commands/messages
   def add_chat_message(message)
     if message.sent_by_recipient?
@@ -289,21 +309,14 @@ class Case < ::Entity
   # -- queries/status
   delegate(
     :opened?,
-    :pending?,
     :submitted?,
+    :returned?,
     :approved?,
     :denied?,
     :removed?,
-    :active?,
     :complete?,
     to: :status,
   )
-
-  alias :can_complete? :submitted?
-
-  def can_submit?
-    return opened? || pending?
-  end
 
   # -- queries/condition
   delegate(

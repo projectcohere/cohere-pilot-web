@@ -1,6 +1,6 @@
 class Case
   module Events
-    class DidSubmit < ::Value
+    class DidSubmitToEnroller < ::Value
       # -- props --
       prop(:case_id)
       prop(:case_program)
@@ -8,7 +8,7 @@ class Case
 
       # -- factories --
       def self.from_entity(kase)
-        DidSubmit.new(
+        DidSubmitToEnroller.new(
           case_id: kase.id,
           case_program: kase.program,
           case_is_referred: kase.referred?

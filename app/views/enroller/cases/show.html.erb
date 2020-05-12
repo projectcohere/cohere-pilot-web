@@ -3,27 +3,32 @@
     <%= back_link_tag %>
 
     <h1 class="PageHeader-title">
-      <%= @case.recipient_name %>'s case
+      <%= t(".title", name: @case.recipient_name) %>
     </h1>
 
     <div class="PageHeader-actions">
       <% if @case.can_complete? %>
         <%=
-          button_to("Approve Case", @case.approve_path,
+          button_to(t(".actions.approve.name"), @case.approve_path,
             method: :patch,
             class: "Button Button--action",
-            data: {
-              confirm: "Are you sure you want to approve this case?"
-            }
+            data: { confirm: t(".actions.approve.confirm") },
           )
         %>
+
         <%=
-          button_to("Deny Case", @case.deny_path,
+          button_to(t(".actions.deny.name"), @case.deny_path,
             method: :patch,
             class: "Button Button--destructive",
-            data: {
-              confirm: "Are you sure you want to deny this case?"
-            }
+            data: { confirm: t(".actions.deny.confirm") },
+          )
+        %>
+
+        <%=
+          button_to(t(".actions.return.name"), @case.return_path,
+            method: :patch,
+            class: "Button Button--secondary",
+            data: { confirm: t(".actions.return.confirm") },
           )
         %>
       <% end %>
@@ -33,6 +38,7 @@
       <nav class="Filters">
         <%= filter_for(:application, is_selected: true) %>
         <%= filter_for(:documents) %>
+        <%= filter_for(:notes) %>
       </nav>
     </div>
   </header>
@@ -46,9 +52,8 @@
       </div>
 
       <div class="CaseDetail-content">
-        <section id="application" class="Panel-tab is-visible">
+        <%= filter_panel_tag(:application, visible: true) do %>
           <%- locals = { view: @case } %>
-
           <%= render(partial: "cases/detail/details", locals: locals) %>
           <%= render(partial: "cases/detail/contact", locals: locals) %>
 
@@ -57,11 +62,15 @@
           <% end %>
 
           <%= render(partial: "cases/detail/household", locals: locals) %>
-        </section>
+        <%- end %>
 
-        <section id="documents" class="Panel-tab">
+        <%= filter_panel_tag(:notes) do %>
+          <%= render(partial: "cases/notes", object: @case, as: :kase) %>
+        <%- end %>
+
+        <%= filter_panel_tag(:documents) do %>
           <%= render(partial: "cases/documents", locals: { documents: @case.documents }) %>
-        </section>
+        <%- end %>
       </div>
     </article>
   </div>

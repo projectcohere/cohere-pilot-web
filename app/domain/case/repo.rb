@@ -1,6 +1,7 @@
 class Case
   class Repo < ::Repo
     include Service
+    include Case::Policy::Context
 
     # -- lifetime --
     def initialize(
@@ -14,14 +15,14 @@ class Case
     # -- queries --
     # -- queries/one
     def find(case_id)
-      case_rec = Case::Record
+      case_rec = make_query
         .find(case_id)
 
       return entity_from(case_rec)
     end
 
     def find_by_phone_number(phone_number)
-      case_rec = Case::Record
+      case_rec = make_query
         .join_recipient
         .find_by(recipients: { phone_number: phone_number })
 
@@ -55,7 +56,7 @@ class Case
     end
 
     def find_with_associations(case_id)
-      case_rec = Case::Record
+      case_rec = make_query
         .join_assignments
         .find(case_id)
 
@@ -66,51 +67,11 @@ class Case
       return entity_from(case_rec, assignments: case_rec.assignments, documents: document_recs)
     end
 
-    def find_for_governor(case_id, partner_id)
-      case_rec = Case::Record
-        .for_governor(partner_id)
-        .find(case_id)
-
-      return entity_from(case_rec)
-    end
-
-    def find_with_documents_for_governor(case_id, partner_id)
-      case_rec = Case::Record
-        .for_governor(partner_id)
-        .find(case_id)
-
-      document_recs = Document::Record
-        .with_attached_file
-        .where(case_id: case_id)
-
-      return entity_from(case_rec, documents: document_recs)
-    end
-
-    def find_for_enroller(case_id, enroller_id)
-      case_rec = Case::Record
-        .for_enroller(enroller_id)
-        .find(case_id)
-
-      return entity_from(case_rec)
-    end
-
-    def find_with_assosciations_for_enroller(case_id, enroller_id)
-      case_rec = Case::Record
-        .for_enroller(enroller_id)
-        .find(case_id)
-
-      document_recs = Document::Record
-        .with_attached_file
-        .where(case_id: case_id)
-
-      return entity_from(case_rec, assignments: case_rec.assignments, documents: document_recs)
-    end
-
-    def find_active_by_recipient(recipient_id)
+    def find_by_chat_recipient(recipient_id)
       case_rec = Case::Record
         .active
-        .order(updated_at: :desc)
-        .find_by!(recipient_id: recipient_id)
+        .order(created_at: :desc)
+        .find_by(recipient_id: recipient_id)
 
       return entity_from(case_rec)
     end
@@ -122,6 +83,25 @@ class Case
         .where(id: case_ids)
 
       return case_recs.map { |r| entity_from(r) }
+    end
+
+    # -- queries/helpers
+    private def make_query
+      q = Case::Record
+
+      # filter by role
+      q = case user_role
+      when Role::Source
+        q.for_source(user_partner_id)
+      when Role::Governor
+        q.for_governor(user_partner_id)
+      when Role::Enroller
+        q.for_enroller(user_partner_id)
+      else
+        q
+      end
+
+      return q
     end
 
     # -- commands --
@@ -161,16 +141,15 @@ class Case
     end
 
     def save_governor_data(kase)
-      case_rec = kase.record
-      recipient_rec = kase.recipient.record
-
-      if case_rec.nil? || recipient_rec.nil?
-        raise "case and recipient must be fetched from the db!"
-      end
+      assert(kase.record != nil, "case must be persisted.")
+      assert(kase.recipient.record != nil, "recipient must be persisted.")
 
       # update records
+      case_rec = kase.record
       assign_status(kase, case_rec)
       assign_activity(kase, case_rec)
+
+      recipient_rec = kase.recipient.record
       assign_household(kase, recipient_rec)
 
       # save records
@@ -184,17 +163,16 @@ class Case
     end
 
     def save_agent_data(kase)
-      case_rec = kase.record
-      recipient_rec = kase.recipient.record
-
-      if case_rec.nil? || recipient_rec.nil?
-        raise "case and recipient must be fetched from the db!"
-      end
+      assert(kase.record != nil, "case must be persisted.")
+      assert(kase.recipient.record != nil, "recipient must be persisted.")
 
       # update records
+      case_rec = kase.record
       assign_status(kase, case_rec)
       assign_activity(kase, case_rec)
       assign_supplier_account(kase, case_rec)
+
+      recipient_rec = kase.recipient.record
       assign_profile(kase, recipient_rec)
       assign_household(kase, recipient_rec)
 
@@ -211,10 +189,7 @@ class Case
     end
 
     def save_new_assignment(kase)
-      case_rec = kase.record
-      if case_rec == nil
-        raise "case must be fetched from the db!"
-      end
+      assert(kase.record != nil, "case must be persisted.")
 
       # initialize record
       assignment_rec = Assignment::Record.new
@@ -227,11 +202,31 @@ class Case
       @domain_events.consume(kase.events)
     end
 
+    def save_removed_assignment(kase)
+      assert(kase.record != nil, "case must be persisted.")
+
+      # destroy record
+      destroy_removed_assignment!(kase)
+
+      # consume all entity events
+      @domain_events.consume(kase.events)
+    end
+
+    def save_new_note(kase)
+      assert(kase.record != nil, "case must be persisted.")
+      assert(kase.selected_note != nil, "case has no new note")
+
+      # create records
+      create_new_note!(kase)
+
+      # consume all entity events
+      @domain_events.consume(kase.events)
+    end
+
     def save_new_message(kase)
+      assert(kase.record != nil, "case must be persisted.")
+
       case_rec = kase.record
-      if case_rec.nil?
-        raise "case must be fetched from the db!"
-      end
 
       # update records
       assign_activity(kase, case_rec)
@@ -248,17 +243,13 @@ class Case
 
     def save_selected_document(kase)
       document = kase.selected_document
-      if document.nil?
-        raise "no document was selected"
-      end
+      assert(document != nil, "case has no selected document")
 
       document_rec = document.record
-      if document_rec.nil?
-        raise "unsaved document can't be updated with a new file"
-      end
+      assert(document_rec != nil, "document must be persisted")
 
       new_file = document.new_file
-      if new_file.nil?
+      if new_file == nil
         return
       end
 
@@ -286,6 +277,52 @@ class Case
         case_rec.save!
         destroy_removed_assignment!(kase)
       end
+
+      # consume all entity events
+      @domain_events.consume(kase.events)
+    end
+
+    def save_returned(kase)
+      assert(kase.record != nil, "case must be persisted")
+
+      # update the record
+      case_rec = kase.record
+      assign_status(kase, case_rec)
+      assign_activity(kase, case_rec)
+
+      # save the record
+      transaction do
+        case_rec.save!
+        destroy_removed_assignment!(kase)
+      end
+
+      # consume all entity events
+      @domain_events.consume(kase.events)
+    end
+
+    def save_archived(kase)
+      assert(kase.record != nil, "case must be persisted")
+
+      # update the record
+      case_rec = kase.record
+      assign_status(kase, case_rec)
+
+      # save the record
+      case_rec.save!
+
+      # consume all entity events
+      @domain_events.consume(kase.events)
+    end
+
+    def save_deleted(kase)
+      assert(kase.record != nil, "case must be persisted")
+
+      # update the record
+      case_rec = kase.record
+      assign_status(kase, case_rec)
+
+      # save the record
+      case_rec.save!
 
       # consume all entity events
       @domain_events.consume(kase.events)
@@ -341,50 +378,6 @@ class Case
       @domain_events.consume(referred.events)
     end
 
-    def save_deleted(kase)
-      assert(kase.record != nil, "case must be persisted")
-
-      # update the record
-      case_rec = kase.record
-      case_rec.assign_attributes(
-        condition: kase.condition.key,
-      )
-
-      # save the record
-      case_rec.save!
-    end
-
-    def save_archived(kase)
-      assert(kase.record != nil, "case must be persisted")
-
-      # update the record
-      case_rec = kase.record
-      case_rec.assign_attributes(
-        condition: kase.condition.key,
-      )
-
-      # save the record
-      case_rec.save!
-    end
-
-    def save_removed_assignment(kase)
-      case_rec = kase.record
-      if case_rec == nil
-        raise "case must be fetched from the db!"
-      end
-
-      # find record
-      assignment_rec = case_rec.assignments.find do |a|
-        a.partner_id == kase.selected_assignment.partner_id
-      end
-
-      # save record
-      assignment_rec.destroy!
-
-      # consume all entity events
-      @domain_events.consume(kase.events)
-    end
-
     # -- commands/helpers
     private def assign_partners(kase, case_rec)
       c = kase
@@ -418,9 +411,7 @@ class Case
 
     private def assign_new_assignment(kase, assignment_rec)
       assignment = kase.new_assignment
-      if assignment == nil
-        raise "case has no new assignment"
-      end
+      assert(assignment != nil, "case has no new assignment")
 
       c = kase
       a = assignment
@@ -504,6 +495,24 @@ class Case
       end
     end
 
+    private def create_new_note!(kase)
+      note = kase.selected_note
+      if note == nil
+        return
+      end
+
+      # initialize record
+      note_rec = Case::Note::Record.new
+      note_rec.assign_attributes(
+        body: note.body,
+        case_id: kase.id.val,
+        user_id: note.user_id.val,
+      )
+
+      # save record
+      note_rec.save!
+    end
+
     private def destroy_removed_assignment!(kase)
       assignment = kase.selected_assignment
       if assignment&.removed? != true
@@ -532,8 +541,8 @@ class Case
         recipient: map_recipient(r.recipient),
         enroller_id: r.enroller_id,
         supplier_account: map_supplier_account(r),
-        documents: documents&.map { |r| map_document(r) },
         assignments: assignments&.map { |r| map_assignment(r) },
+        documents: documents&.map { |r| map_document(r) },
         referred: r.referrer_id != nil,
         referrer: r.referred != nil,
         new_activity: r.new_activity,
@@ -568,6 +577,16 @@ class Case
         user_id: r.user.id,
         user_email: r.user.email,
         partner_id: r.partner_id,
+      )
+    end
+
+    def self.map_note(r)
+      return Note.new(
+        id: Id.new(r.id),
+        body: r.body,
+        user_id: r.user_id,
+        user_email: r.user.email,
+        created_at: r.created_at,
       )
     end
 

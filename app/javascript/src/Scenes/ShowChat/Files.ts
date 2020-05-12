@@ -1,9 +1,9 @@
-import { IComponent } from "../Core"
+import { IComponent } from "../../Core"
+import { kClassEmpty } from "../../Shared/Constants"
 
 // -- constants --
 const kIdFileList = "chat-files"
 const kIdFileInput = "chat-file-input"
-const kClassEmpty = "is-empty"
 const kNameRemove = "remove-file"
 
 // -- types --

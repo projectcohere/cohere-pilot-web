@@ -98,6 +98,7 @@ Rails.application.routes.draw do
   end
 
   signed_in(role: Role::Enroller) do |c|
+    # -- cases --
     resources(:cases, id: /\d+/, only: %i[
       index
       show
@@ -112,13 +113,24 @@ Rails.application.routes.draw do
         action: :search,
       )
 
-      patch("/:complete_action",
-        as: :complete,
-        action: :complete,
-        constraints: { complete_action: /approve|deny/ }
+      patch("/return",
+        as: :return,
+        action: :return,
       )
 
+      patch("/complete/:status",
+        as: :complete,
+        action: :complete,
+        constraints: { status: /approved|denied/ }
+      )
+
+      # -- cases/assignments
       resources(:assignments, only: %i[
+        create
+      ])
+
+      # -- cases/notes
+      resources(:notes, only: %i[
         create
       ])
     end
@@ -159,6 +171,11 @@ Rails.application.routes.draw do
       ]) do
         delete("/:partner_id", on: :collection, action: :destroy, as: :destroy)
       end
+
+      # -- cases/notes
+      resources(:notes, only: %i[
+        create
+      ])
 
       # -- cases/referrals
       resources(:referrals, only: %i[

@@ -26,8 +26,8 @@ opened_2:
   received_message_at: null
   completed_at: null
 
-pending_1:
-  status: pending
+opened_3:
+  status: opened
   program: energy_0
   recipient: recipient_2
   enroller: enroller_2
@@ -40,8 +40,8 @@ pending_1:
   received_message_at: <%= Time.zone.now %>
   completed_at: null
 
-pending_2:
-  status: pending
+opened_4:
+  status: opened
   program: energy_0
   recipient: recipient_1
   enroller: enroller_2
@@ -54,8 +54,8 @@ pending_2:
   received_message_at: null
   completed_at: null
 
-pending_3:
-  status: pending
+opened_5:
+  status: opened
   program: food_c
   recipient: recipient_2
   enroller: enroller_2
@@ -68,8 +68,8 @@ pending_3:
   received_message_at: <%= Time.zone.now %>
   completed_at: null
 
-pending_4:
-  status: pending
+opened_6:
+  status: opened
   condition: deleted
   program: food_c
   recipient: recipient_4
@@ -91,7 +91,7 @@ submitted_1:
   supplier: supplier_1
   supplier_account_number: A1
   supplier_account_arrears_cents: 1000_00
-  new_activity: true
+  new_activity: false
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now - 2.hours %>
   received_message_at: <%= Time.zone.now %>
@@ -141,7 +141,7 @@ approved_2:
   completed_at: <%= Time.zone.now %>
 
 referral_1:
-  status: pending
+  status: opened
   program: water_0
   recipient: recipient_2
   enroller: enroller_1
@@ -149,7 +149,7 @@ referral_1:
   supplier_account_number: nil
   supplier_account_arrears_cents: nil
   new_activity: false
-  created_at: <%= Time.zone.now - 1.days %>
+  created_at: <%= Time.zone.now - 1.hour %>
   updated_at: <%= Time.zone.now %>
   received_message_at: nil
   completed_at: nil

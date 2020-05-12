@@ -1,12 +1,13 @@
 export { start } from "./Core"
 
 // -- layout --
-export { Viewport } from "./Viewport"
-export { Flash } from "./Flash"
-export { TabControl } from "./TabControl"
+export { Viewport } from "./Shared/Viewport"
+export { Flash } from "./Shared/Flash"
+export { TabControl } from "./Shared/TabControl"
 
 // -- scenes --
-export { ShowCaseList } from "./ShowCaseList"
-export { ShowChat } from "./ShowChat"
-export { ShowPasswords } from "./ShowPasswords"
-export { ShowStats } from "./ShowStats"
+export { ShowCaseList } from "./Scenes/ShowCaseList"
+export { ShowEditCase } from "./Scenes/ShowEditCase"
+export { ShowChat } from "./Scenes/ShowChat"
+export { ShowPasswords } from "./Scenes/ShowPasswords"
+export { ShowStats } from "./Scenes/ShowStats"

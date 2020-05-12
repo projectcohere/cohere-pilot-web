@@ -38,7 +38,7 @@ module Agent
       when Cases::Action::Submit
         @case.submit_to_enroller
       when Cases::Action::Remove
-        @case.remove_from_pilot
+        @case.remove
       when Cases::Action::Approve
         @case.complete(Case::Status::Approved)
       when Cases::Action::Deny

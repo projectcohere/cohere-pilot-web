@@ -20,6 +20,8 @@
       <%= yield %>
     </div>
 
+    <%= content_for(:modals) %>
+
     <% if flash.present? %>
       <%= render(partial: "layouts/flash") %>
     <% end %>

@@ -365,7 +365,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "edit a case as a governor" do
     user_rec = users(:governor_1)
-    case_rec = cases(:pending_1)
+    case_rec = cases(:opened_3)
 
     get(auth("/cases/#{case_rec.id}/edit", as: user_rec))
     assert_response(:success)
@@ -389,6 +389,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
+    assert_analytics_events(%w[DidSaveGovernorForm])
 
     assert_broadcast_on(case_activity_for(:agent_1), {
       name: "HAS_NEW_ACTIVITY",
@@ -397,7 +398,6 @@ class CasesTests < ActionDispatch::IntegrationTest
         case_new_activity: true,
       }
     })
-    assert_analytics_events(%w[DidBecomePending])
   end
 
   test "edit a case as an agent" do
@@ -410,7 +410,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "save an edited case as an agent" do
-    case_rec = cases(:pending_1)
+    case_rec = cases(:opened_3)
 
     patch(auth("/cases/#{case_rec.id}"), params: {
       case: {
@@ -438,7 +438,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "save a signed contract" do
-    case_rec = cases(:pending_2)
+    case_rec = cases(:opened_4)
 
     act = ->() do
       patch(auth("/cases/#{case_rec.id}"), params: {
@@ -465,7 +465,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "doesn't save a duplicate contract" do
-    case_rec = cases(:pending_1)
+    case_rec = cases(:opened_3)
 
     act = ->() do
       patch(auth("/cases/#{case_rec.id}"), params: {
@@ -486,7 +486,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "show errors when saving an invalid case as an agent" do
-    case_rec = cases(:pending_1)
+    case_rec = cases(:opened_3)
 
     patch(auth("/cases/#{case_rec.id}"), params: {
       case: {
@@ -520,7 +520,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "show errors submitting an invalid case as an agent" do
-    case_rec = cases(:pending_2)
+    case_rec = cases(:opened_4)
 
     patch(auth("/cases/#{case_rec.id}"), params: {
       submit: :ignored
@@ -532,7 +532,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "submit a case as an agent" do
     user_rec = users(:agent_1)
-    case_rec = cases(:pending_1)
+    case_rec = cases(:opened_3)
 
     patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
       submit: :ignored
@@ -540,7 +540,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
-    assert_analytics_events(%w[DidSubmit])
+    assert_analytics_events(%w[DidSubmitToEnroller])
 
     assert_broadcast_on(case_activity_for(:agent_1), {
       name: "HAS_NEW_ACTIVITY",
@@ -559,7 +559,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "submit a case that doesn't require a contract as an agent" do
     user_rec = users(:agent_1)
-    case_rec = cases(:pending_3)
+    case_rec = cases(:opened_5)
 
     patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
       submit: :ignored
@@ -571,7 +571,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "submit a case that doesn't require dhs income as an agent" do
     user_rec = users(:agent_1)
-    case_rec = cases(:pending_4)
+    case_rec = cases(:opened_6)
 
     patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
       submit: :ignored
@@ -598,20 +598,50 @@ class CasesTests < ActionDispatch::IntegrationTest
 
   test "delete a case" do
     user_rec = users(:agent_1)
-    case_rec = cases(:pending_1)
+    case_rec = cases(:opened_3)
 
     delete(auth("/cases/#{case_rec.id}", as: user_rec))
-
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
   end
 
+  # -- return --
+  test "can't return a case if signed out" do
+    assert_raises(ActionController::RoutingError) do
+      patch("/cases/0/return")
+    end
+  end
+
+  test "return a case to the agent as an enroller" do
+    user_rec = users(:enroller_1)
+    case_rec = cases(:submitted_1)
+
+    patch(auth("/cases/#{case_rec.id}/return", as: user_rec))
+    assert_redirected_to("/cases")
+    assert_present(flash[:notice])
+    assert_analytics_events(%w[DidReturnToAgent])
+
+    assert_broadcast_on(case_activity_for(:agent_1), {
+      name: "HAS_NEW_ACTIVITY",
+      data: {
+        case_id: case_rec.id,
+        case_new_activity: true,
+      }
+    })
+  end
+
   # -- complete --
+  test "can't complete a case if signed out" do
+    assert_raises(ActionController::RoutingError) do
+      patch("/cases/1/complete/approved")
+    end
+  end
+
   test "can't complete a case with an unknown status as an enroller" do
     user_rec = users(:enroller_1)
 
     assert_raises(ActionController::RoutingError) do
-      patch(auth("/cases/0/remove", as: user_rec))
+      patch(auth("/cases/1/complete/removed", as: user_rec))
     end
   end
 
@@ -620,9 +650,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     case_rec = cases(:submitted_2)
 
     assert_raises(ActiveRecord::RecordNotFound) do
-      patch(auth("/cases/#{case_rec.id}/approve", as: user_rec), params: {
-        deny: :ignored
-      })
+      patch(auth("/cases/#{case_rec.id}/complete/approved", as: user_rec))
     end
   end
 
@@ -630,7 +658,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     user_rec = users(:enroller_1)
     case_rec = cases(:submitted_1)
 
-    patch(auth("/cases/#{case_rec.id}/deny", as: user_rec))
+    patch(auth("/cases/#{case_rec.id}/complete/denied", as: user_rec))
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
     assert_analytics_events(%w[DidComplete])
@@ -639,7 +667,7 @@ class CasesTests < ActionDispatch::IntegrationTest
       name: "HAS_NEW_ACTIVITY",
       data: {
         case_id: case_rec.id,
-        case_new_activity: false,
+        case_new_activity: true,
       }
     })
   end
@@ -660,14 +688,14 @@ class CasesTests < ActionDispatch::IntegrationTest
       name: "HAS_NEW_ACTIVITY",
       data: {
         case_id: case_rec.id,
-        case_new_activity: false,
+        case_new_activity: true,
       }
     })
   end
 
   test "remove a case from the pilot as an agent" do
     user_rec = users(:agent_1)
-    case_rec = cases(:pending_1)
+    case_rec = cases(:opened_3)
 
     patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
       remove: :ignored

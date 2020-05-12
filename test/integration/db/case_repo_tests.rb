@@ -72,31 +72,36 @@ module Db
       assert(kase.referrer?)
     end
 
-    test "finds a submitted case by id for an enroller" do
+    test "finds a submitted case as an enroller" do
       case_repo = Case::Repo.new
       case_rec = cases(:submitted_1)
+      user_rec = users(:enroller_1)
+      User::Repo.get.sign_in(user_rec)
 
-      kase = case_repo.find_with_assosciations_for_enroller(case_rec.id, case_rec.enroller_id)
+      kase = case_repo.find_with_associations(case_rec.id)
       assert_not_nil(kase)
       assert_equal(kase.status, Case::Status::Submitted)
     end
 
-    test "can't find a unsubmitted case for an enroller" do
+    test "can't find a unsubmitted case as an enroller" do
       case_repo = Case::Repo.new
       case_rec = cases(:opened_1)
+      user_rec = users(:enroller_1)
+      User::Repo.get.sign_in(user_rec)
 
       assert_raises(ActiveRecord::RecordNotFound) do
-        case_repo.find_with_assosciations_for_enroller(case_rec.id, case_rec.enroller_id)
+        case_repo.find_with_associations(case_rec.id)
       end
     end
 
-    test "can't find another enroller's case" do
+    test "can't find another enroller's case as an enroller" do
       case_repo = Case::Repo.new
-      case_rec1 = cases(:submitted_1)
-      case_rec2 = cases(:submitted_2)
+      case_rec = cases(:submitted_2)
+      user_rec = users(:enroller_1)
+      User::Repo.get.sign_in(user_rec)
 
       assert_raises(ActiveRecord::RecordNotFound) do
-        case_repo.find_with_assosciations_for_enroller(case_rec1.id, case_rec2.enroller_id)
+        case_repo.find_with_associations(case_rec.id)
       end
     end
 
@@ -104,8 +109,9 @@ module Db
       case_repo = Case::Repo.new
       case_rec = cases(:opened_1)
       user_rec = users(:governor_1)
+      User::Repo.get.sign_in(user_rec)
 
-      kase = case_repo.find_with_documents_for_governor(case_rec.id, user_rec.partner_id)
+      kase = case_repo.find_with_associations(case_rec.id)
       assert_not_nil(kase)
       assert_equal(kase.status, Case::Status::Opened)
     end
@@ -114,17 +120,18 @@ module Db
       case_repo = Case::Repo.new
       case_rec = cases(:submitted_1)
       user_rec = users(:governor_1)
+      User::Repo.get.sign_in(user_rec)
 
       assert_raises(ActiveRecord::RecordNotFound) do
-        case_repo.find_with_documents_for_governor(case_rec.id, user_rec.partner_id)
+        case_repo.find_with_associations(case_rec.id)
       end
     end
 
-    test "finds an active case by recipient id" do
+    test "finds a case by chat recipient" do
       case_repo = Case::Repo.new
       case_recipient_rec = recipients(:recipient_1)
 
-      kase = case_repo.find_active_by_recipient(case_recipient_rec.id)
+      kase = case_repo.find_by_chat_recipient(case_recipient_rec.id)
       assert_not_nil(kase)
       assert_equal(kase.recipient.id.val, case_recipient_rec.id)
     end
@@ -269,7 +276,7 @@ module Db
       assert_length(Events::DispatchAll.get.events, 2)
     end
 
-    test "saves a dhs contribution" do
+    test "saves governor data" do
       case_rec = cases(:opened_1)
 
       kase = Case::Repo.map_record(case_rec)
@@ -284,7 +291,6 @@ module Db
 
       case_rec = kase.record
       assert(case_rec.new_activity)
-      assert_equal(case_rec.status, "pending")
 
       recipient_rec = case_rec.recipient
       assert_equal(recipient_rec.dhs_number, "11111")
@@ -338,8 +344,8 @@ module Db
 
       case_repo.save_agent_data(kase)
 
-      c = kase.record
-      assert_equal(c.status, "approved")
+      c = case_rec
+      assert(c.approved?)
       assert_equal(c.supplier_account_number, "12345")
       assert_equal(c.supplier_account_arrears_cents, 1000_00)
       assert_not_nil(c.completed_at)
@@ -360,7 +366,7 @@ module Db
 
       d = kase.new_documents[0].record
       assert_not_nil(d)
-      assert_equal(d.classification, "contract")
+      assert(d.contract?)
       assert_equal(d.source_url, "wrap_1k")
 
       events = kase.events
@@ -397,6 +403,35 @@ module Db
       assert_length(Events::DispatchAll.get.events, 1)
     end
 
+    test "saves a new note" do
+      case_repo = Case::Repo.new
+      case_rec = cases(:opened_2)
+      user_rec = users(:agent_1)
+
+      kase = Case::Repo.map_record(case_rec)
+      user = User::Repo.map_record(user_rec)
+      kase.add_note("Test note.", user)
+
+      act = -> do
+        case_repo.save_new_note(kase)
+      end
+
+      assert_difference(
+        -> { Case::Note::Record.count } => 1,
+        &act
+      )
+
+      note_rec = case_rec.notes.first
+      assert_not_nil(note_rec)
+      assert_equal(note_rec.body, "Test note.")
+      assert_equal(note_rec.user_id, user_rec.id)
+      assert_equal(note_rec.case_id, case_rec.id)
+
+      events = kase.events
+      assert_length(events, 0)
+      assert_length(Events::DispatchAll.get.events, 0)
+    end
+
     test "saves a removed assignment" do
       case_repo = Case::Repo.new
       case_rec = cases(:opened_1)
@@ -425,7 +460,7 @@ module Db
 
     test "saves a new message" do
       case_repo = Case::Repo.new
-      case_rec = cases(:pending_1)
+      case_rec = cases(:opened_3)
 
       kase = Case::Repo.map_record(case_rec)
       kase.add_chat_message(Chat::Message.stub(
@@ -489,10 +524,24 @@ module Db
       assert(document_rec.file.attached?)
     end
 
+    test "saves a returned case" do
+      case_repo = Case::Repo.new
+      case_rec = cases(:submitted_1)
+      kase = Case::Repo.map_record(case_rec, assignments: case_rec.assignments)
+      kase.return_to_agent
+
+      case_repo.save_returned(kase)
+      assert(case_rec.returned?)
+      assert_length(case_rec.assignments.reload, 2)
+
+      events = kase.events
+      assert_length(events, 0)
+      assert_length(Events::DispatchAll.get.events, 3)
+    end
+
     test "saves a completed case" do
       case_repo = Case::Repo.new
       case_rec = cases(:submitted_1)
-
       kase = Case::Repo.map_record(case_rec, assignments: case_rec.assignments, documents: case_rec.documents)
       kase.complete(Case::Status::Approved)
 
@@ -500,6 +549,38 @@ module Db
       assert(case_rec.approved?)
       assert_length(case_rec.assignments.reload, 2)
       assert_not_nil(case_rec.completed_at)
+
+      events = kase.events
+      assert_length(events, 0)
+      assert_length(Events::DispatchAll.get.events, 3)
+    end
+
+    test "saves a deleted case" do
+      case_repo = Case::Repo.new
+      case_rec = cases(:opened_1)
+      kase = Case::Repo.map_record(case_rec)
+      kase.delete
+
+      case_repo.save_deleted(kase)
+      assert(case_rec.deleted?)
+
+      events = kase.events
+      assert_length(events, 0)
+      assert_length(Events::DispatchAll.get.events, 0)
+    end
+
+    test "saves an archived case" do
+      case_repo = Case::Repo.new
+      case_rec = cases(:opened_1)
+      kase = Case::Repo.map_record(case_rec)
+      kase.archive
+
+      case_repo.save_archived(kase)
+      assert(case_rec.archived?)
+
+      events = kase.events
+      assert_length(events, 0)
+      assert_length(Events::DispatchAll.get.events, 0)
     end
 
     test "saves a referral" do
@@ -547,28 +628,6 @@ module Db
       assert_length(referrer.events, 0)
       assert_length(referred.events, 0)
       assert_length(Events::DispatchAll.get.events, 4)
-    end
-
-    test "saves a deleted case" do
-      case_repo = Case::Repo.new
-      case_rec = cases(:opened_1)
-
-      kase = Case::Repo.map_record(case_rec)
-      kase.delete
-
-      case_repo.save_deleted(kase)
-      assert(case_rec.deleted?)
-    end
-
-    test "saves a archived case" do
-      case_repo = Case::Repo.new
-      case_rec = cases(:opened_1)
-
-      kase = Case::Repo.map_record(case_rec)
-      kase.archive
-
-      case_repo.save_archived(kase)
-      assert(case_rec.archived?)
     end
   end
 end

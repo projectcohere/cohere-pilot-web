@@ -1,8 +1,8 @@
 import { IComponent } from "../Core"
+import { kClassVisible } from "src/Shared/Constants"
 
 // -- constants --
 const kIdStatsQuotes = "stats--quotes"
-const kClassVisible = "is-visible"
 
 // -- impls --
 export class ShowStats implements IComponent {

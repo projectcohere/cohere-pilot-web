@@ -7,8 +7,9 @@ class Case
     belongs_to(:supplier, record: :partner, optional: true)
 
     # -- associations/children
-    has_many(:documents, dependent: :destroy)
     has_many(:assignments, child: true, dependent: :destroy)
+    has_many(:notes, child: true, dependent: :destroy)
+    has_many(:documents, dependent: :destroy)
 
     # -- associations/referrals
     has_one(:referred, record: :case, foreign_key: "referrer_id")
@@ -24,12 +25,14 @@ class Case
 
     def self.join_recipient(references: false)
       scope = includes(:recipient)
-
       if references
         scope = scope.references(:recipients)
       end
-
       return scope
+    end
+
+    def self.join_assignments
+      return includes(:assignments)
     end
 
     def self.with_recipient_name(name)
@@ -54,10 +57,6 @@ class Case
       return scope
     end
 
-    def self.join_assignments
-      return includes(:assignments)
-    end
-
     def self.for_source(partner_id)
       scope = self
         .includes(:assignments)
@@ -75,7 +74,7 @@ class Case
       scope = self
         .includes(program: :partners)
         .where(
-          status: [Status::Opened.key, Status::Pending.key],
+          status: [Status::Opened.key],
           programs: {
             partners_programs: {
               partner_id: partner_id,

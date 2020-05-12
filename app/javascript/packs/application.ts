@@ -7,6 +7,7 @@ import {
   ShowChat,
   ShowPasswords,
   ShowStats,
+  ShowEditCase,
 } from "../src"
 
 // -- main --
@@ -18,6 +19,7 @@ start(
   new Flash(),
   new TabControl(),
   new ShowCaseList(),
+  new ShowEditCase(),
   new ShowChat(),
   new ShowPasswords(),
   new ShowStats(),

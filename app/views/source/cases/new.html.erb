@@ -6,7 +6,7 @@
 
   <div class="CaseDetail CaseDetail--edit">
     <article class="CaseDetail-case">
-      <%= form_for(@form, url: cases_path, html: { class: "CaseDetail-content" }) do |f| %>
+      <%= form_for(@form, url: @case.new_path, html: { class: "CaseDetail-content" }) do |f| %>
         <%- form_locals = { f: f, form: @form, policy: policy } %>
         <%= f.hidden_field(:program_id) %>
         <%= hidden_field_tag(:temp_id, @case.temp_id.val) %>

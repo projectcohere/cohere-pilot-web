@@ -1,22 +1,22 @@
 document_p1_c:
   classification: contract
   source_url: meap
-  case: pending_1
+  case: opened_3
 
 document_p1_i:
   classification: unknown
   source_url: https://website.com/image.jpg
-  case: pending_1
+  case: opened_3
 
 document_p3_i:
   classification: unknown
   source_url: https://website.com/image.jpg
-  case: pending_3
+  case: opened_5
 
 document_p4_i:
   classification: unknown
   source_url: https://website.com/image.jpg
-  case: pending_4
+  case: opened_6
 
 document_s1_c:
   classification: contract

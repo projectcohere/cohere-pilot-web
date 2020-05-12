@@ -1,14 +1,14 @@
-<%= section_tag("Documents", class: "CaseDocuments") do %>
+<%= section_tag(t(".title"), class: "CaseDocuments") do %>
   <ul class="CaseDocuments-list">
     <% if documents.blank? %>
-      <p>This case has no documents yet.</p>
+      <%= tag.p(t(".list.fallback"), class: "CaseDocuments-fallback") %>
     <% else %>
       <% documents.each do |d| %>
         <li class="CaseDocument">
           <%- file_url = d.file.attached? ? url_for(d.file) : nil %>
 
           <% if file_url.nil? %>
-            <p class="CaseDocument-placeholder">This file is being processed.</p>
+            <% tag.p(t(".document.processing"), class: "CaseDocument-placeholder") %>
           <% else %>
             <%- image_url = file_url %>
             <%- image_url = d.file.attachment.representation(resize: "200x200>") if d.file.attachment.representable? %>
@@ -21,7 +21,7 @@
             </label>
 
             <%=
-              link_to("View Document", file_url || "",
+              link_to(t(".document.action"), file_url || "",
                 class: "CaseDocument-link",
                 target: "_blank",
                 rel: "noopener noreferrer"

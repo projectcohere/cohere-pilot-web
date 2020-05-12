@@ -32,6 +32,10 @@ module Cases
       end
 
       # -- queries --
+      def note
+        @note ||= Forms::Note.new(@model)
+      end
+
       def action_text
         return @action != nil ? t("cases.action.#{@action.key}") : nil
       end

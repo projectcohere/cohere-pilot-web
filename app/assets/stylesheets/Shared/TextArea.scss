@@ -1,0 +1,52 @@
+.TextArea {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  background-color: $color-field;
+
+  // -- elements --
+  &-input {
+    flex: 1;
+    box-sizing: content-box;
+    display: block;
+    padding: $spacing5;
+    overflow-wrap: anywhere;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &-placeholder {
+    position: absolute;
+    top: $spacing5;
+    left: $spacing5;
+    color: $gray1;
+    pointer-events: none;
+  }
+
+  &-input:not(:empty) ~ &-placeholder {
+    display: none;
+  }
+
+  // -- variants --
+  &--field {
+    border-bottom: 2px solid $brand-black;
+    border-top-left-radius: $radius-field;
+    border-top-right-radius: $radius-field;
+    background-color: $color-field;
+
+    &:hover {
+      background-color: fade-out($brand-primary, 0.85);
+    }
+
+    &:focus-within {
+      border-bottom-color: $brand-primary;
+    }
+  }
+
+  &--field &-input {
+    min-height: $font-size-body;
+  }
+}

@@ -24,20 +24,32 @@ module Enroller
 
     def show
       permit!(:view)
+
       @case = view_repo.find_detail(params[:id])
       events.add(Cases::Events::DidViewEnrollerCase.from_entity(@case))
+    end
+
+    def return
+      permit!(:complete)
+
+      @case = ReturnCaseToAgent.(params[:case_id])
+      redirect_to(cases_path, notice: t(".flash", name: name))
     end
 
     def complete
       permit!(:complete)
 
-      @case = case_repo.find_with_assosciations_for_enroller(params[:case_id], user_partner_id)
-      save_case = SaveCompletedCase.new(@case, params[:complete_action].to_sym)
-      save_case.()
+      @case = CompleteCase.(params[:case_id], params[:status])
+      redirect_to(cases_path, notice: t(".flash", action: status_text, name: name))
+    end
 
-      redirect_to(cases_path,
-        notice: "#{@case.status.to_s.capitalize} #{@case.recipient.profile.name}'s case!"
-      )
+    # -- helpers --
+    private def status_text
+      return t("case.status.#{params[:status]}")
+    end
+
+    private def name
+      return @case.recipient.profile.name
     end
   end
 end

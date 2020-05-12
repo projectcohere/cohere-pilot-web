@@ -1,8 +1,9 @@
 import { Files, IPreview } from "./Files"
 import { Macros, IMacro } from "./Macros"
 import { UploadFiles } from "./UploadFiles"
-import { IComponent, kConsumer, Id } from "../Core"
-import { getReadableTimeSince } from "../Shared/Time"
+import { IComponent, kConsumer, Id } from "../../Core"
+import { kClassLoaded } from "../../Shared/Constants"
+import { getReadableTimeSince, formatTimes } from "../../Shared/Time"
 
 // -- constants --
 const kChannelChat = "Chats::MessagesChannel"
@@ -14,9 +15,8 @@ const kIdChatForm = "chat-form"
 const kIdChatInput = "chat-input"
 const kClassInfo = "ChatMessageInfo"
 const kClassStatus = `${kClassInfo}-status`
-const kClassIsLoaded = "is-loaded"
-const kClassIsSent = "is-sent"
-const kClassIsRecieved = "is-received"
+const kClassSent = "is-sent"
+const kClassReceived = "is-received"
 
 const kSenderRecipient = "recipient"
 const kFieldAuthenticityToken = "authenticity_token"
@@ -327,17 +327,14 @@ export class ShowChat implements IComponent {
   private didLoadImages() {
     const $chat = this.$chat!
     $chat.scrollTop = $chat.scrollHeight
-    $chat.classList.toggle(kClassIsLoaded, true)
+    $chat.classList.toggle(kClassLoaded, true)
   }
 
   private didFireRefreshTimer() {
-    const $timestamps = document.querySelectorAll<HTMLTimeElement>(`#${kIdChatMessages} time`)
-
-    for (let i = 0; i < $timestamps.length; i++) {
-      const $timestamp = $timestamps[$timestamps.length - 1]
-      const time = new Date($timestamp.dateTime)
-      $timestamp.textContent = getReadableTimeSince(time)
-    }
+    formatTimes(
+      document.querySelectorAll<HTMLTimeElement>(`#${kIdChatMessages} time`),
+      getReadableTimeSince,
+    )
   }
 
   // -- view --
@@ -348,7 +345,7 @@ export class ShowChat implements IComponent {
       name: isSent ? "Me" : this.receiver,
       time: new Date(timestamp * 1000),
       status,
-      class: isSent ? kClassIsSent : kClassIsRecieved,
+      class: isSent ? kClassSent : kClassReceived,
     }
 
     return `

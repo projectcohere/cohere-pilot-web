@@ -1,0 +1,35 @@
+.Modal {
+  position: fixed;
+  display: none; // flex @ .is-visible
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: fade-out($brand-black, 0.5);
+  z-index: 1;
+
+  // -- children --
+  &-view {
+    @extend .u-panel-cozy;
+  }
+
+  &-title {
+    margin-bottom: $spacing3;
+  }
+
+  &-actions {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    margin-top: $spacing3;
+
+    > * + * {
+      margin-left: $spacing5;
+    }
+  }
+
+  // -- states --
+  &.is-visible {
+    display: flex;
+  }
+}

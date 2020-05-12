@@ -1,0 +1,29 @@
+<% form = Cases::Forms::Note.new(kase) %>
+
+<% content_for(:modals) do  %>
+  <div id="add-note-form" class="Modal">
+    <%= form_for(form, url: kase.add_note_path, remote: true, html: { class: "CaseNoteForm Modal-view" }) do |f| %>
+      <%= tag.h3(t(".title"), class: "Modal-title") %>
+
+      <%= f.hidden_field(:body) %>
+      <div class="TextArea TextArea--field">
+        <span id="add-note-body" class="TextArea-input" contenteditable="true"></span>
+        <%= tag.span(t(".placeholder"), class: "TextArea-placeholder") %>
+      </div>
+
+      <div class="Modal-actions">
+        <%=
+          f.submit(t(".actions.save"),
+            class: "Modal-confirm Button Button--action",
+          )
+        %>
+
+        <%=
+          f.button(t(".actions.cancel"),
+            class: "Modal-cancel Button Button--secondary",
+          )
+        %>
+      </div>
+    <%- end %>
+  </div>
+<% end %>

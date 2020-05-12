@@ -1,6 +1,6 @@
 .CaseDocuments {
   &-list[class] {
-    grid-column: 1 / 10;
+    grid-area: auto / span 8;
     display: flex;
     margin: -$spacing3;
     flex-wrap: wrap;
@@ -8,5 +8,41 @@
     > * {
       margin: $spacing3;
     }
+  }
+
+  &-fallback {
+    font-size: $font-size5;
+    font-style: italic;
+  }
+}
+
+.CaseDocument {
+  $height: 140px;
+
+  &-placeholder {
+    height: $height;
+    padding: $spacing3;
+    border-radius: $radius;
+    background-color: $color-field;
+  }
+
+  &-image {
+    height: $height;
+    border-radius: $radius;
+  }
+
+  &-info {
+    margin-top: $spacing5;
+    padding-left: $radius;
+    padding-right: $radius;
+  }
+
+  &-classification {
+    @extend .u-label-hint;
+    display: block;
+  }
+
+  &-link {
+    display: block;
   }
 }
