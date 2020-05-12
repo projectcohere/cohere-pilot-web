@@ -1,12 +1,7 @@
-.PendingCase {
-  &-title {
+.SelectProgram {
+  &-instructions {
     @extend .u-subtitle;
     margin-top: $radius;
-  }
-
-  &-subtitle {
-    max-width: $width3;
-    margin-top: $spacing3;
   }
 
   &-field {

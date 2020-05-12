@@ -90,6 +90,10 @@ class Case < ::Entity
     track_new_activity(false)
   end
 
+  def convert_to_program(program)
+    @program = program
+  end
+
   def submit_to_enroller
     if not (opened? || returned?)
       return

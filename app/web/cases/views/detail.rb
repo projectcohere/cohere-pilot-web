@@ -100,19 +100,21 @@ module Cases
         return @documents.find { |d| d.classification == :contract }
       end
 
-      # -- queries/submit
+      # -- queries/actions
       def can_submit?
         return @status.opened? || @status.returned?
       end
 
+      def can_convert?
+        return @status.returned?
+      end
+
       alias :can_remove? :can_submit?
 
-      # -- queries/complete
       def can_complete?
         return @status.submitted?
       end
 
-      # -- queries/condition
       def can_archive?
         return @condition.active? && @status.complete?
       end

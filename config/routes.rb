@@ -114,13 +114,13 @@ Rails.application.routes.draw do
       )
 
       patch("/return",
-        as: :return,
         action: :return,
+        as: :return,
       )
 
       patch("/complete/:status",
-        as: :complete,
         action: :complete,
+        as: :complete,
         constraints: { status: /approved|denied/ }
       )
 
@@ -157,6 +157,18 @@ Rails.application.routes.draw do
         on: :collection,
         action: :search,
         constraints: merge(c, query(scope: /^(all|active|archived)?$/)),
+      )
+
+      get("/select",
+        on: :member,
+        action: :select,
+        as: :select,
+      )
+
+      patch("/convert",
+        on: :member,
+        action: :convert,
+        as: :convert,
       )
 
       patch("/archive",

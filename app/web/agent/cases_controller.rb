@@ -60,6 +60,20 @@ module Agent
       end
     end
 
+    def select
+      permit!(:convert)
+
+      @form = view_repo.program_form(params[:id])
+      @case = @form.model
+    end
+
+    def convert
+      permit!(:convert)
+
+      @case = Cases::ConvertProgram.(params[:id], params.dig(:case, :program_id))
+      redirect_to(edit_case_path(@case), notice: t(".flash", name: name))
+    end
+
     def destroy
       permit!(:destroy)
 
@@ -84,6 +98,11 @@ module Agent
         cases_path,
         notice: t(".flash", name: @case.recipient.profile.name)
       )
+    end
+
+    # -- helpers --
+    private def name
+      return @case.recipient.profile.name
     end
   end
 end

@@ -30,6 +30,14 @@ module Cases
         return urls.case_path(@id)
       end
 
+      def select_path
+        return urls.select_case_path(@id)
+      end
+
+      def convert_path
+        return urls.convert_case_path(@id)
+      end
+
       def delete_path
         return urls.case_path(@id)
       end

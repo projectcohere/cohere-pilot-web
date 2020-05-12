@@ -117,19 +117,16 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   # -- create --
-  test "can't select a case program if signed-out" do
+  test "can't select a new case's program without permission" do
     get("/cases/select")
     assert_redirected_to("/sign-in")
-  end
 
-  test "can't select a case program without permission" do
     user_rec = users(:enroller_1)
-
     get(auth("/cases/select", as: user_rec))
     assert_redirected_to("/cases")
   end
 
-  test "select a case program" do
+  test "select a new case's program" do
     user_rec = users(:source_1)
     case_rec = cases(:approved_2)
 
@@ -154,18 +151,18 @@ class CasesTests < ActionDispatch::IntegrationTest
     user_rec = users(:source_1)
     program_rec = user_rec.partner.programs.first
 
-    get(auth("/cases/new?temp_id=9&program_id=#{program_rec.id}", as: user_rec))
+    get(auth("/cases/new?temp_id=9&case[program_id]=#{program_rec.id}", as: user_rec))
     assert_response(:success)
-    assert_select(".PageHeader-title", text: /Add a Case/)
+    assert_select(".PageHeader-title", text: /Open a New Case/)
   end
 
   test "views open case form as a non-supplier source" do
     user_rec = users(:source_3)
     program_rec = user_rec.partner.programs.first
 
-    get(auth("/cases/new?temp_id=9&program_id=#{program_rec.id}", as: user_rec))
+    get(auth("/cases/new?temp_id=9&case[program_id]=#{program_rec.id}", as: user_rec))
     assert_response(:success)
-    assert_select(".PageHeader-title", text: /Add a Case/)
+    assert_select(".PageHeader-title", text: /Open a New Case/)
   end
 
   test "opens a case as a source" do
@@ -500,11 +497,55 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:alert])
   end
 
-  # -- submit/action --
+  # -- convert --
+  test "can't select an existing case's program without permission" do
+    get("/cases/3/select")
+    assert_redirected_to("/sign-in")
+
+    user_rec = users(:source_1)
+    get(auth("/cases/3/select", as: user_rec))
+    assert_redirected_to("/cases")
+  end
+
+  test "select an existing case's program" do
+    user_rec = users(:agent_1)
+    case_rec = cases(:opened_5)
+
+    get(auth("/cases/#{case_rec.id}/select", as: user_rec))
+    assert_response(:success)
+  end
+
+  test "can't convert an existing case's program without permission" do
+    assert_raises(ActionController::RoutingError) do
+      patch("/cases/3/convert")
+    end
+
+    user_rec = users(:source_1)
+    assert_raises(ActionController::RoutingError) do
+      patch(auth("/cases/3/convert", as: user_rec))
+    end
+  end
+
+  test "convert an existing case's program as an agent" do
+    user_rec = users(:agent_1)
+    case_rec = cases(:opened_5)
+    program_rec = programs(:water_0)
+
+    patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
+      case: {
+        program_id: program_rec.id
+      }
+    })
+
+    assert_redirected_to("/cases/#{case_rec.id}/edit")
+    assert_present(flash[:notice])
+  end
+
+  # -- submit --
   test "can't update a case with an action if signed-out" do
     assert_raises(ActionController::RoutingError) do
       patch("/cases/3", params: {
-        approve: :ignored
+        submit: :ignored
       })
     end
   end
@@ -514,7 +555,7 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_raises(ActionController::RoutingError) do
       patch(auth("/cases/4", as: user_rec), params: {
-        deny: :ignored
+        submit: :ignored
       })
     end
   end

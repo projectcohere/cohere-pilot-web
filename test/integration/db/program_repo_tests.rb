@@ -8,11 +8,11 @@ module Db
       program_repo = Program::Repo.new
 
       recipient_rec = recipients(:recipient_3)
-      programs = program_repo.find_all_available_by_recipient(recipient_rec.id)
+      programs = program_repo.find_all_available(recipient_rec.id)
       assert_length(programs, 5)
 
       recipient_rec = recipients(:recipient_2)
-      programs = program_repo.find_all_available_by_recipient(recipient_rec.id)
+      programs = program_repo.find_all_available(recipient_rec.id)
       assert_length(programs, 3)
     end
   end

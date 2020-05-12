@@ -24,7 +24,11 @@ class Program
         WHERE c.program_id = programs.id AND c.recipient_id = ?
       SQL
 
-      return where("NOT EXISTS (#{query})", recipient_id)
+      scope = self
+        .active
+        .where("NOT EXISTS (#{query})", recipient_id)
+
+      return scope
     end
 
     def self.by_priority

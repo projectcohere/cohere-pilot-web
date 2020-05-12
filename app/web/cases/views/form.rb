@@ -1,6 +1,6 @@
 module Cases
   module Views
-    # A Case form object for modifying any writeable information.
+    # A Case form object for modifying all writeable attributes.
     class Form < ApplicationForm
       include ActionView::Helpers::TranslationHelper
 

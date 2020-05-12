@@ -13,22 +13,28 @@ module Cases
       end
 
       # -- queries --
-      # -- queries/program-picker
-      def new_program_picker(partner_id)
+      # -- queries/program
+      def pending_program_form
         programs = @program_repo
-          .find_all_by_partner(partner_id)
+          .find_all_by_partner(user_partner_id)
 
-        return self.class.map_program_picker(nil, programs)
+        return Forms::Program.new(
+          self.class.map_pending,
+          programs
+        )
       end
 
-      def program_picker(id)
-        case_rec = make_query(detail: true)
+      def program_form(id)
+        case_rec = make_query
           .find(id)
 
         programs = @program_repo
-          .find_all_available_by_recipient(case_rec.recipient_id)
+          .find_all_available(case_rec.recipient_id)
 
-        return self.class.map_program_picker(case_rec, programs)
+        return Forms::Program.new(
+          self.class.map_reference(case_rec),
+          programs
+        )
       end
 
       # -- queries/detail
@@ -62,10 +68,6 @@ module Cases
           self.class.map_detail_from_record(case_rec),
           params,
         )
-      end
-
-      def note_form(id, params: nil)
-
       end
 
       def referral_form(entity, params: nil)
@@ -186,21 +188,20 @@ module Cases
       end
 
       # -- mapping --
-      # -- mapping/program-picker
-      def self.map_program_picker(r, programs)
-        return ProgramPicker.new(
-          id: r != nil ? Id.new(r.id) : Id.new(SecureRandom.base58),
-          recipient_id: r&.recipient_id,
-          recipient_name: r&.recipient&.then { |r| Recipient::Repo.map_name(r) },
-          programs: programs,
-        )
-      end
-
       # -- mapping/pending
-      def self.map_pending(temp_id, program)
+      def self.map_pending(temp_id = SecureRandom.base58, program = nil)
         return Pending.new(
           temp_id: Id.new(temp_id),
           program: program,
+        )
+      end
+
+      # -- mapping/reference
+      def self.map_reference(r)
+        return Reference.new(
+          id: Id.new(r.id),
+          recipient_id: r.recipient_id,
+          recipient_name: r.recipient&.then { |r| Recipient::Repo.map_name(r) },
         )
       end
 
