@@ -9,6 +9,10 @@ module Cases
         return urls.new_case_path
       end
 
+      def create_path
+        return urls.cases_path
+      end
+
       def detail_path(other = nil)
         kase = other || self
         return kase.archived? ? show_path : edit_path
