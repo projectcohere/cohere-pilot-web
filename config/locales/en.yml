@@ -127,9 +127,6 @@ en:
         arrears: "Arrears"
         active-service: "Active?"
 
-      dhs:
-        title: "MDHHS"
-
       household:
         title: "Household"
         size: "Size"
@@ -141,6 +138,13 @@ en:
         fpl-percent:
           label: "FPL"
           fallback: "Unknown"
+
+      note:
+        title: "Add a Case Note"
+        placeholder: "Enter your note..."
+        actions:
+          save: "Save Note"
+          cancel: "Cancel"
 
     # -- partials
     forms:
@@ -159,6 +163,7 @@ en:
 
     notes:
       title: "Notes"
+      action: "Add a new note..."
       list:
         fallback: "This case has no notes yet."
 

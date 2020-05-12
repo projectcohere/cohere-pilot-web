@@ -10,6 +10,20 @@ const kDateConfig = {
 }
 
 // -- impls --
+// -- impls/commands
+export function formatTimes($times: NodeListOf<HTMLTimeElement>, format: (d: Date) => string) {
+  for (let i = 0; i < $times.length; i++) {
+    const $time = $times[i]
+    const timestamp = new Date($time.dateTime)
+    $time.textContent = format(timestamp)
+  }
+}
+
+// -- impls/queries
+export function getReadableTime(date: Date): string {
+  return date.toLocaleString("en-US", kDateConfig)
+}
+
 export function getReadableTimeSince(date: Date): string {
   const delta = Math.max(new Date().getTime() - date.getTime(), 0)
   const minutes = Math.floor(delta / 1000 / 60)
@@ -22,6 +36,6 @@ export function getReadableTimeSince(date: Date): string {
   } else if (hours < 24) {
     return `${hours} ${pluralize("hour", hours)} ago`
   } else {
-    return date.toLocaleString("en-US", kDateConfig)
+    return getReadableTime(date)
   }
 }

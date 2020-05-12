@@ -64,6 +64,10 @@ module Cases
         )
       end
 
+      def note_form(id, params: nil)
+
+      end
+
       def referral_form(entity, params: nil)
         return make_form(
           self.class.map_detail_from_entity(entity),
@@ -163,7 +167,7 @@ module Cases
         # inlcude associations
         q = q.includes(:program, :recipient, :enroller, :supplier, assignments: :user)
         if detail
-          q = q.includes(documents: { file_attachment: :blob })
+          q = q.includes(:notes, documents: { file_attachment: :blob })
         end
 
         # filter by role
@@ -216,7 +220,7 @@ module Cases
           referrer: r.referred != nil,
           referred: r.referrer_id != nil,
           assignments: r.assignments.map { |r| Case::Repo.map_assignment(r) },
-          notes: r.notes.map { |r| Case::Repo.map_note(r) },
+          notes: r.notes.by_most_recent.map { |r| Case::Repo.map_note(r) },
           documents: r.documents&.map { |r| Case::Repo.map_document(r) },
         )
       end

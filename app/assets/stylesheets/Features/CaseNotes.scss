@@ -7,10 +7,30 @@
     font-size: $font-size5;
     font-style: italic;
   }
+
+  &-addNote {
+    font-style: italic;
+  }
 }
 
 .CaseNote {
+  &-user {
+    @extend .u-label;
+  }
 
+  &-timestamp {
+    @extend .u-label;
+
+    &::before {
+      content: "— ";
+    }
+  }
+}
+
+.CaseNote + .CaseNote {
+  margin-top: $spacing4;
+  padding-top: $spacing4;
+  border-top: 1px solid $color-divider;
 }
 
 .CaseNoteForm {

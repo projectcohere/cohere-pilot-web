@@ -21,6 +21,8 @@ class Case
         source?
       when :create_assignment
         agent? || enroller? || governor?
+      when :create_note
+        agent? || enroller?
       # edit
       when :edit
         agent? || governor?

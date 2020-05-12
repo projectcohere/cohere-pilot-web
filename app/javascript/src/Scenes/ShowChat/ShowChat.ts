@@ -3,7 +3,7 @@ import { Macros, IMacro } from "./Macros"
 import { UploadFiles } from "./UploadFiles"
 import { IComponent, kConsumer, Id } from "../../Core"
 import { kClassLoaded } from "../../Shared/Constants"
-import { getReadableTimeSince } from "../../Shared/Time"
+import { getReadableTimeSince, formatTimes } from "../../Shared/Time"
 
 // -- constants --
 const kChannelChat = "Chats::MessagesChannel"
@@ -331,13 +331,10 @@ export class ShowChat implements IComponent {
   }
 
   private didFireRefreshTimer() {
-    const $timestamps = document.querySelectorAll<HTMLTimeElement>(`#${kIdChatMessages} time`)
-
-    for (let i = 0; i < $timestamps.length; i++) {
-      const $timestamp = $timestamps[$timestamps.length - 1]
-      const time = new Date($timestamp.dateTime)
-      $timestamp.textContent = getReadableTimeSince(time)
-    }
+    formatTimes(
+      document.querySelectorAll<HTMLTimeElement>(`#${kIdChatMessages} time`),
+      getReadableTimeSince,
+    )
   }
 
   // -- view --

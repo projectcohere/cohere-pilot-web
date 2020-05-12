@@ -1,16 +1,26 @@
 <%= section_tag(t(".title"), class: "CaseNotes") do %>
-  <ul class="CaseNotes-list">
+  <ul id="note-list" class="CaseNotes-list">
     <% if notes.blank? %>
       <%= tag.p(t(".list.fallback"), class: "CaseNotes-fallback") %>
     <% else %>
+      <li class="CaseNote">
+        <%=
+          button_tag(t(".action"),
+            id: "add-note",
+            class: "CaseNotes-addNote Link"
+          )
+        %>
+      </li>
+
       <% notes.each do |note| %>
         <li class="CaseNote">
-          <%= note.body %>
+          <p><%= note.body %></p>
+          <p class="CaseNote-metadata">
+            <%= tag.span(note.user_email, class: "CaseNote-user") %>
+            <%= time_tag(note.created_at, class: "CaseNote-timestamp") %>
+          </p>
         </li>
       <% end %>
-
     <% end %>
-
-    <%= button_tag("Add Note", id: "add-note", class: "Button Button--secondary") %>
   </ul>
 <% end %>

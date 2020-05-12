@@ -231,6 +231,7 @@ class Case < ::Entity
     @selected_note = Note.new(
       body: body,
       user_id: user.id,
+      user_email: user.email,
     )
 
     @notes.push(@selected_note)

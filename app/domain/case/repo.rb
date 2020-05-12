@@ -605,6 +605,8 @@ class Case
         id: Id.new(r.id),
         body: r.body,
         user_id: r.user_id,
+        user_email: r.user.email,
+        created_at: r.created_at,
       )
     end
 

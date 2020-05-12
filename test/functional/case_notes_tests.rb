@@ -16,15 +16,11 @@ class CaseNotesTests < ActionDispatch::IntegrationTest
 
   test "add a case note as an agent" do
     user_rec = users(:agent_1)
-    case_rec = cases(:opened_2)
-
-    note_params = {
-      body: "Test note."
-    }
+    case_rec = cases(:opened_1)
 
     act = -> do
       post(auth("/cases/#{case_rec.id}/notes", as: user_rec), params: {
-        note: note_params,
+        case_note: { body: "Test note." },
       })
     end
 
@@ -34,17 +30,29 @@ class CaseNotesTests < ActionDispatch::IntegrationTest
     )
   end
 
-  test "add a case note as an enroller" do
-    user_rec = users(:agent_1)
+  test "can't add a case note to another enroller's case as an enroller" do
+    user_rec = users(:enroller_1)
     case_rec = cases(:opened_2)
-
-    note_params = {
-      body: "Test note."
-    }
 
     act = -> do
       post(auth("/cases/#{case_rec.id}/notes", as: user_rec), params: {
-        note: note_params,
+        case_note: { body: "Ignored." },
+      })
+    end
+
+    assert_difference(
+      -> { Case::Note::Record.count } => 0,
+      &act
+    )
+  end
+
+  test "add a case note as an enroller" do
+    user_rec = users(:enroller_1)
+    case_rec = cases(:opened_1)
+
+    act = -> do
+      post(auth("/cases/#{case_rec.id}/notes", as: user_rec), params: {
+        case_note: { body: "Test note." },
       })
     end
 
