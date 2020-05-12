@@ -204,11 +204,9 @@ class CaseTests < ActiveSupport::TestCase
     assert_not_nil(referral)
 
     referrer = referral.referrer
-    assert(referrer.referrer?)
     assert(referrer.archived?)
 
     referred = referral.referred
-    assert(referred.referred?)
     assert(referred.new_activity?)
     assert(referred.opened?)
     assert(referred.active?)
@@ -223,7 +221,6 @@ class CaseTests < ActiveSupport::TestCase
 
     event = referred.events[0]
     assert_instances_of(referred.events, [Case::Events::DidOpen])
-    assert(event.case_is_referred)
   end
 
   test "deletes a case" do

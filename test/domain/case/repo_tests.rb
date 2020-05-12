@@ -20,8 +20,6 @@ class Case
       assert_not_nil(kase.updated_at)
       assert_not_nil(kase.completed_at)
       assert(kase.new_activity?)
-      assert(kase.referrer?)
-      assert_not(kase.referred?)
 
       recipient = kase.recipient
       assert_not_nil(recipient.record)
@@ -40,18 +38,6 @@ class Case
       assert_not_nil(assignment.user_id)
       assert_not_nil(assignment.user_email)
       assert_not_nil(assignment.partner_id)
-    end
-
-    test "maps a referral" do
-      case_rec = cases(:referral_1)
-
-      kase = Case::Repo.map_record(case_rec, documents: case_rec.documents)
-      assert_not(kase.referrer?)
-      assert(kase.referred?)
-      assert(kase.supplier_account.active_service?)
-
-      household = kase.recipient.household
-      assert_equal(household.ownership, ::Recipient::Ownership::Unknown)
     end
   end
 end

@@ -32,10 +32,6 @@ module Cases
       end
 
       # -- queries --
-      def note
-        @note ||= Forms::Note.new(@model)
-      end
-
       def action_text
         return @action != nil ? t("cases.action.#{@action.key}") : nil
       end
@@ -47,10 +43,6 @@ module Cases
         status = @admin&.map_to_status || @model.try(:status)
         if @action&.submit? || status&.submitted? || @action&.complete? || status&.complete?
           scopes.push(:submitted)
-        end
-
-        if @model.try(:referred?) == true && @model.id == Id::None
-          scopes.push(:new_referral)
         end
 
         super(scopes)

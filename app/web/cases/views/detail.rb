@@ -17,8 +17,6 @@ module Cases
       prop(:recipient_id)
       prop(:profile)
       prop(:household)
-      prop(:referrer, predicate: true)
-      prop(:referred, predicate: true)
       prop(:documents)
       prop(:assignments)
       prop(:notes)

@@ -11,10 +11,6 @@ class Case
     has_many(:notes, child: true, dependent: :destroy)
     has_many(:documents, dependent: :destroy)
 
-    # -- associations/referrals
-    has_one(:referred, record: :case, foreign_key: "referrer_id")
-    belongs_to(:referrer, record: :case, optional: true)
-
     # -- status --
     enum(status: Status.keys, condition: Condition.keys)
 

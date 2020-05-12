@@ -344,7 +344,6 @@ class Case
       # update the referred record
       referred_rec.assign_attributes(
         recipient_id: referred.recipient.id.val,
-        referrer_id: referrer.id.val
       )
 
       assign_status(referred, referred_rec)
@@ -543,8 +542,6 @@ class Case
         supplier_account: map_supplier_account(r),
         assignments: assignments&.map { |r| map_assignment(r) },
         documents: documents&.map { |r| map_document(r) },
-        referred: r.referrer_id != nil,
-        referrer: r.referred != nil,
         new_activity: r.new_activity,
         received_message_at: r.received_message_at,
         created_at: r.created_at,
