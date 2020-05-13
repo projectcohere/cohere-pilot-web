@@ -276,6 +276,11 @@ en:
       new:
         <<: *case-detail
         back: "Back to Select Referral"
+        actions:
+          save: "Save New Referral"
+          submit:
+            name: "Save & Submit to Enroller"
+            confirm: "Are you sure you want to submit this case?"
 
   enroller:
     cases:
