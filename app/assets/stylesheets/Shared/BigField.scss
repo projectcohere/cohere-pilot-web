@@ -16,6 +16,7 @@
   &-action {
     @extend .ButtonBase;
     @extend .Button--action;
+    @extend .u-action;
 
     height: 100%;
   }

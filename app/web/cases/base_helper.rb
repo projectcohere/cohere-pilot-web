@@ -24,7 +24,7 @@ module Cases
       return link_to(scope.name, cases_search_path(scope: scope.key),
         id: "filter-#{scope.key}",
         class: cx(
-          "Filter",
+          "Filters-option",
           "is-selected": @scope == scope,
         ),
       )

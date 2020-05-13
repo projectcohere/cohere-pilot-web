@@ -5,45 +5,27 @@
     <h1 class="PageHeader-title">
       <%= t(".title", name: @case.recipient_name) %>
     </h1>
+  </header>
 
-    <div class="PageHeader-actions">
+  <div class="CaseDetail CaseDetail--view">
+    <div class="CaseDetail-menu">
+      <nav class="CaseDetail-filters Filters Filters--vertical">
+        <%= filter_for(:application, selected: true) %>
+        <%= filter_for(:documents) %>
+        <%= filter_for(:case_notes) %>
+      </nav>
+
       <% if @case.can_complete? %>
-        <%=
-          button_to(t(".actions.approve.name"), @case.approve_path,
-            method: :patch,
-            class: "Button Button--action",
-            data: { confirm: t(".actions.approve.confirm") },
-          )
-        %>
-
-        <%=
-          button_to(t(".actions.deny.name"), @case.deny_path,
-            method: :patch,
-            class: "Button Button--destructive",
-            data: { confirm: t(".actions.deny.confirm") },
-          )
-        %>
-
         <%=
           button_to(t(".actions.return.name"), @case.return_path,
             method: :patch,
-            class: "Button Button--secondary",
+            class: "ButtonSm Button--secondary",
             data: { confirm: t(".actions.return.confirm") },
           )
         %>
       <% end %>
     </div>
 
-    <div class="PageHeader-row PageHeader-filters">
-      <nav class="Filters">
-        <%= filter_for(:application, is_selected: true) %>
-        <%= filter_for(:documents) %>
-        <%= filter_for(:notes) %>
-      </nav>
-    </div>
-  </header>
-
-  <div class="CaseDetail CaseDetail--view">
     <article class="CaseDetail-case">
       <div class="CaseDetail-bar">
         <p class="CaseDetail-id">
@@ -64,13 +46,33 @@
           <%= render(partial: "cases/detail/household", locals: locals) %>
         <%- end %>
 
-        <%= filter_panel_tag(:notes) do %>
+        <%= filter_panel_tag(:case_notes) do %>
           <%= render(partial: "cases/notes", object: @case, as: :kase) %>
         <%- end %>
 
         <%= filter_panel_tag(:documents) do %>
           <%= render(partial: "cases/documents", locals: { documents: @case.documents }) %>
         <%- end %>
+
+        <% if @case.can_complete? %>
+          <div class="Panel-actions">
+            <%=
+              button_to(t(".actions.approve.name"), @case.approve_path,
+                method: :patch,
+                class: "Button Button--action",
+                data: { confirm: t(".actions.approve.confirm") },
+              )
+            %>
+
+            <%=
+              button_to(t(".actions.deny.name"), @case.deny_path,
+                method: :patch,
+                class: "Button Button--destructive",
+                data: { confirm: t(".actions.deny.confirm") },
+              )
+            %>
+          </div>
+        <% end %>
       </div>
     </article>
   </div>

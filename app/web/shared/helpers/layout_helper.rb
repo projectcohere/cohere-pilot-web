@@ -16,15 +16,17 @@ module Helpers
     end
 
     # -- filters --
-    def filter_for(id, is_selected: false, is_error: false)
-      return link_to(id.to_s.titlecase, "##{id}",
+    def filter_for(id, selected: false, active: false)
+      return link_to("##{id}",
         class: cx(
-          "Filter",
-          "is-selected" => is_selected,
-          "is-active" => is_error
+          "Filters-option",
+          "is-selected" => selected,
+          "is-active" => active,
         ),
         data: { turbolinks: false }
-      )
+      ) do
+        tag.span(id.to_s.titlecase, class: "Filters-text")
+      end
     end
 
     def filter_panel_tag(id, visible: false, &children)
@@ -75,25 +77,25 @@ module Helpers
     end
 
     # -- panels --
-    def section_tag(title = nil, header_tag = :h2, *args, **kwargs, &children)
+    def section_tag(title = nil, *args, **kwargs, &children)
       a_class = kwargs.delete(:class)
 
       # pre-render children
       section_content = capture(&children)
 
       # render section tag
-      section_class = cx(a_class, "Panel-section")
+      section_class = cx(a_class, "Panel-section PanelSection")
 
       tag.div(*args, class: section_class, **kwargs) do
-        section_title = "".html_safe
+        section_header = "".html_safe
 
         if title.present?
-          section_title = tag.h1(class: "Panel-sectionTitle") do
-            tag.span(title)
+          section_header = tag.div(class: "PanelSection-header") do
+            tag.h1(title)
           end
         end
 
-        section_title + section_content
+        section_header + section_content
       end
     end
 

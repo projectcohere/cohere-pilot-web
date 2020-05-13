@@ -5,60 +5,63 @@
     <h1 class="PageHeader-title">
       <%= @case.recipient_name %>'s case
     </h1>
-
-    <div class="PageHeader-row PageHeader-filters">
-      <nav class="Filters">
-        <%= filter_for(:profile, is_error: errors?(@form.contact, @form.contract), is_selected: true) %>
-        <%= filter_for(:household, is_error: errors?(@form.address, @form.household)) %>
-
-        <% if permit?(:edit_supplier_account) %>
-          <%= filter_for(:accounts, is_error: errors?(@form.supplier_account)) %>
-        <% end %>
-
-        <%= filter_for(:documents, is_error: errors?(@form.documents)) %>
-      </nav>
-    </div>
   </header>
 
   <div class="CaseDetail CaseDetail--edit">
+    <div class="CaseDetail-menu">
+      <nav class="CaseDetail-filters Filters Filters--vertical">
+        <%= filter_for(:profile, active: errors?(@form.contact, @form.contract), selected: true) %>
+        <%= filter_for(:household, active: errors?(@form.address, @form.household)) %>
+
+        <% if permit?(:edit_supplier_account) %>
+          <%= filter_for(:accounts, active: errors?(@form.supplier_account)) %>
+        <% end %>
+
+        <%= filter_for(:documents, active: errors?(@form.documents)) %>
+      </nav>
+    </div>
+
     <article class="CaseDetail-case">
       <%= form_for(@form, url: case_referrals_path, html: { class: "CaseDetail-content" }) do |f| %>
-        <% form_locals = { f: f, form: @form, view: @case } %>
         <%= f.hidden_field(:program_id) %>
 
-        <section id="profile" class="Panel-tab is-visible">
+        <%- form_locals = { f: f, form: @form, view: @case } %>
+        <%= filter_panel_tag(:profile, visible: true) do %>
           <%= render(partial: "cases/forms/details", locals: form_locals) %>
           <%= render(partial: "cases/forms/contact", locals: form_locals) %>
 
           <% if permit?(:edit_contract) %>
             <%= render(partial: "cases/forms/contract", locals: form_locals) %>
           <% end %>
-        </section>
+        <%- end %>
 
-        <section id="household" class="Panel-tab">
+        <%= filter_panel_tag(:household) do %>
           <%= render(partial: "cases/forms/address", locals: form_locals) %>
           <%= render(partial: "cases/forms/household", locals: form_locals) %>
-        </section>
+        <%- end %>
 
         <% if permit?(:edit_supplier_account) %>
-          <section id="accounts" class="Panel-tab">
+          <%= filter_panel_tag(:accounts) do %>
             <%= render(partial: "cases/forms/supplier_account", locals: form_locals) %>
-          </section>
+          <%- end %>
         <% end %>
 
-        <section id="documents" class="Panel-tab">
+        <%= filter_panel_tag(:documents) do %>
           <%= render(partial: "cases/documents", locals: { documents: @form.documents.all }) %>
-        </section>
+        <%- end %>
 
         <div class="Panel-actions">
-          <%= f.submit("Save", class: "Button Button--action") %>
           <%=
-            f.submit("Save & Submit to Enroller",
+            f.submit(t(".actions.save"),
+              class: "Button Button--action"
+            )
+          %>
+
+          <%=
+            f.submit(t(".actions.submit.name"),
               name: :submit,
               class: "Button Button--secondary",
-              data: {
-                confirm: "Are you sure you want to submit this case?"
-              },
+              data: { confirm: t(".actions.submit.confirm") },
             )
           %>
         </div>

@@ -6,6 +6,19 @@
     margin-left: $spacing3;
   }
 
+  &-menu {
+    min-width: $width6;
+
+    > * + * {
+      margin-top: $spacing4;
+    }
+  }
+
+  &-filters + * {
+    padding-top: $spacing3;
+    border-top: 1px solid $color-divider;
+  }
+
   &-case {
     display: flex;
     flex-direction: column;

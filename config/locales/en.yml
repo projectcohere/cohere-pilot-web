@@ -162,8 +162,8 @@ en:
         action: "View Document"
 
     notes:
-      title: "Notes"
-      action: "Add a new note..."
+      title: "Case Notes"
+      action: "Add a Case Note"
 
     search:
       prompt: "Enter an applicant's name or phone number to find their cases."
@@ -203,6 +203,8 @@ en:
         <<: *case-search
       edit:
         <<: *case-detail
+        actions:
+          save: "Save Case"
 
   agent:
     cases:
@@ -230,9 +232,9 @@ en:
             name: "Remove Case"
             confirm: "Are you sure you want to remove this case?"
           archive:
-            name: "Archive"
+            name: "Archive Case"
             confirm: "Are you sure you want to archive this case?"
-          convert: "Convert Program"
+          convert: "Change Program"
           referral: "Select Referral"
 
       update:
@@ -244,7 +246,7 @@ en:
       select:
         <<: *case-detail
         back: "Back to Case Details"
-        action: "Convert to Program"
+        action: "Change to Program"
         instructions: "Please select of these programs to convert this case to a new program."
         placeholder: "Select a program..."
 
@@ -254,7 +256,7 @@ en:
       show:
         <<: *case-detail
         actions:
-          edit: "Edit"
+          edit: "Edit Case"
 
       destroy:
         flash: "Deleted %{name}'s case."
@@ -288,10 +290,10 @@ en:
         <<: *case-detail
         actions:
           approve:
-            name: "Approve"
+            name: "Approve Case"
             confirm: "Are you sure you want to approve this case?"
           deny:
-            name: "Deny"
+            name: "Deny Case"
             confirm: "Are you sure you want to deny this case?"
           return:
             name: "Return to Agent"

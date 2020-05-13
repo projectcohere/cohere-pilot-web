@@ -1,5 +1,79 @@
 .Filters {
-  display: inline-flex;
-  max-width: $width1;
-  border-bottom: 1px solid fade-out($brand-black, 0.8);
+  // -- children --
+  &-option {
+    @extend .u-action;
+
+    display: flex;
+    align-items: center;
+    line-height: $height2;
+    opacity: $opacity-inactive;
+    text-decoration: none;
+
+    &:hover, &.is-selected {
+      opacity: 1.0;
+    }
+
+    &.is-active {
+      &::before {
+        $dot-size: 4px;
+
+        content: "";
+        position: absolute;
+        left: 4px;
+        width: $dot-size;
+        height: $dot-size;
+        border-radius: $dot-size / 2;
+        background-color: $color-error;
+      }
+    }
+  }
+
+  &-text {
+    pointer-events: none;
+  }
+
+  // -- variants --
+  @mixin underline {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: $brand-primary;
+  }
+
+  // -- variants/horizontal
+  &--horizontal {
+    display: inline-flex;
+    max-width: $width1;
+    border-bottom: 1px solid fade-out($brand-black, 0.8);
+  }
+
+  &--horizontal &-option {
+    padding: 0 $spacing4;
+
+    &.is-selected {
+      position: relative;
+
+      &::after {
+        @include underline;
+        bottom: -2px;
+      }
+    }
+  }
+
+  // -- variants/vertical
+  &--vertical {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &--vertical &-option.is-selected &-text {
+    position: relative;
+
+    &::after {
+      @include underline;
+      bottom: 0;
+    }
+  }
 }

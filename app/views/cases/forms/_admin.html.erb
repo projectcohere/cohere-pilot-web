@@ -19,7 +19,7 @@
             <%=
               link_to("Unassign", destroy_case_assignments_path(view.id, assignment.partner_id),
                 method: :delete,
-                class: "CaseFormAssignments-unassign Link--destructive",
+                class: "CaseFormAssignments-unassign ButtonSm Button--destructive",
                 data: {
                   confirm: "Are you sure you want to unassign this user?"
                 },

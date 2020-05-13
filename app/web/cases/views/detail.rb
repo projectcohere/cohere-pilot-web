@@ -105,11 +105,11 @@ module Cases
         return @status.opened? || @status.returned?
       end
 
+      alias :can_remove? :can_submit?
+
       def can_convert?
         return @status.returned?
       end
-
-      alias :can_remove? :can_submit?
 
       def can_complete?
         return @status.submitted?

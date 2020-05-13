@@ -1,14 +1,13 @@
 %button {
-  @extend .u-action;
   @include prefix(moz webkit, (appearance: none));
 
   display: flex;
   align-items: center;
-  padding: 0 $spacing3;
   border-radius: 5px;
   text-decoration: none;
   cursor: pointer;
   transition: opacity 0.05s;
+  border-style: solid;
 
   &:disabled {
     opacity: $opacity-disabled;
@@ -16,44 +15,56 @@
   }
 }
 
-.Button {
+.ButtonBase {
   @extend %button;
+  padding: 0 $spacing3;
+}
+
+.Button {
+  @extend .ButtonBase;
+  @extend .u-action;
+
   height: $height2;
+  padding: 0 $spacing3;
+  border-width: 2px;
+  border: 2px solid;
 }
 
 .ButtonSm {
   @extend %button;
-  height: $height3;
-}
+  @extend .u-action-sm;
 
-.ButtonBase {
-  @extend %button;
+  height: $height3;
+  padding: 0 $spacing5;
+  border-width: 1px;
 }
 
 .Button--action {
   color: $white;
+  border-color: $brand-primary;
   background-color: $brand-primary;
 
   &:hover {
     color: $white;
-    background-color: lighten($brand-primary, 5%);
+    border-color: $color-highlight;
+    background-color: $color-highlight;
   }
 }
 
 .Button--secondary {
   color: $brand-primary;
-  border: 2px solid $brand-primary;
+  border-color: $brand-primary;
 
   &:hover {
-    color: lighten($brand-primary, 5%);
-    border-color: lighten($brand-primary, 5%);
+    color: $color-highlight;
+    border-color: $color-highlight;
     background-color: $color-field;
   }
 }
 
 .Button--destructive {
   color: $brand-primary;
-  border: 2px solid $brand-primary;
+  border-color: $brand-primary;
 
   &:hover {
     color: $color-error;
