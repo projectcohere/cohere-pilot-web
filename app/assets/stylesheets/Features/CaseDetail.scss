@@ -7,7 +7,7 @@
   }
 
   &-menu {
-    min-width: $width6;
+    min-width: 100px;
 
     > * + * {
       margin-top: $spacing4;
@@ -19,6 +19,10 @@
     border-top: 1px solid $color-divider;
   }
 
+  &-button {
+    width: $width6;
+  }
+
   &-case {
     display: flex;
     flex-direction: column;
@@ -27,16 +31,14 @@
   }
 
   &-bar {
+    @extend .u-label;
+
     display: flex;
     justify-content: space-between;
     align-items: center;
     height: $height3;
     padding: 0 $spacing1;
     background-color: $color-accent;
-  }
-
-  &-id {
-    @extend .u-label;
   }
 
   &-content {

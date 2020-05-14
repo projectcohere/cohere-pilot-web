@@ -19,7 +19,7 @@
         <%=
           button_to(t(".actions.return.name"), @case.return_path,
             method: :patch,
-            class: "ButtonSm Button--secondary",
+            class: "CaseDetail-button ButtonSm Button--secondary",
             data: { confirm: t(".actions.return.confirm") },
           )
         %>
@@ -28,9 +28,8 @@
 
     <article class="CaseDetail-case">
       <div class="CaseDetail-bar">
-        <p class="CaseDetail-id">
-          <%= @case.id_text %>
-        </p>
+        <p><%= @case.status_name %></p>
+        <p><%= @case.id_text %></p>
       </div>
 
       <div class="CaseDetail-content">

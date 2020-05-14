@@ -22,6 +22,10 @@
     </div>
 
     <article class="CaseDetail-case">
+      <div class="CaseDetail-bar">
+        <p><%= @case.status_name %></p>
+      </div>
+
       <%= form_for(@form, url: case_referrals_path, html: { class: "CaseDetail-content" }) do |f| %>
         <%= f.hidden_field(:program_id) %>
 

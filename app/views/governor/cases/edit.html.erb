@@ -13,6 +13,11 @@
     </div>
 
     <article class="CaseDetail-case">
+      <div class="CaseDetail-bar">
+        <p><%= @case.status_name %></p>
+        <p><%= @case.id_text %></p>
+      </div>
+
       <%= form_for(@form, url: @case.update_path, html: { class: "CaseDetail-content" }) do |f| %>
         <% form_locals = { f: f, form: @form, view: @case, policy: policy } %>
 

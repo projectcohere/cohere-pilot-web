@@ -30,7 +30,7 @@
           button_to(t(".actions.remove.name"), @case.remove_path,
             name: :remove,
             method: :patch,
-            class: "ButtonSm Button--destructive",
+            class: "CaseDetail-button ButtonSm Button--destructive",
             data: { confirm: t(".actions.remove.confirm") },
           )
         %>
@@ -40,7 +40,7 @@
         <%=
           button_to(t(".actions.convert"), @case.select_path,
             method: :get,
-            class: "ButtonSm Button--secondary",
+            class: "CaseDetail-button ButtonSm Button--secondary",
           )
         %>
       <% end %>
@@ -49,7 +49,7 @@
         <%=
           button_to(t(".actions.archive.name"), @case.archive_path,
             method: :patch,
-            class: "ButtonSm Button--secondary",
+            class: "CaseDetail-button ButtonSm Button--secondary",
             data: { confirm: t(".actions.archive.confirm") },
           )
         %>
@@ -59,7 +59,7 @@
         <%=
           button_to(t(".actions.referral"), @case.select_referral_path,
             method: :get,
-            class: "ButtonSm Button--action",
+            class: "CaseDetail-button ButtonSm Button--action",
           )
         %>
       <% end %>
@@ -67,9 +67,8 @@
 
     <article class="CaseDetail-case">
       <div class="CaseDetail-bar">
-        <p class="CaseDetail-id">
-          <%= @case.id_text %>
-        </p>
+        <p><%= @case.status_name %></p>
+        <p><%= @case.id_text %></p>
       </div>
 
       <%= form_for(@form, url: @case.update_path, html: { class: "CaseDetail-content" }) do |f| %>

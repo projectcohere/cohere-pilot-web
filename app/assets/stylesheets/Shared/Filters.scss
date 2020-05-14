@@ -5,7 +5,6 @@
 
     display: flex;
     align-items: center;
-    line-height: $height2;
     opacity: $opacity-inactive;
     text-decoration: none;
 
@@ -29,6 +28,7 @@
   }
 
   &-text {
+    padding-bottom: $spacing6;
     pointer-events: none;
   }
 
@@ -62,10 +62,22 @@
     }
   }
 
+  &--horizontal &-text {
+    padding-bottom: 5px;
+  }
+
   // -- variants/vertical
   &--vertical {
     display: flex;
     flex-direction: column;
+  }
+
+  &--vertical &-option + &-option {
+    margin-top: 7px;
+  }
+
+  &--vertical &-text {
+    padding-bottom: 3px;
   }
 
   &--vertical &-option.is-selected &-text {

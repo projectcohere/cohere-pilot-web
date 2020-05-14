@@ -18,7 +18,7 @@
       <%=
         button_to(t(".actions.edit"), @case.edit_path,
           method: :get,
-          class: "ButtonSm Button--secondary",
+          class: "CaseDetail-button ButtonSm Button--secondary",
           data: { "turbolinks-action": "replace" },
         )
       %>
@@ -26,9 +26,8 @@
 
     <article class="CaseDetail-case">
       <div class="CaseDetail-bar">
-        <p class="CaseDetail-id">
-          <%= @case.id_text %>
-        </p>
+        <p><%= @case.status_name %></p>
+        <p><%= @case.id_text %></p>
       </div>
 
       <div class="CaseDetail-content">

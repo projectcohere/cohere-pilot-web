@@ -234,7 +234,7 @@ en:
           archive:
             name: "Archive Case"
             confirm: "Are you sure you want to archive this case?"
-          convert: "Change Program"
+          convert: "Switch Program"
           referral: "Select Referral"
 
       update:
@@ -246,7 +246,7 @@ en:
       select:
         <<: *case-detail
         back: "Back to Case Details"
-        action: "Change to Program"
+        action: "Switch to Program"
         instructions: "Please select of these programs to convert this case to a new program."
         placeholder: "Select a program..."
 
