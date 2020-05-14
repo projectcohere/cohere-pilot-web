@@ -210,6 +210,9 @@ Rails.application.routes.draw do
       )
     end
 
+    # -- admin --
+    get("/admin", to: "admin#index")
+
     # -- fallback --
     fallback(Role::Agent, to: "/cases", constraints: c)
   end

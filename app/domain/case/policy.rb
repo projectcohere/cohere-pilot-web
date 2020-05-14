@@ -10,20 +10,19 @@ class Case
     # checks if the given user/case is allowed to perform an action.
     def permit?(action)
       case action
+      # -- list
       when :list
-        true
-      when :list_queue
-        agent? || enroller? || governor?
-      when :list_search
-        agent? || enroller? || governor?
-      # create
+        permit?(:list_cases)
+
+      # -- create
       when :create
         source?
       when :create_assignment
         agent? || enroller? || governor?
       when :create_note
         agent? || enroller?
-      # edit
+
+      # -- edit
       when :edit
         agent? || governor?
       when :edit_contract
@@ -60,7 +59,8 @@ class Case
         agent?
       when :edit_admin
         agent?
-      # view
+
+      # -- view
       when :view
         agent? || source? || enroller?
       when :view_details
@@ -83,19 +83,22 @@ class Case
         (agent? || enroller?) && proof_of_income?(&:dhs?)
       when :view_supplier_account_active_service
         (agent? || enroller?) && requirement?(&:supplier_account_active_service?)
-      # actions
+
+      # -- actions
       when :convert
         agent?
       when :referral
         agent?
       when :complete
         agent? || enroller?
-      # destroy
+
+      # -- destroy
       when :destroy
         agent?
       when :destroy_assignment
         agent?
-      # archive
+
+      # -- archive
       when :archive
         agent?
       else

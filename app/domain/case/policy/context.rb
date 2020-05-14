@@ -1,12 +1,12 @@
 class Case
   class Policy
-    # context module for mixing in cross-cutting concerns.
-    # provides accessors and helpers for the current case policy.
+    # Context module for mixing in cross-cutting authorization concerns.
+    # Provides accessors and helpers for the current policy.
     module Context
       extend ActiveSupport::Concern
 
       # -- includes --
-      include User::Context
+      include ::Policy::Context
 
       # -- queries --
       # constructs a case policy
@@ -14,18 +14,14 @@ class Case
         return Case::Policy.new(user, self.case)
       end
 
-      # returns the case used to construct the policy. defaults
-      # to `@case`.
+      # returns the case used to construct the policy. defaults to `@case`.
       def case
         return @case
       end
 
-      # expose permit? and forbit? on the includer
-      delegate(:permit?, :forbid?, to: :policy)
-
       # -- children --
-      # includes all of the above, but the case policy is memoized.
-      # use this when the value of `case` does not change.
+      # Includes all of the above, but the policy is memoized. Use this
+      # when the value of `case` does not change.
       module Shared
         extend ActiveSupport::Concern
 

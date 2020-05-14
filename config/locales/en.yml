@@ -4,15 +4,16 @@ en:
     failure_after_update: Password did not meet requirements.
 
   pages: &pages
-    cases: Cases
-    queue: Inbox
-    search: Search
+    cases: "Cases"
+    queue: "Inbox"
+    search: "Search"
+    admin: "Admin"
 
   layouts:
     navigation:
       <<: *pages
-      logo: Cohere
-      sign-out: Sign Out
+      logo: "Cohere"
+      sign-out: "Sign Out"
 
   # -- domain --
   case:
@@ -207,6 +208,17 @@ en:
           save: "Save Case"
 
   agent:
+    admin:
+      index:
+        title: "Admin Settings"
+        actions:
+          start:
+            name: "Start Working Hours"
+            confirm: "Are you sure you want to start working hours?"
+        hours:
+          title: "Working Hours"
+          prompt: "Working hours are not currently active."
+
     cases:
       index:
         <<: *case-index

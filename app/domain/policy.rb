@@ -7,7 +7,21 @@ class Policy
   # -- queries --
   # checks if the given user / scope is allowed to perform an action.
   def permit?(action)
-    return false
+    # TODO: policies are mixing application and domain concerns (or perhaps
+    # they are purely application concerns). need to figure out how to draw
+    # the line.
+    case action
+    when :list_cases
+      true
+    when :list_queue
+      agent? || enroller? || governor?
+    when :list_search
+      agent? || enroller? || governor?
+    when :admin
+      agent?
+    else
+      false
+    end
   end
 
   # checks if the given user / scope is forbidden from performing

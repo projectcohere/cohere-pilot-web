@@ -17,7 +17,6 @@
   &-content {
     @include desktop {
       flex: 1;
-      display: flex;
       position: relative;
       overflow-y: scroll;
       height: 100vh;

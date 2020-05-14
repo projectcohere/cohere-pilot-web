@@ -1,10 +1,7 @@
 <main class="ShowCase Page">
   <header class="PageHeader">
     <%= back_link_tag %>
-
-    <h1 class="PageHeader-title">
-      <%= t(".title", name: @case.recipient_name) %>
-    </h1>
+    <%= tag.h1(t(".title", name: @case.recipient_name), class: "PageHeader-title") %>
   </header>
 
   <div class="CaseDetail CaseDetail--view">

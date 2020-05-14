@@ -1,4 +1,7 @@
 module ApplicationHelper
+  include Policy::Context::Shared
+
+  # -- children --
   include Helpers::LayoutHelper
   include Helpers::NavigationHelper
 

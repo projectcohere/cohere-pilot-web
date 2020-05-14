@@ -1,0 +1,17 @@
+<main class="ShowAdmin Page">
+  <header class="PageHeader">
+    <%= tag.h1(t(".title"), class: "PageHeader-title") %>
+  </header>
+
+  <div class="ShowAdmin-panel">
+    <%= section_tag(t(".hours.title")) do %>
+      <%= tag.p(t(".hours.prompt"), class: "ShowAdmin-prompt") %>
+      <%=
+        button_to(t(".actions.start.name"), "#",
+          class: "ShowAdmin-action Button Button--action",
+          data: { confirm: t(".actions.start.confirm") },
+        )
+      %>
+    <%- end %>
+  </div>
+</main>
