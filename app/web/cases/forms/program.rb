@@ -1,25 +1,19 @@
 module Cases
-  module Views
-    class ProgramPicker < ::Value
-      include Routing
-
+  module Forms
+    class Program < ApplicationForm
       # -- fields --
-      prop(:id)
-      prop(:recipient_id)
-      prop(:recipient_name)
-      prop(:programs)
+      field(:program_id, :integer)
 
       # -- lifetime --
-      def initialize(chat_repo: Chat::Repo.get, **props)
+      def initialize(model, programs, attrs = {}, chat_repo: Chat::Repo.get)
+        @programs = programs
         @chat_repo = chat_repo
-        super(props)
+        super(model, attrs)
       end
 
       # -- queries --
       def program_options
-        return @programs.map do |p|
-          [p.name, p.id]
-        end
+        return @programs.map { |p| [p.name, p.id] }
       end
 
       def recipient_first_name
@@ -30,6 +24,11 @@ module Cases
       def chat
         # TODO: return Chats::Views::Detail instead of entity
         return @chat ||= @chat_repo.find_by_recipient_with_messages(recipient_id)
+      end
+
+      # -- ApplicationForm --
+      def self.entity_type
+        return Case
       end
     end
   end

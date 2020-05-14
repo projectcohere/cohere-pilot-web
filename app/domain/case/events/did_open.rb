@@ -7,7 +7,6 @@ class Case
       prop(:case_recipient_id)
       prop(:case_recipient_phone_number)
       prop(:case_program)
-      prop(:case_is_referred)
 
       # -- factories --
       def self.from_entity(kase, temp_id:)
@@ -17,7 +16,6 @@ class Case
           case_recipient_id: kase.recipient.id,
           case_recipient_phone_number: kase.recipient.profile.phone.number,
           case_program: kase.program,
-          case_is_referred: kase.referred?
         )
       end
     end

@@ -1,0 +1,11 @@
+.SelectProgram {
+  &-instructions {
+    @extend .u-prompt;
+    margin-top: $radius;
+  }
+
+  &-field {
+    max-width: $width2;
+    margin-top: $spacing3;
+  }
+}

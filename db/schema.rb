@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_08_181103) do
+ActiveRecord::Schema.define(version: 2020_05_12_190533) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -71,14 +71,12 @@ ActiveRecord::Schema.define(version: 2020_05_08_181103) do
     t.datetime "received_message_at", precision: 6
     t.boolean "supplier_account_active_service", default: true, null: false
     t.boolean "new_activity", default: false, null: false
-    t.bigint "referrer_id"
     t.bigint "program_id", null: false
     t.integer "condition", default: 0, null: false
     t.index ["condition"], name: "index_cases_on_condition"
     t.index ["enroller_id"], name: "index_cases_on_enroller_id"
     t.index ["program_id"], name: "index_cases_on_program_id"
     t.index ["recipient_id"], name: "index_cases_on_recipient_id"
-    t.index ["referrer_id"], name: "index_cases_on_referrer_id"
     t.index ["status"], name: "index_cases_on_status"
     t.index ["supplier_id"], name: "index_cases_on_supplier_id"
   end

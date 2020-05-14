@@ -1,22 +1,18 @@
 .CaseNotes {
+  &-actions {
+    grid-area: auto / span 9;
+    margin-bottom: $spacing6;
+  }
+
   &-list {
     grid-area: auto / span 7;
-  }
-
-  &-addNote {
-    grid-area: auto / span 9;
-    text-align: left;
-    font-style: italic;
-  }
-
-  &-fallback {
-    grid-area: auto / span 9;
-    font-size: $font-size5;
-    font-style: italic;
   }
 }
 
 .CaseNote {
+  padding-top: $spacing4;
+  border-top: 1px solid $color-divider;
+
   &-user {
     @extend .u-label;
   }
@@ -32,8 +28,6 @@
 
 .CaseNote + .CaseNote {
   margin-top: $spacing4;
-  padding-top: $spacing4;
-  border-top: 1px solid $color-divider;
 }
 
 .CaseNoteForm {

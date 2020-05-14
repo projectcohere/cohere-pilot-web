@@ -108,9 +108,10 @@ class Case
     def save_opened(kase)
       # intiailize record
       case_rec = Case::Record.new
+      assign_program(kase, case_rec)
+      assign_partners(kase, case_rec)
       assign_status(kase, case_rec)
       assign_activity(kase, case_rec)
-      assign_partners(kase, case_rec)
       assign_supplier_account(kase, case_rec)
 
       # find or initialize a recipient record by phone number
@@ -183,6 +184,20 @@ class Case
         create_documents!(kase.id.val, kase.new_documents)
         destroy_removed_assignment!(kase)
       end
+
+      # consume all entity events
+      @domain_events.consume(kase.events)
+    end
+
+    def save_converted(kase)
+      assert(kase.record != nil, "case must be persisted.")
+
+      # update records
+      case_rec = kase.record
+      assign_program(kase, case_rec)
+
+      # save records
+      case_rec.save!
 
       # consume all entity events
       @domain_events.consume(kase.events)
@@ -344,12 +359,12 @@ class Case
       # update the referred record
       referred_rec.assign_attributes(
         recipient_id: referred.recipient.id.val,
-        referrer_id: referrer.id.val
       )
 
+      assign_program(referred, referred_rec)
+      assign_partners(referred, referred_rec)
       assign_status(referred, referred_rec)
       assign_activity(referred, referred_rec)
-      assign_partners(referred, referred_rec)
       assign_supplier_account(referred, referred_rec)
 
       # update the recipient record
@@ -379,10 +394,16 @@ class Case
     end
 
     # -- commands/helpers
-    private def assign_partners(kase, case_rec)
+    private def assign_program(kase, case_rec)
       c = kase
       case_rec.assign_attributes(
         program_id: c.program.id,
+      )
+    end
+
+    private def assign_partners(kase, case_rec)
+      c = kase
+      case_rec.assign_attributes(
         enroller_id: c.enroller_id,
       )
 
@@ -543,8 +564,6 @@ class Case
         supplier_account: map_supplier_account(r),
         assignments: assignments&.map { |r| map_assignment(r) },
         documents: documents&.map { |r| map_document(r) },
-        referred: r.referrer_id != nil,
-        referrer: r.referred != nil,
         new_activity: r.new_activity,
         received_message_at: r.received_message_at,
         created_at: r.created_at,

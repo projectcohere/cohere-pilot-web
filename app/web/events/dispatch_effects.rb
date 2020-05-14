@@ -8,11 +8,9 @@ module Events
           event.user_id.val,
         ), now: true)
       when Case::Events::DidOpen
-        if not event.case_is_referred
-          Chats::OpenChat.(
-            event.case_recipient_id.val,
-          )
-        end
+        Chats::OpenChat.(
+          event.case_recipient_id.val,
+        )
 
         Agent::PublishQueuedCase.perform_async(
           event.case_id.val,

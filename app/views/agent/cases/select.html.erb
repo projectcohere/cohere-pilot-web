@@ -3,7 +3,7 @@
     <%= back_link_tag %>
 
     <h1 class="PageHeader-title">
-      <%= t(".title") %>
+      <%= t(".title", name: @case.recipient_name) %>
     </h1>
   </header>
 
@@ -11,9 +11,7 @@
     <div class="CaseDetail-case">
       <%= tag.p(t(".instructions"), class: "SelectProgram-instructions") %>
 
-      <%= form_for(@form, url: @case.new_path, method: :get, html: { class: "SelectProgram-field BigField" }) do |f| %>
-        <%= hidden_field_tag(:temp_id, @case.temp_id.val) %>
-
+      <%= form_for(@form, url: @case.convert_path, html: { class: "SelectProgram-field BigField" }) do |f| %>
         <div class="BigField-input Select">
           <%=
             f.select(
@@ -24,8 +22,15 @@
           %>
         </div>
 
-        <%= f.submit(t(".action"), name: "", class: "BigField-action") %>
+        <%= f.submit(t(".action"), class: "BigField-action") %>
       <%- end %>
     </div>
+
+    <%=
+      render(partial: "agent/cases/chat", locals: {
+        chat: @case.chat,
+        recevier: @case.recipient_first_name
+      })
+    %>
   </div>
 </main>

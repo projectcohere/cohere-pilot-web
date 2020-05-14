@@ -84,6 +84,8 @@ class Case
       when :view_supplier_account_active_service
         (agent? || enroller?) && requirement?(&:supplier_account_active_service?)
       # actions
+      when :convert
+        agent?
       when :referral
         agent?
       when :complete

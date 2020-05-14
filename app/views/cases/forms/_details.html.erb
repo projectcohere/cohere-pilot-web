@@ -1,9 +1,5 @@
 <%= section_tag(t(".title"), class: "CaseForm-details") do %>
   <div class="Panel-row">
-    <%= field_tag(:status, t(".status"), class: "CaseForm-status Field--fixed") do %>
-      <%= view.status_name %>
-    <%- end %>
-
     <%= field_tag(:enroller, t(".enroller"), class: "CaseForm-enroller Field--fixed") do %>
       <%= view.enroller_name %>
     <%- end %>

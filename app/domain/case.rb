@@ -14,8 +14,6 @@ class Case < ::Entity
   prop(:documents, default: nil)
   prop(:assignments, default: nil)
   prop(:notes, default: nil)
-  prop(:referrer, default: false, predicate: true)
-  prop(:referred, default: false, predicate: true)
   prop(:new_activity, default: false, predicate: true)
   prop(:received_message_at, default: nil)
   prop(:created_at, default: nil)
@@ -92,6 +90,10 @@ class Case < ::Entity
     track_new_activity(false)
   end
 
+  def convert_to_program(program)
+    @program = program
+  end
+
   def submit_to_enroller
     if not (opened? || returned?)
       return
@@ -158,7 +160,6 @@ class Case < ::Entity
       enroller_id: enroller_id,
       supplier_account: nil,
       documents: new_documents,
-      referred: true,
       new_activity: true,
     )
 

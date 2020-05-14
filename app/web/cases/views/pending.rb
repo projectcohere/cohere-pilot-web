@@ -1,5 +1,6 @@
 module Cases
   module Views
+    # A Case read model for rendering an unsaved, new case
     class Pending < ::Value
       include Routing
 

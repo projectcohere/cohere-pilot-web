@@ -13,9 +13,9 @@ module Cases
         return
       end
 
-      @case = @case_repo.find(id)
-      @case.add_note(body, user)
-      @case_repo.save_new_note(@case)
+      kase = @case_repo.find(id)
+      kase.add_note(body, user)
+      @case_repo.save_new_note(kase)
     end
   end
 end

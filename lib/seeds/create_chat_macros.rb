@@ -7,16 +7,16 @@ macros = Rails.root.join("macros")
   .filter { |p| p.extname == ".png" }
   .map { |p| Macro.new(p, p.basename.to_s) }
 
+# destroy old blobs, we're going to replace them
 created = ActiveStorage::Blob
   .where(filename: [macros.map(&:filename)])
-  .pluck(:filename)
+  .destroy_all
 
+# create new blobs for every macro
 macros.each do |m|
-  if not created.include?(m.filename)
-    ActiveStorage::Blob.create_and_upload!(
-      io: File.new(m.path),
-      filename: m.filename,
-      content_type: "image/png",
-    )
-  end
+  ActiveStorage::Blob.create_and_upload!(
+    io: File.new(m.path),
+    filename: m.filename,
+    content_type: "image/png",
+  )
 end

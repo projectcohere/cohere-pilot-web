@@ -2,7 +2,7 @@ import { IComponent } from "../Core"
 import { kClassSelected, kClassVisible } from "./Constants"
 
 // -- constants --
-const kQueryFilters = ".Filter"
+const kQueryFilters = ".Filters-option"
 const kQueryTabs = ".Panel-tab"
 
 // -- impls --

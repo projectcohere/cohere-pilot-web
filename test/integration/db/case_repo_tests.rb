@@ -62,14 +62,13 @@ module Db
       end
     end
 
-    test "finds a case with its documents and referral" do
+    test "finds a case with associations" do
       case_repo = Case::Repo.new
       case_rec = cases(:approved_2)
 
       kase = case_repo.find_with_associations(case_rec.id)
       assert_equal(kase.id.val, case_rec.id)
       assert_length(kase.documents, 2)
-      assert(kase.referrer?)
     end
 
     test "finds a submitted case as an enroller" do
@@ -617,7 +616,6 @@ module Db
       assert(referred_rec.opened?)
       assert(referred_rec.active?)
       assert_equal(referred_rec.program.id, program_rec.id)
-      assert_equal(referred_rec.referrer_id, referrer.id.val)
 
       referrer_rec = referrer.record.reload
       assert(referrer_rec.archived?)

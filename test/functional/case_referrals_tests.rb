@@ -22,14 +22,14 @@ class CaseReferralsTests < ActionDispatch::IntegrationTest
   end
 
   test "can't start a referral if signed-out" do
-    get("/cases/3/referrals/new?program_id=6")
+    get("/cases/3/referrals/new?case[program_id]=6")
     assert_redirected_to("/sign-in")
   end
 
   test "can't start a referral without permission" do
     user_rec = users(:source_1)
 
-    get(auth("/cases/4/referrals/new?program_id=6", as: user_rec))
+    get(auth("/cases/4/referrals/new?case[program_id]=6", as: user_rec))
     assert_redirected_to("/cases")
   end
 
@@ -37,7 +37,7 @@ class CaseReferralsTests < ActionDispatch::IntegrationTest
     user_rec = users(:agent_1)
     case_rec = cases(:approved_2)
 
-    get(auth("/cases/#{case_rec.id}/referrals/new?program_id=", as: user_rec))
+    get(auth("/cases/#{case_rec.id}/referrals/new?case[program_id]=", as: user_rec))
     assert_redirected_to("/cases/#{case_rec.id}")
   end
 
@@ -46,7 +46,7 @@ class CaseReferralsTests < ActionDispatch::IntegrationTest
     case_rec = cases(:approved_2)
     program_rec = programs(:water_0)
 
-    get(auth("/cases/#{case_rec.id}/referrals/new?program_id=#{program_rec.id}", as: user_rec))
+    get(auth("/cases/#{case_rec.id}/referrals/new?case[program_id]=#{program_rec.id}", as: user_rec))
     assert_response(:success)
   end
 

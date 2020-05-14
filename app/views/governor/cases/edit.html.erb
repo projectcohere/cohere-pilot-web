@@ -1,25 +1,27 @@
 <main class="EditCase Page">
   <header class="PageHeader">
     <%= back_link_tag %>
-
-    <h1 class="PageHeader-title">
-      <%= @case.recipient_name %>'s case
-    </h1>
-
-    <div class="PageHeader-row PageHeader-filters">
-      <nav class="Filters">
-        <%= filter_for(:application, is_error: errors?(@form.household), is_selected: true) %>
-        <%= filter_for(:documents) %>
-      </nav>
-    </div>
+    <%= tag.h1(t(".title", name: @case.recipient_name), class: "PageHeader-title") %>
   </header>
 
   <div class="CaseDetail CaseDetail--edit">
+    <div class="CaseDetail-menu">
+      <nav class="CaseDetail-filters Filters Filters--vertical">
+        <%= filter_for(:application, active: errors?(@form.household), selected: true) %>
+        <%= filter_for(:documents) %>
+      </nav>
+    </div>
+
     <article class="CaseDetail-case">
+      <div class="CaseDetail-bar">
+        <p><%= @case.status_name %></p>
+        <p><%= @case.id_text %></p>
+      </div>
+
       <%= form_for(@form, url: @case.update_path, html: { class: "CaseDetail-content" }) do |f| %>
         <% form_locals = { f: f, form: @form, view: @case, policy: policy } %>
 
-        <div id="application" class="Panel-tab is-visible">
+        <%= filter_panel_tag(:application, visible: true) do %>
           <%= section_tag("Contact", class: "ShowCase-contact") do %>
             <%= field_tag("Primary Residential Address", class: "ShowCase-address") do %>
               <% @case.address.each do |line| %>
@@ -30,14 +32,14 @@
           <%- end %>
 
           <%= render(partial: "cases/forms/household", locals: form_locals) %>
-        </div>
+        <%- end %>
 
-        <div id="documents" class="Panel-tab">
+        <%= filter_panel_tag(:documents) do %>
           <%= render(partial: "cases/documents", locals: { documents: @case.documents }) %>
-        </div>
+        <%- end %>
 
         <div class="Panel-actions">
-          <%= f.submit("Save", class: "Button Button--action") %>
+          <%= f.submit(t(".actions.save"), class: "Button Button--action") %>
         </div>
       <%- end %>
     </article>

@@ -1,4 +1,4 @@
-<main class="PendingCase Page">
+<main class="SelectProgram Page">
   <header class="PageHeader">
     <%= back_link_tag %>
 
@@ -9,21 +9,20 @@
 
   <div class="CaseDetail">
     <div class="CaseDetail-case">
-      <%= tag.p(t(".program.title"), class: "PendingCase-title") %>
-      <%= tag.p(t(".program.subtitle"), class: "PendingCase-subtitle") %>
+      <%= tag.p(t(".instructions"), class: "SelectProgram-instructions") %>
 
-      <%= form_tag(@case.start_referral_path, method: :get, class: "PendingCase-field BigField") do %>
+      <%= form_for(@form, url: @case.start_referral_path, method: :get, html: { class: "SelectProgram-field BigField" }) do |f| %>
         <div class="BigField-input Select">
           <%=
-            select_tag(
+            f.select(
               :program_id,
-              options_for_select(@case.program_options),
-              include_blank: t(".program.placeholder")
+              @form.program_options,
+              include_blank: t(".placeholder")
             )
           %>
         </div>
 
-        <%= submit_tag(t(".actions.submit"), class: "BigField-action") %>
+        <%= f.submit(t(".action"), class: "BigField-action") %>
       <%- end %>
     </div>
 

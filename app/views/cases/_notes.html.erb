@@ -1,7 +1,14 @@
 <% notes = kase.notes %>
 
 <%= section_tag(t(".title"), class: "CaseNotes") do %>
-  <%= button_tag(t(".action"), id: "add-note", class: "CaseNotes-addNote Link") %>
+  <div class="CaseNotes-actions">
+    <%=
+      button_tag(t(".action"),
+        id: "add-note",
+        class: "ButtonSm Button--secondary",
+      )
+    %>
+  </div>
 
   <ul id="note-list" class="CaseNotes-list">
     <% notes.each do |note| %>

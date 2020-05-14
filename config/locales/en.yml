@@ -162,8 +162,8 @@ en:
         action: "View Document"
 
     notes:
-      title: "Notes"
-      action: "Add a new note..."
+      title: "Case Notes"
+      action: "Add a Case Note"
 
     search:
       prompt: "Enter an applicant's name or phone number to find their cases."
@@ -180,20 +180,15 @@ en:
 
       select:
         <<: *case-detail
-        title: "New Case"
-        actions:
-          submit: "Start Case"
-
-        program:
-          title: "Start a New Case"
-          subtitle: "Please pick one of these programs to start a new application."
-          placeholder: "Select a Program"
+        title: "Start a New Case"
+        action: "Start Case"
+        instructions: "Please select one of these programs to start a new application."
+        placeholder: "Select a program..."
 
       new:
         <<: *case-detail
-        title: "Add a Case"
-        actions:
-          submit: "Save"
+        title: "Open a New Case"
+        action: "Save New Case"
 
       show:
         <<: *case-detail
@@ -208,6 +203,8 @@ en:
         <<: *case-search
       edit:
         <<: *case-detail
+        actions:
+          save: "Save Case"
 
   agent:
     cases:
@@ -221,8 +218,23 @@ en:
       edit:
         <<: *case-detail
         actions:
-          remove: "Remove Case"
-          archive: "Archive"
+          save: "Save Case"
+          submit:
+            name: "Save & Submit to Enroller"
+            confirm: "Are you sure you want to submit this case?"
+          approve:
+            name: "Save & Approve"
+            confirm: "Are you sure you want to approve this case?"
+          deny:
+            name: "Save & Deny"
+            confirm: "Are you sure you want to deny this case?"
+          remove:
+            name: "Remove Case"
+            confirm: "Are you sure you want to remove this case?"
+          archive:
+            name: "Archive Case"
+            confirm: "Are you sure you want to archive this case?"
+          convert: "Switch Program"
           referral: "Select Referral"
 
       update:
@@ -231,10 +243,20 @@ en:
           failure: "Please check %{name}'s case for errors."
           action: "%{action} %{name}'s case."
 
+      select:
+        <<: *case-detail
+        back: "Back to Case Details"
+        action: "Switch to Program"
+        instructions: "Please select of these programs to convert this case to a new program."
+        placeholder: "Select a program..."
+
+      convert:
+        flash: "Converted %{name}'s case."
+
       show:
         <<: *case-detail
         actions:
-          edit: "Edit"
+          edit: "Edit Case"
 
       destroy:
         flash: "Deleted %{name}'s case."
@@ -246,17 +268,19 @@ en:
       select:
         <<: *case-detail
         back: "Back to Case Details"
-        actions:
-          submit: "Start Referral"
-
-        program:
-          title: "Start a New Referral"
-          subtitle: "Please pick one of these programs to start a new referral application."
-          placeholder: "Select a Program"
+        title: "Start a New Referral"
+        action: "Start Referral"
+        instructions: "Please select one of these programs to start a new referral application."
+        placeholder: "Select a program..."
 
       new:
         <<: *case-detail
         back: "Back to Select Referral"
+        actions:
+          save: "Save New Referral"
+          submit:
+            name: "Save & Submit to Enroller"
+            confirm: "Are you sure you want to submit this case?"
 
   enroller:
     cases:
@@ -271,10 +295,10 @@ en:
         <<: *case-detail
         actions:
           approve:
-            name: "Approve"
+            name: "Approve Case"
             confirm: "Are you sure you want to approve this case?"
           deny:
-            name: "Deny"
+            name: "Deny Case"
             confirm: "Are you sure you want to deny this case?"
           return:
             name: "Return to Agent"

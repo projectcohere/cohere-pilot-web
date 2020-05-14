@@ -1,16 +1,4 @@
 .ShowCase {
-  &-status {
-    grid-area: auto / span 2;
-  }
-
-  &-program {
-    grid-area: auto / span 3;
-  }
-
-  &-enroller {
-    grid-area: 3 / span 4;
-  }
-
   /* ShowCase-contact */
   &-phoneNumber {
     grid-column: 1 / 5;

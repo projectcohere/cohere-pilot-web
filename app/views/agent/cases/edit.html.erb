@@ -7,62 +7,68 @@
     </h1>
 
     <div class="PageHeader-actions">
+    </div>
+  </header>
+
+  <div class="CaseDetail CaseDetail--edit">
+    <div class="CaseDetail-menu">
+      <nav class="CaseDetail-filters Filters Filters--vertical">
+        <%= filter_for(:profile, active: errors?(@form.contact, @form.contract), selected: true) %>
+        <%= filter_for(:household, active: errors?(@form.address, @form.household)) %>
+
+        <% if permit?(:edit_supplier_account) %>
+          <%= filter_for(:accounts, active: errors?(@form.supplier_account)) %>
+        <% end %>
+
+        <%= filter_for(:documents, active: errors?(@form.documents)) %>
+        <%= filter_for(:case_notes) %>
+        <%= filter_for(:admin) %>
+      </nav>
+
       <% if @case.can_remove? %>
         <%=
-          button_to(t(".actions.remove"), @case.remove_path,
+          button_to(t(".actions.remove.name"), @case.remove_path,
             name: :remove,
             method: :patch,
-            class: "Button Button--destructive",
-            data: {
-              confirm: "Are you sure you want to remove this case from the pilot?"
-            },
+            class: "CaseDetail-button ButtonSm Button--destructive",
+            data: { confirm: t(".actions.remove.confirm") },
+          )
+        %>
+      <% end %>
+
+      <% if @case.can_convert? %>
+        <%=
+          button_to(t(".actions.convert"), @case.select_path,
+            method: :get,
+            class: "CaseDetail-button ButtonSm Button--secondary",
           )
         %>
       <% end %>
 
       <% if @case.can_archive? %>
         <%=
-          button_to(t(".actions.archive"), @case.archive_path,
+          button_to(t(".actions.archive.name"), @case.archive_path,
             method: :patch,
-            class: "Button Button--secondary",
-            data: {
-              confirm: "Are you sure you want to archive this case?"
-            },
+            class: "CaseDetail-button ButtonSm Button--secondary",
+            data: { confirm: t(".actions.archive.confirm") },
           )
         %>
       <% end %>
 
       <% if @case.can_make_referral? %>
         <%=
-          link_to(t(".actions.referral"), @case.select_referral_path,
-            class: "Button Button--action",
+          button_to(t(".actions.referral"), @case.select_referral_path,
+            method: :get,
+            class: "CaseDetail-button ButtonSm Button--action",
           )
         %>
       <% end %>
     </div>
 
-    <div class="PageHeader-row PageHeader-filters">
-      <nav class="Filters">
-        <%= filter_for(:profile, is_error: errors?(@form.contact, @form.contract), is_selected: true) %>
-        <%= filter_for(:household, is_error: errors?(@form.address, @form.household)) %>
-
-        <% if permit?(:edit_supplier_account) %>
-          <%= filter_for(:accounts, is_error: errors?(@form.supplier_account)) %>
-        <% end %>
-
-        <%= filter_for(:documents, is_error: errors?(@form.documents)) %>
-        <%= filter_for(:notes) %>
-        <%= filter_for(:admin) %>
-      </nav>
-    </div>
-  </header>
-
-  <div class="CaseDetail CaseDetail--edit">
     <article class="CaseDetail-case">
       <div class="CaseDetail-bar">
-        <p class="CaseDetail-id">
-          <%= @case.id_text %>
-        </p>
+        <p><%= @case.status_name %></p>
+        <p><%= @case.id_text %></p>
       </div>
 
       <%= form_for(@form, url: @case.update_path, html: { class: "CaseDetail-content" }) do |f| %>
@@ -92,7 +98,7 @@
           <%= render(partial: "cases/documents", locals: { documents: @form.documents.all }) %>
         <%- end %>
 
-        <%= filter_panel_tag(:notes) do %>
+        <%= filter_panel_tag(:case_notes) do %>
           <%= render(partial: "cases/notes", object: @case, as: :kase) %>
         <%- end %>
 
@@ -101,35 +107,33 @@
         <%- end %>
 
         <div class="Panel-actions">
-          <%= f.submit("Save", class: "Button Button--action") %>
+          <%=
+            f.submit(t(".actions.save"),
+              class: "Button Button--action"
+            )
+          %>
 
-          <%- if @case.can_submit? %>
+          <% if @case.can_submit? %>
             <%=
-              f.submit("Save & Submit to Enroller",
+              f.submit(t(".actions.submit.name"),
                 name: :submit,
                 class: "Button Button--secondary",
-                data: {
-                  confirm: "Are you sure you want to submit this case?"
-                },
+                data: { confirm: t(".actions.submit.confirm") },
               )
             %>
           <% elsif @case.can_complete? %>
             <%=
-              f.submit("Save & Approve",
+              f.submit(t(".actions.approve.name"),
                 name: :approve,
                 class: "Button Button--secondary",
-                data: {
-                  confirm: "Are you sure you want to approve this case?"
-                }
+                data: { confirm: t(".actions.approve.confirm") },
               )
             %>
             <%=
-              f.submit("Save & Deny",
+              f.submit(t(".actions.deny.name"),
                 name: :deny,
                 class: "Button Button--destructive",
-                data: {
-                  confirm: "Are you sure you want to deny this case?"
-                },
+                data: { confirm: t(".actions.deny.confirm") },
               )
             %>
           <%- end %>

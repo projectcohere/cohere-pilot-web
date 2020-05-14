@@ -4,19 +4,21 @@ module Agent
     def select
       permit!(:referral)
 
-      @case = view_repo.program_picker(params[:case_id])
+      @form = view_repo.program_form(params[:case_id])
+      @case = @form.model
     end
 
     def new
       permit!(:referral)
 
-      if params[:program_id].blank?
+      program_id = params.dig(:case, :program_id)
+      if program_id.blank?
         return redirect_to(case_path(id: params[:case_id]))
       end
 
       referral = case_repo
         .find_with_associations(params[:case_id])
-        .make_referral(program_repo.find(params[:program_id]))
+        .make_referral(program_repo.find(program_id))
 
       @form = view_repo.referral_form(referral.referred)
       @case = @form.model

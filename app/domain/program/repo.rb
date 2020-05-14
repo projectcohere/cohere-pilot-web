@@ -10,19 +10,25 @@ class Program
       return self.class.map_record(program_rec)
     end
 
+    def find_available(recipient_id, program_id)
+      program_rec = Program::Record
+        .with_no_case_for_recipient(recipient_id)
+        .find(program_id)
+
+      return self.class.map_record(program_rec)
+    end
+
     # -- queries/all
     def find_all_by_partner(partner_id)
       program_query = Program::Record
         .active
-        .for_partner(partner_id)
         .by_priority
 
       return program_query.map { |r| self.class.map_record(r) }
     end
 
-    def find_all_available_by_recipient(recipient_id)
+    def find_all_available(recipient_id)
       program_query = Program::Record
-        .active
         .with_no_case_for_recipient(recipient_id)
         .by_priority
 

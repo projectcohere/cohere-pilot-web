@@ -53,10 +53,6 @@ module Events
         data[:case_program] = event.case_program.id
       end
 
-      if event.respond_to?(:case_is_referred)
-        data[:case_is_referred] = event.case_is_referred
-      end
-
       case event
       when Case::Events::DidReceiveMessage
         data[:is_first] = event.is_first

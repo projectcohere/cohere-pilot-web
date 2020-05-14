@@ -5,30 +5,29 @@
     <h1 class="PageHeader-title">
       <%= t(".title", name: @case.recipient_name) %>
     </h1>
+  </header>
 
-    <div class="PageHeader-actions">
+  <div class="CaseDetail CaseDetail--view">
+    <div class="CaseDetail-menu">
+      <nav class="CaseDetail-filters Filters Filters--vertical">
+        <%= filter_for(:application, selected: true) %>
+        <%= filter_for(:documents) %>
+        <%= filter_for(:case_notes) %>
+      </nav>
+
       <%=
-        link_to(t(".actions.edit"), @case.edit_path,
-          class: "Button Button--secondary",
+        button_to(t(".actions.edit"), @case.edit_path,
+          method: :get,
+          class: "CaseDetail-button ButtonSm Button--secondary",
           data: { "turbolinks-action": "replace" },
         )
       %>
     </div>
 
-    <div class="PageHeader-row PageHeader-filters">
-      <nav class="Filters">
-        <%= filter_for(:application, is_selected: true) %>
-        <%= filter_for(:documents) %>
-      </nav>
-    </div>
-  </header>
-
-  <div class="CaseDetail CaseDetail--view">
     <article class="CaseDetail-case">
       <div class="CaseDetail-bar">
-        <p class="CaseDetail-id">
-          <%= @case.id_text %>
-        </p>
+        <p><%= @case.status_name %></p>
+        <p><%= @case.id_text %></p>
       </div>
 
       <div class="CaseDetail-content">
@@ -44,12 +43,12 @@
           <%= render(partial: "cases/detail/household", locals: locals) %>
         <%- end %>
 
-        <%= filter_panel_tag(:notes) do %>
-          <%= render(partial: "cases/notes", object: @case, as: :kase) %>
-        <%- end %>
-
         <%= filter_panel_tag(:documents) do %>
           <%= render(partial: "cases/documents", locals: { documents: @case.documents }) %>
+        <%- end %>
+
+        <%= filter_panel_tag(:case_notes) do %>
+          <%= render(partial: "cases/notes", object: @case, as: :kase) %>
         <%- end %>
       </div>
     </article>

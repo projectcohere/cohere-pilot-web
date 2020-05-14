@@ -1,10 +1,11 @@
 // width
 $width0: 1000px;
-$width1: 600px;
+$width1: 570px;
 $width2: 500px;
 $width3: 400px;
 $width4: 360px;
 $width5: 240px;
+$width6: 125px;
 
 // height
 $height0: 48px;
@@ -77,6 +78,7 @@ $color-bg: fade-out($brand-primary, 0.97);
 $color-accent: fade-out($brand-primary, 0.85);
 $color-field: fade-out($brand-primary, 0.90);
 $color-divider: fade-out($brand-primary, 0.7);
+$color-highlight: lighten($brand-primary, 5%);
 
 $color-notice: $color-accent;
 $color-error: $brand-secondary2;

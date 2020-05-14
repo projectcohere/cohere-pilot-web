@@ -21,13 +21,15 @@ module Cases
 
     # -- filters --
     def cases_scope_link_to(scope)
-      return link_to(scope.name, cases_search_path(scope: scope.key),
+      return link_to(cases_search_path(scope: scope.key),
         id: "filter-#{scope.key}",
         class: cx(
-          "Filter",
+          "Filters-option",
           "is-selected": @scope == scope,
         ),
-      )
+      ) do
+        tag.span(scope.name, class: "Filters-text")
+      end
     end
 
     # -- cells --
