@@ -126,7 +126,9 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_redirected_to("/cases")
   end
 
-  test "select a new case's program" do
+  test "select a new case's program as a source during working hours" do
+    Settings.get.working_hours = true
+
     user_rec = users(:source_1)
     case_rec = cases(:approved_2)
 
@@ -135,19 +137,18 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_analytics_events(%w[DidViewSourceForm])
   end
 
-  test "can't view open case form if signed-out" do
+  test "can't fill out new case form without permission" do
     get("/cases/new?temp_id=9&program_id=3")
     assert_redirected_to("/sign-in")
-  end
 
-  test "can't view open case form without permission" do
     user_rec = users(:agent_1)
-
     get(auth("/cases/new?temp_id=9&program_id=3", as: user_rec))
     assert_redirected_to("/cases")
   end
 
-  test "views open case form as a source" do
+  test "fills out new case form as a source during working hours" do
+    Settings.get.working_hours = true
+
     user_rec = users(:source_1)
     program_rec = user_rec.partner.programs.first
 
@@ -156,7 +157,9 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".PageHeader-title", text: /Open a New Case/)
   end
 
-  test "views open case form as a non-supplier source" do
+  test "fills out new case form as a non-supplier source during working hours" do
+    Settings.get.working_hours = true
+
     user_rec = users(:source_3)
     program_rec = user_rec.partner.programs.first
 
@@ -165,7 +168,9 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_select(".PageHeader-title", text: /Open a New Case/)
   end
 
-  test "opens a case as a source" do
+  test "opens a case as a source during working hours" do
+    Settings.get.working_hours = true
+
     user_rec = users(:source_1)
     program_rec = programs(:energy_c)
 
@@ -220,7 +225,9 @@ class CasesTests < ActionDispatch::IntegrationTest
     end
   end
 
-  test "opens a case a non-supplier source" do
+  test "opens a case a non-supplier source during working hours" do
+    Settings.get.working_hours = true
+
     user_rec = users(:source_3)
     supplier_rec = partners(:supplier_1)
     program_rec = programs(:energy_c)
@@ -271,6 +278,8 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "show errors when opening an invalid case as a source" do
+    Settings.get.working_hours = true
+
     user_rec = users(:source_1)
     program_rec = user_rec.partner.programs.first
 

@@ -3,7 +3,11 @@ module Cases
     include Case::Policy::Context
 
     # -- types --
-    class NotAuthorized < StandardError; end
+    class NotAuthorized < StandardError
+      def to_s
+        return "Sorry, you're not allowed to perform this action right now."
+      end
+    end
 
     # -- filters --
     rescue_from(NotAuthorized, with: :deny_access)

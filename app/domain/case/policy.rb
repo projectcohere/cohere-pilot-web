@@ -16,7 +16,7 @@ class Case
 
       # -- create
       when :create
-        source?
+        source? && @settings.working_hours?
       when :create_assignment
         agent? || enroller? || governor?
       when :create_note

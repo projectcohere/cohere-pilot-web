@@ -1,7 +1,8 @@
 class Policy
   # -- lifetime --
-  def initialize(user)
+  def initialize(user, settings: Settings.get)
     @user = user
+    @settings = settings
   end
 
   # -- queries --
