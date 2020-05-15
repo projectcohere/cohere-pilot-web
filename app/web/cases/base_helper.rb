@@ -73,7 +73,7 @@ module Cases
         next {
           body: m.body,
           attachment: m.file&.then { |f|
-            url = url_for(f.representation(resize: "400x400>"))
+            url = url_for(f)
             next {
               id: f.id,
               preview: {
