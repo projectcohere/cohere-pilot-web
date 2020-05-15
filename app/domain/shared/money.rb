@@ -9,15 +9,23 @@ class Money
 
   # -- queries --
   def dollars
-    return cents != nil ? cents / 100.0 : nil
+    if @cents == nil
+      return nil
+    end
+
+    return "#{cents / 100}.#{cents % 100}"
   end
 
-  # -- factories
+  # -- factories --
   def self.cents(cents)
-    return Money.new  (cents)
+    return Money.new(cents)
   end
 
   def self.dollars(dollars)
-    return Money.cents((dollars.to_f * 100.0).to_i)
+    if dollars == nil
+      return nil
+    end
+
+    return Money.cents(dollars.tr(".", "").to_i)
   end
 end
