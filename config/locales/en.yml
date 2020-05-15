@@ -10,6 +10,8 @@ en:
     admin: "Admin"
 
   layouts:
+    application:
+      hours-banner: "Working hours are not currently active."
     navigation:
       <<: *pages
       logo: "Cohere"
