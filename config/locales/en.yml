@@ -209,15 +209,18 @@ en:
 
   agent:
     admin:
-      index:
+      show:
         title: "Admin Settings"
-        actions:
-          start:
-            name: "Start Working Hours"
-            confirm: "Are you sure you want to start working hours?"
         hours:
           title: "Working Hours"
-          prompt: "Working hours are not currently active."
+          :on:
+            prompt: "Working hours are currently active."
+            action: "End Working Hours"
+            confirm: "Are you sure you want to end working hours?"
+          :off:
+            prompt: "Working hours are not currently active."
+            action: "Start Working Hours"
+            confirm: "Are you sure you want to start working hours?"
 
     cases:
       index:

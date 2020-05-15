@@ -1,5 +1,19 @@
 module Support
   module Redis
+    extend ActiveSupport::Concern
+
+    # -- lifecycle --
+    def before_setup
+      super
+      Services.mock(::Redis, MockRedis.new)
+    end
+
+    def after_teardown
+      Services.unmock(::Redis)
+      super
+    end
+
+    # -- mock --
     class MockRedis
       def get(key)
         return storage[key]
@@ -9,14 +23,13 @@ module Support
         storage[key] = value
       end
 
+      def del(key)
+        storage.delete(key)
+      end
+
       private def storage
         @storage ||= {}
       end
-    end
-
-    # -- mocks --
-    Services.mock do |s|
-      s.redis = MockRedis.new
     end
   end
 end

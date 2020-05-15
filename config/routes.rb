@@ -211,7 +211,18 @@ Rails.application.routes.draw do
     end
 
     # -- admin --
-    get("/admin", to: "admin#index")
+    scope(path: "/admin", controller: :admin) do
+      get("/",
+        action: :show,
+        as: :admin,
+      )
+
+      patch("/hours/:status",
+        action: :hours,
+        constraints: { status: /on|off/ },
+        as: :admin_hours,
+      )
+    end
 
     # -- fallback --
     fallback(Role::Agent, to: "/cases", constraints: c)

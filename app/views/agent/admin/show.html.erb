@@ -1,0 +1,21 @@
+<main class="ShowAdmin Page">
+  <header class="PageHeader">
+    <%= tag.h1(t(".title"), class: "PageHeader-title") %>
+  </header>
+
+  <div class="ShowAdmin-panel">
+    <%= section_tag(t(".hours.title")) do %>
+      <% state = settings.working_hours? ? :on : :off %>
+      <% other = state == :on ? :off : :on %>
+
+      <%= tag.p(t(".hours.#{state}.prompt"), class: "ShowAdmin-prompt") %>
+      <%=
+        button_to(t(".hours.#{state}.action"), admin_hours_path(status: other),
+          method: :patch,
+          class: "ShowAdmin-action Button Button--action",
+          data: { confirm: t(".hours.#{state}.confirm") },
+        )
+      %>
+    <%- end %>
+  </div>
+</main>

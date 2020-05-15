@@ -11,7 +11,6 @@ class ApplicationController < ActionController::Base
   after_action(:dispatch_events)
 
   # -- helpers --
-  helper_method(:user_role)
   helper_method(:shows_navigation?)
 
   # -- config --

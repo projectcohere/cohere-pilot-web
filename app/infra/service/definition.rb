@@ -7,36 +7,40 @@ module Service
     class_methods do
       # -- queries --
       def get(name_or_type)
-        return public_send(name_from(name_or_type))
+        return public_send(get_name(name_or_type))
       end
 
-      # -- definition --
+      def get_name(name_or_type)
+        name = name_or_type
+
+        if name_or_type.is_a?(Module)
+          name = name_or_type.name.underscore.gsub("/", "_")
+        end
+
+        return name.to_sym
+      end
+
+      # -- scoping --
       def single(name_or_type, &factory)
-        name = name_from(name_or_type)
+        assert(factory != nil || name_or_type.is_a?(Module), "must pass a type or a factory")
 
-        # define CurrentAttributes.attribute
+        name = get_name(name_or_type)
         attribute(name)
+        define_lazy_reader(name, factory || -> { name_or_type.new })
+      end
 
-        # synthesize lazy singleton accessor
+      # -- scoping/helpers
+      private def define_lazy_reader(name, factory)
         define_method(name) do
           service = super()
 
           if service == nil
-            service = factory != nil ? factory.() : name_or_type.new
+            service = factory.()
             public_send("#{name}=", service)
           end
 
           service
         end
-      end
-
-      # -- helpers --
-      private def name_from(name_or_type)
-        if not name_or_type.is_a?(Module)
-          return name_or_type
-        end
-
-        return name_or_type.name.underscore.gsub("/", "_")
       end
     end
   end
