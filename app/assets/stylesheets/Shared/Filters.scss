@@ -3,6 +3,7 @@
   &-option {
     @extend .u-action;
 
+    position: relative;
     display: flex;
     align-items: center;
     opacity: $opacity-inactive;
@@ -10,20 +11,6 @@
 
     &:hover, &.is-selected {
       opacity: 1.0;
-    }
-
-    &.is-active {
-      &::before {
-        $dot-size: 4px;
-
-        content: "";
-        position: absolute;
-        left: 4px;
-        width: $dot-size;
-        height: $dot-size;
-        border-radius: $dot-size / 2;
-        background-color: $color-error;
-      }
     }
   }
 
@@ -42,6 +29,15 @@
     background-color: $brand-primary;
   }
 
+  @mixin activity {
+    $dot-size: 4px;
+    content: "";
+    width: $dot-size;
+    height: $dot-size;
+    border-radius: $dot-size / 2;
+    background-color: $color-error;
+  }
+
   // -- variants/horizontal
   &--horizontal {
     display: inline-flex;
@@ -52,13 +48,15 @@
   &--horizontal &-option {
     padding: 0 $spacing4;
 
-    &.is-selected {
-      position: relative;
+    &.is-selected::after {
+      @include underline;
+      bottom: -2px;
+    }
 
-      &::after {
-        @include underline;
-        bottom: -2px;
-      }
+    &.is-active::before {
+      @include activity;
+      position: absolute;
+      left: 4px;
     }
   }
 
@@ -78,14 +76,21 @@
 
   &--vertical &-text {
     padding-bottom: 3px;
+    position: relative;
   }
 
-  &--vertical &-option.is-selected &-text {
-    position: relative;
+  &--vertical &-option.is-active &-text {
+    display: flex;
+    align-items: center;
 
     &::after {
-      @include underline;
-      bottom: 0;
+      @include activity;
+      margin-left: $spacing6;
     }
+  }
+
+  &--vertical &-option.is-selected &-text::before {
+    @include underline;
+    bottom: 0;
   }
 }

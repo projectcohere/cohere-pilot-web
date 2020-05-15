@@ -12,7 +12,7 @@
   </head>
 
   <%= layout_tag do %>
-    <% if not settings.working_hours? %>
+    <% if signed_in? && !settings.working_hours? %>
       <%= tag.div(t(".hours-banner"), class: "Layout-banner") %>
     <% end %>
 
