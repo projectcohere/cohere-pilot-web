@@ -5,13 +5,14 @@ module Service
 
     # -- services --
     # -- services/web
+    single(Settings)
     single(Events::DispatchAll)
 
     # -- services/domain
     single(User::Repo)
     single(Partner::Repo)
 
-    # -- services/infra
-    single(Redis)
+    # -- services/external
+    builds(Redis)
   end
 end

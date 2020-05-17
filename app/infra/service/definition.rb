@@ -21,16 +21,30 @@ module Service
       end
 
       # -- scoping --
+      def builds(name_or_type, &factory)
+        assert(factory != nil || name_or_type.is_a?(Module), "must pass a type or a factory")
+
+        name = get_name(name_or_type)
+        attribute(name)
+        define_factory(name, factory || -> { name_or_type.new })
+      end
+
       def single(name_or_type, &factory)
         assert(factory != nil || name_or_type.is_a?(Module), "must pass a type or a factory")
 
         name = get_name(name_or_type)
         attribute(name)
-        define_lazy_reader(name, factory || -> { name_or_type.new })
+        define_single_factory(name, factory || -> { name_or_type.new })
       end
 
       # -- scoping/helpers
-      private def define_lazy_reader(name, factory)
+      private def define_factory(name, factory)
+        define_method(name) do
+          super() || factory.()
+        end
+      end
+
+      private def define_single_factory(name, factory)
         define_method(name) do
           service = super()
 

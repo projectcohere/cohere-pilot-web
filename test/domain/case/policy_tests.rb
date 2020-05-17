@@ -85,7 +85,7 @@ class Case
 
     # -- create --
     test "permits suppliers to create cases during working hours" do
-      Settings.get.working_hours = true
+      set_working_hours!
       user = stub_user(:source)
       policy = Case::Policy.new(user)
       assert(policy.permit?(:create))

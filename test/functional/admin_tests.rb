@@ -47,7 +47,7 @@ class AdminTests < ActionDispatch::IntegrationTest
   end
 
   test "stop working hours as an agent" do
-    Settings.get.working_hours = true
+    set_working_hours!
     user_rec = users(:agent_1)
 
     act = -> do

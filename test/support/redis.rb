@@ -27,6 +27,9 @@ module Support
         storage.delete(key)
       end
 
+      def close; end
+
+      # -- helpers --
       private def storage
         @storage ||= {}
       end

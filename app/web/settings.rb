@@ -1,33 +1,30 @@
 class Settings
-  include Service
+  include Service::Single
 
   # -- lifetime --
-  def initialize(redis: Service::Container.redis)
-    @redis = redis
+  def initialize(store: InMemoryStore.get)
+    @store = store
+    @store.execute do |s|
+      @working_hours = s.get(WorkingHoursKey) == WorkingHoursFlag
+    end
+  end
+
+  # -- commands --
+  def save
+    @store.execute do |s|
+      s.set(WorkingHoursKey, @working_hours ? WorkingHoursFlag : nil)
+    end
   end
 
   # -- hours --
-  WorkingHoursKey = "cohere/settings/working-hours".freeze
+  WorkingHoursKey = "cohere/settings".freeze
   WorkingHoursFlag = "true".freeze
 
   def working_hours?
-    return get(WorkingHoursKey) == WorkingHoursFlag
+    return @working_hours
   end
 
   def working_hours=(value)
-    set(WorkingHoursKey, value ? WorkingHoursFlag : nil)
-  end
-
-  # -- helpers --
-  private def get(key)
-    return @redis.get(key)
-  end
-
-  private def set(key, value)
-    if value
-      @redis.set(key, value)
-    else
-      @redis.del(key)
-    end
+    @working_hours = value
   end
 end

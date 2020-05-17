@@ -127,7 +127,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "select a new case's program as a source during working hours" do
-    Settings.get.working_hours = true
+    set_working_hours!
 
     user_rec = users(:source_1)
     case_rec = cases(:approved_2)
@@ -147,7 +147,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "fills out new case form as a source during working hours" do
-    Settings.get.working_hours = true
+    set_working_hours!
 
     user_rec = users(:source_1)
     program_rec = user_rec.partner.programs.first
@@ -158,7 +158,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "fills out new case form as a non-supplier source during working hours" do
-    Settings.get.working_hours = true
+    set_working_hours!
 
     user_rec = users(:source_3)
     program_rec = user_rec.partner.programs.first
@@ -169,7 +169,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "opens a case as a source during working hours" do
-    Settings.get.working_hours = true
+    set_working_hours!
 
     user_rec = users(:source_1)
     program_rec = programs(:energy_c)
@@ -226,7 +226,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "opens a case a non-supplier source during working hours" do
-    Settings.get.working_hours = true
+    set_working_hours!
 
     user_rec = users(:source_3)
     supplier_rec = partners(:supplier_1)
@@ -278,7 +278,7 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   test "show errors when opening an invalid case as a source" do
-    Settings.get.working_hours = true
+    set_working_hours!
 
     user_rec = users(:source_1)
     program_rec = user_rec.partner.programs.first
