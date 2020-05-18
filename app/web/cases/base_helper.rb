@@ -5,7 +5,7 @@ module Cases
 
     # -- search --
     def cases_search_params
-      return request.query_parameters
+      return request.query_parameters.without(:page)
     end
 
     def cases_search_path(params = nil)
