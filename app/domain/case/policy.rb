@@ -24,9 +24,7 @@ class Case
 
       # -- edit
       when :edit
-        agent? || governor?
-      when :edit_contract
-        agent? && requirement?(&:contract_present?)
+        agent? || governor? || enroller?
       when :edit_address
         agent? || source?
       when :edit_contact
@@ -55,6 +53,10 @@ class Case
         agent? || (source? && !supplier?)
       when :edit_supplier_account_active_service
         agent? && requirement?(&:supplier_account_active_service?)
+      when :edit_benefit
+        agent? || enroller?
+      when :edit_benefit_contract
+        agent? && requirement?(&:contract_present?)
       when :edit_documents
         agent?
       when :edit_admin

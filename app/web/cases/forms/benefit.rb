@@ -1,11 +1,12 @@
 module Cases
   module Forms
-    class Contract < ApplicationForm
+    class Benefit < ApplicationForm
       include Case::Policy::Context::Shared
       include ActionView::Helpers::TranslationHelper
 
       # -- fields --
-      field(:variant, :symbol,
+      field(:amount, :string, presence: { on: :approved })
+      field(:contract, :symbol,
         presence: {
           on: :submitted,
           if: -> { permit?(:edit_contract) },
@@ -15,19 +16,20 @@ module Cases
       # -- lifecycle --
       protected def initialize_attrs(attrs)
         assign_defaults!(attrs, {
-          variant: @model.contract&.source_url,
+          amount: @model.benefit&.dollars,
+          contract: @model.contract&.source_url,
         })
       end
 
       # -- queries --
-      def disabled?
-        return variant.present?
-      end
-
-      def variant_options
+      def contract_options
         return contracts.map do |c|
           [t("program.contract.#{c.variant}", default: "program.contract.default"), c.variant]
         end
+      end
+
+      def contract_disabled?
+        return contract.present?
       end
 
       private def contracts
@@ -35,8 +37,12 @@ module Cases
       end
 
       # -- transformation --
+      def map_to_benefit
+        return Money.dollars(amount)
+      end
+
       def map_to_contract
-        return contracts.find { |c| c.variant == variant }
+        return contracts.find { |c| c.variant == contract }
       end
 
       # -- Case::Policy::Context --

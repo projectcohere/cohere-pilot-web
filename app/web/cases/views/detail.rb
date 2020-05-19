@@ -17,6 +17,7 @@ module Cases
       prop(:recipient_id)
       prop(:profile)
       prop(:household)
+      prop(:benefit)
       prop(:documents)
       prop(:assignments)
       prop(:notes)
@@ -63,7 +64,7 @@ module Cases
       end
 
       def supplier_account_arrears
-        return "$#{@supplier_account.arrears.dollars}"
+        return format_money(@supplier_account&.arrears)
       end
 
       def supplier_account_active_service?
@@ -84,7 +85,7 @@ module Cases
       end
 
       def household_income
-        return @household&.income&.dollars&.then { |f| "$#{f}" } || "Unknown"
+        return format_money(@household&.income)
       end
 
       def household_ownership
@@ -93,6 +94,11 @@ module Cases
 
       def household_fpl_percent
         return @household&.fpl_percent&.then { |f| "#{f}%" }
+      end
+
+      # -- queries/benefit
+      def benefit_amount
+        return format_money(@benefit)
       end
 
       # -- queries/documents
@@ -130,6 +136,11 @@ module Cases
       def chat
         # TODO: return Chats::Views::Detail instead of entity
         return @chat ||= @chat_repo.find_by_recipient_with_messages(recipient_id)
+      end
+
+      # -- queries/helpers
+      private def format_money(money)
+        return money != nil ? "$#{money.dollars}" : "Unknown"
       end
     end
   end

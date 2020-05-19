@@ -339,7 +339,7 @@ module Db
       kase.add_agent_data(supplier_account, profile, household)
       kase.sign_contract(contract)
       kase.submit_to_enroller
-      kase.complete(Case::Status::Approved)
+      kase.complete(Case::Status::Approved, Money.cents(123_44))
 
       case_repo.save_agent_data(kase)
 
@@ -347,6 +347,7 @@ module Db
       assert(c.approved?)
       assert_equal(c.supplier_account_number, "12345")
       assert_equal(c.supplier_account_arrears_cents, 1000_00)
+      assert_equal(c.benefit_amount_cents, 123_44)
       assert_not_nil(c.completed_at)
 
       r = c.recipient
@@ -542,10 +543,11 @@ module Db
       case_repo = Case::Repo.new
       case_rec = cases(:submitted_1)
       kase = Case::Repo.map_record(case_rec, assignments: case_rec.assignments, documents: case_rec.documents)
-      kase.complete(Case::Status::Approved)
+      kase.complete(Case::Status::Approved, Money.new(123_99))
 
       case_repo.save_completed(kase)
       assert(case_rec.approved?)
+      assert(case_rec.benefit_amount_cents, 129_99)
       assert_length(case_rec.assignments.reload, 2)
       assert_not_nil(case_rec.completed_at)
 

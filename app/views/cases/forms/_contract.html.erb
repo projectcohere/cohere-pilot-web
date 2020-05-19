@@ -1,8 +1,0 @@
-<%- form = form.contract %>
-<%= f.fields_for(:contract, form) do |f| %>
-  <%= section_tag(t(".title"), class: "CaseForm-contract") do %>
-    <%= f.field(:variant, t(".variant.label"), disabled: form.disabled?, class: "CaseForm-contract Field--select") do %>
-      <%= f.select(:variant, form.variant_options, include_blank: t(".variant.fallback")) %>
-    <%- end %>
-  <% end %>
-<% end %>

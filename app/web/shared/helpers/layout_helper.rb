@@ -111,10 +111,10 @@ module Helpers
       )
 
       tag.label(name, *args, class: field_class, **kwargs) do
-        title = title || name.to_s.titlecase
+        title = title || t(".#{name}", default: name.to_s.titlecase)
 
         hint_tag = title.blank? ? raw("") : tag.p(class: "Field-hint") do
-          hint_text = tag.span(title || name.to_s.titlecase)
+          hint_text = tag.span(title)
           hint_error = errors.present? ? tag.span(" #{errors}", class: "Field-errors") : ""
           hint_text + hint_error
         end

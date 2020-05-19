@@ -11,11 +11,11 @@ module Cases
       field(:program_id, :integer)
 
       # -- subforms --
-      subform(:contract, Cases::Forms::Contract)
       subform(:address, Cases::Forms::Address)
       subform(:contact, Cases::Forms::Contact)
       subform(:household, Cases::Forms::Household)
       subform(:supplier_account, Cases::Forms::SupplierAccount)
+      subform(:benefit, Cases::Forms::Benefit)
       subform(:documents, Cases::Forms::Documents)
       subform(:admin, Cases::Forms::Admin)
 
@@ -45,6 +45,10 @@ module Cases
           scopes.push(:submitted)
         end
 
+        if @action&.approve? || status&.approved?
+          scopes.push(:approved)
+        end
+
         super(scopes)
       end
 
@@ -65,8 +69,12 @@ module Cases
         return supplier_account&.map_to_supplier_account
       end
 
+      def map_to_benefit
+        return benefit.map_to_benefit
+      end
+
       def map_to_contract
-        return contract&.map_to_contract
+        return benefit.map_to_contract
       end
 
       def map_to_admin

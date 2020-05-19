@@ -32,28 +32,56 @@
         <p><%= @case.id_text %></p>
       </div>
 
-      <div class="CaseDetail-content">
+      <%= form_for(@form, url: @case.update_path, html: { class: "CaseDetail-content" }) do |f| %>
+        <% form_locals = { f: f, form: @form, view: @case } %>
+
         <%= filter_panel_tag(:application, visible: true) do %>
           <%- locals = { view: @case } %>
           <%= render(partial: "cases/detail/details", locals: locals) %>
           <%= render(partial: "cases/detail/contact", locals: locals) %>
-          <%= render(partial: "cases/detail/benefit", locals: locals) %>
 
           <% if permit?(:view_supplier_account) %>
             <%= render(partial: "cases/detail/supplier_account", locals: locals) %>
           <% end %>
 
           <%= render(partial: "cases/detail/household", locals: locals) %>
+          <%= render(partial: "cases/forms/benefit", object: @form, as: :form, locals: { f: f }) %>
+        <%- end %>
+
+        <%= filter_panel_tag(:documents) do %>
+          <%= render(partial: "cases/documents", locals: { documents: @case.documents }) %>
         <%- end %>
 
         <%= filter_panel_tag(:case_notes) do %>
           <%= render(partial: "cases/notes", object: @case, as: :kase) %>
         <%- end %>
 
-        <%= filter_panel_tag(:documents) do %>
-          <%= render(partial: "cases/documents", locals: { documents: @case.documents }) %>
-        <%- end %>
-      </div>
+        <div class="Panel-actions">
+          <%=
+            f.submit(t(".actions.save"),
+              class: "Button Button--action"
+            )
+          %>
+
+          <% if @case.can_complete? %>
+            <%=
+              f.submit(t(".actions.approve.name"),
+                name: :approve,
+                class: "Button Button--secondary",
+                data: { confirm: t(".actions.approve.confirm") },
+              )
+            %>
+
+            <%=
+              f.submit(t(".actions.deny.name"),
+                name: :deny,
+                class: "Button Button--destructive",
+                data: { confirm: t(".actions.deny.confirm") },
+              )
+            %>
+          <% end %>
+        </div>
+      <% end %>
     </article>
   </div>
 </main>

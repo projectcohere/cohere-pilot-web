@@ -1,0 +1,14 @@
+<%- form = form.benefit %>
+<%= f.fields_for(:benefit, form) do |f| %>
+  <%= section_tag(t(".title"), class: "CaseForm-benefit") do %>
+    <%= f.field(:amount, prefix: "$", class: "CaseForm-benefitAmount") do %>
+      <%= f.text_field(:amount) %>
+    <% end %>
+
+    <% if permit?(:edit_benefit_contract) %>
+      <%= f.field(:contract, t(".contract.label"), disabled: form.contract_disabled?, class: "CaseForm-benefitContract Field--select") do %>
+        <%= f.select(:contract, form.contract_options, include_blank: t(".contract.fallback")) %>
+      <%- end %>
+    <% end %>
+  <% end %>
+<% end %>

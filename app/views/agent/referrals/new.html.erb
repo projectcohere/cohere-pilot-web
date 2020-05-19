@@ -10,7 +10,7 @@
   <div class="CaseDetail CaseDetail--edit">
     <div class="CaseDetail-menu">
       <nav class="CaseDetail-filters Filters Filters--vertical">
-        <%= filter_for(:profile, active: errors?(@form.contact, @form.contract), selected: true) %>
+        <%= filter_for(:profile, active: errors?(@form.contact, @form.benefit), selected: true) %>
         <%= filter_for(:household, active: errors?(@form.address, @form.household)) %>
 
         <% if permit?(:edit_supplier_account) %>
@@ -33,10 +33,7 @@
         <%= filter_panel_tag(:profile, visible: true) do %>
           <%= render(partial: "cases/forms/details", locals: form_locals) %>
           <%= render(partial: "cases/forms/contact", locals: form_locals) %>
-
-          <% if permit?(:edit_contract) %>
-            <%= render(partial: "cases/forms/contract", locals: form_locals) %>
-          <% end %>
+          <%= render(partial: "cases/forms/benefit", locals: form_locals) %>
         <%- end %>
 
         <%= filter_panel_tag(:household) do %>

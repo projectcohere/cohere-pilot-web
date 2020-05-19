@@ -1,0 +1,7 @@
+<%= section_tag(t(".title"), class: "ShowCase-details") do %>
+  <div class="Panel-row">
+    <%= field_tag(:benefit, class: "ShowCase-benefit") do %>
+      <%= view.benefit_amount %>
+    <%- end %>
+  </div>
+<%- end %>

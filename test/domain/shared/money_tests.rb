@@ -12,4 +12,9 @@ class MoneyTests < ActiveSupport::TestCase
     money = Money.dollars("644.17")
     assert_equal(money.cents, 64417)
   end
+
+  test "create money from a dollar amount missing digits" do
+    money = Money.dollars("644.2")
+    assert_equal(money.cents, 64420)
+  end
 end

@@ -26,6 +26,18 @@ class Money
       return nil
     end
 
-    return Money.cents(dollars.tr(".", "").to_i)
+    whole, fraction = dollars.split(".")
+
+    cents = whole.to_i * 100
+    cents += case fraction&.length
+    when nil
+      0
+    when 1
+      fraction.to_i * 10
+    else
+      fraction[0, 2].to_i
+    end
+
+    return self.cents(cents)
   end
 end

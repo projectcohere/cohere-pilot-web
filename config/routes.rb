@@ -102,6 +102,8 @@ Rails.application.routes.draw do
     resources(:cases, id: /\d+/, only: %i[
       index
       show
+      edit
+      update
     ]) do
       get("/inbox",
         on: :collection,
@@ -116,12 +118,6 @@ Rails.application.routes.draw do
       patch("/return",
         action: :return,
         as: :return,
-      )
-
-      patch("/complete/:status",
-        action: :complete,
-        as: :complete,
-        constraints: { status: /approved|denied/ }
       )
 
       # -- cases/assignments

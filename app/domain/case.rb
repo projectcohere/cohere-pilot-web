@@ -11,6 +11,7 @@ class Case < ::Entity
   prop(:recipient)
   prop(:enroller_id)
   prop(:supplier_account)
+  prop(:benefit, default: nil)
   prop(:documents, default: nil)
   prop(:assignments, default: nil)
   prop(:notes, default: nil)
@@ -83,8 +84,9 @@ class Case < ::Entity
 
   def remove
     @status = Status::Removed
-    @completed_at = Time.zone.now
     @condition = Condition::Archived
+    @completed_at = Time.zone.now
+
     @events.add(Events::DidComplete.from_entity(self))
 
     track_new_activity(false)
@@ -118,13 +120,15 @@ class Case < ::Entity
     track_new_activity(true)
   end
 
-  def complete(status)
+  def complete(status, benefit_amount)
     if not submitted?
       return
     end
 
     @status = status
     @completed_at = Time.zone.now
+    @benefit = benefit_amount
+
     remove_assignment(Role::Agent)
     @events.add(Events::DidComplete.from_entity(self))
 

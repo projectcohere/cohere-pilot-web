@@ -341,7 +341,6 @@ class CasesTests < ActionDispatch::IntegrationTest
     get(auth("/cases/#{case_rec.id}", as: user_rec))
     assert_response(:success)
     assert_select(".PageHeader-title", text: /#{name}/)
-    assert_analytics_events(%w[DidViewEnrollerCase])
   end
 
   test "can't view another enroller's case as an enroller" do
@@ -354,18 +353,12 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   # -- edit --
-  test "can't edit a case if signed-out" do
-    case_rec = cases(:submitted_1)
-
-    get("/cases/#{case_rec.id}/edit")
-    assert_redirected_to("/sign-in")
-  end
-
   test "can't edit a case without permission" do
-    user_rec = users(:source_1)
-    case_rec = cases(:submitted_1)
+    get("/cases/3/edit")
+    assert_redirected_to("/sign-in")
 
-    get(auth("/cases/#{case_rec.id}/edit", as: user_rec))
+    user_rec = users(:source_1)
+    get(auth("/cases/3/edit", as: user_rec))
     assert_redirected_to("/cases")
   end
 
@@ -443,14 +436,14 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_present(flash[:notice])
   end
 
-  test "save a signed contract" do
+  test "save a signed contract as an agent" do
     case_rec = cases(:opened_4)
 
     act = ->() do
       patch(auth("/cases/#{case_rec.id}"), params: {
         case: {
-          contract: {
-            variant: :meap
+          benefit: {
+            contract: :meap
           }
         }
       })
@@ -470,7 +463,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     assert_match(/Janice\s*Sample/, pdf_text)
   end
 
-  test "doesn't save a duplicate contract" do
+  test "can't save a duplicate contract as an agent" do
     case_rec = cases(:opened_3)
 
     act = ->() do
@@ -504,6 +497,25 @@ class CasesTests < ActionDispatch::IntegrationTest
 
     assert_response(:success)
     assert_present(flash[:alert])
+  end
+
+  test "edit a case as an enroller" do
+    user_rec = users(:enroller_1)
+    case_rec = cases(:submitted_1)
+
+    get(auth("/cases/#{case_rec.id}/edit", as: user_rec))
+    assert_response(:success)
+    assert_select(".PageHeader-title", text: /\w+'s case/)
+    assert_analytics_events(%w[DidViewEnrollerForm])
+  end
+
+  test "can't edit another enroller's case as an enroller" do
+    user_rec = users(:enroller_1)
+    case_rec = cases(:submitted_2)
+
+    assert_raises(ActiveRecord::RecordNotFound) do
+      get(auth("/cases/#{case_rec.id}/edit", as: user_rec))
+    end
   end
 
   # -- convert --
@@ -681,26 +693,9 @@ class CasesTests < ActionDispatch::IntegrationTest
   end
 
   # -- complete --
-  test "can't complete a case if signed out" do
+  test "can't complete a case without permission" do
     assert_raises(ActionController::RoutingError) do
-      patch("/cases/1/complete/approved")
-    end
-  end
-
-  test "can't complete a case with an unknown status as an enroller" do
-    user_rec = users(:enroller_1)
-
-    assert_raises(ActionController::RoutingError) do
-      patch(auth("/cases/1/complete/removed", as: user_rec))
-    end
-  end
-
-  test "can't complete another enroller's case as an enroller" do
-    user_rec = users(:enroller_1)
-    case_rec = cases(:submitted_2)
-
-    assert_raises(ActiveRecord::RecordNotFound) do
-      patch(auth("/cases/#{case_rec.id}/complete/approved", as: user_rec))
+      patch("/cases/1")
     end
   end
 
@@ -708,7 +703,15 @@ class CasesTests < ActionDispatch::IntegrationTest
     user_rec = users(:enroller_1)
     case_rec = cases(:submitted_1)
 
-    patch(auth("/cases/#{case_rec.id}/complete/denied", as: user_rec))
+    patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
+      deny: :ignored,
+      case: {
+        benefit: {
+          amount: "100.33",
+        },
+      }
+    })
+
     assert_redirected_to("/cases")
     assert_present(flash[:notice])
     assert_analytics_events(%w[DidComplete])
@@ -720,6 +723,17 @@ class CasesTests < ActionDispatch::IntegrationTest
         case_new_activity: true,
       }
     })
+  end
+
+  test "can't complete another enroller's case as an enroller" do
+    user_rec = users(:enroller_1)
+    case_rec = cases(:submitted_2)
+
+    assert_raises(ActiveRecord::RecordNotFound) do
+      patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
+        approve: :ignored,
+      })
+    end
   end
 
   test "complete a case as an agent" do
@@ -727,7 +741,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     case_rec = cases(:submitted_1)
 
     patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
-      approve: :ignored
+      deny: :ignored,
     })
 
     assert_redirected_to("/cases")
@@ -743,6 +757,21 @@ class CasesTests < ActionDispatch::IntegrationTest
     })
   end
 
+  test "show errors when completing an invalid case" do
+    user_rec = users(:agent_1)
+    case_rec = cases(:submitted_1)
+
+    patch(auth("/cases/#{case_rec.id}"), params: {
+      approve: :ignored,
+    })
+
+    assert_response(:success)
+    assert_present(flash[:alert])
+  end
+
+  # -- remove --
+  # TODO: this should be its own endpoint, since it's a secondary action
+  # and does not patch any case attributes
   test "remove a case from the pilot as an agent" do
     user_rec = users(:agent_1)
     case_rec = cases(:opened_3)

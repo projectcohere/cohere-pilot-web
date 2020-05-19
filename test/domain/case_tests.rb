@@ -148,9 +148,10 @@ class CaseTests < ActiveSupport::TestCase
       ],
     )
 
-    kase.complete(Case::Status::Approved)
+    kase.complete(Case::Status::Approved, Money.cents(123_55))
     assert(kase.approved?)
     assert(kase.new_activity?)
+    assert(kase.benefit.cents, 123_55)
     assert_in_delta(Time.zone.now, kase.completed_at, 1.0)
 
     assignments = kase.assignments

@@ -1,7 +1,7 @@
 en:
   flashes:
-    failure_after_create: Your e-mail and password did not match.
-    failure_after_update: Password did not meet requirements.
+    failure_after_create: "Your e-mail and password did not match."
+    failure_after_update: "Password did not meet requirements."
 
   pages: &pages
     cases: "Cases"
@@ -60,22 +60,22 @@ en:
   users:
     # -- fields
     email:
-      label: E-mail
+      label: "E-mail"
       placeholder: "you@work.com"
     password:
-      label: Password
+      label: "Password"
     password-confirmation:
-      label: Confirm Password
+      label: "Confirm Password"
 
     # -- controllers
     passwords:
       forgot:
-        title: Forgot Your Password?
-        prompt: Please enter your e-mail and we'll send you instructions to reset your password.
-        remember-password: Just remembered? Sign in
+        title: "Forgot Your Password?"
+        prompt: "Please enter your e-mail and we'll send you instructions to reset your password."
+        remember-password: "Just remembered? Sign in"
       rules:
-        - at least 12 characters
-        - at least one letter, number, and symbol
+        - "at least 12 characters"
+        - "at least one letter, number, and symbol"
 
   cases:
     # -- lists
@@ -117,12 +117,6 @@ en:
         phone-number: "Phone #"
         address: "Primary Residential Address"
 
-      contract:
-        title: "Contract"
-        variant:
-          label: "Signed Contract?"
-          fallback: "None"
-
       supplier_account:
         title: "Utility Account"
         supplier: "Supplier"
@@ -142,12 +136,34 @@ en:
           label: "FPL"
           fallback: "Unknown"
 
+      benefit:
+        title: "Benefit"
+        amount: "Amount"
+        contract:
+          label: "Signed Contract?"
+          fallback: "None"
+
       note:
         title: "Add a Case Note"
         placeholder: "Enter your note..."
         actions:
           save: "Save Note"
           cancel: "Cancel"
+
+    form-actions: &case-form-actions
+      save: "Save Case"
+      approve:
+        name: "Save & Approve"
+        confirm: "Are you sure you want to approve this case?"
+      deny:
+        name: "Save & Deny"
+        confirm: "Are you sure you want to deny this case?"
+
+    # -- actions
+    form-flashes: &case-form-flashes
+      success: "Updated %{name}'s case."
+      failure: "Please check %{name}'s case for errors."
+      action: "%{action} %{name}'s case."
 
     # -- partials
     forms:
@@ -235,16 +251,10 @@ en:
       edit:
         <<: *case-detail
         actions:
-          save: "Save Case"
+          <<: *case-form-actions
           submit:
             name: "Save & Submit to Enroller"
             confirm: "Are you sure you want to submit this case?"
-          approve:
-            name: "Save & Approve"
-            confirm: "Are you sure you want to approve this case?"
-          deny:
-            name: "Save & Deny"
-            confirm: "Are you sure you want to deny this case?"
           remove:
             name: "Remove Case"
             confirm: "Are you sure you want to remove this case?"
@@ -256,9 +266,7 @@ en:
 
       update:
         flashes:
-          success: "Updated %{name}'s case."
-          failure: "Please check %{name}'s case for errors."
-          action: "%{action} %{name}'s case."
+          <<: *case-form-flashes
 
       select:
         <<: *case-detail
@@ -310,41 +318,40 @@ en:
 
       show:
         <<: *case-detail
+
+      edit:
+        <<: *case-detail
         actions:
-          approve:
-            name: "Approve Case"
-            confirm: "Are you sure you want to approve this case?"
-          deny:
-            name: "Deny Case"
-            confirm: "Are you sure you want to deny this case?"
+          <<: *case-form-actions
           return:
             name: "Return to Agent"
             confirm: "Are you sure you want to return this case to the agent?"
 
+      update:
+        flashes:
+          <<: *case-form-flashes
+
       return:
         flash: "Returned %{name}'s case."
-
-      complete:
-        flash: "%{action} %{name}'s case."
 
   # imagine this nested in users. clearance actions & root templates don't
   # respect standard pathing:
   # https://github.com/thoughtbot/clearance/pull/743
   sessions:
     new:
-      title: Welcome to Cohere!
-      prompt: Thank you for participating, please sign in.
-      forgot-password: Forgot your password?
+      title: "Welcome to Cohere!"
+      prompt: "Thank you for participating, please sign in."
+      forgot-password: "Forgot your password?"
 
   # see `sessions:` above
   passwords:
     create:
-      message: Thank you! If we find your account, you'll receive an e-mail in the next few minutes with further instructions.
+      message: "Thank you! If we find your account, you'll receive an e-mail in the next few minutes with further instructions."
 
     edit:
       invite:
-        title: Create Your Password
+        title: "Create Your Password"
         prompt: "Please enter a password<br>that has:"
       reset:
-        title: Reset Your Password
+        title: "Reset Your Password"
         prompt: "Please enter a new password<br>that has:"
