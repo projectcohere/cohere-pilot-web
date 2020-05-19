@@ -18,6 +18,8 @@ class Policy
       agent? || enroller? || governor?
     when :list_search
       agent? || enroller? || governor?
+    when :list_reports
+      admin? || enroller?
     when :admin
       agent? && admin?
     else

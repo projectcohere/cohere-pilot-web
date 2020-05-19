@@ -2,6 +2,7 @@ agent_1:
   email: me@projectcohere.com
   encrypted_password: <%= password("password123$") %>
   role: agent
+  admin: true
   partner: cohere_1
   remember_token: <%= SecureRandom.uuid %>
 
@@ -16,6 +17,7 @@ enroller_1:
   email: enroll@testmetro.org
   encrypted_password: <%= password("password123$") %>
   role: enroller
+  admin: true
   partner: enroller_1
   remember_token: <%= SecureRandom.uuid %>
 

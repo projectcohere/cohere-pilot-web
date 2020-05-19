@@ -131,6 +131,12 @@ Rails.application.routes.draw do
       ])
     end
 
+    # -- reports --
+    resources(:reports, only: %i[
+      new
+      create
+    ])
+
     fallback(Role::Enroller, to: "/cases", constraints: c)
   end
 
@@ -205,6 +211,12 @@ Rails.application.routes.draw do
         constraints: merge(c, content_type("multipart/form-data")),
       )
     end
+
+    # -- reports --
+    resources(:reports, only: %i[
+      new
+      create
+    ])
 
     # -- admin --
     scope(path: "/admin", controller: :admin) do

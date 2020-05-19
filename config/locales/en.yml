@@ -192,6 +192,16 @@ en:
       prompt: "Enter an applicant's name or phone number to find their cases."
       action: "Find Cases"
 
+  reports:
+    form:
+      title: "New Report"
+      prompt: "Specify the report type, start, and end date. It may take some time to create the report."
+      action: "Create Report"
+      accounting: "Accounting"
+      report: "Report Type"
+      start_date: "Start Date"
+      end_date: "End Date"
+
   source:
     cases:
       index:

@@ -16,6 +16,10 @@ module Helpers
         links.push(Link.new(:search, search_cases_path))
       end
 
+      if permit?(:list_reports)
+        links.push(Link.new(:reports, new_report_path))
+      end
+
       if permit?(:admin)
         links.push(Link.new(:admin, admin_path))
       end
