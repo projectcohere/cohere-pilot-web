@@ -1,5 +1,8 @@
 class Case
   class Policy < ::Policy
+    R = ::Program::Requirement
+    P = ::Recipient::ProofOfIncome
+
     # -- lifetime --
     def initialize(user, kase = nil)
       @case = kase
@@ -38,25 +41,29 @@ class Case
       when :edit_household_size
         agent? || governor?
       when :edit_household_ownership
-        (agent? || source?) && requirement?(&:household_ownership?)
+        (agent? || source?) && requirement?(R::HouseholdOwnership)
       when :edit_household_proof_of_income
-        (agent? || source?) && !requirement?(&:household_proof_of_income_dhs?)
+        (agent? || source?) && !requirement?(R::HouseholdProofOfIncomeDhs)
       when :edit_household_dhs_number
-        (agent? || governor?) && proof_of_income?(&:dhs?)
+        (agent? || governor?) && proof_of_income?(P::Dhs)
       when :edit_household_size
         agent? || governor?
       when :edit_household_income
-        (agent? || governor?) && proof_of_income?(&:dhs?)
+        (agent? || governor?) && proof_of_income?(P::Dhs)
       when :edit_supplier_account
-        (agent? || source?) && requirement?(&:supplier_account_present?)
+        (agent? || source?) && requirement?(R::SupplierAccountPresent)
       when :edit_supplier
         agent? || (source? && !supplier?)
       when :edit_supplier_account_active_service
-        agent? && requirement?(&:supplier_account_active_service?)
+        agent? && requirement?(R::SupplierAccountActiveService)
+      when :edit_food
+        (source? || agent?) && requirement?(R::FoodDietaryRestrictions)
       when :edit_benefit
         agent? || enroller?
+      when :edit_benefit_amount
+        (agent? || enroller?)
       when :edit_benefit_contract
-        agent? && requirement?(&:contract_present?)
+        (agent?) && requirement?(R::ContractPresent)
       when :edit_documents
         agent?
       when :edit_admin
@@ -72,19 +79,21 @@ class Case
       when :view_details_enroller
         agent?
       when :view_supplier_account
-        permit?(:view) && requirement?(&:supplier_account_present?)
+        permit?(:view) && requirement?(R::SupplierAccountPresent)
+      when :view_food
+        permit?(:view) && requirement?(R::FoodDietaryRestrictions)
       when :view_household_size
         (agent? || enroller?)
       when :view_household_ownership
-        permit?(:view) && requirement?(&:household_ownership?)
+        permit?(:view) && requirement?(R::HouseholdOwnership)
       when :view_household_proof_of_income
-        (agent? || enroller?) && !requirement?(&:household_proof_of_income_dhs?)
+        (agent? || enroller?) && !requirement?(R::HouseholdProofOfIncomeDhs)
       when :view_household_dhs_number
-        (agent? || enroller?) && proof_of_income?(&:dhs?)
+        (agent? || enroller?) && proof_of_income?(P::Dhs)
       when :view_household_income
-        (agent? || enroller?) && proof_of_income?(&:dhs?)
+        (agent? || enroller?) && proof_of_income?(P::Dhs)
       when :view_supplier_account_active_service
-        (agent? || enroller?) && requirement?(&:supplier_account_active_service?)
+        (agent? || enroller?) && requirement?(R::SupplierAccountActiveService)
 
       # -- actions
       when :convert
@@ -123,12 +132,12 @@ class Case
     end
 
     # -- queries --
-    private def requirement?(&predicate)
-      return @case.program.requirements.any?(&predicate)
+    private def requirement?(requirement)
+      return @case.program.requirements.include?(requirement)
     end
 
-    private def proof_of_income?(&predicate)
-      return predicate.(@case.household.proof_of_income)
+    private def proof_of_income?(proof_of_income)
+      return @case.household.proof_of_income == proof_of_income
     end
   end
 end

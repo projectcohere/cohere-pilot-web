@@ -117,13 +117,6 @@ en:
         phone-number: "Phone #"
         address: "Primary Residential Address"
 
-      supplier_account:
-        title: "Utility Account"
-        supplier: "Supplier"
-        number: "Account #"
-        arrears: "Arrears"
-        active-service: "Active?"
-
       household:
         title: "Household"
         size: "Size"
@@ -135,6 +128,17 @@ en:
         fpl-percent:
           label: "FPL"
           fallback: "Unknown"
+
+      supplier_account:
+        title: "Utility Account"
+        supplier: "Supplier"
+        number: "Account #"
+        arrears: "Arrears"
+        active-service: "Active?"
+
+      food:
+        title: "Food"
+        dietary_restrictions: "Dietary Restrictions?"
 
       benefit:
         title: "Benefit"

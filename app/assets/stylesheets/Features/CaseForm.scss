@@ -1,5 +1,5 @@
 .CaseForm {
-  /* CaseForm-details */
+  // CaseForm-details
   &-status {
     grid-area: 2 / span 2;
   }
@@ -12,7 +12,7 @@
     grid-area: 3 / span 3;
   }
 
-  /* CaseForm-name */
+  // CaseForm-name
   &-firstName {
     grid-column: 1 / 4;
   }
@@ -21,12 +21,12 @@
     grid-column: 4 / 8;
   }
 
-  /* CaseForm-contact */
+  // CaseForm-contact
   &-phoneNumber {
     grid-column: 1 / 5;
   }
 
-  /* CaseForm-address */
+  // CaseForm-address
   &-address--read {
     gap: $spacing7;
   }
@@ -59,26 +59,7 @@
     grid-column: 5 / 7;
   }
 
-  /* CaseForm-utilityAccount */
-  &-supplier {
-    grid-column: 1 / 5;
-    margin-bottom: $spacing5;
-  }
-
-  &-hasActiveService {
-    grid-column: 5 / 10;
-    padding-left: $spacing5;
-  }
-
-  &-accountNumber {
-    grid-column: 1 / 6;
-  }
-
-  &-arrears {
-    grid-column: 6 / 8;
-  }
-
-  /* CaseForm-household */
+  // CaseForm-household
   &-size {
     grid-area: 2 / auto;
   }
@@ -104,7 +85,31 @@
     padding-left: $spacing6;
   }
 
-  /* CaseForm-benefit */
+  // CaseForm-utilityAccount
+  &-supplier {
+    grid-column: 1 / 5;
+    margin-bottom: $spacing5;
+  }
+
+  &-hasActiveService {
+    grid-column: 5 / 10;
+    padding-left: $spacing5;
+  }
+
+  &-accountNumber {
+    grid-column: 1 / 6;
+  }
+
+  &-arrears {
+    grid-column: 6 / 8;
+  }
+
+  // CaseForm-food
+  &-dietaryRestrictions {
+    grid-area: auto / span 4;
+  }
+
+  // CaseForm-benefit
   &-benefitAmount {
     grid-area: auto / span 3;
   }
@@ -112,7 +117,6 @@
   &-benefitContract {
     grid-area: auto / span 5;
   }
-
 }
 
 .CaseFormAdmin {

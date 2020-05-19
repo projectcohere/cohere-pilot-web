@@ -112,7 +112,7 @@ class Case
       assign_partners(kase, case_rec)
       assign_status(kase, case_rec)
       assign_activity(kase, case_rec)
-      assign_supplier_account(kase, case_rec)
+      assign_program_fields(kase, case_rec)
 
       # find or initialize a recipient record by phone number
       recipient_rec = ::Recipient::Record.find_or_initialize_by(
@@ -172,7 +172,7 @@ class Case
       assign_status(kase, case_rec)
       assign_benefit(kase, case_rec)
       assign_activity(kase, case_rec)
-      assign_supplier_account(kase, case_rec)
+      assign_program_fields(kase, case_rec)
 
       recipient_rec = kase.recipient.record
       assign_profile(kase, recipient_rec)
@@ -367,7 +367,7 @@ class Case
       assign_partners(referred, referred_rec)
       assign_status(referred, referred_rec)
       assign_activity(referred, referred_rec)
-      assign_supplier_account(referred, referred_rec)
+      assign_program_fields(referred, referred_rec)
 
       # update the recipient record
       recipient_rec = referred.recipient.record
@@ -436,8 +436,11 @@ class Case
       rec.partner_id = a.partner_id
     end
 
-    private def assign_supplier_account(kase, case_rec)
-      rec, a = case_rec, kase.supplier_account
+    private def assign_program_fields(kase, case_rec)
+      rec, c = case_rec, kase
+      rec.dietary_restrictions = c.food&.dietary_restrictions
+
+      a = c.supplier_account
       rec.supplier_account_number = a&.number
       rec.supplier_account_arrears_cents = a&.arrears&.cents
       rec.supplier_account_active_service = a == nil ? true : a.active_service?
@@ -480,16 +483,15 @@ class Case
         return
       end
 
-      document_attrs = documents.map do |d|
-        _attrs = {
+      # create records
+      document_recs = Document::Record.create!(documents.map { |d|
+        next {
           classification: d.classification,
           source_url: d.source_url,
           file: d.new_file || d.file&.attachment&.blob,
           case_id: case_id,
         }
-      end
-
-      document_recs = Document::Record.create!(document_attrs)
+      })
 
       # send creation events back to entities
       document_recs.each_with_index do |r, i|
@@ -503,16 +505,13 @@ class Case
         return
       end
 
-      # initialize record
-      note_rec = Case::Note::Record.new
-      note_rec.assign_attributes(
-        body: note.body,
-        case_id: kase.id.val,
-        user_id: note.user_id.val,
+      # create record
+      c, n = kase, note
+      Case::Note::Record.create!(
+        body: n.body,
+        case_id: c.id.val,
+        user_id: n.user_id.val,
       )
-
-      # save record
-      note_rec.save!
     end
 
     private def destroy_removed_assignment!(kase)
@@ -543,6 +542,7 @@ class Case
         recipient: map_recipient(r.recipient),
         enroller_id: r.enroller_id,
         supplier_account: map_supplier_account(r),
+        food: map_food(r),
         benefit: map_benefit(r),
         assignments: assignments&.map { |r| map_assignment(r) },
         documents: documents&.map { |r| map_document(r) },
@@ -569,6 +569,12 @@ class Case
         number: r.supplier_account_number,
         arrears: Money.cents(r.supplier_account_arrears_cents),
         active_service: r.supplier_account_active_service
+      )
+    end
+
+    def self.map_food(r)
+      return Food.new(
+        dietary_restrictions: r.dietary_restrictions,
       )
     end
 

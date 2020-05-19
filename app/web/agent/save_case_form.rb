@@ -18,9 +18,10 @@ module Agent
 
       # update the case
       @case.add_agent_data(
-        form.map_to_supplier_account,
         form.map_to_profile,
         form.map_to_household,
+        form.map_to_supplier_account,
+        form.map_to_food,
       )
 
       @case.add_admin_data(

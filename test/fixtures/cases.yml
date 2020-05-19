@@ -134,6 +134,8 @@ approved_2:
   supplier: supplier_2
   supplier_account_number: A1
   supplier_account_arrears_cents: 1000_00
+  dietary_restrictions: true
+  benefit_amount_cents: 123_66
   new_activity: true
   created_at: <%= Time.zone.now - 1.days %>
   updated_at: <%= Time.zone.now %>

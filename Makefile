@@ -86,27 +86,28 @@ s/sk:
 	$(tools-sidekiq) -c 1 -q default -q mailers
 .PHONY: s/dev
 
-## alias for s/k/rails
-s/kill: s/k/rails
-.PHONY: s/kill
+# -- kill --
+## alias for k/rails
+kill: k/rails
+.PHONY: kill
 
 ## kill the rails server
-s/k/rails:
-	kill -9 $(lsof -t -i:3000)
-.PHONY: s/k/rails
+k/rails:
+	lsof -t -i:3000 | xargs kill -9
+.PHONY: k/rails
 
 ## kill the webpack dev server
-s/k/js:
-	kill -9 $(lsof -t -i:3035)
-.PHONY: s/k/js
+k/js:
+	lsof -t -i:3035 | xargs kill -9
+.PHONY: k/js
 
 ## kill all related processes
-s/reap: s/k/rails s/k/js
-	@pkill -9 ruby && echo "killed ruby" || true
-	@pkill -9 rails && echo "killed rails" || true
-	@pkill -9 spring && echo "killed spring" || true
-	@pkill -9 make && echo "killed make" || true
-.PHONY: s/reap
+k/reap: k/rails k/js
+	@pkill -9 ruby && echo "bye ruby" || true
+	@pkill -9 rails && echo "bye rails" || true
+	@pkill -9 spring && echo "bye spring" || true
+	@pkill -9 make && echo "bye make" || true
+.PHONY: k/reap
 
 # -- test --
 ## alias for t/unit

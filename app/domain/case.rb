@@ -10,7 +10,6 @@ class Case < ::Entity
   prop(:program)
   prop(:recipient)
   prop(:enroller_id)
-  prop(:supplier_account)
   prop(:benefit, default: nil)
   prop(:documents, default: nil)
   prop(:assignments, default: nil)
@@ -21,6 +20,13 @@ class Case < ::Entity
   prop(:updated_at, default: nil)
   prop(:completed_at, default: nil)
 
+  # TODO: these, and a few other fields, are only relevant to specific
+  # programs. hmw model this in a way that is more composable and
+  # flexible?
+  prop(:food, default: nil)
+  # TODO: rename to utility account?
+  prop(:supplier_account, default: nil)
+
   # -- props/temporary
   attr(:new_assignment)
   attr(:selected_assignment)
@@ -29,7 +35,7 @@ class Case < ::Entity
   attr(:selected_document)
 
   # -- factory --
-  def self.open(temp_id: nil, program:, profile:, household:, enroller:, supplier_account: nil)
+  def self.open(temp_id: nil, program:, profile:, household:, enroller:, supplier_account:, food:)
     household ||= ::Recipient::Household.new(
       proof_of_income: ::Recipient::ProofOfIncome::Dhs,
     )
@@ -45,6 +51,7 @@ class Case < ::Entity
       recipient: recipient,
       enroller_id: enroller.id,
       supplier_account: supplier_account,
+      food: food,
       new_activity: true,
     )
 
@@ -61,9 +68,10 @@ class Case < ::Entity
     track_new_activity(true)
   end
 
-  def add_agent_data(supplier_account, profile, household)
-    @supplier_account = supplier_account
+  def add_agent_data(profile, household, supplier_account, food)
     @recipient.add_agent_data(profile, household)
+    @supplier_account = supplier_account
+    @food = food
     track_new_activity(false)
   end
 
@@ -162,7 +170,6 @@ class Case < ::Entity
       status: Status::Opened,
       recipient: recipient,
       enroller_id: enroller_id,
-      supplier_account: nil,
       documents: new_documents,
       new_activity: true,
     )

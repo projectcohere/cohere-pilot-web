@@ -13,7 +13,7 @@ class Money
       return nil
     end
 
-    return "#{cents / 100}.#{cents % 100}"
+    return "#{cents / 100}.#{(cents % 100).to_s.ljust(2, "0")}"
   end
 
   # -- factories --

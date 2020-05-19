@@ -10,13 +10,9 @@
   <div class="CaseDetail CaseDetail--edit">
     <div class="CaseDetail-menu">
       <nav class="CaseDetail-filters Filters Filters--vertical">
-        <%= filter_for(:profile, active: errors?(@form.contact, @form.benefit), selected: true) %>
+        <%= filter_for(:overview, active: errors?(@form.contact), selected: true) %>
         <%= filter_for(:household, active: errors?(@form.address, @form.household)) %>
-
-        <% if permit?(:edit_supplier_account) %>
-          <%= filter_for(:accounts, active: errors?(@form.supplier_account)) %>
-        <% end %>
-
+        <%= filter_for(:program, active: errors?(@form.supplier_account, @form.food, @form.benefit)) %>
         <%= filter_for(:documents, active: errors?(@form.documents)) %>
         <%= filter_for(:case_notes) %>
         <%= filter_for(:admin) %>
@@ -68,13 +64,12 @@
         <p><%= @case.id_text %></p>
       </div>
 
-      <%= form_for(@form, url: @case.update_path, html: { class: "CaseDetail-content" }) do |f| %>
+      <%= form_for(@form, url: @case.update_path, html: { class: "CaseDetail-content CaseForm" }) do |f| %>
         <% form_locals = { f: f, form: @form, view: @case } %>
 
-        <%= filter_panel_tag(:profile, visible: true) do %>
+        <%= filter_panel_tag(:overview, visible: true) do %>
           <%= render(partial: "cases/forms/details", locals: form_locals) %>
           <%= render(partial: "cases/forms/contact", locals: form_locals) %>
-          <%= render(partial: "cases/forms/benefit", locals: form_locals) %>
         <%- end %>
 
         <%= filter_panel_tag(:household) do %>
@@ -82,11 +77,17 @@
           <%= render(partial: "cases/forms/household", locals: form_locals) %>
         <%- end %>
 
-        <% if permit?(:edit_supplier_account) %>
-          <%= filter_panel_tag(:accounts) do %>
+        <%= filter_panel_tag(:program) do %>
+          <% if permit?(:edit_supplier_account) %>
             <%= render(partial: "cases/forms/supplier_account", locals: form_locals) %>
           <%- end %>
-        <% end %>
+
+          <% if permit?(:edit_food) %>
+              <%= render(partial: "cases/forms/food", locals: form_locals) %>
+          <% end %>
+
+          <%= render(partial: "cases/forms/benefit", locals: form_locals) %>
+        <%- end %>
 
         <%= filter_panel_tag(:documents) do %>
           <%= render(partial: "cases/documents", locals: { documents: @form.documents.all }) %>

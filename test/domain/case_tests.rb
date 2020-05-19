@@ -14,16 +14,18 @@ class CaseTests < ActiveSupport::TestCase
       household: :test_household,
       enroller: Partner.stub(id: 1),
       supplier_account: :test_account,
+      food: :test_food,
     )
 
     assert(kase.new_activity?)
     assert(kase.opened?)
     assert(kase.active?)
     assert_equal(kase.program, :test_program)
+    assert_equal(kase.enroller_id, 1)
     assert_equal(kase.recipient.profile, profile)
     assert_equal(kase.recipient.household, :test_household)
     assert_equal(kase.supplier_account, :test_account)
-    assert_equal(kase.enroller_id, 1)
+    assert_equal(kase.food, :test_food)
 
     assert_instances_of(kase.events, [Case::Events::DidOpen])
   end
@@ -39,7 +41,8 @@ class CaseTests < ActiveSupport::TestCase
       profile: profile,
       household: nil,
       enroller: Partner.stub(id: 1),
-      supplier_account: :test_account,
+      supplier_account: nil,
+      food: nil,
     )
 
     assert(kase.recipient.household.proof_of_income.dhs?)
@@ -54,15 +57,17 @@ class CaseTests < ActiveSupport::TestCase
     )
 
     kase.add_agent_data(
-      Case::Account.stub,
-      Recipient::Profile.stub,
-      Recipient::Household.stub,
+      :test_profile,
+      :test_household,
+      :test_account,
+      :test_food,
     )
 
-    assert_not_nil(kase.supplier_account)
-    assert_not_nil(kase.recipient.profile)
-    assert_not_nil(kase.recipient.household)
     assert_not(kase.new_activity?)
+    assert_equal(kase.recipient.profile, :test_profile)
+    assert_equal(kase.recipient.household, :test_household)
+    assert_equal(kase.supplier_account, :test_account)
+    assert_equal(kase.food, :test_food)
   end
 
   test "adds governor data" do

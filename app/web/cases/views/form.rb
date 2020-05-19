@@ -11,11 +11,12 @@ module Cases
       field(:program_id, :integer)
 
       # -- subforms --
-      subform(:address, Cases::Forms::Address)
       subform(:contact, Cases::Forms::Contact)
+      subform(:address, Cases::Forms::Address)
       subform(:household, Cases::Forms::Household)
-      subform(:supplier_account, Cases::Forms::SupplierAccount)
       subform(:benefit, Cases::Forms::Benefit)
+      subform(:supplier_account, Cases::Forms::SupplierAccount)
+      subform(:food, Cases::Forms::Food)
       subform(:documents, Cases::Forms::Documents)
       subform(:admin, Cases::Forms::Admin)
 
@@ -75,6 +76,10 @@ module Cases
 
       def map_to_contract
         return benefit.map_to_contract
+      end
+
+      def map_to_food
+        return food&.map_to_food
       end
 
       def map_to_admin

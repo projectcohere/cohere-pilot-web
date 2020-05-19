@@ -1,6 +1,6 @@
 module Cases
-  module Forms
-    class Program < ApplicationForm
+  module Views
+    class ProgramForm < ApplicationForm
       # -- fields --
       field(:program_id, :integer)
 

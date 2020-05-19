@@ -1,0 +1,8 @@
+<%- form = form.food %>
+<%= f.fields_for(:food, form) do |f| %>
+  <%= section_tag(t(".title"), class: "CaseForm-program") do %>
+    <%= f.field(:dietary_restrictions, class: "CaseForm-dietaryRestrictions Field--checkbox") do %>
+      <%= f.check_box(:dietary_restrictions) %>
+    <%- end %>
+  <%- end %>
+<%- end %>

@@ -14,16 +14,6 @@
         <%= filter_for(:documents) %>
         <%= filter_for(:case_notes) %>
       </nav>
-
-      <% if @case.can_complete? %>
-        <%=
-          button_to(t(".actions.return.name"), @case.return_path,
-            method: :patch,
-            class: "CaseDetail-button ButtonSm Button--secondary",
-            data: { confirm: t(".actions.return.confirm") },
-          )
-        %>
-      <% end %>
     </div>
 
     <article class="CaseDetail-case">
@@ -41,6 +31,8 @@
 
           <% if permit?(:view_supplier_account) %>
             <%= render(partial: "cases/detail/supplier_account", locals: locals) %>
+          <% elsif permit?(:view_food) %>
+            <%= render(partial: "cases/detail/food", object: @case, as: :kase) %>
           <% end %>
 
           <%= render(partial: "cases/detail/household", locals: locals) %>
