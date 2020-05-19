@@ -19,7 +19,7 @@ class Policy
     when :list_search
       agent? || enroller? || governor?
     when :admin
-      agent?
+      agent? && admin?
     else
       false
     end
@@ -32,6 +32,10 @@ class Policy
   end
 
   # -- queries --
+  protected def admin?
+    return @user.admin?
+  end
+
   protected def role
     return @user.role
   end

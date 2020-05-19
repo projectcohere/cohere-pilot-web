@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_19_001319) do
+ActiveRecord::Schema.define(version: 2020_05_19_182351) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -180,6 +180,7 @@ ActiveRecord::Schema.define(version: 2020_05_19_001319) do
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "partner_id", null: false
     t.integer "role", default: 0, null: false
+    t.boolean "admin", default: false, null: false
     t.index ["email"], name: "index_users_on_email"
     t.index ["partner_id"], name: "index_users_on_partner_id"
     t.index ["remember_token"], name: "index_users_on_remember_token"

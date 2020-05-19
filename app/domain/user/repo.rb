@@ -68,6 +68,7 @@ class User
         id: Id.new(r.id),
         email: r.email,
         role: Role.from_key(r.role),
+        admin: r.admin,
         partner: Partner::Repo.map_record(r.partner),
         confirmation_token: r.confirmation_token
       )
