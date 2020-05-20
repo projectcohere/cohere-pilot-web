@@ -35,15 +35,20 @@ module Reports
 
       # -- queries --
       def report_options
-        options = []
+        options = {}
 
-        if permit?(:list_accounting)
-          options << [t("reports.form.accounting"), Accounting]
+        if permit?(:create_internal)
+          options[t("reports.internal.title")] = [
+            [t("reports.internal.#{Accounting}"), Accounting]
+          ]
         end
 
-        if permit?(:list_programs)
-          @program_repo.find_all_by_partner(user_partner_id).each do |program|
-            options << [program.name, program.id]
+        if permit?(:create_programs)
+          programs = @program_repo
+            .find_all_by_partner(user_partner_id)
+
+          options[t("reports.programs.title")] = programs.map do |program|
+            [program.name, program.id]
           end
         end
 

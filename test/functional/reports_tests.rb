@@ -17,7 +17,7 @@ class ReportsTests < ActionDispatch::IntegrationTest
     get(auth("/reports/new", as: user_rec))
     assert_response(:success)
     assert_select(".PageHeader-title", text: /New Report/)
-    assert_select("option", 6)
+    assert_select("option", 5)
   end
 
   test "fill out the new report form as an enroller admin" do

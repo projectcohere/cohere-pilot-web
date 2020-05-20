@@ -193,10 +193,19 @@ en:
       action: "Find Cases"
 
   reports:
+    # -- data --
+    internal:
+      title: "Internal"
+      accounting: "Accounting"
+
+    programs:
+      title: "Programs"
+
+    # -- templates --
     base:
       new:
         title: "New Report"
-        prompt: "Specify the report type, start, and end date. It may take some time to create the report."
+        prompt: "Create a report. Please be patient, it may take a moment to generate the report."
         action: "Create Report"
         accounting: "Accounting"
         report: "Report Type"
