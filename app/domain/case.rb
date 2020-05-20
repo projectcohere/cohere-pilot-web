@@ -68,10 +68,11 @@ class Case < ::Entity
     track_new_activity(true)
   end
 
-  def add_agent_data(profile, household, supplier_account, food)
+  def add_agent_data(profile, household, supplier_account, food, benefit)
     @recipient.add_agent_data(profile, household)
     @supplier_account = supplier_account
     @food = food
+    @benefit = benefit
     track_new_activity(false)
   end
 

@@ -61,6 +61,7 @@ class CaseTests < ActiveSupport::TestCase
       :test_household,
       :test_account,
       :test_food,
+      :test_benefit,
     )
 
     assert_not(kase.new_activity?)
@@ -68,6 +69,7 @@ class CaseTests < ActiveSupport::TestCase
     assert_equal(kase.recipient.household, :test_household)
     assert_equal(kase.supplier_account, :test_account)
     assert_equal(kase.food, :test_food)
+    assert_equal(kase.benefit, :test_benefit)
   end
 
   test "adds governor data" do

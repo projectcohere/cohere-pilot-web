@@ -346,11 +346,13 @@ module Db
         variant: :wrap_1k
       )
 
+      benefit = Money.cents(123_44)
+
       kase = Case::Repo.map_record(case_rec)
-      kase.add_agent_data(profile, household, supplier_account, food)
+      kase.add_agent_data(profile, household, supplier_account, food, Money.cents(333))
       kase.sign_contract(contract)
       kase.submit_to_enroller
-      kase.complete(Case::Status::Approved, Money.cents(123_44))
+      kase.complete(Case::Status::Approved, benefit)
 
       case_repo.save_agent_data(kase)
 
