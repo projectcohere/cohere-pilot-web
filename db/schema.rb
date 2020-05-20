@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_19_182351) do
+ActiveRecord::Schema.define(version: 2020_05_20_164051) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -75,6 +75,7 @@ ActiveRecord::Schema.define(version: 2020_05_19_182351) do
     t.integer "condition", default: 0, null: false
     t.integer "benefit_amount_cents"
     t.boolean "dietary_restrictions"
+    t.index ["completed_at"], name: "index_cases_on_completed_at"
     t.index ["condition"], name: "index_cases_on_condition"
     t.index ["enroller_id"], name: "index_cases_on_enroller_id"
     t.index ["program_id"], name: "index_cases_on_program_id"

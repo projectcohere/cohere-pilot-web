@@ -6,9 +6,9 @@
   <article class="NewReport-content">
     <%= tag.p(t(".prompt"), class: "NewReport-prompt") %>
 
-    <%= form_for(form, html: { class: "NewReport-form PanelSection" }) do |f| %>
+    <%= form_for(@form, html: { class: "NewReport-form PanelSection" }) do |f| %>
       <%= f.field(:report, class: "NewReport-report Field--select") do %>
-        <%= f.select(:report, form.report_options) %>
+        <%= f.select(:report, @form.report_options) %>
       <%- end %>
 
       <%= f.field(:start_date, class: "NewReport-startDate") do %>
@@ -20,7 +20,7 @@
       <%- end %>
 
       <div class="NewReport-actions">
-        <%= f.submit(t(".action"), class: "Button Button--action") %>
+        <%= f.submit(t(".action"), class: "Button Button--action", data: { disable_with: false }) %>
       </div>
     <%- end %>
   </article>

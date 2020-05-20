@@ -27,6 +27,10 @@ class Case
       return scope
     end
 
+    def self.join_supplier
+      return includes(:supplier)
+    end
+
     def self.join_assignments
       return includes(:assignments)
     end
@@ -51,6 +55,19 @@ class Case
         .where(recipients: { phone_number: phone_number })
 
       return scope
+    end
+
+    def self.for_role(role, partner_id)
+      return case role
+      when Role::Source
+        for_source(partner_id)
+      when Role::Governor
+        for_governor(partner_id)
+      when Role::Enroller
+        for_enroller(partner_id)
+      else
+        all
+      end
     end
 
     def self.for_source(partner_id)
@@ -109,6 +126,12 @@ class Case
       SQL
 
       return where("NOT EXISTS (#{query})", role.to_i)
+    end
+
+    def self.with_completion_between(start_date, end_date)
+      return where(
+        completed_at: start_date.beginning_of_day..end_date.end_of_day,
+      )
     end
 
     def self.by_updated_date

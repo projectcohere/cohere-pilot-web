@@ -5,6 +5,9 @@ module Reports
       include Reports::Policy::Context::Shared
       include ActionView::Helpers::TranslationHelper
 
+      # -- constants --
+      Accounting = "accounting".freeze
+
       # -- fields --
       field(:report, :string, presence: true)
       field(:start_date, :date, presence: true)
@@ -14,13 +17,17 @@ module Reports
       validate(:check_date_order!)
 
       # -- lifetime --
-      def initialize(model = nil, attrs = {}, program_repo: Program::Repo.get)
+      def initialize(model = nil, attrs: {}, program_repo: Program::Repo.get)
         @program_repo = program_repo
         super(model, attrs)
       end
 
       # -- commands --
       def check_date_order!
+        if start_date == nil || end_date == nil
+          return
+        end
+
         if not end_date.after?(start_date)
           errors.add(:end_date, "must be after start date")
         end
@@ -31,7 +38,7 @@ module Reports
         options = []
 
         if permit?(:list_accounting)
-          options << [t("reports.form.accounting"), :accounting]
+          options << [t("reports.form.accounting"), Accounting]
         end
 
         if permit?(:list_programs)

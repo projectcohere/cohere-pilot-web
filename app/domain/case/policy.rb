@@ -133,7 +133,7 @@ class Case
 
     # -- queries --
     private def requirement?(requirement)
-      return @case.program.requirements.include?(requirement)
+      return @case.program.requirement?(requirement)
     end
 
     private def proof_of_income?(proof_of_income)

@@ -80,6 +80,7 @@ module Cases
       private def make_form(model, params)
         # extract action, if any
         action = Action.find { |a| params&.key?(a.key) }
+
         # extract attrs, if any
         attrs = params&.fetch(:case, {}) || {}
 
@@ -173,16 +174,7 @@ module Cases
         end
 
         # filter by role
-        q = case user_role
-        when Role::Source
-          q.for_source(user_partner_id)
-        when Role::Governor
-          q.for_governor(user_partner_id)
-        when Role::Enroller
-          q.for_enroller(user_partner_id)
-        else
-          q
-        end
+        q = q.for_role(user_role, user_partner_id)
 
         return q
       end

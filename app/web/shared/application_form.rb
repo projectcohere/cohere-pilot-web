@@ -12,17 +12,15 @@ class ApplicationForm
   def initialize(model = nil, attrs = {}, &permit)
     @model = model
 
+    # whitelist attrs if permittable
+    shape = self.class.params_shape(&permit)
+    if attrs.respond_to?(:permit) && !attrs.permitted?
+      attrs = attrs.permit(shape)
+    end
+
     # filter list of permitted subforms
     sf_names = self.class.subform_map&.keys
-
-    if block_given?
-      shape = self.class.params_shape(&permit)
-
-      # whitelist attrs if permittable
-      if attrs.respond_to?(:permit) && !attrs.permitted?
-        attrs = attrs.permit(shape)
-      end
-
+    if sf_names != nil
       sf_names &= shape.last.keys
     end
 
