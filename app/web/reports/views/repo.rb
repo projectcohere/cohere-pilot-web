@@ -51,6 +51,7 @@ module Reports
         case_query = Case::Record
           .join_recipient
           .join_supplier
+          .approved
           .for_role(user_role, user_partner_id)
 
         return case_query
