@@ -18,7 +18,11 @@ class Money
 
   # -- factories --
   def self.cents(cents)
-    return Money.new(cents)
+    if cents == nil
+      return nil
+    end
+
+   return Money.new(cents)
   end
 
   def self.dollars(dollars)

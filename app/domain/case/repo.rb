@@ -579,7 +579,7 @@ class Case
     end
 
     def self.map_benefit(r)
-      return r.benefit_amount_cents&.then { |c| Money.cents(c) }
+      return Money.cents(r.benefit_amount_cents)
     end
 
     def self.map_assignment(r)
