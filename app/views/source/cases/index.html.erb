@@ -6,8 +6,10 @@
 
     <div class="PageHeader-actions">
       <%=
-        link_to(t(".actions.new"), select_cases_path,
-          class: "Button Button--action"
+        button_to(t(".actions.new"), select_cases_path,
+          method: :get,
+          disabled: forbid?(:create),
+          class: "Button Button--action",
         )
       %>
     </div>

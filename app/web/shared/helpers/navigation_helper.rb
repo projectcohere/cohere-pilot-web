@@ -4,16 +4,24 @@ module Helpers
     def navigation_link_tags
       links = []
 
-      if policy.permit?(:list)
+      if permit?(:list_cases)
         links.push(Link.new(:cases, cases_path))
       end
 
-      if policy.permit?(:list_queue)
+      if permit?(:list_queue)
         links.push(Link.new(:queue, queue_cases_path))
       end
 
-      if policy.permit?(:list_search)
+      if permit?(:list_search)
         links.push(Link.new(:search, search_cases_path))
+      end
+
+      if permit?(:list_reports)
+        links.push(Link.new(:reports, new_report_path))
+      end
+
+      if permit?(:admin)
+        links.push(Link.new(:admin, admin_path))
       end
 
       links.reverse.each do |r|

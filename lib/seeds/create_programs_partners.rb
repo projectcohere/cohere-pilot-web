@@ -31,6 +31,11 @@ wrap = Program::Record.create!(
 cares_food = Program::Record.create!(
   name: "Food (CARES)",
   priority: 0,
+  requirements: {
+    food: %i[
+      dietary_restrictions
+    ],
+  }
 )
 
 cares_energy = Program::Record.create!(

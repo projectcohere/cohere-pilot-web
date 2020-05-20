@@ -6,7 +6,7 @@
 
   <div class="CaseDetail CaseDetail--edit">
     <article class="CaseDetail-case">
-      <%= form_for(@form, url: @case.create_path, html: { class: "CaseDetail-content" }) do |f| %>
+      <%= form_for(@form, url: @case.create_path, html: { class: "CaseDetail-content CaseForm" }) do |f| %>
         <%- form_locals = { f: f, form: @form, policy: policy } %>
         <%= f.hidden_field(:program_id) %>
         <%= hidden_field_tag(:temp_id, @case.temp_id.val) %>
@@ -20,6 +20,8 @@
 
         <% if permit?(:edit_supplier_account) %>
           <%= render(partial: "cases/forms/supplier_account", locals: form_locals) %>
+        <% elsif permit?(:edit_food) %>
+          <%= render(partial: "cases/forms/food", locals: form_locals) %>
         <% end %>
 
         <div class="Panel-actions">

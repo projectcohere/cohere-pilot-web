@@ -1,5 +1,5 @@
 class ApplicationFormBuilder < ::ActionView::Helpers::FormBuilder
-  def field(name, title = nil, *args, prefix: nil, disabled: false, bare: false, background: true, **kwargs, &children)
+  def field(name, title = nil, *args, prefix: nil, disabled: false, **kwargs, &children)
     a_class = kwargs.delete(:class)
 
     # check for field errors

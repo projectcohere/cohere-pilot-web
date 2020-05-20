@@ -54,14 +54,6 @@ module Cases
         return urls.case_path(@id)
       end
 
-      def approve_path
-        return urls.case_complete_path(@id, status: Case::Status::Approved.key)
-      end
-
-      def deny_path
-        return urls.case_complete_path(@id, status: Case::Status::Denied.key)
-      end
-
       def return_path
         return urls.case_return_path(@id)
       end

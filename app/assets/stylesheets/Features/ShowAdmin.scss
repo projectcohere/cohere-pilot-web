@@ -1,0 +1,12 @@
+.ShowAdmin {
+  &-panel {
+    @extend .u-panel-cozy;
+    max-width: $width1;
+  }
+
+  &-prompt {
+    grid-area: auto / span 9;
+    font-size: $font-size5;
+    font-style: italic;
+  }
+}

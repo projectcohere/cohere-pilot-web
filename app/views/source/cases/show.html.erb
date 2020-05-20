@@ -22,6 +22,8 @@
 
           <% if permit?(:view_supplier_account) %>
             <%= render(partial: "cases/detail/supplier_account", locals: locals) %>
+          <% elsif permit?(:view_food) %>
+            <%= render(partial: "cases/detail/food", object: @case, as: :kase) %>
           <% end %>
 
           <%= render(partial: "cases/detail/household", locals: locals) %>

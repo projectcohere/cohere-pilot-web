@@ -171,6 +171,10 @@ module Db
         arrears: Money.cents(1000_00),
       )
 
+      food = Case::Food.new(
+        dietary_restrictions: false,
+      )
+
       kase = Case.open(
         temp_id: 9,
         program: Program::Repo.map_record(program_rec),
@@ -178,6 +182,7 @@ module Db
         household: household,
         enroller: Partner::Repo.map_record(enroller_rec),
         supplier_account: supplier_account,
+        food: food,
       )
 
       kase.assign_user(User::Repo.map_record(user_rec))
@@ -202,6 +207,7 @@ module Db
       assert(case_rec.opened?)
       assert(case_rec.active?)
       assert_equal(case_rec.program.id, program_rec.id)
+      assert_not(case_rec.dietary_restrictions?)
 
       events = kase.events
       assert_length(events, 0)
@@ -249,7 +255,8 @@ module Db
         profile: profile,
         household: household,
         enroller: Partner::Repo.map_record(enroller_rec),
-        supplier_account: supplier_account,
+        supplier_account: nil,
+        food: nil,
       )
 
       kase.assign_user(User::Repo.map_record(user_rec))
@@ -301,12 +308,6 @@ module Db
       case_repo = Case::Repo.new
       case_rec = cases(:opened_2)
 
-      supplier_account = Case::Account.new(
-        supplier_id: case_rec.supplier_id,
-        number: "12345",
-        arrears: Money.cents(1000_00),
-      )
-
       profile = Recipient::Profile.new(
         phone: Phone.new(
           number: "1112223333"
@@ -331,22 +332,36 @@ module Db
         ownership: Recipient::Ownership::Rent,
       )
 
+      supplier_account = Case::Account.new(
+        supplier_id: case_rec.supplier_id,
+        number: "12345",
+        arrears: Money.cents(1000_00),
+      )
+
+      food = Case::Food.new(
+        dietary_restrictions: true,
+      )
+
       contract = Program::Contract.new(
         variant: :wrap_1k
       )
 
+      benefit = Money.cents(123_44)
+
       kase = Case::Repo.map_record(case_rec)
-      kase.add_agent_data(supplier_account, profile, household)
+      kase.add_agent_data(profile, household, supplier_account, food, Money.cents(333))
       kase.sign_contract(contract)
       kase.submit_to_enroller
-      kase.complete(Case::Status::Approved)
+      kase.complete(Case::Status::Approved, benefit)
 
       case_repo.save_agent_data(kase)
 
       c = case_rec
       assert(c.approved?)
+      assert(c.dietary_restrictions?)
       assert_equal(c.supplier_account_number, "12345")
       assert_equal(c.supplier_account_arrears_cents, 1000_00)
+      assert_equal(c.benefit_amount_cents, 123_44)
       assert_not_nil(c.completed_at)
 
       r = c.recipient
@@ -542,10 +557,11 @@ module Db
       case_repo = Case::Repo.new
       case_rec = cases(:submitted_1)
       kase = Case::Repo.map_record(case_rec, assignments: case_rec.assignments, documents: case_rec.documents)
-      kase.complete(Case::Status::Approved)
+      kase.complete(Case::Status::Approved, Money.new(123_99))
 
       case_repo.save_completed(kase)
       assert(case_rec.approved?)
+      assert(case_rec.benefit_amount_cents, 129_99)
       assert_length(case_rec.assignments.reload, 2)
       assert_not_nil(case_rec.completed_at)
 

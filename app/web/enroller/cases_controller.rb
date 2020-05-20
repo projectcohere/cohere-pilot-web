@@ -26,7 +26,39 @@ module Enroller
       permit!(:view)
 
       @case = view_repo.find_detail(params[:id])
-      events.add(Cases::Events::DidViewEnrollerCase.from_entity(@case))
+    end
+
+    def edit
+      permit!(:edit)
+
+      @form = view_repo.edit_form(params[:id])
+      @case = @form.model
+      events.add(Cases::Events::DidViewEnrollerForm.from_entity(@case))
+    end
+
+    def update
+      permit!(:edit)
+
+      @form = view_repo.edit_form(params[:id], params: params)
+      @case = @form.model
+
+      save_form = SaveCaseForm.new
+      if not save_form.(@form)
+        flash.now[:alert] = t(".flashes.failure", name: @case.recipient_name)
+        return render(:edit)
+      end
+
+      if @form.action == nil
+        redirect_to(
+          @case.detail_path(save_form.case),
+          notice: t(".flashes.success", name: @case.recipient_name),
+        )
+      else
+        redirect_to(
+          @case.list_path,
+          notice: t(".flashes.action", action: @form.action_text, name: @case.recipient_name),
+        )
+      end
     end
 
     def return
@@ -34,13 +66,6 @@ module Enroller
 
       @case = ReturnCaseToAgent.(params[:case_id])
       redirect_to(cases_path, notice: t(".flash", name: name))
-    end
-
-    def complete
-      permit!(:complete)
-
-      @case = CompleteCase.(params[:case_id], params[:status])
-      redirect_to(cases_path, notice: t(".flash", action: status_text, name: name))
     end
 
     # -- helpers --

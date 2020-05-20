@@ -29,6 +29,14 @@
     @include prefix(webkit, (mask-image: image-url("search.svg")));
   }
 
+  &--reports {
+    @include prefix(webkit, (mask-image: image-url("reports.svg")));
+  }
+
+  &--admin {
+    @include prefix(webkit, (mask-image: image-url("admin.svg")));
+  }
+
   &--profile {
     @include prefix(webkit, (mask-image: image-url("profile.svg")));
   }

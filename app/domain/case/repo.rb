@@ -112,7 +112,7 @@ class Case
       assign_partners(kase, case_rec)
       assign_status(kase, case_rec)
       assign_activity(kase, case_rec)
-      assign_supplier_account(kase, case_rec)
+      assign_program_fields(kase, case_rec)
 
       # find or initialize a recipient record by phone number
       recipient_rec = ::Recipient::Record.find_or_initialize_by(
@@ -170,8 +170,9 @@ class Case
       # update records
       case_rec = kase.record
       assign_status(kase, case_rec)
+      assign_benefit(kase, case_rec)
       assign_activity(kase, case_rec)
-      assign_supplier_account(kase, case_rec)
+      assign_program_fields(kase, case_rec)
 
       recipient_rec = kase.recipient.record
       assign_profile(kase, recipient_rec)
@@ -285,6 +286,7 @@ class Case
       # update case record
       case_rec = kase.record
       assign_status(kase, case_rec)
+      assign_benefit(kase, case_rec)
       assign_activity(kase, case_rec)
 
       # save records
@@ -365,7 +367,7 @@ class Case
       assign_partners(referred, referred_rec)
       assign_status(referred, referred_rec)
       assign_activity(referred, referred_rec)
-      assign_supplier_account(referred, referred_rec)
+      assign_program_fields(referred, referred_rec)
 
       # update the recipient record
       recipient_rec = referred.recipient.record
@@ -395,103 +397,85 @@ class Case
 
     # -- commands/helpers
     private def assign_program(kase, case_rec)
-      c = kase
-      case_rec.assign_attributes(
-        program_id: c.program.id,
-      )
+      rec, c = case_rec, kase
+      rec.program_id = c.program.id
     end
 
     private def assign_partners(kase, case_rec)
-      c = kase
-      case_rec.assign_attributes(
-        enroller_id: c.enroller_id,
-      )
-
-      a = c.supplier_account
-      case_rec.assign_attributes(
-        supplier_id: a&.supplier_id,
-      )
+      rec, c = case_rec, kase
+      rec.enroller_id = c.enroller_id
+      rec.supplier_id = c.supplier_account&.supplier_id
     end
 
     private def assign_status(kase, case_rec)
-      c = kase
-      case_rec.assign_attributes(
-        status: c.status.key,
-        condition: c.condition.key,
-        completed_at: c.completed_at
-      )
+      rec, c = case_rec, kase
+      rec.status = c.status.key
+      rec.condition = c.condition.key
+      rec.completed_at = c.completed_at
+    end
+
+    private def assign_benefit(kase, case_rec)
+      rec, c = case_rec, kase
+      rec.benefit_amount_cents = c.benefit&.cents
     end
 
     private def assign_activity(kase, case_rec)
-      c = kase
-      case_rec.assign_attributes(
-        new_activity: c.new_activity,
-        received_message_at: c.received_message_at,
-      )
+      rec, c = case_rec, kase
+      rec.new_activity = c.new_activity
+      rec.received_message_at = c.received_message_at
     end
 
     private def assign_new_assignment(kase, assignment_rec)
       assignment = kase.new_assignment
       assert(assignment != nil, "case has no new assignment")
 
-      c = kase
-      a = assignment
-      assignment_rec.assign_attributes(
-        role: a.role.index,
-        case_id: c.id.val,
-        user_id: a.user_id.val,
-        partner_id: a.partner_id,
-      )
+      rec, c, a = assignment_rec, kase, assignment
+      rec.role = a.role.index
+      rec.case_id = c.id.val
+      rec.user_id = a.user_id.val
+      rec.partner_id = a.partner_id
     end
 
-    private def assign_supplier_account(kase, case_rec)
-      a = kase.supplier_account
-      case_rec.assign_attributes(
-        supplier_account_number: a&.number,
-        supplier_account_arrears_cents: a&.arrears&.cents,
-        supplier_account_active_service: a.nil? ? true : a.active_service?
-      )
+    private def assign_program_fields(kase, case_rec)
+      rec, c = case_rec, kase
+      rec.dietary_restrictions = c.food&.dietary_restrictions
+
+      a = c.supplier_account
+      rec.supplier_account_number = a&.number
+      rec.supplier_account_arrears_cents = a&.arrears&.cents
+      rec.supplier_account_active_service = a == nil ? true : a.active_service?
     end
 
     private def assign_profile(kase, recipient_rec)
-      r = kase.recipient
+      rec, r = recipient_rec, kase.recipient
 
       p = r.profile.phone
-      recipient_rec.assign_attributes(
-        phone_number: p.number
-      )
+      rec.phone_number = p.number
 
       n = r.profile.name
-      recipient_rec.assign_attributes(
-        first_name: n.first,
-        last_name: n.last,
-      )
+      rec.first_name = n.first
+      rec.last_name = n.last
 
       a = r.profile.address
-      recipient_rec.assign_attributes(
-        street: a.street,
-        street2: a.street2,
-        city: a.city,
-        state: a.state,
-        zip: a.zip
-      )
+      rec.street = a.street
+      rec.street2 = a.street2
+      rec.city = a.city
+      rec.state = a.state
+      rec.zip = a.zip
     end
 
-    private def assign_household(kase, rec)
-      r = kase.recipient
-      h = r.household
+    private def assign_household(kase, recipient_rec)
+      rec, h = recipient_rec, kase.recipient.household
 
       # TODO: need to think through how best to handle partial assignment
       # destroy data if it overwites values with nil (maybe only use assign
       # helpers than expect values or intentional nils, maybe introduce an
       # `omitted` value that is filtered from assignment)
-      rec.assign_attributes(
-        dhs_number: h.dhs_number || rec.dhs_number,
-        household_proof_of_income: h.proof_of_income&.key || rec.household_proof_of_income,
-        household_size: h.size || rec.household_size,
-        household_income_cents: h.income&.cents || rec.household_income_cents,
-        household_ownership: h.ownership&.key || rec.household_ownership,
-      )
+      rec.dhs_number = h.dhs_number || rec.dhs_number
+      rec.household_proof_of_income = h.proof_of_income&.key || rec.household_proof_of_income
+      rec.household_size = h.size || rec.household_size
+      rec.household_income_cents = h.income&.cents || rec.household_income_cents
+      rec.household_ownership = h.ownership&.key || rec.household_ownership
     end
 
     private def create_documents!(case_id, documents)
@@ -499,16 +483,15 @@ class Case
         return
       end
 
-      document_attrs = documents.map do |d|
-        _attrs = {
+      # create records
+      document_recs = Document::Record.create!(documents.map { |d|
+        next {
           classification: d.classification,
           source_url: d.source_url,
           file: d.new_file || d.file&.attachment&.blob,
           case_id: case_id,
         }
-      end
-
-      document_recs = Document::Record.create!(document_attrs)
+      })
 
       # send creation events back to entities
       document_recs.each_with_index do |r, i|
@@ -522,16 +505,13 @@ class Case
         return
       end
 
-      # initialize record
-      note_rec = Case::Note::Record.new
-      note_rec.assign_attributes(
-        body: note.body,
-        case_id: kase.id.val,
-        user_id: note.user_id.val,
+      # create record
+      c, n = kase, note
+      Case::Note::Record.create!(
+        body: n.body,
+        case_id: c.id.val,
+        user_id: n.user_id.val,
       )
-
-      # save record
-      note_rec.save!
     end
 
     private def destroy_removed_assignment!(kase)
@@ -562,6 +542,8 @@ class Case
         recipient: map_recipient(r.recipient),
         enroller_id: r.enroller_id,
         supplier_account: map_supplier_account(r),
+        food: map_food(r),
+        benefit: map_benefit(r),
         assignments: assignments&.map { |r| map_assignment(r) },
         documents: documents&.map { |r| map_document(r) },
         new_activity: r.new_activity,
@@ -588,6 +570,16 @@ class Case
         arrears: Money.cents(r.supplier_account_arrears_cents),
         active_service: r.supplier_account_active_service
       )
+    end
+
+    def self.map_food(r)
+      return Food.new(
+        dietary_restrictions: r.dietary_restrictions,
+      )
+    end
+
+    def self.map_benefit(r)
+      return Money.cents(r.benefit_amount_cents)
     end
 
     def self.map_assignment(r)

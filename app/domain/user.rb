@@ -6,6 +6,7 @@ class User < ::Entity
   prop(:id, default: Id::None)
   prop(:email)
   prop(:role)
+  prop(:admin, predicate: true)
   prop(:partner)
   prop(:confirmation_token, default: nil)
 
@@ -14,6 +15,7 @@ class User < ::Entity
     user = User.new(
       email: invitation.email,
       role: invitation.role,
+      admin: false,
       partner: Partner.new(
         id: invitation.partner_id,
         name: nil,

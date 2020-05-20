@@ -13,10 +13,12 @@ module Cases
       prop(:program)
       prop(:enroller_name)
       prop(:supplier_name)
-      prop(:supplier_account)
       prop(:recipient_id)
       prop(:profile)
       prop(:household)
+      prop(:supplier_account)
+      prop(:food)
+      prop(:benefit)
       prop(:documents)
       prop(:assignments)
       prop(:notes)
@@ -57,19 +59,6 @@ module Cases
         return "+1 #{number_to_phone(@profile.phone.number)}"
       end
 
-      # -- queries/account
-      def supplier_account_number
-        return @supplier_account.number
-      end
-
-      def supplier_account_arrears
-        return "$#{@supplier_account.arrears.dollars}"
-      end
-
-      def supplier_account_active_service?
-        return @supplier_account.active_service?
-      end
-
       # -- queries/household
       def household_dhs_number
         return @household&.dhs_number || "Unknown"
@@ -84,7 +73,7 @@ module Cases
       end
 
       def household_income
-        return @household&.income&.dollars&.then { |f| "$#{f}" } || "Unknown"
+        return format_money(@household&.income)
       end
 
       def household_ownership
@@ -93,6 +82,29 @@ module Cases
 
       def household_fpl_percent
         return @household&.fpl_percent&.then { |f| "#{f}%" }
+      end
+
+      # -- queries/account
+      def supplier_account_number
+        return @supplier_account.number
+      end
+
+      def supplier_account_arrears
+        return format_money(@supplier_account&.arrears)
+      end
+
+      def supplier_account_active_service?
+        return @supplier_account.active_service?
+      end
+
+      # -- queries/food
+      def dietary_restrictions
+        return "Dietary Restrictions"
+      end
+
+      # -- queries/benefit
+      def benefit_amount
+        return format_money(@benefit)
       end
 
       # -- queries/documents
@@ -130,6 +142,11 @@ module Cases
       def chat
         # TODO: return Chats::Views::Detail instead of entity
         return @chat ||= @chat_repo.find_by_recipient_with_messages(recipient_id)
+      end
+
+      # -- queries/helpers
+      private def format_money(money)
+        return money != nil ? "$#{money.dollars}" : "Unknown"
       end
     end
   end

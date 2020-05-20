@@ -14,16 +14,6 @@
         <%= filter_for(:documents) %>
         <%= filter_for(:case_notes) %>
       </nav>
-
-      <% if @case.can_complete? %>
-        <%=
-          button_to(t(".actions.return.name"), @case.return_path,
-            method: :patch,
-            class: "CaseDetail-button ButtonSm Button--secondary",
-            data: { confirm: t(".actions.return.confirm") },
-          )
-        %>
-      <% end %>
     </div>
 
     <article class="CaseDetail-case">
@@ -37,9 +27,12 @@
           <%- locals = { view: @case } %>
           <%= render(partial: "cases/detail/details", locals: locals) %>
           <%= render(partial: "cases/detail/contact", locals: locals) %>
+          <%= render(partial: "cases/detail/benefit", locals: locals) %>
 
           <% if permit?(:view_supplier_account) %>
             <%= render(partial: "cases/detail/supplier_account", locals: locals) %>
+          <% elsif permit?(:view_food) %>
+            <%= render(partial: "cases/detail/food", object: @case, as: :kase) %>
           <% end %>
 
           <%= render(partial: "cases/detail/household", locals: locals) %>
@@ -52,26 +45,6 @@
         <%= filter_panel_tag(:documents) do %>
           <%= render(partial: "cases/documents", locals: { documents: @case.documents }) %>
         <%- end %>
-
-        <% if @case.can_complete? %>
-          <div class="Panel-actions">
-            <%=
-              button_to(t(".actions.approve.name"), @case.approve_path,
-                method: :patch,
-                class: "Button Button--action",
-                data: { confirm: t(".actions.approve.confirm") },
-              )
-            %>
-
-            <%=
-              button_to(t(".actions.deny.name"), @case.deny_path,
-                method: :patch,
-                class: "Button Button--destructive",
-                data: { confirm: t(".actions.deny.confirm") },
-              )
-            %>
-          </div>
-        <% end %>
       </div>
     </article>
   </div>

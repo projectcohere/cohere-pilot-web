@@ -18,7 +18,7 @@ module Cases
         programs = @program_repo
           .find_all_by_partner(user_partner_id)
 
-        return Forms::Program.new(
+        return ProgramForm.new(
           self.class.map_pending,
           programs
         )
@@ -31,7 +31,7 @@ module Cases
         programs = @program_repo
           .find_all_available(case_rec.recipient_id)
 
-        return Forms::Program.new(
+        return ProgramForm.new(
           self.class.map_reference(case_rec),
           programs
         )
@@ -80,6 +80,7 @@ module Cases
       private def make_form(model, params)
         # extract action, if any
         action = Action.find { |a| params&.key?(a.key) }
+
         # extract attrs, if any
         attrs = params&.fetch(:case, {}) || {}
 
@@ -173,16 +174,7 @@ module Cases
         end
 
         # filter by role
-        q = case user_role
-        when Role::Source
-          q.for_source(user_partner_id)
-        when Role::Governor
-          q.for_governor(user_partner_id)
-        when Role::Enroller
-          q.for_enroller(user_partner_id)
-        else
-          q
-        end
+        q = q.for_role(user_role, user_partner_id)
 
         return q
       end
@@ -213,11 +205,13 @@ module Cases
           condition: Case::Condition.from_key(r.condition),
           program: Program::Repo.map_record(r.program),
           supplier_name: r.supplier&.name,
-          supplier_account: Case::Repo.map_supplier_account(r),
           enroller_name: r.enroller.name,
           recipient_id: r.recipient_id,
           profile: Recipient::Repo.map_profile(r.recipient),
           household: Recipient::Repo.map_household(r.recipient),
+          supplier_account: Case::Repo.map_supplier_account(r),
+          food: Case::Repo.map_food(r),
+          benefit: Case::Repo.map_benefit(r),
           assignments: r.assignments.map { |r| Case::Repo.map_assignment(r) },
           notes: r.notes.by_most_recent.map { |r| Case::Repo.map_note(r) },
           documents: r.documents&.map { |r| Case::Repo.map_document(r) },
@@ -231,11 +225,13 @@ module Cases
           condition: e.condition,
           program: e.program,
           supplier_name: e.supplier_account&.supplier_id&.then { |i| find_partner_name(i) },
-          supplier_account: e.supplier_account,
           enroller_name: find_partner_name(e.enroller_id),
           recipient_id: e.recipient.id.val,
           profile: e.recipient.profile,
           household: e.recipient.household,
+          supplier_account: e.supplier_account,
+          food: e.food,
+          benefit: e.benefit,
           assignments: e.assignments,
           notes: e.notes,
           documents: e.documents,

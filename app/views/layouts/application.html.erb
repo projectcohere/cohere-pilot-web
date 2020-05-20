@@ -12,18 +12,24 @@
   </head>
 
   <%= layout_tag do %>
-    <% if shows_navigation? %>
-      <%= render(partial: "layouts/navigation") %>
+    <% if signed_in? && !settings.working_hours? %>
+      <%= tag.div(t(".hours-banner"), class: "Layout-banner") %>
     <% end %>
 
-    <div class="Layout-content">
-      <%= yield %>
+    <div class="Layout-frame">
+      <% if shows_navigation? %>
+        <%= render(partial: "layouts/navigation") %>
+      <% end %>
+
+      <div class="Layout-content">
+        <%= yield %>
+      </div>
+
+      <%= content_for(:modals) %>
+
+      <% if flash.present? %>
+        <%= render(partial: "layouts/flash") %>
+      <% end %>
     </div>
-
-    <%= content_for(:modals) %>
-
-    <% if flash.present? %>
-      <%= render(partial: "layouts/flash") %>
-    <% end %>
   <%- end %>
 </html>

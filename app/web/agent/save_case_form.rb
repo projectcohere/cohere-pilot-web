@@ -18,9 +18,11 @@ module Agent
 
       # update the case
       @case.add_agent_data(
-        form.map_to_supplier_account,
         form.map_to_profile,
         form.map_to_household,
+        form.map_to_supplier_account,
+        form.map_to_food,
+        form.map_to_benefit,
       )
 
       @case.add_admin_data(
@@ -39,10 +41,17 @@ module Agent
         @case.submit_to_enroller
       when Cases::Action::Remove
         @case.remove
+      end
+
+      status = case form.action
       when Cases::Action::Approve
-        @case.complete(Case::Status::Approved)
+        Case::Status::Approved
       when Cases::Action::Deny
-        @case.complete(Case::Status::Denied)
+        Case::Status::Denied
+      end
+
+      if status != nil
+        @case.complete(status, form.map_to_benefit)
       end
 
       @case_repo.save_agent_data(@case)

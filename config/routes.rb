@@ -102,6 +102,8 @@ Rails.application.routes.draw do
     resources(:cases, id: /\d+/, only: %i[
       index
       show
+      edit
+      update
     ]) do
       get("/inbox",
         on: :collection,
@@ -118,12 +120,6 @@ Rails.application.routes.draw do
         as: :return,
       )
 
-      patch("/complete/:status",
-        action: :complete,
-        as: :complete,
-        constraints: { status: /approved|denied/ }
-      )
-
       # -- cases/assignments
       resources(:assignments, only: %i[
         create
@@ -134,6 +130,12 @@ Rails.application.routes.draw do
         create
       ])
     end
+
+    # -- reports --
+    resources(:reports, only: %i[
+      new
+      create
+    ])
 
     fallback(Role::Enroller, to: "/cases", constraints: c)
   end
@@ -207,6 +209,26 @@ Rails.application.routes.draw do
       post("/files",
         action: :files,
         constraints: merge(c, content_type("multipart/form-data")),
+      )
+    end
+
+    # -- reports --
+    resources(:reports, only: %i[
+      new
+      create
+    ])
+
+    # -- admin --
+    scope(path: "/admin", controller: :admin) do
+      get("/",
+        action: :show,
+        as: :admin,
+      )
+
+      patch("/hours/:status",
+        action: :hours,
+        constraints: { status: /on|off/ },
+        as: :admin_hours,
       )
     end
 

@@ -10,6 +10,10 @@ class Program
       option(:active_service)
     end
 
+    group(:food) do
+      option(:dietary_restrictions)
+    end
+
     group(:household) do
       option(:ownership)
       option(:proof_of_income_dhs)

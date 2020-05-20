@@ -1,3 +1,5 @@
+@import "./CaseForm";
+
 .CaseDetail {
   flex: 1;
   display: flex;
@@ -58,7 +60,6 @@
 
   &--edit &-content {
     @extend .Panel;
-    @extend .CaseForm;
   }
 
   &--view &-case {

@@ -1,6 +1,9 @@
 food_c:
   priority: 0
   name: "Food (CARES)"
+  requirements:
+    food:
+      - dietary_restrictions
 
 housing_c:
   name: "Housing (CARES)"

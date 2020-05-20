@@ -25,6 +25,7 @@ module Source
         household: form.map_to_household,
         enroller: @partner_repo.find_default_enroller,
         supplier_account: form.map_to_supplier_account,
+        food: form.map_to_food,
       )
 
       @case.assign_user(user)

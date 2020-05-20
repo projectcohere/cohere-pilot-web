@@ -1,0 +1,27 @@
+<main class="NewReport Page">
+  <header class="PageHeader">
+    <%= tag.h1(t(".title"), class: "PageHeader-title") %>
+  </header>
+
+  <article class="NewReport-content">
+    <%= tag.p(t(".prompt"), class: "NewReport-prompt") %>
+
+    <%= form_for(@form, html: { class: "NewReport-form PanelSection" }) do |f| %>
+      <%= f.field(:report, class: "NewReport-report Field--select") do %>
+        <%= f.select(:report, @form.report_options) %>
+      <%- end %>
+
+      <%= f.field(:start_date, class: "NewReport-startDate") do %>
+        <%= f.date_field(:start_date) %>
+      <%- end %>
+
+      <%= f.field(:end_date, class: "NewReport-endDate") do %>
+        <%= f.date_field(:end_date) %>
+      <%- end %>
+
+      <div class="NewReport-actions">
+        <%= f.submit(t(".action"), class: "Button Button--action", data: { disable_with: false }) %>
+      </div>
+    <%- end %>
+  </article>
+</main>

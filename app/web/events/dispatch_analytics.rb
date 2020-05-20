@@ -26,7 +26,7 @@ module Events
         event.case_id.val
       when Case::Events::DidSubmitToEnroller
         event.case_id.val
-      when Cases::Events::DidViewEnrollerCase
+      when Cases::Events::DidViewEnrollerForm
         event.case_id.val
       when Case::Events::DidReturnToAgent
         event.case_id.val

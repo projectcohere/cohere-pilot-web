@@ -45,7 +45,7 @@ module Cases
           dhs_number: h&.dhs_number,
           size: h&.size&.to_s,
           proof_of_income: h&.proof_of_income,
-          income: h&.income&.dollars&.to_s,
+          income: h&.income&.dollars,
           ownership: h&.ownership&.to_sym,
         })
       end

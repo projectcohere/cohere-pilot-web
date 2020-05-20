@@ -26,7 +26,7 @@ module Cases
         assign_defaults!(attrs, {
           supplier_id: a&.supplier_id,
           account_number: a&.number,
-          arrears: a&.arrears&.dollars&.to_s,
+          arrears: a&.arrears&.dollars,
           active_service: a&.active_service?,
         })
       end

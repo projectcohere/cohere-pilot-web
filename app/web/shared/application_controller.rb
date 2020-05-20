@@ -1,7 +1,8 @@
 class ApplicationController < ActionController::Base
-  # -- modules --
+  # -- includes --
   include Clearance::Controller
   include Authentication
+  include Policy::Context::Shared
 
   # -- config --
   default_form_builder(ApplicationFormBuilder)
@@ -11,7 +12,7 @@ class ApplicationController < ActionController::Base
   after_action(:dispatch_events)
 
   # -- helpers --
-  helper_method(:user_role)
+  helper_method(:settings)
   helper_method(:shows_navigation?)
 
   # -- config --
@@ -35,6 +36,11 @@ class ApplicationController < ActionController::Base
 
   protected def dispatch_events
     Events::DispatchAll.()
+  end
+
+  # -- settings --
+  protected def settings
+    return Settings.get
   end
 
   # -- Clearance::Authentication --

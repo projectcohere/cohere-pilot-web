@@ -46,9 +46,11 @@ class Program
     end
 
     def self.map_requirements(group, rs)
-      return rs.map do |r|
+      requirements = rs.map do |r|
         Requirement.from_key(r, group: group)
       end
+
+      return requirements.compact
     end
   end
 end

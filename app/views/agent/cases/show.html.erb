@@ -1,10 +1,7 @@
 <main class="ShowCase Page">
   <header class="PageHeader">
     <%= back_link_tag %>
-
-    <h1 class="PageHeader-title">
-      <%= t(".title", name: @case.recipient_name) %>
-    </h1>
+    <%= tag.h1(t(".title", name: @case.recipient_name), class: "PageHeader-title") %>
   </header>
 
   <div class="CaseDetail CaseDetail--view">
@@ -33,11 +30,15 @@
       <div class="CaseDetail-content">
         <%= filter_panel_tag(:application, visible: true) do %>
           <%- locals = { view: @case } %>
+
           <%= render(partial: "cases/detail/details", locals: locals) %>
           <%= render(partial: "cases/detail/contact", locals: locals) %>
+          <%= render(partial: "cases/detail/benefit", locals: locals) %>
 
           <% if permit?(:view_supplier_account) %>
             <%= render(partial: "cases/detail/supplier_account", locals: locals) %>
+          <% elsif permit?(:view_food) %>
+            <%= render(partial: "cases/detail/food", object: @case, as: :kase) %>
           <% end %>
 
           <%= render(partial: "cases/detail/household", locals: locals) %>

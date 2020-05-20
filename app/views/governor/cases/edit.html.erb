@@ -18,7 +18,7 @@
         <p><%= @case.id_text %></p>
       </div>
 
-      <%= form_for(@form, url: @case.update_path, html: { class: "CaseDetail-content" }) do |f| %>
+      <%= form_for(@form, url: @case.update_path, html: { class: "CaseDetail-content CaseForm" }) do |f| %>
         <% form_locals = { f: f, form: @form, view: @case, policy: policy } %>
 
         <%= filter_panel_tag(:application, visible: true) do %>

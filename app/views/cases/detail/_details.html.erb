@@ -1,11 +1,11 @@
 <%= section_tag(t(".title"), class: "ShowCase-details") do %>
   <div class="Panel-row">
-    <%= field_tag(t(".program"), class: "ShowCase-program") do %>
+    <%= field_tag(:program, class: "ShowCase-program") do %>
       <%= view.program_name %>
     <%- end %>
 
     <% if permit?(:view_details_enroller) %>
-      <%= field_tag(t(".enroller"), class: "ShowCase-enroller") do %>
+      <%= field_tag(:enroller, class: "ShowCase-enroller") do %>
         <%= view.enroller_name %>
       <%- end %>
     <% end %>
