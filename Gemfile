@@ -30,16 +30,19 @@ group :development do
 end
 
 group :development, :test do
+  gem "awesome_print", "~> 1.8"
   gem "dotenv-rails", "~> 2.7"
   gem "faker", "~> 2.6"
   gem "pry-rails", "~> 0.3.9"
   gem "pry-byebug", "~> 3.8"
   gem "pry-rescue", "~> 1.5"
-  gem "awesome_print", "~> 1.8"
 end
 
 group :test do
+  gem "capybara", "~> 3.32"
+  gem "hexapdf", "~> 0.10.0"
+  gem "selenium", "~> 0.2.11"
+  gem "selenium-webdriver", "~> 3.142"
   gem "vcr", "~> 5.0"
   gem "webmock", "~> 3.7"
-  gem "hexapdf", "~> 0.10.0"
 end

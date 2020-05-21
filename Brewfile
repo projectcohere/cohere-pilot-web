@@ -12,3 +12,6 @@ cask "wkhtmltopdf"
 
 # pdf previewer; required by ActiveStorage to generate PDF previews
 brew "poppler"
+
+# selenium chromedriver; required for headless system tests
+cask "chromedriver"

@@ -147,6 +147,16 @@ t/a/rescue:
 	PRY_RESCUE=1 $(call run-tests,$(tests-path-all))
 .PHONY: t/a/rescue
 
+## runs system tests, which are excluded from "all"
+t/system:
+	$(call run-tests,$(tests-path-sys))
+.PHONY: t/system
+
+## runs system tests and stops on exceptions
+t/s/rescue:
+	PRY_RESCUE=1 $(call run-tests,$(tests-path-sys))
+.PHONY: t/s/rescue
+
 ## runs failed tests
 t/fail:
 	$(tools-rails) test $(tests-path-fail)
@@ -162,9 +172,10 @@ define run-tests
 	$(tools-rails) test $$(find $(1) -name "*_tests.rb")
 endef
 
-tests-path      = test/domain test/web
+tests-path      = test/infra test/domain test/web
 tests-path-int  = $(tests-path) test/integration
-tests-path-all  = test
+tests-path-all  = $(tests-path-int) test/functional
+tests-path-sys  = test/system
 tests-path-fail = $$(cat tmp/failures.log | paste -sd " " -)
 
 # -- utilties --
