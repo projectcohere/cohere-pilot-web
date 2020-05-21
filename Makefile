@@ -122,50 +122,30 @@ t/unit:
 	$(call run-tests,$(tests-path))
 .PHONY: t/unit
 
-## runs unit tests and stops on exceptions
-t/u/rescue:
-	PRY_RESCUE=1 $(call run-tests,$(tests-path))
-.PHONY: t/u/rescue
-
 ## runs unit/integration tests
 t/int:
 	$(call run-tests,$(tests-path-int))
-.PHONY: t/all
+.PHONY: t/int
 
-## runs unit/integration tests and stops on exceptions
-t/i/rescue:
-	PRY_RESCUE=1 $(call run-tests,$(tests-path-int))
-.PHONY: t/all
+## runs unit/integration/functional tests
+t/fun:
+	$(call run-tests,$(tests-path-fun))
+.PHONY: t/fun
+
+## runs system tests
+t/system:
+	$(call run-tests,$(tests-path-sys))
+.PHONY: t/system
 
 ## runs all tests
 t/all:
 	$(call run-tests,$(tests-path-all))
 .PHONY: t/all
 
-## runs all tests and stops on exceptions
-t/a/rescue:
-	PRY_RESCUE=1 $(call run-tests,$(tests-path-all))
-.PHONY: t/a/rescue
-
-## runs system tests, which are excluded from "all"
-t/system:
-	$(call run-tests,$(tests-path-sys))
-.PHONY: t/system
-
-## runs system tests and stops on exceptions
-t/s/rescue:
-	PRY_RESCUE=1 $(call run-tests,$(tests-path-sys))
-.PHONY: t/s/rescue
-
 ## runs failed tests
 t/fail:
 	$(tools-rails) test $(tests-path-fail)
 .PHONY: t/fail
-
-## runs failed tests and stops on exceptions
-t/f/rescue:
-	PRY_RESCUE=1 $(tools-rails) test $(tests-path-fail)
-.PHONY: t/f/rescue
 
 # -- test/helpers
 define run-tests
@@ -174,8 +154,9 @@ endef
 
 tests-path      = test/infra test/domain test/web
 tests-path-int  = $(tests-path) test/integration
-tests-path-all  = $(tests-path-int) test/functional
+tests-path-fun  = $(tests-path-int) test/functional
 tests-path-sys  = test/system
+tests-path-all  = test
 tests-path-fail = $$(cat tmp/failures.log | paste -sd " " -)
 
 # -- utilties --

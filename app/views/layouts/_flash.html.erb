@@ -1,4 +1,3 @@
-<%- alert_class = flash[:alert].present? ? "is-alert" : "" %>
-<p class="Flash <%= alert_class %>" id="flash">
+<%= tag.p(id: "flash", class: cx("Flash", "is-alert" => flash[:alert].present?)) do %>
   <%= flash[:notice] || flash[:alert] %>
-</p>
+<%- end %>

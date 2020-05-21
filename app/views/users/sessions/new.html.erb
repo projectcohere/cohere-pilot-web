@@ -6,12 +6,27 @@
       <%= form_for(:session, url: sessions_path, html: { class: "SignIn-form Panel" }) do |f| %>
         <%= section_tag(class: "SignIn-credentials") do %>
           <%= f.field(:email, t("users.email.label"), class: "SignIn-email") do %>
-            <% f.text_field(:email, type: "email", placeholder: t("users.email.placeholder")) %>
+            <%=
+              f.text_field(:email,
+                type: "email",
+                placeholder: t("users.email.placeholder"),
+                tid: "E-mail Field",
+              )
+            %>
           <% end %>
 
           <%= f.field(:password, t("users.password.label"), class: "SignIn-password") do %>
-            <%= f.password_field(:password) %>
-            <%= check_box_tag(:show_password, 1, false, class: "SignIn-showPassword Icon Icon--eye") %>
+            <%=
+              f.password_field(:password,
+                tid: "Password Field",
+              )
+            %>
+
+            <%=
+              check_box_tag(:show_password, 1, false,
+                class: "SignIn-showPassword Icon Icon--eye"
+              )
+            %>
           <% end %>
 
           <div class="SignIn-helpers">
@@ -20,15 +35,20 @@
         <% end %>
 
         <%= section_tag(class: "SignIn-actions") do %>
-          <%= f.submit(class: "SignIn-submit Form-submit Button Button--action") %>
+          <%=
+            f.submit(
+              class: "SignIn-submit Form-submit Button Button--action",
+              tid: "Sign In Button"
+            )
+          %>
         <% end %>
       <% end %>
     </div>
 
     <div class="SignIn-right">
       <div class="SignIn-title">
-        <h1><%= t(".title") %></h1>
-        <h2><%= t(".prompt") %></h2>
+        <%= tag.h1(t(".title")) %>
+        <%= tag.h2(t(".prompt")) %>
       </div>
     </div>
   </div>

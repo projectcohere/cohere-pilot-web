@@ -2,21 +2,21 @@
 <%= f.fields_for(:address, form) do |f| %>
   <%= section_tag("Primary Residential Address", class: "CaseForm-address") do %>
     <%= f.field(:street, class: "CaseForm-street") do %>
-      <%= f.text_field(:street) %>
+      <%= f.text_field(:street, tid: "Street Field") %>
     <%- end %>
 
     <%= f.field(:street2, "", class: "CaseForm-street2") do %>
-      <%= f.text_field(:street2) %>
+      <%= f.text_field(:street2, tid: "Street Two Field") %>
     <%- end %>
 
     <% if permit?(:edit_address_geography) %>
       <%= f.field(:geography, "Wayne County?", class: "CaseForm-geography Field--checkbox") do %>
-        <%= f.check_box(:geography) %>
+        <%= f.check_box(:geography, tid: "Geography Field") %>
       <%- end %>
     <% end %>
 
     <%= f.field(:city, class: "CaseForm-city") do %>
-      <%= f.text_field(:city) %>
+      <%= f.text_field(:city, tid: "City Field") %>
     <%- end %>
 
     <%= field_tag(:state, class: "CaseForm-state Field--fixed") do %>
@@ -24,7 +24,7 @@
     <%- end %>
 
     <%= f.field(:zip, class: "CaseForm-zip") do %>
-      <%= f.text_field(:zip) %>
+      <%= f.text_field(:zip, tid: "Zip Field") %>
     <%- end %>
   <% end %>
 <% end %>

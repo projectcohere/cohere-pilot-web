@@ -86,7 +86,7 @@ module Helpers
       # render section tag
       section_class = cx(a_class, "Panel-section PanelSection")
 
-      tag.div(*args, class: section_class, **kwargs) do
+      tag.section(*args, class: section_class, **kwargs) do
         section_header = "".html_safe
 
         if title.present?

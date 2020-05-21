@@ -79,14 +79,14 @@ class ChatTests < ActiveSupport::TestCase
       body: "This is a test.",
       files: [Sms::Media.stub(url: :test_url)],
       status: Chat::Message::Status::Received,
-      remote_id: :test_id
+      remote_id: :tid
     )
 
     message = chat.new_message
     assert_not_nil(message)
     assert_not(message.prepared?)
     assert(message.status.received?)
-    assert_equal(message.remote_id, :test_id)
+    assert_equal(message.remote_id, :tid)
 
     attachments = message.attachments
     assert_length(attachments, 1)

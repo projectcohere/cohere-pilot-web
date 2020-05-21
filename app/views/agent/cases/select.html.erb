@@ -14,15 +14,20 @@
       <%= form_for(@form, url: @case.convert_path, html: { class: "SelectProgram-field BigField" }) do |f| %>
         <div class="BigField-input Select">
           <%=
-            f.select(
-              :program_id,
+            f.select(:program_id,
               @form.program_options,
-              include_blank: t(".placeholder")
+              include_blank: t(".placeholder"),
+              tid: "Program Select",
             )
           %>
         </div>
 
-        <%= f.submit(t(".action"), class: "BigField-action") %>
+        <%=
+          f.submit(t(".action"),
+            class: "BigField-action",
+            tid: "Select Program Button"
+          )
+        %>
       <%- end %>
     </div>
 

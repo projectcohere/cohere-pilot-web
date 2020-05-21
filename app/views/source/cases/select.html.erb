@@ -16,15 +16,20 @@
 
         <div class="BigField-input Select">
           <%=
-            f.select(
-              :program_id,
+            f.select(:program_id,
               @form.program_options,
-              include_blank: t(".placeholder")
+              include_blank: t(".placeholder"),
+              tid: "Program Select"
             )
           %>
         </div>
 
-        <%= f.submit(t(".action"), name: "", class: "BigField-action") %>
+        <%=
+          f.submit(t(".action"),
+            class: "BigField-action",
+            tid: "Select Program Button"
+          )
+        %>
       <%- end %>
     </div>
   </div>

@@ -3,31 +3,42 @@
   <%= section_tag(t(".title"), class: "CaseForm-household") do %>
     <% if permit?(:edit_household_size) %>
       <%= f.field(:size, t(".size"), class: "CaseForm-size") do %>
-        <%= f.text_field(:size) %>
+        <%= f.text_field(:size, tid: "Household Size Field") %>
       <% end %>
     <% end %>
 
     <% if permit?(:edit_household_ownership) %>
       <%= f.field(:ownership, t(".ownership"), class: "CaseForm-ownership Field--select") do %>
-        <%= f.select(:ownership, form.ownership_options) %>
+        <%=
+          f.select(:ownership,
+            form.ownership_options,
+            tid: "Household Ownership Field",
+          )
+        %>
       <%- end %>
     <% end %>
 
     <% if permit?(:edit_household_proof_of_income) %>
       <%= f.field(:proof_of_income, t(".proof-of-income"), class: "CaseForm-proofOfIncome Field--select") do %>
-        <%= f.select(:proof_of_income, form.proof_of_income_options, include_blank: true) %>
+        <%=
+          f.select(:proof_of_income,
+            form.proof_of_income_options,
+            include_blank: true,
+            tid: "Proof Of Income Field"
+          )
+        %>
       <%- end %>
     <% end %>
 
     <% if permit?(:edit_household_dhs_number) %>
       <%= f.field(:dhs_number, t(".dhs-number"), class: "CaseForm-dhsNumber") do %>
-        <%= f.text_field(:dhs_number) %>
+        <%= f.text_field(:dhs_number, tid: "Dhs Number Field") %>
       <% end %>
     <% end %>
 
     <% if permit?(:edit_household_income) %>
       <%= f.field(:income, t(".income"), prefix: "$", class: "CaseForm-monthlyIncome") do %>
-        <%= f.text_field(:income) %>
+        <%= f.text_field(:income, tid: "Household Income Field") %>
       <% end %>
     <% end %>
 

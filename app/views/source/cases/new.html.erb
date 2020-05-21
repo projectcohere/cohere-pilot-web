@@ -25,7 +25,12 @@
         <% end %>
 
         <div class="Panel-actions">
-          <%= f.submit(t(".action"), class: "Button Button--action") %>
+          <%=
+            f.submit(t(".action"),
+              class: "Button Button--action",
+              tid: "Save Button"
+            )
+          %>
         </div>
       <%- end %>
     </article>

@@ -3,22 +3,27 @@
   <%= section_tag("Utility Account", class: "CaseForm-utilityAccount") do %>
     <% if permit?(:edit_supplier) %>
       <%= f.field(:supplier, class: "CaseForm-supplier Field--select") do %>
-        <%= f.select(:supplier_id, form.supplier_options) %>
+        <%=
+          f.select(:supplier_id,
+            form.supplier_options,
+            tid: "Supplier Field",
+          )
+        %>
       <% end %>
     <% end %>
 
     <% if permit?(:edit_supplier_account_active_service) %>
       <%= f.field(:active_service, "Active?", class: "CaseForm-hasActiveService Field--checkbox") do %>
-        <%= f.check_box(:active_service) %>
+        <%= f.check_box(:active_service, tid: "Supplier Active Field") %>
       <% end %>
     <% end %>
 
     <%= f.field(:account_number, "Account #", class: "CaseForm-accountNumber") do %>
-      <%= f.text_field(:account_number) %>
+      <%= f.text_field(:account_number, tid: "Supplier Account Number Field") %>
     <% end %>
 
     <%= f.field(:arrears, prefix: "$", class: "CaseForm-arrears") do %>
-      <%= f.text_field(:arrears) %>
+      <%= f.text_field(:arrears, tid: "Supplier Arrears Field") %>
     <% end %>
   <% end %>
 <% end %>
