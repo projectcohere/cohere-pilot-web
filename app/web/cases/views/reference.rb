@@ -1,7 +1,7 @@
 module Cases
   module Views
     # A Case read model for rendering barebones case detail.
-    class Reference < ::Value
+    class Reference < Read
       include Routing
 
       # -- props --

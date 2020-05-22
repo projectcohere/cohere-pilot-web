@@ -16,7 +16,15 @@
 
     <div class="Chat-controls">
       <div class="Chat-field TextArea">
-        <span id="chat-input" class="Chat-input TextArea-input" contenteditable="true"></span>
+        <%=
+          tag.span(
+            id: "chat-input",
+            class: "Chat-input TextArea-input",
+            contenteditable: true,
+            tid: "Chat Message Field",
+          )
+        %>
+
         <span class="TextArea-placeholder">Enter your message...</span>
 
         <label class="Chat-addFile">
@@ -24,7 +32,15 @@
         </label>
       </div>
 
-      <button class="Chat-send" alt="Send Message"></button>
+      <%=
+        button_tag("",
+          name: nil,
+          type: nil,
+          class: "Chat-send",
+          alt: "Send Message",
+          tid: "Chat Send Message Button",
+        )
+      %>
     </div>
   <% end %>
 

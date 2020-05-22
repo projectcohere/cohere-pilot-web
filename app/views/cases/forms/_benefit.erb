@@ -3,7 +3,7 @@
   <%= section_tag(t(".title"), class: "CaseForm-program") do %>
     <% if permit?(:edit_benefit_amount) %>
       <%= f.field(:amount, prefix: "$", class: "CaseForm-benefitAmount") do %>
-        <%= f.text_field(:amount) %>
+        <%= f.text_field(:amount, tid: "Benefit Amount Field") %>
       <% end %>
     <% end %>
 

@@ -39,10 +39,27 @@ module Chats
           Attachment.new(
             f.filename,
             f.service_url,
-            f.representable? ? f.representation(resize: "400x400>").processed.service_url : nil
+            transform_preview_url(f),
           )
         }
       )
+    end
+
+    private def transform_preview_url(f)
+      if not f.representable?
+        return nil
+      end
+
+      return f.representation(resize: "400x400>").processed.service_url
+    rescue ActiveStorage::FileNotFoundError => e
+      # TODO: we should not be catching (or even encountering) this error?, but not sure
+      # how to make sure ActiveStorage::Blob fixtures to exist in dev (copying the files
+      # into ./tmp/storage does not seem to cut it?)
+      if not Rails.env.development?
+        raise e
+      end
+
+      return f.service_url
     end
   end
 end

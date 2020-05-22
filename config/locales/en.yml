@@ -1,18 +1,21 @@
 en:
   flashes:
-    failure_after_create: Your e-mail and password did not match.
-    failure_after_update: Password did not meet requirements.
+    failure_after_create: "Your e-mail and password did not match."
+    failure_after_update: "Password did not meet requirements."
 
   pages: &pages
-    cases: Cases
-    queue: Inbox
-    search: Search
+    cases: "Cases"
+    queue: "Inbox"
+    search: "Search"
+    admin: "Admin"
 
   layouts:
+    application:
+      hours-banner: "Working hours are not currently active."
     navigation:
       <<: *pages
-      logo: Cohere
-      sign-out: Sign Out
+      logo: "Cohere"
+      sign-out: "Sign Out"
 
   # -- domain --
   case:
@@ -57,22 +60,22 @@ en:
   users:
     # -- fields
     email:
-      label: E-mail
+      label: "E-mail"
       placeholder: "you@work.com"
     password:
-      label: Password
+      label: "Password"
     password-confirmation:
-      label: Confirm Password
+      label: "Confirm Password"
 
     # -- controllers
     passwords:
       forgot:
-        title: Forgot Your Password?
-        prompt: Please enter your e-mail and we'll send you instructions to reset your password.
-        remember-password: Just remembered? Sign in
+        title: "Forgot Your Password?"
+        prompt: "Please enter your e-mail and we'll send you instructions to reset your password."
+        remember-password: "Just remembered? Sign in"
       rules:
-        - at least 12 characters
-        - at least one letter, number, and symbol
+        - "at least 12 characters"
+        - "at least one letter, number, and symbol"
 
   cases:
     # -- lists
@@ -114,19 +117,6 @@ en:
         phone-number: "Phone #"
         address: "Primary Residential Address"
 
-      contract:
-        title: "Contract"
-        variant:
-          label: "Signed Contract?"
-          fallback: "None"
-
-      supplier_account:
-        title: "Utility Account"
-        supplier: "Supplier"
-        number: "Account #"
-        arrears: "Arrears"
-        active-service: "Active?"
-
       household:
         title: "Household"
         size: "Size"
@@ -139,9 +129,23 @@ en:
           label: "FPL"
           fallback: "Unknown"
 
+      supplier_account:
+        title: "Utility Account"
+        supplier: "Supplier"
+        number: "Account #"
+        arrears: "Arrears"
+        active-service: "Active?"
+
       food:
         title: "Food"
         dietary_restrictions: "Dietary Restrictions?"
+
+      benefit:
+        title: "Benefit"
+        amount: "Amount"
+        contract:
+          label: "Signed Contract?"
+          fallback: "None"
 
       note:
         title: "Add a Case Note"
@@ -149,6 +153,24 @@ en:
         actions:
           save: "Save Note"
           cancel: "Cancel"
+
+    # -- actions
+    actions:
+      common: &case-actions
+        save: "Save Case"
+      complete: &case-actions-complete
+        <<: *case-actions
+        approve:
+          name: "Save & Approve"
+          confirm: "Are you sure you want to approve this case?"
+        deny:
+          name: "Save & Deny"
+          confirm: "Are you sure you want to deny this case?"
+
+    flashes: &case-flashes
+      success: "Updated %{name}'s case."
+      failure: "Please check %{name}'s case for errors."
+      action: "%{action} %{name}'s case."
 
     # -- partials
     forms:
@@ -172,6 +194,26 @@ en:
     search:
       prompt: "Enter an applicant's name or phone number to find their cases."
       action: "Find Cases"
+
+  reports:
+    # -- data --
+    internal:
+      title: "Internal"
+      accounting: "Accounting"
+
+    programs:
+      title: "Programs"
+
+    # -- templates --
+    base:
+      new:
+        title: "New Report"
+        prompt: "Create a report. Please be patient, it may take a moment to generate the report."
+        action: "Create Report"
+        accounting: "Accounting"
+        report: "Report Type"
+        start_date: "Start Date"
+        end_date: "End Date"
 
   source:
     cases:
@@ -208,9 +250,23 @@ en:
       edit:
         <<: *case-detail
         actions:
-          save: "Save Case"
+          <<: *case-actions
 
   agent:
+    admin:
+      show:
+        title: "Admin Settings"
+        hours:
+          title: "Working Hours"
+          :on:
+            prompt: "Working hours are currently active."
+            action: "End Working Hours"
+            confirm: "Are you sure you want to end working hours?"
+          :off:
+            prompt: "Working hours are not currently active."
+            action: "Start Working Hours"
+            confirm: "Are you sure you want to start working hours?"
+
     cases:
       index:
         <<: *case-index
@@ -222,16 +278,10 @@ en:
       edit:
         <<: *case-detail
         actions:
-          save: "Save Case"
+          <<: *case-actions-complete
           submit:
             name: "Save & Submit to Enroller"
             confirm: "Are you sure you want to submit this case?"
-          approve:
-            name: "Save & Approve"
-            confirm: "Are you sure you want to approve this case?"
-          deny:
-            name: "Save & Deny"
-            confirm: "Are you sure you want to deny this case?"
           remove:
             name: "Remove Case"
             confirm: "Are you sure you want to remove this case?"
@@ -243,9 +293,7 @@ en:
 
       update:
         flashes:
-          success: "Updated %{name}'s case."
-          failure: "Please check %{name}'s case for errors."
-          action: "%{action} %{name}'s case."
+          <<: *case-flashes
 
       select:
         <<: *case-detail
@@ -297,41 +345,40 @@ en:
 
       show:
         <<: *case-detail
+
+      edit:
+        <<: *case-detail
         actions:
-          approve:
-            name: "Approve Case"
-            confirm: "Are you sure you want to approve this case?"
-          deny:
-            name: "Deny Case"
-            confirm: "Are you sure you want to deny this case?"
+          <<: *case-actions-complete
           return:
             name: "Return to Agent"
             confirm: "Are you sure you want to return this case to the agent?"
 
+      update:
+        flashes:
+          <<: *case-flashes
+
       return:
         flash: "Returned %{name}'s case."
-
-      complete:
-        flash: "%{action} %{name}'s case."
 
   # imagine this nested in users. clearance actions & root templates don't
   # respect standard pathing:
   # https://github.com/thoughtbot/clearance/pull/743
   sessions:
     new:
-      title: Welcome to Cohere!
-      prompt: Thank you for participating, please sign in.
-      forgot-password: Forgot your password?
+      title: "Welcome to Cohere!"
+      prompt: "Thank you for participating, please sign in."
+      forgot-password: "Forgot your password?"
 
   # see `sessions:` above
   passwords:
     create:
-      message: Thank you! If we find your account, you'll receive an e-mail in the next few minutes with further instructions.
+      message: "Thank you! If we find your account, you'll receive an e-mail in the next few minutes with further instructions."
 
     edit:
       invite:
-        title: Create Your Password
+        title: "Create Your Password"
         prompt: "Please enter a password<br>that has:"
       reset:
-        title: Reset Your Password
+        title: "Reset Your Password"
         prompt: "Please enter a new password<br>that has:"

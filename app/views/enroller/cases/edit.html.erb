@@ -21,6 +21,7 @@
             method: :patch,
             class: "CaseDetail-button ButtonSm Button--secondary",
             data: { confirm: t(".actions.return.confirm") },
+            tid: "Return Case Button",
           )
         %>
       <% end %>
@@ -61,7 +62,8 @@
         <div class="Panel-actions">
           <%=
             f.submit(t(".actions.save"),
-              class: "Button Button--action"
+              class: "Button Button--action",
+              tid: "Save Button",
             )
           %>
 
@@ -71,6 +73,7 @@
                 name: :approve,
                 class: "Button Button--secondary",
                 data: { confirm: t(".actions.approve.confirm") },
+                tid: "Save & Approve Button",
               )
             %>
 
@@ -79,6 +82,7 @@
                 name: :deny,
                 class: "Button Button--destructive",
                 data: { confirm: t(".actions.deny.confirm") },
+                tid: "Save & Deny Button",
               )
             %>
           <% end %>

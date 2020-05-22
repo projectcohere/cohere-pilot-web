@@ -4,7 +4,8 @@
       link_to(
         cell.recipient_name,
         cell.detail_path,
-        class: "CaseCell-name"
+        class: "CaseCell-name",
+        tid: "Case Cell Link",
       )
     %>
 
@@ -13,7 +14,8 @@
         button_to(
           cell.assign_label,
           cell.assign_path,
-          class: "CaseCell-assign ButtonSm Button--secondary"
+          class: "CaseCell-assign ButtonSm Button--secondary",
+          tid: "Case Cell Assign Button"
         )
       %>
     <% else %>

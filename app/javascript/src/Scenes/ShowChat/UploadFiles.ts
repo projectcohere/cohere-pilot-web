@@ -2,7 +2,7 @@ import { IFile, IUpload } from "./Files"
 
 // -- types --
 interface UploadFilesRequest {
-  authenticityToken: string
+  token: string
   chatId: string | null
   files: IFile[]
 }
@@ -30,7 +30,7 @@ export async function UploadFiles(req: UploadFilesRequest): Promise<number[]> {
 
   // otherwise, construct form body from uploads
   const body = new FormData()
-  body.set("authenticity_token", req.authenticityToken)
+  body.set("authenticity_token", req.token)
 
   let index = 0
   for (const upload of uploads) {

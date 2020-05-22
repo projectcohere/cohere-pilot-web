@@ -1,7 +1,7 @@
 module Cases
   module Views
     # A Case read model for rendering a cell in a list of cases.
-    class Cell < ::Value
+    class Cell < Read
       include Case::Policy::Context::Shared
       include Routing
       include ActionView::Helpers::DateHelper

@@ -1,7 +1,7 @@
 module Cases
   module Views
     # A Case read model for rendering an unsaved, new case
-    class Pending < ::Value
+    class Pending < Read
       include Routing
 
       # -- props --

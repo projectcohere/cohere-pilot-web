@@ -17,15 +17,18 @@ module Helpers
 
     # -- filters --
     def filter_for(id, selected: false, active: false)
+      name = id.to_s.titlecase
+
       return link_to("##{id}",
         class: cx(
           "Filters-option",
           "is-selected" => selected,
           "is-active" => active,
         ),
-        data: { turbolinks: false }
+        data: { turbolinks: false },
+        tid: "#{name} Filter"
       ) do
-        tag.span(id.to_s.titlecase, class: "Filters-text")
+        tag.span(name, class: "Filters-text")
       end
     end
 

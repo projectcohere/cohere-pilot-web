@@ -26,7 +26,7 @@ class Money
   end
 
   def self.dollars(dollars)
-    if dollars == nil
+    if dollars.blank?
       return nil
     end
 

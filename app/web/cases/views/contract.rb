@@ -1,7 +1,7 @@
 module Cases
   module Views
     # A Case read model for rendering a contract.
-    class Contract < ::Value
+    class Contract < Read
       include ActionView::Helpers::NumberHelper
 
       # -- props --

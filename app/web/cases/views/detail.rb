@@ -1,7 +1,7 @@
 module Cases
   module Views
     # A Case read model for rendering a detail view.
-    class Detail < ::Value
+    class Detail < Read
       include Routing
       include ActionView::Helpers::DateHelper
       include ActionView::Helpers::NumberHelper
@@ -147,6 +147,11 @@ module Cases
       # -- queries/helpers
       private def format_money(money)
         return money != nil ? "$#{money.dollars}" : "Unknown"
+      end
+
+      # -- debugging --
+      def inspect
+        "<#{self.class.name}:#{object_id} id=#{@id}>"
       end
     end
   end

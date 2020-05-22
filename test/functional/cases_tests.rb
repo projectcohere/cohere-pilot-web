@@ -704,7 +704,7 @@ class CasesTests < ActionDispatch::IntegrationTest
     case_rec = cases(:submitted_1)
 
     patch(auth("/cases/#{case_rec.id}", as: user_rec), params: {
-      deny: :ignored,
+      approve: :ignored,
       case: {
         benefit: {
           amount: "100.33",

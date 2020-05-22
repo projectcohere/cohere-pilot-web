@@ -35,13 +35,15 @@ module Helpers
     end
 
     def navigation_link_tag(link)
+      name = t(".#{link.key}")
+
       return link_to(link.path,
         class: cx(
           "Navigation-link",
           "is-active": link.active?,
         ),
+        tid: "#{name} Page Link",
       ) do
-        name = t(".#{link.key}")
         next (
           navigation_icon_tag(link.key, name) +
           tag.span(name, class: "Navigation-linkName")

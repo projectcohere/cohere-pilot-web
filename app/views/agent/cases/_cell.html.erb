@@ -1,6 +1,11 @@
 <%= tag.li(case_cell_options(cell, shows_activity: true)) do %>
   <div class="CaseCell-title">
-    <%= link_to(cell.detail_path, class: "CaseCell-name") do %>
+    <%=
+      link_to(cell.detail_path,
+        class: "CaseCell-name",
+        tid: "Case Cell Link"
+      ) do
+    %>
       <%= cell.recipient_name %>
       <span class="CaseCell-activity"></span>
     <%- end %>
@@ -10,7 +15,8 @@
         button_to(
           cell.assign_label,
           cell.assign_path,
-          class: "CaseCell-assign ButtonSm Button--secondary"
+          class: "CaseCell-assign ButtonSm Button--secondary",
+          tid: "Case Cell Assign Button",
         )
       %>
     <% else %>

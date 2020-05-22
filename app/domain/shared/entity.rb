@@ -24,6 +24,6 @@ class Entity
 
   # -- debugging --
   def inspect
-    "<#{self.class.name}:#{object_id} id=#{@id}>"
+    return "<#{self.class.name}:#{object_id} id=#{@id}>"
   end
 end

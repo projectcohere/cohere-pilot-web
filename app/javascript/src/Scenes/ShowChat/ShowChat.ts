@@ -94,7 +94,7 @@ export class ShowChat implements IComponent {
   private id: string | null = null
   private sender: Sender = null!
   private receiver: string = null!
-  private authenticityToken: string = null!
+  private token: string = null!
 
   // -- props/el
   private $chat: HTMLElement | null = null
@@ -115,7 +115,12 @@ export class ShowChat implements IComponent {
     this.id = $chat.dataset.id || null
     this.sender = $chat.dataset.sender as Sender
     this.receiver = $chat.dataset.receiver!
-    this.authenticityToken = $chatForm.querySelector(kQueryAuthenticityToken)!.getAttribute("value")!
+
+    const token = $chatForm.querySelector(kQueryAuthenticityToken)
+    this.token = token != null ? token.getAttribute("value")! : ""
+    if (token == null) {
+      console.debug("chat: missing authenticity token")
+    }
 
     // capture elements
     this.$chat = $chat
@@ -222,7 +227,7 @@ export class ShowChat implements IComponent {
 
     // send attachments
     const fileIds = await UploadFiles({
-      authenticityToken: this.authenticityToken,
+      token: this.token,
       chatId: this.id,
       files: files
     })
@@ -458,7 +463,12 @@ export class ShowChat implements IComponent {
 
     // fire the callback when all images are loaded
     let loaded = 0
-    function didLoadImage() {
+    function didLoadImage(event: Event | null) {
+      if (event != null && event.target != null) {
+        event.target.removeEventListener("load", didLoadImage)
+        event.target.removeEventListener("error", didLoadImage)
+      }
+
       if (++loaded === length) {
         callback()
       }
@@ -468,9 +478,10 @@ export class ShowChat implements IComponent {
     for (let i = 0; i < length; i++) {
       const image = query[i]
       if (image.complete) {
-        didLoadImage()
+        didLoadImage(null)
       } else {
         image.addEventListener("load", didLoadImage, { once: true })
+        image.addEventListener("error", didLoadImage, { once: true })
       }
     }
   }
