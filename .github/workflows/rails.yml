@@ -93,4 +93,4 @@ jobs:
         PGPORT: ${{ job.services.postgres.ports[5432] }} # get the randomly-assigned port
         RAILS_ENV: test
       run: |
-        make t/all
+        make t/fun
