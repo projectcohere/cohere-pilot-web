@@ -10,6 +10,7 @@ tools-spring      = $(tools-rb)/spring
 tools-sidekiq     = $(tools-rb)/sidekiq
 tools-wds         = $(tools-rb)/webpack-dev-server
 tools-bundle      = $(tools-rb)/bundle
+tools-bundle-ver  = $$(cat Gemfile.lock | tail -n 1 | tr -d ' \t')
 tools-yarn        = yarn
 tools-pg-up       = $(shell pg_isready 1>/dev/null 2>&1; echo $$?)
 tools-pg-start    = brew services start postgresql@11
@@ -18,20 +19,29 @@ tools-redis-start = brew services start redis
 
 # -- init --
 ## initializes the dev environment
-init: .env i/pre i/base i/deps i/services d/r/all i/hooks
+init: .env i/pre i/system i/services i/deps d/r/all i/hooks
 .PHONY: init
 
 ## installs the ruby/js deps
-i/deps:
+i/deps: i/pre
+ifeq ("$(shell gem list bundler | grep $(tools-bundle-ver))", "")
+	gem install bundler -v $(tools-bundle-ver)
+endif
+
 	$(tools-bundle)
 	$(tools-yarn)
-.PHONY: i/pre
+.PHONY: i/deps
 
 # -- init/helpers
 .env:
 	cp .env.sample .env
 
 i/pre:
+ifeq ("$(shell command -v ruby)", "/usr/bin/ruby")
+	$(info ✘ using the system ruby:)
+	$(info - please use a ruby management tool (e.g. https://github.com/rbenv/rbenv))
+	$(error 1)
+endif
 ifeq ("$(shell command -v brew)", "")
 	$(info ✘ brew is not installed, please see:)
 	$(info - https://brew.sh)
@@ -44,9 +54,9 @@ ifeq ("$(shell command -v yarn)", "")
 endif
 .PHONY: i/pre
 
-i/base:
+i/system:
 	HOMEBREW_NO_AUTO_UPDATE=1 brew bundle -v
-.PHONY: i/base
+.PHONY: i/system
 
 i/services:
 ifneq ($(tools-pg-up), 0)
