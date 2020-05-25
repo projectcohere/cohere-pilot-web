@@ -28,10 +28,22 @@ module Support
 
     # -- installation --
     s = self
-    Service::Container.resets do
+    Service::Container.after_reset do
       attributes.merge!(s.mocks)
     end
   end
+
+  # monkey patch to ensure container always has up-to-date mocks. instances
+  # created for new threads don't run their resets automatically.
+  module Container
+    def new
+      instance = super
+      instance.reset
+      return instance
+    end
+  end
+
+  Service::Container.extend(Container)
 end
 
 ActiveSupport::TestCase.include(Support::Services)
