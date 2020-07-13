@@ -1,4 +1,27 @@
 en:
+  # -- clearance --
+  # imagine these nested in users. clearance actions & root templates don't
+  # respect standard pathing:
+  # https://github.com/thoughtbot/clearance/pull/743
+  sessions: &sessions
+    new:
+      title: "Welcome to Cohere!"
+      prompt: "Thank you for participating, please sign in."
+      forgot-password: "Forgot your password?"
+
+  passwords: &passwords
+    create:
+      message: "Thank you! If we find your account, you'll receive an e-mail in the next few minutes with further instructions."
+
+    edit:
+      invite:
+        title: "Create Your Password"
+        prompt: "Please enter a password<br>that has:"
+      reset:
+        title: "Reset Your Password"
+        prompt: "Please enter a new password<br>that has:"
+
+  # -- layout --
   flashes:
     failure_after_create: "Your e-mail and password did not match."
     failure_after_update: "Password did not meet requirements."
@@ -68,7 +91,12 @@ en:
       label: "Confirm Password"
 
     # -- controllers
+    sessions:
+      <<: *sessions
+
     passwords:
+      <<: *passwords
+
       forgot:
         title: "Forgot Your Password?"
         prompt: "Please enter your e-mail and we'll send you instructions to reset your password."
@@ -360,25 +388,3 @@ en:
 
       return:
         flash: "Returned %{name}'s case."
-
-  # imagine this nested in users. clearance actions & root templates don't
-  # respect standard pathing:
-  # https://github.com/thoughtbot/clearance/pull/743
-  sessions:
-    new:
-      title: "Welcome to Cohere!"
-      prompt: "Thank you for participating, please sign in."
-      forgot-password: "Forgot your password?"
-
-  # see `sessions:` above
-  passwords:
-    create:
-      message: "Thank you! If we find your account, you'll receive an e-mail in the next few minutes with further instructions."
-
-    edit:
-      invite:
-        title: "Create Your Password"
-        prompt: "Please enter a password<br>that has:"
-      reset:
-        title: "Reset Your Password"
-        prompt: "Please enter a new password<br>that has:"
