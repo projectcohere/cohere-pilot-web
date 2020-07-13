@@ -234,3 +234,22 @@ d/m/check: d/migrate d/m/undo
 d/console:
 	$(tools-rails) console
 .PHONY: d/console
+
+# -- demo --
+# -- db --
+## alias for t
+demo: t
+.PHONY: t
+
+t: t/build
+.PHONY: t
+
+## build the static demo site
+t/build:
+	$(tools-rails) demo:build
+.PHONY: t/build
+
+## serve the static demo site
+t/start:
+	python3 -m http.server -d demo
+.PHONY: t/start
