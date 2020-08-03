@@ -8,6 +8,7 @@
           <%= f.field(:email, t("users.email.label"), class: "SignIn-email") do %>
             <%=
               f.text_field(:email,
+                value: params[:email],
                 type: "email",
                 placeholder: t("users.email.placeholder"),
                 tid: "E-mail Field",
@@ -18,6 +19,7 @@
           <%= f.field(:password, t("users.password.label"), class: "SignIn-password") do %>
             <%=
               f.password_field(:password,
+                value: params[:password],
                 tid: "Password Field",
               )
             %>
@@ -41,6 +43,12 @@
               tid: "Sign In Button"
             )
           %>
+
+          <% if demo? %>
+            <div id="demo-coachmark" class="DemoCoachmark">
+              <p class="DemoCoachmark-popup">Let's get started. Click this button to sign in to Cohere and create a new case.</p>
+            </div>
+          <% end %>
         <% end %>
       <% end %>
     </div>

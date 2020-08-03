@@ -5,13 +5,17 @@ class DemoRenderer
 
   # -- pages --
   def s01_sign_in
-    setup!
+    @params = {
+      email: @repo.find_source_user.email,
+      password: "password123$",
+    }
+
     return render("users/sessions/new")
   end
 
   def s02_source_list
-    setup!
     sign_in(@repo.find_source_user)
+
     @scope = Cases::Scope::All
     @page, @cases = @repo.find_source_cases
     return render("source/cases/index")
@@ -19,6 +23,7 @@ class DemoRenderer
 
   # -- helpers --
   private def setup!
+    @demo = true
     Settings.get.working_hours = true
   end
 
@@ -27,6 +32,8 @@ class DemoRenderer
   end
 
   private def render(template)
+    setup!
+
     assigns = instance_variables.each_with_object({}) do |ivar, memo|
       name = ivar[1..-1] # remove @
       memo[name] = instance_variable_get(ivar)

@@ -9,6 +9,11 @@
 
     <%= stylesheet_link_tag("application", media: "all", "data-turbolinks-track": "reload") %>
     <%= javascript_pack_tag("application", defer: "defer", "data-turbolinks-track": "reload") %>
+
+    <% if demo? %>
+      <%= stylesheet_link_tag("demo", media: "all", "data-turbolinks-track": "reload") %>
+      <%= javascript_pack_tag("demo", defer: "defer", "data-turbolinks-track": "reload") %>
+    <% end %>
   </head>
 
   <%= layout_tag do %>

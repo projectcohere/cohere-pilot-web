@@ -6,6 +6,10 @@ module ApplicationHelper
   include Helpers::NavigationHelper
 
   # -- utilities --
+  def demo?
+    return false
+  end
+
   def cx(*classes, states)
     active_classes = classes.filter do |c|
       c.present?

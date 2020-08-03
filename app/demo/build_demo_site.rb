@@ -32,14 +32,24 @@ class BuildDemoSite < ::Command
       dst.make_symlink(src)
     end
 
-    # namespace application css files
+    # symlink namespaced css files
+    sheets = %w[application demo]
+
     @public_dir.join("assets").children.each do |asset|
-      if asset.basename.fnmatch("application-*.css")
-        src = asset.basename
-        dst = asset.sub("application-", "application.self-")
-        dst.make_symlink(src) if not dst.exist?
+      sheets.each do |name|
+        if asset.basename.fnmatch("#{name}-*.css")
+          src = asset.basename
+          dst = asset.sub("#{name}-", "#{name}.self-")
+          dst.make_symlink(src) if not dst.exist?
+        end
       end
     end
+  end
+
+  private def link_stylesheet(name, asset)
+    src = asset.basename
+    dst = asset.sub("#{name}-", "#{name}.self-")
+    dst.make_symlink(src) if not dst.exist?
   end
 
   private def mock_service(type, value)
