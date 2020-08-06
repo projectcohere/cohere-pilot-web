@@ -16,8 +16,9 @@ class BuildDemoSite < ::Command
     mock_service(InMemoryStore, @store)
 
     # create pages
-    create_page("s01_sign_in", render.s01_sign_in)
-    create_page("s02_source_list", render.s02_source_list)
+    create_page("1", render.s01_sign_in)
+    create_page("2", render.s02_source_list)
+    create_page("3", render.s03_source_start_case)
   end
 
   # -- helpers --
@@ -58,7 +59,7 @@ class BuildDemoSite < ::Command
   end
 
   private def create_page(name, html)
-    path = @demo_dir.join("#{name}.html")
+    path = @demo_dir.join("#{name}")
     path.write(html)
   end
 

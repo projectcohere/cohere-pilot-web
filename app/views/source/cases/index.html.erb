@@ -13,6 +13,12 @@
           tid: "New Case Button",
         )
       %>
+
+      <% if @demo_id == "s03" %>
+        <%= demo_coachmark_tag(anchor: :right) do %>
+          An applicant, Janice Sample, calls in and the CSR is ready to start a case.
+        <%- end %>
+      <% end %>
     </div>
   </header>
 
@@ -21,6 +27,12 @@
       <%= tag.h2(t(".list.fallback"), class: "CaseList-fallback") %>
     <% else %>
       <%= render(partial: "source/cases/cell", collection: @cases) %>
+
+      <% if @demo_id == "s02" %>
+        <%= demo_coachmark_tag(anchor: :bottom) do %>
+          When they sign in, the CSR sees a list of cases they've created.
+        <%- end %>
+      <% end %>
     <% end %>
   </ul>
 

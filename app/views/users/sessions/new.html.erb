@@ -40,14 +40,15 @@
           <%=
             f.submit(
               class: "SignIn-submit Form-submit Button Button--action",
-              tid: "Sign In Button"
+              tid: "Sign In Button",
             )
           %>
 
-          <% if demo? %>
-            <div id="demo-coachmark" class="DemoCoachmark">
-              <p class="DemoCoachmark-popup">Let's get started. Click this button to sign in to Cohere and create a new case.</p>
-            </div>
+          <% case @demo_id %>
+          <% when "s01" %>
+            <%= demo_coachmark_tag(anchor: :right) do %>
+              To get started, let's sign in as a Call Center Representative.
+            <%- end %>
           <% end %>
         <% end %>
       <% end %>

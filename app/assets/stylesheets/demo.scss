@@ -1,6 +1,7 @@
 .DemoCoachmark {
-  display: none;
+  $arrow-width: 8px;
 
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
@@ -14,23 +15,39 @@
     display: flex;
     align-items: center;
     width: 250px;
-    margin-left: 15px;
     padding: 10px;
     border-radius: 7px;
     background-color: white;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
 
     &::before {
-      $arrow-width: 8px;
-
       content: "";
       position: absolute;
       width: 0;
       height: 0;
+    }
+  }
+
+  &--right &-popup {
+    margin-left: 15px;
+
+    &::before {
       left: -$arrow-width;
       border-top: $arrow-width solid transparent;
       border-bottom: $arrow-width solid transparent;
       border-right:$arrow-width solid white;
+    }
+  }
+
+  &--bottom &-popup {
+    flex-direction: column;
+    margin-top: 15px;
+
+    &::before {
+      top: -$arrow-width;
+      border-left: $arrow-width solid transparent;
+      border-right: $arrow-width solid transparent;
+      border-bottom:$arrow-width solid white;
     }
   }
 
