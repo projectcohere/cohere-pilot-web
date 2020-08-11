@@ -5,6 +5,11 @@ class DemoRenderer
   end
 
   # -- pages --
+  def landing
+    setup(demo_id: "index")
+    return render("demo/index", path: "/")
+  end
+
   def s01_sign_in
     setup(demo_id: "s01")
 

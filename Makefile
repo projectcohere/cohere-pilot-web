@@ -252,5 +252,5 @@ t/build:
 
 ## serve the static demo site
 t/start:
-	python3 demo-server.py
+	./demo-server
 .PHONY: t/start

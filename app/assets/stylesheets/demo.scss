@@ -1,3 +1,64 @@
+.DemoLanding {
+  display: flex;
+  height: 100%;
+  padding: 0;
+
+  &-panel {
+    padding: 40px;
+
+    &:nth-child(1) {
+      flex: 1;
+      background-color: white;
+    }
+
+    &:nth-child(2) {
+      flex: 2;
+    }
+  }
+
+  .PageHeader {
+    margin-bottom: 25px;
+
+    > h2 {
+      margin-top: 25px;
+    }
+  }
+
+  &-rightHeader {
+    height: 67px;
+    align-items: center;
+  }
+
+  &-intro {
+    width: 80%;
+    font-size: 18px;
+
+    > * + * {
+      margin-top: 10px;
+    }
+  }
+
+  &-roles {
+    display: flex;
+    flex-direction: column;
+
+    > * + * {
+      margin-top: 10px;
+    }
+  }
+
+  &-role {
+    display: flex;
+    font-size: 24px;
+
+    &::before {
+      content: "•";
+      color: var(--role-color);
+      margin-right: 10px;
+    }
+  }
+}
+
 .DemoCoachmark {
   $arrow-width: 8px;
 

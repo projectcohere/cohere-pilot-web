@@ -16,6 +16,7 @@ class BuildDemoSite < ::Command
     mock_service(InMemoryStore, @store)
 
     # create pages
+    create_page("index.html", render.landing)
     create_page("1", render.s01_sign_in)
     create_page("2", render.s02_source_list)
     create_page("3", render.s03_source_start_case)
@@ -23,7 +24,7 @@ class BuildDemoSite < ::Command
 
   # -- helpers --
   private def scaffold_dir
-    @demo_dir.rmtree if @demo_dir.exist?
+    @demo_dir.glob("*").each(&:rmtree) if @demo_dir.exist?
     @demo_dir.mkpath
 
     # symlink assets from public

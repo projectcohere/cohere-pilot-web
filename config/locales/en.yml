@@ -388,3 +388,19 @@ en:
 
       return:
         flash: "Returned %{name}'s case."
+
+  demo:
+    index:
+      title: "Welcome to Cohere!"
+      prompt: "Select a role to get started."
+
+      roles:
+        applicant: "Applicant"
+        csr: "Call Center"
+        state: "State Caseworker"
+        nonprofit: "Nonprofit Caseworker"
+
+      intro:
+        - "This site is a demo for the technology that was used to pilot Cohere."
+        - "In 2019, Civilla partnered with state, nonprofit, and corporate leaders to launch the Cohere pilot, which enrolled more than 100 Michigan families in the MEAP utility assistance program."
+        - "The pilot removed significant barriers and demonstrated the advantages of simplified policy requirements. It reused existing applicant data and enable applicants to apply in real time via two-way text messaging. Case determinations that commonly took 40 days were completed in under 10 minutes. Administrative tasks that took staff 45 minutes were completed in under 5 minutes. The successful enrollment rate increased by 60%."

@@ -20,7 +20,7 @@ function ShowCoachmark() {
   document.body.appendChild($coachmark)
   $coachmark.classList.toggle("is-visible", true)
 
-  // anchor popup to right edge of target
+  // anchor popup to edge of target
   const src = $popup.getBoundingClientRect()
   const dst = $target.getBoundingClientRect()
 
