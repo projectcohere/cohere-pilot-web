@@ -406,8 +406,8 @@ en:
         mark:
           - Applicants apply for benefits using a two-way communication platform, like text messaging (SMS).
           - Applicants grant legal consent by typing their name.
-          - Applicants respond to application questions that are stated in plain language. Visual cues to help them understand directions.
           - Applicants answer questions using short responses.
+          - Applicants respond to application questions that are stated in plain language. Visual cues to help them understand directions.
           - Applicants take photos of their documents and submit them from their phone.
           - After they receive a determination, applicants receive an invitation to enroll in another benefit program.
       call-center:

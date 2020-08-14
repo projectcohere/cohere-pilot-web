@@ -94,52 +94,32 @@ class DemoRepo
       ),
     ]
 
-    macros = Chat::Macro::Repo.get.find_grouped
-
-    def create_message_from_recipient(body = nil, attachments: [])
-      return Chat::Message::Record.new(
-        sender: "recipient",
-        body: body&.to_s,
-        attachments: attachments,
-        status: Chat::Message::Status::Received.to_i,
-      )
-    end
-
-    def create_message_from_macro(macro)
-      return Chat::Message::Record.new(
-        sender: "Gaby",
-        body: macro.body,
-        attachments: [Chat::Attachment::Record.new(file: macro.file)],
-        status: Chat::Message::Status::Received.to_i,
-      )
-    end
-
-    def create_attachment(filename)
-      content_type = case filename.split(".").last
-      when "jpg"
-        "image/jpg"
-      else
-        "application/octet-stream"
-      end
-
-      return Chat::Attachment::Record.new(
-        file: ActiveStorage::Blob.new(
-          filename: filename,
-          content_type: content_type,
-        )
-      )
-    end
-
-    @chat_messages = [[
-      create_message_from_macro(macros[0].list[0]),
-    ], [
-      create_message_from_recipient(Recipient::Repo.map_name(@recipients[0])),
-    ], [
-      create_message_from_macro(macros[1].list[0]),
-      create_message_from_recipient(@recipients[0].household_size),
-      create_message_from_macro(macros[1].list[1]),
-      create_message_from_recipient(attachments: [create_attachment("id.jpg")]),
-    ]]
+    @chat_messages = [
+      [
+        build_msg_from_macro(0, 0),
+      ],
+      [
+        build_msg(body: Recipient::Repo.map_name(@recipients[0])),
+      ],
+      [
+        build_msg_from_macro(1, 0),
+        build_msg(body: @recipients[0].household_size),
+      ],
+      [
+        build_msg_from_macro(1, 1),
+        build_msg(attachments: [build_attachment("id.jpg")]),
+      ],
+      [
+        build_msg_from_macro(3, 0),
+        build_msg(attachments: [build_attachment("document.jpg")]),
+      ],
+      [
+        build_msg_from_macro(5, 5),
+        build_msg(body: "Thank you!."),
+        build_msg_from_macro(6, 1),
+        build_msg(body: "Yes"),
+      ],
+    ]
 
     @users = [
       User::Record.new(
@@ -149,5 +129,44 @@ class DemoRepo
         partner: @partners[0],
       ),
     ]
+  end
+
+  def build_msg(body: nil, attachments: [])
+    return Chat::Message::Record.new(
+      sender: "recipient",
+      body: body&.to_s,
+      attachments: attachments,
+      status: Chat::Message::Status::Received.to_i,
+    )
+  end
+
+  def build_msg_from_macro(group, item)
+    @macros ||= begin
+      Chat::Macro::Repo.get.find_grouped
+    end
+
+    macro = @macros[group].list[item]
+    return Chat::Message::Record.new(
+      sender: "Gaby",
+      body: macro.body,
+      attachments: [Chat::Attachment::Record.new(file: macro.file)],
+      status: Chat::Message::Status::Received.to_i,
+    )
+  end
+
+  def build_attachment(filename)
+    content_type = case filename.split(".").last
+    when "jpg"
+      "image/jpg"
+    else
+      "application/octet-stream"
+    end
+
+    return Chat::Attachment::Record.new(
+      file: ActiveStorage::Blob.new(
+        filename: filename,
+        content_type: content_type,
+      )
+    )
   end
 end

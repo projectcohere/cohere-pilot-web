@@ -10,7 +10,7 @@ class DemoRenderer
     return render("demo/index", path: "/")
   end
 
-  def a01_phone
+  def a01_communication
     setup(demo_id: "a01")
     @chat = @repo.find_applicant_chat(step: 0)
     return render("demo/phone", path: "/")
@@ -22,9 +22,27 @@ class DemoRenderer
     return render("demo/phone", path: "/")
   end
 
-  def a03_id
+  def a03_language
     setup(demo_id: "a03")
     @chat = @repo.find_applicant_chat(step: 2)
+    return render("demo/phone", path: "/")
+  end
+
+  def a04_questions
+    setup(demo_id: "a04")
+    @chat = @repo.find_applicant_chat(step: 3)
+    return render("demo/phone", path: "/")
+  end
+
+  def a05_documents
+    setup(demo_id: "a05")
+    @chat = @repo.find_applicant_chat(step: 4)
+    return render("demo/phone", path: "/")
+  end
+
+  def a06_enrolled
+    setup(demo_id: "a06")
+    @chat = @repo.find_applicant_chat(step: 5)
     return render("demo/phone", path: "/")
   end
 

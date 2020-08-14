@@ -2,7 +2,7 @@ import { kConsumer } from "src/Core"
 
 // -- constants --
 const DEMO_PAGE_COUNT = {
-  "applicant": 3,
+  "applicant": 6,
   "call-center": 0,
   "state": 0,
   "nonprofit": 0,
