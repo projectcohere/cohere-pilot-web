@@ -247,7 +247,7 @@ t: t/build
 ## build the static demo site
 t/build:
 	$(tools-rails) assets:precompile
-	$(tools-rails) demo:build
+	HOST=http://localhost:8000 $(tools-rails) demo:build
 .PHONY: t/build
 
 ## serve the static demo site

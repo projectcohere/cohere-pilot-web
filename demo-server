@@ -6,7 +6,7 @@ import http.server as h
 class Handler(h.SimpleHTTPRequestHandler):
   def guess_type(self, path):
     # default to text/html for all numbered demo pages
-    if re.match("^\/\d+$", self.path):
+    if re.match("^.*\/\d+$", self.path):
       return "text/html; charset=UTF-8"
 
     return super().guess_type(path)

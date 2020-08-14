@@ -1,0 +1,18 @@
+<main class="DemoPhone Phone Page">
+  <div class="Phone-frame">
+    <%=
+      render(partial: "chats/chat", locals: {
+        chat: @chat,
+        sender: "recipient",
+        receiver: "Gaby",
+      })
+    %>
+  </div>
+
+  <% case @demo_id %>
+  <% when "a01" %>
+    <%= demo_coachmark_tag(anchor: :right) do %>
+      Applicants opt in to navigate all program enrollment procedures on their phone.
+    <%- end %>
+  <% end %>
+</main>

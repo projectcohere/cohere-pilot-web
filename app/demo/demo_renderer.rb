@@ -10,6 +10,12 @@ class DemoRenderer
     return render("demo/index", path: "/")
   end
 
+  def a01_phone
+    setup(demo_id: "a01")
+    @chat = @repo.find_applicant_chat
+    return render("demo/phone", path: "/applicant/1")
+  end
+
   def s01_sign_in
     setup(demo_id: "s01")
 
@@ -58,6 +64,7 @@ class DemoRenderer
 
     # build map of ivars
     assigns = instance_variables.each_with_object({}) do |ivar, memo|
+      next if ivar == :@repo
       name = ivar[1..-1] # remove @
       memo[name] = instance_variable_get(ivar)
     end

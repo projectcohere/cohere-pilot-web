@@ -11,7 +11,7 @@
 <%= tag.article(id: "chat", class: cx(local_assigns[:class], "Chat Phone-view"), data: data) do %>
   <ol id="chat-messages" class="Chat-messages"></ol>
 
-  <%= form_for(:chat, html: { id: "chat-form", class: "Chat-form" }) do |f| %>
+  <%= form_for(:chat, url: "/chat", html: { id: "chat-form", class: "Chat-form" }) do |f| %>
     <ol id="chat-files" class="Chat-files is-empty"></ol>
 
     <div class="Chat-controls">

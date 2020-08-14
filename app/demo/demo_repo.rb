@@ -25,6 +25,12 @@ class DemoRepo
     return page, [Cases::Views::Repo.map_cell(kase, Cases::Scope::All)]
   end
 
+  def find_applicant_chat
+    chat = @chats[0]
+    chat_messages = @chat_messages.map { |m| Chat::Message::Repo.map_record(m, attachments: m.attachments) }
+    return Chat::Repo.map_record(chat, chat_messages)
+  end
+
   # -- data --
   private def build_db
     @programs = [
@@ -74,6 +80,23 @@ class DemoRepo
         supplier: @partners[1],
         created_at: 1.day.ago,
         updated_at: 1.hour.ago,
+      ),
+    ]
+
+    @chats = [
+      Chat::Record.new(
+        id: 1,
+        recipient: @recipients[0],
+      ),
+    ]
+
+    macros = Chat::Macro::Repo.get.find_grouped
+    @chat_messages = [
+      Chat::Message::Record.new(
+        sender: "Gaby",
+        body: macros[0].list[0].body,
+        attachments: [Chat::Attachment::Record.new(file: macros[0].list[0].file)],
+        status: Chat::Message::Status::Received.to_i,
       ),
     ]
 
