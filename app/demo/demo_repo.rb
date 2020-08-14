@@ -25,9 +25,12 @@ class DemoRepo
     return page, [Cases::Views::Repo.map_cell(kase, Cases::Scope::All)]
   end
 
-  def find_applicant_chat
+  def find_applicant_chat(step:)
     chat = @chats[0]
-    chat_messages = @chat_messages.map { |m| Chat::Message::Repo.map_record(m, attachments: m.attachments) }
+    chat_messages = @chat_messages[0..step].flatten.map do |m|
+      Chat::Message::Repo.map_record(m, attachments: m.attachments)
+    end
+
     return Chat::Repo.map_record(chat, chat_messages)
   end
 
@@ -65,6 +68,7 @@ class DemoRepo
         city: "Testburg",
         state: "Testissippi",
         zip: "12345",
+        household_size: 2,
         household_ownership: Recipient::Ownership::Own.to_i,
         household_proof_of_income: Recipient::ProofOfIncome::Weatherization.to_i,
       ),
@@ -91,14 +95,51 @@ class DemoRepo
     ]
 
     macros = Chat::Macro::Repo.get.find_grouped
-    @chat_messages = [
-      Chat::Message::Record.new(
-        sender: "Gaby",
-        body: macros[0].list[0].body,
-        attachments: [Chat::Attachment::Record.new(file: macros[0].list[0].file)],
+
+    def create_message_from_recipient(body = nil, attachments: [])
+      return Chat::Message::Record.new(
+        sender: "recipient",
+        body: body&.to_s,
+        attachments: attachments,
         status: Chat::Message::Status::Received.to_i,
-      ),
-    ]
+      )
+    end
+
+    def create_message_from_macro(macro)
+      return Chat::Message::Record.new(
+        sender: "Gaby",
+        body: macro.body,
+        attachments: [Chat::Attachment::Record.new(file: macro.file)],
+        status: Chat::Message::Status::Received.to_i,
+      )
+    end
+
+    def create_attachment(filename)
+      content_type = case filename.split(".").last
+      when "jpg"
+        "image/jpg"
+      else
+        "application/octet-stream"
+      end
+
+      return Chat::Attachment::Record.new(
+        file: ActiveStorage::Blob.new(
+          filename: filename,
+          content_type: content_type,
+        )
+      )
+    end
+
+    @chat_messages = [[
+      create_message_from_macro(macros[0].list[0]),
+    ], [
+      create_message_from_recipient(Recipient::Repo.map_name(@recipients[0])),
+    ], [
+      create_message_from_macro(macros[1].list[0]),
+      create_message_from_recipient(@recipients[0].household_size),
+      create_message_from_macro(macros[1].list[1]),
+      create_message_from_recipient(attachments: [create_attachment("id.jpg")]),
+    ]]
 
     @users = [
       User::Record.new(

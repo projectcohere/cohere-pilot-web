@@ -393,14 +393,29 @@ en:
     index:
       title: "Welcome to Cohere!"
       prompt: "Select a role to get started."
-
-      roles:
-        applicant: "Applicant"
-        csr: "Call Center"
-        state: "State Caseworker"
-        nonprofit: "Nonprofit Caseworker"
-
       intro:
         - "This site is a demo for the technology that was used to pilot Cohere."
         - "In 2019, Civilla partnered with state, nonprofit, and corporate leaders to launch the Cohere pilot, which enrolled more than 100 Michigan families in the MEAP utility assistance program."
-        - "The pilot removed significant barriers and demonstrated the advantages of simplified policy requirements. It reused existing applicant data and enable applicants to apply in real time via two-way text messaging. Case determinations that commonly took 40 days were completed in under 10 minutes. Administrative tasks that took staff 45 minutes were completed in under 5 minutes. The successful enrollment rate increased by 60%."
+        - "The pilot removed significant barriers and demonstrated the advantages of simplified policy requirements. It reused existing applicant data and enable applicants to apply in real time via two-way text messaging."
+        - "Case determinations that commonly took 40 days were completed in under 10 minutes. Administrative tasks that took staff 45 minutes were completed in under 5 minutes. The successful enrollment rate increased by 60%."
+
+    role:
+      applicant:
+        name: "Applicant"
+        body: "Applicants opt in to navigate all program enrollment procedures on their phone."
+        mark:
+          - Applicants apply for benefits using a two-way communication platform, like text messaging (SMS).
+          - Applicants grant legal consent by typing their name.
+          - Applicants respond to application questions that are stated in plain language. Visual cues to help them understand directions.
+          - Applicants answer questions using short responses.
+          - Applicants take photos of their documents and submit them from their phone.
+          - After they receive a determination, applicants receive an invitation to enroll in another benefit program.
+      call-center:
+        name: "Call Center"
+        body: "Call center representatives screen for qualified applicants and initiate new cases."
+      state:
+        name: "State Caseworker"
+        body: "State caseworkers add verified household and income data to the application."
+      nonprofit:
+        name: "Nonprofit Caseworker"
+        body: "Nonprofit caseworkers collect additional data from applicants using two-way messaging. They approve cases and initiate referrals to additional benefit programs."

@@ -1,5 +1,12 @@
+import { kConsumer } from "src/Core"
+
 // -- constants --
-const DEMO_PAGE_COUNT = 3
+const DEMO_PAGE_COUNT = {
+  "applicant": 3,
+  "call-center": 0,
+  "state": 0,
+  "nonprofit": 0,
+}
 
 // -- commands --
 function ShowCoachmark() {
@@ -30,6 +37,10 @@ function ShowCoachmark() {
         top: ${dst.bottom}px;
         left: ${dst.left + (dst.width - src.width) / 2}px;
       `
+      case "left": return `
+        left: ${dst.left - src.width}px;
+        top: ${dst.top + (dst.height - src.height) / 2}px;
+      `
       case "right": return `
         left: ${dst.right}px;
         top: ${dst.top + (dst.height - src.height) / 2}px;
@@ -40,25 +51,27 @@ function ShowCoachmark() {
 }
 
 function AdvanceDemoOnClick() {
-  const matches = location.pathname.match(/^\/(\d+)$/)
+  const matches = location.pathname.match(/^\/(.+)\/(\d+)$/)
   if (matches == null) {
     console.log("Not on demo page.")
     return
   }
 
-  const page = Number.parseInt(matches[1])
+  const role = matches[1] as keyof typeof DEMO_PAGE_COUNT
+  const page = Number.parseInt(matches[2])
 
   document.addEventListener("click", (event) => {
     event?.preventDefault()
     event?.stopPropagation()
 
-    if (page != DEMO_PAGE_COUNT) {
-      location.href = `/${page + 1}`
+    if (page != DEMO_PAGE_COUNT[role]) {
+      location.href = `/${role}/${page + 1}`
     }
   })
 }
 
 (function main() {
+  kConsumer.disconnect()
   ShowCoachmark()
   AdvanceDemoOnClick()
 })()

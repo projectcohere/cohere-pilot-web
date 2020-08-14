@@ -13,8 +13,15 @@ module DemoHelper
   end
 
   # -- tags --
-  def demo_coachmark_tag(anchor:, &children)
-    content_tag = capture(&children)
+  def demo_role_tag(demo_role, theme:)
+    return tag.li(class: "DemoLanding-role Layout--#{theme.to_s}") do
+      link_to(t("demo.role.#{demo_role}.name"), "/#{demo_role}/1") +
+      tag.p(t("demo.role.#{demo_role}.body"))
+    end
+  end
+
+  def demo_coachmark_tag(body = nil, anchor:, &children)
+    content = body || capture(&children)
 
     coachmark_tag = tag.div(
       id: "demo-coachmark",
@@ -22,7 +29,7 @@ module DemoHelper
       data: { "demo-anchor": anchor },
     ) do
       tag.p(class: "DemoCoachmark-popup") do
-        content_tag
+        content
       end
     end
 

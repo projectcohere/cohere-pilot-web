@@ -11,8 +11,10 @@
 
   <% case @demo_id %>
   <% when "a01" %>
-    <%= demo_coachmark_tag(anchor: :right) do %>
-      Applicants opt in to navigate all program enrollment procedures on their phone.
-    <%- end %>
+    <%= demo_coachmark_tag(t("demo.role.applicant.mark")[0], anchor: :left) %>
+  <% when "a02" %>
+    <%= demo_coachmark_tag(t("demo.role.applicant.mark")[1], anchor: :right) %>
+  <% when "a03" %>
+    <%= demo_coachmark_tag(t("demo.role.applicant.mark")[2], anchor: :right) %>
   <% end %>
 </main>

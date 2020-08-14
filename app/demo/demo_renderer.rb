@@ -12,8 +12,20 @@ class DemoRenderer
 
   def a01_phone
     setup(demo_id: "a01")
-    @chat = @repo.find_applicant_chat
-    return render("demo/phone", path: "/applicant/1")
+    @chat = @repo.find_applicant_chat(step: 0)
+    return render("demo/phone", path: "/")
+  end
+
+  def a02_legal
+    setup(demo_id: "a02")
+    @chat = @repo.find_applicant_chat(step: 1)
+    return render("demo/phone", path: "/")
+  end
+
+  def a03_id
+    setup(demo_id: "a03")
+    @chat = @repo.find_applicant_chat(step: 2)
+    return render("demo/phone", path: "/")
   end
 
   def s01_sign_in

@@ -4,34 +4,29 @@
   padding: 0;
 
   &-panel {
-    padding: 40px;
+    padding: 60px;
 
     &:nth-child(1) {
-      flex: 1;
+      flex: 2;
       background-color: white;
     }
 
     &:nth-child(2) {
-      flex: 2;
+      flex: 1;
     }
   }
 
   .PageHeader {
-    margin-bottom: 25px;
+    margin-bottom: 40px;
 
     > h2 {
       margin-top: 25px;
     }
   }
 
-  &-rightHeader {
-    height: 67px;
-    align-items: center;
-  }
-
   &-intro {
-    width: 80%;
     font-size: 18px;
+    opacity: 0.8;
 
     > * + * {
       margin-top: 10px;
@@ -40,21 +35,23 @@
 
   &-roles {
     display: flex;
+    width: 66%;
     flex-direction: column;
 
     > * + * {
-      margin-top: 10px;
+      margin-top: 30px;
     }
   }
 
   &-role {
-    display: flex;
-    font-size: 24px;
+    > a {
+      display: block;
+      font-size: 24px;
+      text-decoration-color: var(--role-color);
+    }
 
-    &::before {
-      content: "•";
-      color: var(--role-color);
-      margin-right: 10px;
+    > p {
+      margin-top: 10px;
     }
   }
 }
@@ -93,26 +90,37 @@
     }
   }
 
-  &--right &-popup {
-    margin-left: 15px;
-
-    &::before {
-      left: -$arrow-width;
-      border-top: $arrow-width solid transparent;
-      border-bottom: $arrow-width solid transparent;
-      border-right:$arrow-width solid white;
-    }
-  }
-
   &--bottom &-popup {
     flex-direction: column;
-    margin-top: 15px;
+    translate: 0 15px;
 
     &::before {
       top: -$arrow-width;
       border-left: $arrow-width solid transparent;
       border-right: $arrow-width solid transparent;
-      border-bottom:$arrow-width solid white;
+      border-bottom: $arrow-width solid white;
+    }
+  }
+
+  &--left &-popup {
+    translate: -15px 0;
+
+    &::before {
+      right: -$arrow-width;
+      border-top: $arrow-width solid transparent;
+      border-bottom: $arrow-width solid transparent;
+      border-left: $arrow-width solid white;
+    }
+  }
+
+  &--right &-popup {
+    translate: 15px 0;
+
+    &::before {
+      left: -$arrow-width;
+      border-top: $arrow-width solid transparent;
+      border-bottom: $arrow-width solid transparent;
+      border-right: $arrow-width solid white;
     }
   }
 

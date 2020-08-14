@@ -7,27 +7,15 @@
 
     <nav>
       <ul class="DemoLanding-roles">
-        <li class="DemoLanding-role Layout--enroller">
-          <%= link_to(t(".roles.applicant"), "/applicant/1") %>
-        </li>
-        <li class="DemoLanding-role Layout--source">
-          <%= link_to(t(".roles.csr"), "/call-center/1") %>
-        </li>
-        <li class="DemoLanding-role Layout--governor">
-          <%= link_to(t(".roles.state"), "/state/1") %>
-        </li>
-        <li class="DemoLanding-role Layout--agent">
-          <%= link_to(t(".roles.nonprofit"), "/nonprofit/1") %>
-        </li>
+        <%= demo_role_tag("applicant", theme: Role::Enroller) %>
+        <%= demo_role_tag("call-center", theme: Role::Source) %>
+        <%= demo_role_tag("state", theme: Role::Governor) %>
+        <%= demo_role_tag("nonprofit", theme: Role::Agent) %>
       </ul>
     </nav>
-  </div>
+  </section>
 
   <section class="DemoLanding-panel">
-    <header class="DemoLanding-rightHeader PageHeader">
-      <%= tag.h1(t(".title"), class: "PageHeader-title") %>
-    </header>
-
     <div class="DemoLanding-intro">
       <% t(".intro").each do |line| %>
         <p><%= line %></p>

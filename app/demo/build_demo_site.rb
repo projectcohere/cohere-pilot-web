@@ -20,6 +20,7 @@ class BuildDemoSite < ::Command
     Public = Pathname.new("./public")
     Assets = Public.join("assets")
     Macros = Pathname.new("./macros")
+    DemoFiles = Pathname.new("./demo-files")
   end
 
   # -- lifetime --
@@ -39,6 +40,8 @@ class BuildDemoSite < ::Command
     # create pages
     create_page("index.html", render.landing)
     create_page("1", render.a01_phone, role: Roles::Applicant)
+    create_page("2", render.a02_legal, role: Roles::Applicant)
+    create_page("3", render.a03_id, role: Roles::Applicant)
     create_page("1", render.s01_sign_in)
     create_page("2", render.s02_source_list)
     create_page("3", render.s03_source_start_case)
@@ -53,9 +56,7 @@ class BuildDemoSite < ::Command
 
     # symlink public files
     Paths::Public.children.each do |public_path|
-      src = public_path.relative_path_from(Paths::Demo)
-      dst = Paths::Demo.join(src.basename)
-      dst.make_symlink(src)
+      create_symlink(public_path, Paths::Demo)
     end
 
     # symlink namespaced css files
@@ -72,12 +73,15 @@ class BuildDemoSite < ::Command
     # create static storage dir to replace activestorage
     Paths::DemoStorage.mkpath
 
+    # symlink demo files into storage
+    Paths::DemoFiles.children.each do |file_path|
+      create_symlink(file_path, Paths::DemoStorage)
+    end
+
     # symlink macros into storage
     Paths::Macros.children.each do |macro_path|
       if macro_path.extname == ".png"
-        src = macro_path.relative_path_from(Paths::DemoStorage)
-        dst = Paths::DemoStorage.join(src.basename)
-        dst.make_symlink(src)
+        create_symlink(macro_path, Paths::DemoStorage)
       end
     end
   end
@@ -85,6 +89,12 @@ class BuildDemoSite < ::Command
   private def mock_service(type, value)
     name = Service::Container.get_name(type)
     Service::Container.attributes[name] = value
+  end
+
+  private def create_symlink(path, dst_dir)
+    src = path.relative_path_from(dst_dir)
+    dst = dst_dir.join(src.basename)
+    dst.make_symlink(src)
   end
 
   private def create_page(name, html, role: "")
