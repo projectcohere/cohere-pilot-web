@@ -390,6 +390,11 @@ en:
         flash: "Returned %{name}'s case."
 
   demo:
+    actions:
+      back:
+        label: "Viewing:"
+        prompt: "Return to Home"
+
     index:
       title: "Welcome to Cohere!"
       prompt: "Select a role to get started."

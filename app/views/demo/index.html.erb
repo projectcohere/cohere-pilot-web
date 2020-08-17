@@ -7,10 +7,10 @@
 
     <nav>
       <ul class="DemoLanding-roles">
-        <%= demo_role_tag("applicant", theme: Role::Enroller) %>
-        <%= demo_role_tag("call-center", theme: Role::Source) %>
-        <%= demo_role_tag("state", theme: Role::Governor) %>
-        <%= demo_role_tag("nonprofit", theme: Role::Agent) %>
+        <%= demo_role_tag(DemoRole::Applicant) %>
+        <%= demo_role_tag(DemoRole::CallCenter) %>
+        <%= demo_role_tag(DemoRole::State) %>
+        <%= demo_role_tag(DemoRole::Nonprofit) %>
       </ul>
     </nav>
   </section>

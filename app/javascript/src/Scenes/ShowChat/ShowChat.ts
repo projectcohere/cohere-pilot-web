@@ -144,7 +144,7 @@ export class ShowChat implements IComponent {
     this.refreshInterval = window.setInterval(this.didFireRefreshTimer.bind(this), 60 * 1000)
 
     // subscribe to channel
-    this.subscribe()
+    // this.subscribe()
 
     // start deps
     this.files.start()

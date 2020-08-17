@@ -1,12 +1,12 @@
-import { kConsumer } from "src/Core"
-
 // -- constants --
-const DEMO_PAGE_COUNT = {
+const kDemoBackId = "demo-back"
+const kDemoPageCount = {
   "applicant": 6,
   "call-center": 0,
   "state": 0,
   "nonprofit": 0,
 }
+
 
 // -- commands --
 function ShowCoachmark() {
@@ -57,21 +57,39 @@ function AdvanceDemoOnClick() {
     return
   }
 
-  const role = matches[1] as keyof typeof DEMO_PAGE_COUNT
+  const role = matches[1] as keyof typeof kDemoPageCount
   const page = Number.parseInt(matches[2])
 
   document.addEventListener("click", (event) => {
-    event?.preventDefault()
-    event?.stopPropagation()
+    if (event == null) {
+      return
+    }
 
-    if (page != DEMO_PAGE_COUNT[role]) {
+    // check if this click was inside the back button
+    let target = event.target as HTMLElement | null
+    while (target != null && target.id !== kDemoBackId) {
+      target = target.parentElement
+    }
+
+    if (target != null) {
+      return
+    }
+
+    // otherwise intercept and advance page
+    event.preventDefault()
+    event.stopPropagation()
+
+    if (page != kDemoPageCount[role]) {
       location.href = `/${role}/${page + 1}`
+    } else {
+      location.href = "/"
     }
   })
 }
 
 (function main() {
-  kConsumer.disconnect()
-  ShowCoachmark()
-  AdvanceDemoOnClick()
+  document.addEventListener("turbolinks:load", () => {
+    ShowCoachmark()
+    AdvanceDemoOnClick()
+  })
 })()

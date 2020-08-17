@@ -60,6 +60,30 @@
   height: 100%;
 }
 
+.DemoBackButton {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  border-radius: 7px;
+  border: 1px solid var(--role-color);
+
+  &-label, &-prompt {
+    padding: 5px 10px;
+  }
+
+  &-label {
+    background-color: var(--role-color);
+  }
+
+  &-role {
+    font-weight: 600;
+  }
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
 .DemoCoachmark {
   $arrow-width: 8px;
 

@@ -2,13 +2,9 @@ require "demo_ext"
 
 class BuildDemoSite < ::Command
   # -- constants --
-  class Sheets < ::Option
+  class Sheet < ::Option
     option(:application)
     option(:demo)
-  end
-
-  class Roles < ::Option
-    option(:applicant)
   end
 
   module Paths
@@ -39,12 +35,12 @@ class BuildDemoSite < ::Command
 
     # create pages
     create_page("index.html", render.landing)
-    create_page("1", render.a01_communication, role: Roles::Applicant)
-    create_page("2", render.a02_legal, role: Roles::Applicant)
-    create_page("3", render.a03_language, role: Roles::Applicant)
-    create_page("4", render.a04_questions, role: Roles::Applicant)
-    create_page("5", render.a05_documents, role: Roles::Applicant)
-    create_page("6", render.a06_enrolled, role: Roles::Applicant)
+    create_page("1", render.a01_communication, role: DemoRole::Applicant)
+    create_page("2", render.a02_legal, role: DemoRole::Applicant)
+    create_page("3", render.a03_language, role: DemoRole::Applicant)
+    create_page("4", render.a04_questions, role: DemoRole::Applicant)
+    create_page("5", render.a05_documents, role: DemoRole::Applicant)
+    create_page("6", render.a06_enrolled, role: DemoRole::Applicant)
     create_page("1", render.s01_sign_in)
     create_page("2", render.s02_source_list)
     create_page("3", render.s03_source_start_case)
@@ -64,7 +60,7 @@ class BuildDemoSite < ::Command
 
     # symlink namespaced css files
     Paths::Assets.children.each do |asset_path|
-      Sheets.each do |name|
+      Sheet.each do |name|
         if asset_path.basename.fnmatch("#{name}-*.css")
           src = asset_path.basename
           dst = asset_path.sub("#{name}-", "#{name}.self-")

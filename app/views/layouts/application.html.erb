@@ -36,5 +36,15 @@
         <%= render(partial: "layouts/flash") %>
       <% end %>
     </div>
+
+    <% if demo? && @demo_id != "index" %>
+      <%= button_to("/", method: :get, id: "demo-back", class: "DemoBackButton") do %>
+        <%= tag.p(class: "DemoBackButton-label") do %>
+          <%= t("demo.actions.back.label") %>
+          <%= tag.span(demo_role.to_s.titlecase, class: "DemoBackButton-role") %>
+        <%- end %>
+        <%= tag.p(t("demo.actions.back.prompt"), class: "DemoBackButton-prompt") %>
+      <%- end %>
+    <% end %>
   <%- end %>
 </html>
