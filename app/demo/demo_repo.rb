@@ -10,22 +10,29 @@ class DemoRepo
   end
 
   # -- queries --
+  # -- queries/users
   # method name must match UserRepo for substitutability
   def find_current #_user,
     return @user
-  end
-
-  def find_all_suppliers_by_program(_)
-    return [@partners[1]]
   end
 
   def find_source_user
     return User::Repo.map_record(@users[0])
   end
 
-  def find_source_cases
+  def find_state_user
+    return User::Repo.map_record(@users[1])
+  end
+
+  # -- queries/partners
+  def find_all_suppliers_by_program(_)
+    return [@partners[1]]
+  end
+
+  # -- queries/cases
+  def find_cases
     page = Pagy.new(count: 1)
-    kase = Cases::Views::Repo.map_cell(@cases[0], Cases::Scope::All)
+    kase = Cases::Views::Repo.map_cell(find_case, Cases::Scope::All)
     return page, [kase]
   end
 
@@ -39,7 +46,13 @@ class DemoRepo
   def find_new_case(filled: false)
     p = Program::Repo.map_record(@programs[0])
     view = Cases::Views::Repo.map_pending(SecureRandom.base58, p)
-    form = make_form(view, filled ? make_attributes(@cases[0]) : {})
+    form = make_form(view, filled ? make_attributes(find_case) : {})
+    return form
+  end
+
+  def find_open_case(filled: false)
+    view = Cases::Views::Repo.map_detail_from_record(find_case(step: filled ? 1 : 0))
+    form = make_form(view)
     return form
   end
 
@@ -53,6 +66,21 @@ class DemoRepo
   end
 
   # -- helpers --
+  private def find_case(step: 0)
+    c = @cases[0]
+    r = c.recipient
+
+    if step > 0
+      r.assign_attributes(
+        dhs_number: "192283A405",
+        household_size: 2,
+        household_income_cents: 625_00,
+      )
+    end
+
+    return c
+  end
+
   private def make_form(model, attrs = {})
     return Case::Policy.new(@user).with_case(model) do |p|
       Cases::Views::Form.new(model, "", attrs) do |subform|
@@ -123,6 +151,12 @@ class DemoRepo
         membership: Partner::Membership::Supplier.to_i,
         programs: [@programs[0]],
       ),
+      Partner::Record.new(
+        id: 3,
+        name: "Michigan",
+        membership: Partner::Membership::Governor.to_i,
+        programs: [],
+      ),
     ]
 
     @recipients = [
@@ -135,9 +169,7 @@ class DemoRepo
         city: "Testburg",
         state: "Testissippi",
         zip: "12345",
-        household_size: 2,
-        household_ownership: Recipient::Ownership::Own.to_i,
-        household_proof_of_income: Recipient::ProofOfIncome::Weatherization.to_i,
+        household_proof_of_income: Recipient::ProofOfIncome::Dhs.to_i,
       ),
     ]
 
@@ -196,6 +228,12 @@ class DemoRepo
         email: "test@source.com",
         role: Role::Source.to_i,
         partner: @partners[0],
+      ),
+      User::Record.new(
+        id: 2,
+        email: "test@michigan.gov",
+        role: Role::Governor.to_i,
+        partner: @partners[2],
       ),
     ]
   end

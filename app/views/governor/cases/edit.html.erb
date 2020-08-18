@@ -43,5 +43,10 @@
         </div>
       <%- end %>
     </article>
+
+    <% case @demo_id %>
+    <% when "s02" %>
+      <%= demo_coachmark_tag(t("demo.role.state.mark")[1], anchor: :right) %>
+    <% end %>
   </div>
 </main>

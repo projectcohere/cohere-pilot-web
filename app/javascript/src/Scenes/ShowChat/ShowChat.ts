@@ -144,7 +144,7 @@ export class ShowChat implements IComponent {
     this.refreshInterval = window.setInterval(this.didFireRefreshTimer.bind(this), 60 * 1000)
 
     // subscribe to channel
-    // this.subscribe()
+    this.subscribe()
 
     // start deps
     this.files.start()
@@ -181,14 +181,14 @@ export class ShowChat implements IComponent {
 
   // -- commands --
   private subscribe() {
-    const subscription = {
-      channel: kChannelChat,
-      chat: this.id
-    }
+    // const subscription = {
+    //   channel: kChannelChat,
+    //   chat: this.id
+    // }
 
-    this.channel = kConsumer.subscriptions.create(subscription, {
-      received: this.didReceiveData.bind(this)
-    })
+    // this.channel = kConsumer.subscriptions.create(subscription, {
+    //   received: this.didReceiveData.bind(this)
+    // })
   }
 
   // -- comands/ui

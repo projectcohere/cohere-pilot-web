@@ -49,6 +49,9 @@ class BuildDemoSite < ::Command
     create_page("4", render.c04_state_data, role: r::CallCenter)
     create_page("5", render.c05_begin_application, role: r::CallCenter)
     create_page("6", render.c06_view_cases, role: r::CallCenter)
+    create_page("1", render.s01_case_alert, role: r::State)
+    create_page("2", render.s02_form, role: r::State)
+    create_page("3", render.s03_fpl, role: r::State)
   end
 
   # -- helpers --

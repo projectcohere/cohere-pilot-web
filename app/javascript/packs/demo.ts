@@ -5,8 +5,8 @@ const kDemoBackId = "demo-back"
 const kDemoPageCount = {
   "applicant": 6,
   "call-center": 6,
-  "state": 0,
-  "nonprofit": 0,
+  "state": 3,
+  "nonprofit": 1,
 }
 
 // -- commands --

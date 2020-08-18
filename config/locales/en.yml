@@ -428,6 +428,20 @@ en:
       state:
         name: "State Caseworker"
         body: "State caseworkers add verified household and income data to the application."
+        mark:
+          - "State caseworkers are alerted when new applications are available."
+          - "State caseworkers enter existing household and income information into the portal."
+          - "Existing data is used to calculate a fast and accurate FPL for each applicant."
       nonprofit:
         name: "Nonprofit Caseworker"
         body: "Nonprofit caseworkers collect additional data from applicants using two-way messaging. They approve cases and initiate referrals to additional benefit programs."
+        mark:
+          - "Nonprofit caseworkers view all new cases in a shared inbox and assign cases to themselves."
+          - "Nonprofit caseworkers browse menus and add/edit key program information."
+          - "Nonprofit caseworkers use a web chat interface to communicate with clients through two-way messaging."
+          - "Preset macros make it fast and easy for nonprofit caseworkers to send messages and images to clients."
+          - "All images that applicants submit are stored in a single location. Contracts are automatically populated with the applicant’s signature."
+          - "Nonprofit caseworkers use the applicant's FPL to make fast and accurate determinations."
+          - "Nonprofit caseworkers can change the status of complete applications to approved or denied."
+          - "Nonprofit caseworkers suggest referral programs based on the applicant's data."
+          - "Administrative staff easily access program reports and other administrative functions."

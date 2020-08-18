@@ -12,6 +12,11 @@
       <%= tag.p(t(".fallback"), class: "CaseList-fallback") %>
     <% else %>
       <%= render(partial: "governor/cases/cell", collection: @cases) %>
+
+      <% case @demo_id %>
+      <% when "s01" %>
+        <%= demo_coachmark_tag(t("demo.role.state.mark")[0], anchor: :bottom) %>
+      <% end %>
     <% end %>
   </ul>
 

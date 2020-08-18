@@ -88,8 +88,28 @@ class DemoRenderer
   def c06_view_cases
     setup(demo_id: "c06", user: @repo.find_source_user)
     @scope = Cases::Scope::All
-    @page, @cases = @repo.find_source_cases
+    @page, @cases = @repo.find_cases
     return render("source/cases/index", path: "/cases")
+  end
+
+  def s01_case_alert
+    setup(demo_id: "s01", user: @repo.find_state_user)
+    @page, @cases = @repo.find_cases
+    return render("governor/cases/queue", path: "/cases/inbox")
+  end
+
+  def s02_form
+    setup(demo_id: "s02", user: @repo.find_state_user)
+    @form = @repo.find_open_case
+    @case = @form.model
+    return render("governor/cases/edit", path: "/cases/1/edit")
+  end
+
+  def s03_fpl
+    setup(demo_id: "s03", user: @repo.find_state_user)
+    @form = @repo.find_open_case(filled: true)
+    @case = @form.model
+    return render("governor/cases/edit", path: "/cases/1/edit")
   end
 
   # -- helpers --
