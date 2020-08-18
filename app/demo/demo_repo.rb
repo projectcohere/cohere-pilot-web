@@ -15,6 +15,10 @@ class DemoRepo
     return @user
   end
 
+  def find_all_suppliers_by_program(_)
+    return [@partners[1]]
+  end
+
   def find_source_user
     return User::Repo.map_record(@users[0])
   end
@@ -32,10 +36,10 @@ class DemoRepo
     return form
   end
 
-  def find_new_case
+  def find_new_case(filled: false)
     p = Program::Repo.map_record(@programs[0])
     view = Cases::Views::Repo.map_pending(SecureRandom.base58, p)
-    form = make_form(view)
+    form = make_form(view, filled ? make_attributes(@cases[0]) : {})
     return form
   end
 
@@ -49,12 +53,37 @@ class DemoRepo
   end
 
   # -- helpers --
-  private def make_form(model)
+  private def make_form(model, attrs = {})
     return Case::Policy.new(@user).with_case(model) do |p|
-      Cases::Views::Form.new(model, "", {}) do |subform|
+      Cases::Views::Form.new(model, "", attrs) do |subform|
         p.permit?(:"edit_#{subform}")
       end
     end
+  end
+
+  private def make_attributes(r)
+    return {
+      contact: r.recipient.then { |r| {
+        first_name: r.first_name,
+        last_name: r.last_name,
+        phone_number: r.phone_number,
+      } },
+      address: r.recipient.then { |r| {
+        street: r.street,
+        street2: r.street2,
+        city: r.city,
+        zip: r.zip,
+        geography: true,
+      } },
+      household: r.recipient.then { |r| {
+        proof_of_income: r.household_proof_of_income,
+      } },
+      supplier_account: {
+        supplier_id: @partners[1].id,
+        account_number: r.supplier_account_number,
+        arrears: Money.cents(r.supplier_account_arrears_cents).to_s,
+      },
+    }
   end
 
   # -- data --
@@ -120,6 +149,8 @@ class DemoRepo
         recipient: @recipients[0],
         enroller: @partners[0],
         supplier: @partners[1],
+        supplier_account_number: "1A49402932",
+        supplier_account_arrears_cents: 233_10,
         created_at: 1.day.ago,
         updated_at: 1.hour.ago,
       ),

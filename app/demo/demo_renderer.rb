@@ -73,14 +73,14 @@ class DemoRenderer
 
   def c04_state_data
     setup(demo_id: "c04", user: @repo.find_source_user)
-    @form = @repo.find_new_case
+    @form = @repo.find_new_case(filled: true)
     @case = @form.model
     return render("source/cases/new", path: "/cases/new")
   end
 
   def c05_begin_application
     setup(demo_id: "c05", user: @repo.find_source_user)
-    @form = @repo.find_new_case
+    @form = @repo.find_new_case(filled: true)
     @case = @form.model
     return render("source/cases/new", path: "/cases/new")
   end

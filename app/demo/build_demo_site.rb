@@ -30,6 +30,7 @@ class BuildDemoSite < ::Command
     scaffold_dir
 
     # mock services
+    mock_service(Partner::Repo, @repo)
     mock_service(User::Repo, @repo)
     mock_service(InMemoryStore, @store)
 
