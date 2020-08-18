@@ -32,6 +32,7 @@ class BuildDemoSite < ::Command
     # mock services
     mock_service(Partner::Repo, @repo)
     mock_service(User::Repo, @repo)
+    mock_service(Chat::Repo, @repo)
     mock_service(InMemoryStore, @store)
 
     # create pages
@@ -52,6 +53,15 @@ class BuildDemoSite < ::Command
     create_page("1", render.s01_case_alert, role: r::State)
     create_page("2", render.s02_form, role: r::State)
     create_page("3", render.s03_fpl, role: r::State)
+    create_page("1", render.n01_inbox, role: r::Nonprofit)
+    create_page("2", render.n02_form, role: r::Nonprofit)
+    create_page("3", render.n03_chat, role: r::Nonprofit)
+    create_page("4", render.n04_macros, role: r::Nonprofit)
+    create_page("5", render.n05_documents, role: r::Nonprofit)
+    create_page("6", render.n06_fpl, role: r::Nonprofit)
+    create_page("7", render.n07_determination, role: r::Nonprofit)
+    create_page("8", render.n08_referrals, role: r::Nonprofit)
+    create_page("9", render.n09_reports, role: r::Nonprofit)
   end
 
   # -- helpers --
@@ -94,8 +104,9 @@ class BuildDemoSite < ::Command
   end
 
   private def mock_service(type, value)
-    name = Service::Container.get_name(type)
-    Service::Container.attributes[name] = value
+    type.define_singleton_method(:get) do
+      value
+    end
   end
 
   private def create_symlink(path, dst_dir)

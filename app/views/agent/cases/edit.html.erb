@@ -5,15 +5,27 @@
     <h1 class="PageHeader-title">
       <%= @case.recipient_name %>'s case
     </h1>
+
+    <% case @demo_id %>
+    <% when "n02" %>
+      <%= demo_coachmark_tag(t("demo.role.nonprofit.mark")[1], anchor: :right) %>
+    <% end %>
   </header>
 
   <div class="CaseDetail CaseDetail--edit">
+    <% demo_tab = case @demo_id %>
+      <% when "n05"; :documents %>
+      <% when "n06"; :household %>
+      <% when "n07"; :household %>
+      <% else; :overview %>
+    <% end %>
+
     <div class="CaseDetail-menu">
       <nav class="CaseDetail-filters Filters Filters--vertical">
-        <%= filter_for(:overview, active: errors?(@form.contact), selected: true) %>
-        <%= filter_for(:household, active: errors?(@form.address, @form.household)) %>
+        <%= filter_for(:overview, active: errors?(@form.contact), selected: demo_tab == :overview) %>
+        <%= filter_for(:household, active: errors?(@form.address, @form.household), selected: demo_tab == :household) %>
         <%= filter_for(:program, active: errors?(@form.supplier_account, @form.food, @form.benefit)) %>
-        <%= filter_for(:documents, active: errors?(@form.documents)) %>
+        <%= filter_for(:documents, active: errors?(@form.documents), selected: demo_tab == :documents) %>
         <%= filter_for(:case_notes) %>
         <%= filter_for(:admin) %>
       </nav>
@@ -67,12 +79,12 @@
       <%= form_for(@form, url: @case.update_path, html: { class: "CaseDetail-content CaseForm" }) do |f| %>
         <% form_locals = { f: f, form: @form, view: @case } %>
 
-        <%= filter_panel_tag(:overview, visible: true) do %>
+        <%= filter_panel_tag(:overview, visible: demo_tab == :overview) do %>
           <%= render(partial: "cases/forms/details", locals: form_locals) %>
           <%= render(partial: "cases/forms/contact", locals: form_locals) %>
         <%- end %>
 
-        <%= filter_panel_tag(:household) do %>
+        <%= filter_panel_tag(:household, visible: demo_tab == :household) do %>
           <%= render(partial: "cases/forms/address", locals: form_locals) %>
           <%= render(partial: "cases/forms/household", locals: form_locals) %>
         <%- end %>
@@ -89,7 +101,7 @@
           <%= render(partial: "cases/forms/benefit", locals: form_locals) %>
         <%- end %>
 
-        <%= filter_panel_tag(:documents) do %>
+        <%= filter_panel_tag(:documents, visible: demo_tab == :documents) do %>
           <%= render(partial: "cases/documents", locals: { documents: @form.documents.all }) %>
         <%- end %>
 
@@ -136,6 +148,11 @@
               )
             %>
           <%- end %>
+
+          <% case @demo_id %>
+          <% when "n07" %>
+            <%= demo_coachmark_tag(t("demo.role.nonprofit.mark")[6], anchor: :right) %>
+          <% end %>
         </div>
       <% end %>
     </article>

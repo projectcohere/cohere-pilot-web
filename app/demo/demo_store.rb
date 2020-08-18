@@ -4,7 +4,7 @@ class DemoStore
   end
 
   def execute
-    yield
+    yield(self)
   end
 
   def get(key)

@@ -6,7 +6,7 @@ const kDemoPageCount = {
   "applicant": 6,
   "call-center": 6,
   "state": 3,
-  "nonprofit": 1,
+  "nonprofit": 9,
 }
 
 // -- commands --
@@ -24,9 +24,8 @@ function ShowCoachmark() {
     return
   }
 
-  // show coachmark
+  // add coachmark to parent
   $container.appendChild($coachmark)
-  $coachmark.classList.toggle("is-visible", true)
 
   // get popup / target rects
   const src = $coachmark.getBoundingClientRect()
@@ -68,6 +67,9 @@ function ShowCoachmark() {
       default: return ""
     }
   })()
+
+  // show coachmark
+  $coachmark.classList.toggle("is-visible", true)
 }
 
 function AdvanceDemoOnClick() {

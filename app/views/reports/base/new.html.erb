@@ -11,6 +11,11 @@
         <%= f.select(:report, @form.report_options) %>
       <%- end %>
 
+      <% case @demo_id %>
+      <% when "n09" %>
+        <%= demo_coachmark_tag(t("demo.role.nonprofit.mark")[8], anchor: :right) %>
+      <% end %>
+
       <%= f.field(:start_date, class: "NewReport-startDate") do %>
         <%= f.date_field(:start_date) %>
       <%- end %>

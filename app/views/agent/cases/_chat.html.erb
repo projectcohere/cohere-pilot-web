@@ -12,5 +12,15 @@
 
   <div class="Chat-agent">
     <%= render(partial: "chats/macros") %>
+
+    <% case @demo_id %>
+    <% when "n04" %>
+      <%= demo_coachmark_tag(t("demo.role.nonprofit.mark")[3], anchor: :left) %>
+    <% end %>
   </div>
 </div>
+
+<% case @demo_id %>
+<% when "n03" %>
+  <%= demo_coachmark_tag(t("demo.role.nonprofit.mark")[2], anchor: :left) %>
+<% end %>

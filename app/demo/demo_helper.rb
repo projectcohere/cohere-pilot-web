@@ -7,7 +7,10 @@ module DemoHelper
     return DemoRole.from_demo_id(@demo_id)
   end
 
-  # -- helpers --
+  # -- types --
+  DemoCookies = Struct.new(:signed)
+
+  # -- overrides --
   def params
     return @params || super
   end
@@ -24,6 +27,10 @@ module DemoHelper
     return demo_role&.to_user_role
   end
 
+  def cookies
+    return @cookies ||= DemoCookies.new({})
+  end
+
   # -- tags --
   def demo_role_tag(demo_role)
     return tag.li(class: "DemoLanding-role Layout--#{demo_role.to_user_role}") do
@@ -37,10 +44,14 @@ module DemoHelper
 
     coachmark_tag = tag.p(
       id: "demo-coachmark",
-      class: "DemoCoachmark DemoCoachmark--#{anchor}",
+      class: "DemoCoachmark DemoCoachmark--#{anchor.to_s.underscore.camelcase(:lower)}",
       data: { "demo-anchor": anchor },
     ) do
-      content
+      triangle_tag = tag.svg(class: "DemoCoachmark-arrow", viewBox: "0 0 8 16") do
+        tag.path(d: "m0 8 8-8v16z")
+      end
+
+      triangle_tag + content
     end
 
     return coachmark_tag

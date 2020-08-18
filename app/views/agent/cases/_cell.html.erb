@@ -19,6 +19,11 @@
           tid: "Case Cell Assign Button",
         )
       %>
+
+      <% case @demo_id %>
+      <% when "n01" %>
+        <%= demo_coachmark_tag(t("demo.role.nonprofit.mark")[0], anchor: :right) %>
+      <% end %>
     <% else %>
       <p class="CaseCell-assignee">
         <%= cell.assignee_email %>

@@ -24,15 +24,24 @@ class DemoRepo
     return User::Repo.map_record(@users[1])
   end
 
+  def find_nonprofit_user
+    return User::Repo.map_record(@users[2])
+  end
+
   # -- queries/partners
   def find_all_suppliers_by_program(_)
     return [@partners[1]]
   end
 
+  # -- queries/programs
+  def find_all_by_partner(_)
+    return @programs
+  end
+
   # -- queries/cases
-  def find_cases
+  def find_cases(scope)
     page = Pagy.new(count: 1)
-    kase = Cases::Views::Repo.map_cell(find_case, Cases::Scope::All)
+    kase = Cases::Views::Repo.map_cell(find_case, scope)
     return page, [kase]
   end
 
@@ -50,13 +59,25 @@ class DemoRepo
     return form
   end
 
-  def find_open_case(filled: false)
-    view = Cases::Views::Repo.map_detail_from_record(find_case(step: filled ? 1 : 0))
+  def find_active_case(step:)
+    view = Cases::Views::Repo.map_detail_from_record(find_case(step: step))
     form = make_form(view)
     return form
   end
 
-  def find_applicant_chat(step:)
+  def find_referral_case
+    p = @programs.map { |r| Program::Repo.map_record(r) }
+    view = Cases::Views::Repo.map_reference(find_case(step: 5))
+    form = Cases::Views::ProgramForm.new(view, p, { "program_id" => p[1].id })
+    return form
+  end
+
+  # -- queries/chats
+  def find_by_recipient_with_messages(_)
+    return find_chat(step: @chat_step || 1)
+  end
+
+  def find_chat(step:)
     chat = @chats[0]
     chat_messages = @chat_messages[0..step].flatten.map do |m|
       Chat::Message::Repo.map_record(m, attachments: m.attachments)
@@ -65,17 +86,43 @@ class DemoRepo
     return Chat::Repo.map_record(chat, chat_messages)
   end
 
+  # -- queries/reports
+  def find_report_form
+    return Reports::Views::Form.new(nil, program_repo: self)
+  end
+
   # -- helpers --
   private def find_case(step: 0)
     c = @cases[0]
     r = c.recipient
 
-    if step > 0
+    if step >= 1
       r.assign_attributes(
         dhs_number: "192283A405",
         household_size: 2,
         household_income_cents: 625_00,
       )
+    end
+
+    if step >= 2
+      @chat_step = 2
+    end
+
+    if step >= 3
+      @chat_step = 3
+    end
+
+    if step >= 4
+      @chat_step = 4
+
+      c.status = :submitted
+      c.documents = @documents
+    end
+
+    if step >= 5
+      @chat_step = 5
+
+      c.status = :approved
     end
 
     return c
@@ -188,6 +235,18 @@ class DemoRepo
       ),
     ]
 
+    @blobs = [
+      build_blob("id.jpg"),
+      build_blob("document.jpg"),
+      build_blob("contract.jpg"),
+    ]
+
+    @documents = [
+      Document::Record.new(file: @blobs[0]),
+      Document::Record.new(file: @blobs[1]),
+      Document::Record.new(file: @blobs[2]),
+    ]
+
     @chats = [
       Chat::Record.new(
         id: 1,
@@ -204,15 +263,15 @@ class DemoRepo
       ],
       [
         build_msg_from_macro(1, 0),
-        build_msg(body: @recipients[0].household_size),
+        build_msg(body: find_case(step: 1).recipient.household_size),
       ],
       [
         build_msg_from_macro(1, 1),
-        build_msg(attachments: [build_attachment("id.jpg")]),
+        build_msg(attachments: [Chat::Attachment::Record.new(file: @blobs[0])]),
       ],
       [
         build_msg_from_macro(3, 0),
-        build_msg(attachments: [build_attachment("document.jpg")]),
+        build_msg(attachments: [Chat::Attachment::Record.new(file: @blobs[1])]),
       ],
       [
         build_msg_from_macro(5, 5),
@@ -225,7 +284,7 @@ class DemoRepo
     @users = [
       User::Record.new(
         id: 1,
-        email: "test@source.com",
+        email: "source@testmetro.com",
         role: Role::Source.to_i,
         partner: @partners[0],
       ),
@@ -234,6 +293,13 @@ class DemoRepo
         email: "test@michigan.gov",
         role: Role::Governor.to_i,
         partner: @partners[2],
+      ),
+      User::Record.new(
+        id: 3,
+        email: "agent@testmetro.org",
+        role: Role::Agent.to_i,
+        partner: @partners[0],
+        admin: true,
       ),
     ]
   end
@@ -261,7 +327,7 @@ class DemoRepo
     )
   end
 
-  def build_attachment(filename)
+  def build_blob(filename)
     content_type = case filename.split(".").last
     when "jpg"
       "image/jpg"
@@ -269,11 +335,9 @@ class DemoRepo
       "application/octet-stream"
     end
 
-    return Chat::Attachment::Record.new(
-      file: ActiveStorage::Blob.new(
-        filename: filename,
-        content_type: content_type,
-      )
+    return ActiveStorage::Blob.new(
+      filename: filename,
+      content_type: content_type,
     )
   end
 end
