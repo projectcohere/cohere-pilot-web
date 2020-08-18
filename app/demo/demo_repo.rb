@@ -21,8 +21,22 @@ class DemoRepo
 
   def find_source_cases
     page = Pagy.new(count: 1)
-    kase = @cases[0]
-    return page, [Cases::Views::Repo.map_cell(kase, Cases::Scope::All)]
+    kase = Cases::Views::Repo.map_cell(@cases[0], Cases::Scope::All)
+    return page, [kase]
+  end
+
+  def find_pending_case
+    p = @programs.map { |r| Program::Repo.map_record(r) }
+    view = Cases::Views::Repo.map_pending(SecureRandom.base58, p[0])
+    form = Cases::Views::ProgramForm.new(view, p, { "program_id" => p[0].id })
+    return form
+  end
+
+  def find_new_case
+    p = Program::Repo.map_record(@programs[0])
+    view = Cases::Views::Repo.map_pending(SecureRandom.base58, p)
+    form = make_form(view)
+    return form
   end
 
   def find_applicant_chat(step:)
@@ -34,12 +48,36 @@ class DemoRepo
     return Chat::Repo.map_record(chat, chat_messages)
   end
 
+  # -- helpers --
+  private def make_form(model)
+    return Case::Policy.new(@user).with_case(model) do |p|
+      Cases::Views::Form.new(model, "", {}) do |subform|
+        p.permit?(:"edit_#{subform}")
+      end
+    end
+  end
+
   # -- data --
   private def build_db
     @programs = [
       Program::Record.new(
         id: 1,
         name: "MEAP",
+        requirements: {
+          supplier_account: %i[
+            present
+          ]
+        }
+      ),
+      Program::Record.new(
+        id: 2,
+        name: "WRAP",
+        requirements: {
+          supplier_account: %i[
+            present
+            active_service
+          ]
+        }
       ),
     ]
 

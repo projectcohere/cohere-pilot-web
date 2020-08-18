@@ -34,16 +34,20 @@ class BuildDemoSite < ::Command
     mock_service(InMemoryStore, @store)
 
     # create pages
+    r = DemoRole
     create_page("index.html", render.landing)
-    create_page("1", render.a01_communication, role: DemoRole::Applicant)
-    create_page("2", render.a02_legal, role: DemoRole::Applicant)
-    create_page("3", render.a03_language, role: DemoRole::Applicant)
-    create_page("4", render.a04_questions, role: DemoRole::Applicant)
-    create_page("5", render.a05_documents, role: DemoRole::Applicant)
-    create_page("6", render.a06_enrolled, role: DemoRole::Applicant)
-    create_page("1", render.s01_sign_in)
-    create_page("2", render.s02_source_list)
-    create_page("3", render.s03_source_start_case)
+    create_page("1", render.a01_communication, role: r::Applicant)
+    create_page("2", render.a02_legal, role: r::Applicant)
+    create_page("3", render.a03_language, role: r::Applicant)
+    create_page("4", render.a04_questions, role: r::Applicant)
+    create_page("5", render.a05_documents, role: r::Applicant)
+    create_page("6", render.a06_enrolled, role: r::Applicant)
+    create_page("1", render.c01_sign_in, role: r::CallCenter)
+    create_page("2", render.c02_start_case, role: r::CallCenter)
+    create_page("3", render.c03_form, role: r::CallCenter)
+    create_page("4", render.c04_state_data, role: r::CallCenter)
+    create_page("5", render.c05_begin_application, role: r::CallCenter)
+    create_page("6", render.c06_view_cases, role: r::CallCenter)
   end
 
   # -- helpers --

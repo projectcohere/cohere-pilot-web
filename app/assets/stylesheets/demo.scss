@@ -1,36 +1,23 @@
 .DemoLanding {
-  display: flex;
   height: 100%;
-  padding: 0;
-
-  &-panel {
-    padding: 60px;
-
-    &:nth-child(1) {
-      flex: 2;
-      background-color: white;
-    }
-
-    &:nth-child(2) {
-      flex: 1;
-    }
-  }
+  padding: 100px;
 
   .PageHeader {
     margin-bottom: 40px;
 
-    > h2 {
-      margin-top: 25px;
+    > h1 > img {
+      height: 67px;
+      margin-left: -4px;
     }
   }
 
-  &-intro {
-    font-size: 18px;
-    opacity: 0.8;
+  &-content {
+    display: flex;
+    align-items: flex-start;
+  }
 
-    > * + * {
-      margin-top: 10px;
-    }
+  &-nav {
+    flex: 2;
   }
 
   &-roles {
@@ -44,6 +31,9 @@
   }
 
   &-role {
+    border-left: 2px solid var(--role-color);
+    padding-left: 15px;
+
     > a {
       display: block;
       font-size: 24px;
@@ -51,6 +41,26 @@
     }
 
     > p {
+      margin-top: 10px;
+    }
+  }
+
+  &-intro {
+    flex: 1;
+    padding: 30px;
+    border: 1px solid #807fff;
+    border-radius: 7px;
+    background-color: white;
+
+    > h2 {
+      margin-bottom: 20px;
+    }
+
+    > p {
+      font-size: 14px;
+    }
+
+    > * + * {
       margin-top: 10px;
     }
   }
@@ -87,7 +97,6 @@
 .DemoCoachmark {
   $arrow-width: 8px;
 
-  display: none;
   position: fixed;
   top: 0;
   left: 0;
@@ -95,6 +104,8 @@
   height: 100vh;
   z-index: 1;
   pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
 
   &-popup {
     position: absolute;
@@ -149,6 +160,6 @@
   }
 
   &.is-visible {
-    display: block;
+    opacity: 1;
   }
 }

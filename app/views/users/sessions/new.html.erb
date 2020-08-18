@@ -45,10 +45,8 @@
           %>
 
           <% case @demo_id %>
-          <% when "s01" %>
-            <%= demo_coachmark_tag(anchor: :right) do %>
-              To get started, let's sign in as a Call Center Representative.
-            <%- end %>
+          <% when "c01" %>
+            <%= demo_coachmark_tag(t("demo.role.call-center.mark")[0], anchor: :right) %>
           <% end %>
         <% end %>
       <% end %>

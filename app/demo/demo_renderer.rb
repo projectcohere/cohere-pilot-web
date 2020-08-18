@@ -46,8 +46,8 @@ class DemoRenderer
     return render("demo/phone", path: "/")
   end
 
-  def s01_sign_in
-    setup(demo_id: "s01")
+  def c01_sign_in
+    setup(demo_id: "c01")
 
     @params = {
       email: @repo.find_source_user.email,
@@ -57,21 +57,38 @@ class DemoRenderer
     return render("users/sessions/new", path: "/sign-in")
   end
 
-  def s02_source_list
-    setup(demo_id: "s02", user: @repo.find_source_user)
-
-    @scope = Cases::Scope::All
-    @page, @cases = @repo.find_source_cases
-
-    return render("source/cases/index", path: "/cases")
+  def c02_start_case
+    setup(demo_id: "c02", user: @repo.find_source_user)
+    @form = @repo.find_pending_case
+    @case = @form.model
+    return render("source/cases/select", path: "/cases/select")
   end
 
-  def s03_source_start_case
-    setup(demo_id: "s03", user: @repo.find_source_user)
+  def c03_form
+    setup(demo_id: "c03", user: @repo.find_source_user)
+    @form = @repo.find_new_case
+    @case = @form.model
+    return render("source/cases/new", path: "/cases/new")
+  end
 
+  def c04_state_data
+    setup(demo_id: "c04", user: @repo.find_source_user)
+    @form = @repo.find_new_case
+    @case = @form.model
+    return render("source/cases/new", path: "/cases/new")
+  end
+
+  def c05_begin_application
+    setup(demo_id: "c05", user: @repo.find_source_user)
+    @form = @repo.find_new_case
+    @case = @form.model
+    return render("source/cases/new", path: "/cases/new")
+  end
+
+  def c06_view_cases
+    setup(demo_id: "c06", user: @repo.find_source_user)
     @scope = Cases::Scope::All
     @page, @cases = @repo.find_source_cases
-
     return render("source/cases/index", path: "/cases")
   end
 

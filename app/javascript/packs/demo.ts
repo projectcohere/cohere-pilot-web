@@ -2,7 +2,7 @@
 const kDemoBackId = "demo-back"
 const kDemoPageCount = {
   "applicant": 6,
-  "call-center": 0,
+  "call-center": 6,
   "state": 0,
   "nonprofit": 0,
 }
@@ -27,10 +27,20 @@ function ShowCoachmark() {
   document.body.appendChild($coachmark)
   $coachmark.classList.toggle("is-visible", true)
 
-  // anchor popup to edge of target
+  // get popup / target rects
   const src = $popup.getBoundingClientRect()
   const dst = $target.getBoundingClientRect()
 
+  // truncate target width / height if offscreen
+  if (dst.left + dst.right > window.innerWidth) {
+    dst.width = window.innerWidth
+  }
+
+  if (dst.top + dst.height > window.innerHeight) {
+    dst.height = window.innerHeight - dst.top
+  }
+
+  // anchor popup to target
   $popup.style.cssText = (() => {
     switch ($coachmark.dataset["demoAnchor"]) {
       case "bottom": return `

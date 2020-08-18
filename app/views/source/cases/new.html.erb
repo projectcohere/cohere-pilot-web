@@ -33,6 +33,15 @@
           %>
         </div>
       <%- end %>
+
+      <% case @demo_id %>
+      <% when "c03" %>
+        <%= demo_coachmark_tag(t("demo.role.call-center.mark")[2], anchor: :right) %>
+      <% when "c04" %>
+        <%= demo_coachmark_tag(t("demo.role.call-center.mark")[3], anchor: :right) %>
+      <% when "c05" %>
+        <%= demo_coachmark_tag(t("demo.role.call-center.mark")[4], anchor: :right) %>
+      <% end %>
     </article>
   </div>
 </main>

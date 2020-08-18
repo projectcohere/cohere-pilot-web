@@ -1,11 +1,10 @@
 <main class="DemoLanding">
-  <section class="DemoLanding-panel">
-    <header class="PageHeader">
-      <h1><%= image_tag("logo-large-full.svg", height: 67, alt: "Cohere Logo") %></h1>
-      <%= tag.h2(t(".prompt"), class: "PageHeader-subtitle") %>
-    </header>
+  <header class="PageHeader">
+    <h1><%= image_tag("logo-large-full.svg", height: 67, alt: "Cohere Logo") %></h1>
+  </header>
 
-    <nav>
+  <div class="DemoLanding-content">
+    <nav class="DemoLanding-nav">
       <ul class="DemoLanding-roles">
         <%= demo_role_tag(DemoRole::Applicant) %>
         <%= demo_role_tag(DemoRole::CallCenter) %>
@@ -13,13 +12,12 @@
         <%= demo_role_tag(DemoRole::Nonprofit) %>
       </ul>
     </nav>
-  </section>
 
-  <section class="DemoLanding-panel">
-    <div class="DemoLanding-intro">
+    <section class="DemoLanding-intro">
+      <%= tag.h2(t(".prompt")) %>
       <% t(".intro").each do |line| %>
         <p><%= line %></p>
       <% end %>
-    </div>
+    </section>
   </div>
 </main>
