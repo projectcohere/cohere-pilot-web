@@ -1,4 +1,6 @@
 // -- constants --
+const kContainerId = "container"
+const kCoachmarkId = "demo-coachmark"
 const kDemoBackId = "demo-back"
 const kDemoPageCount = {
   "applicant": 6,
@@ -7,41 +9,49 @@ const kDemoPageCount = {
   "nonprofit": 0,
 }
 
-
 // -- commands --
 function ShowCoachmark() {
-  // find coachmark
+  // find coachmark and target
   const $coachmark = document.getElementById("demo-coachmark")
-  if ($coachmark == null) {
+  const $target = $coachmark?.previousElementSibling
+  if ($coachmark == null || $target == null) {
     return
   }
 
-  // find anchor target and popup
-  const $target = $coachmark.previousElementSibling
-  const $popup = $coachmark.querySelector(".DemoCoachmark-popup") as HTMLElement
-  if ($target == null || $popup == null) {
+  // find container
+  const $container = document.getElementById(kContainerId)
+  if ($container == null) {
     return
   }
 
   // show coachmark
-  document.body.appendChild($coachmark)
+  $container.appendChild($coachmark)
   $coachmark.classList.toggle("is-visible", true)
 
   // get popup / target rects
-  const src = $popup.getBoundingClientRect()
+  const src = $coachmark.getBoundingClientRect()
   const dst = $target.getBoundingClientRect()
 
-  // truncate target width / height if offscreen
-  if (dst.left + dst.right > window.innerWidth) {
-    dst.width = window.innerWidth
-  }
+  // make rects relative to container
+  const vr = $container.getBoundingClientRect()
+  src.x -= vr.x
+  dst.x -= vr.x
 
-  if (dst.top + dst.height > window.innerHeight) {
-    dst.height = window.innerHeight - dst.top
+  // adjust window / popup positioning
+  const padding = 150.0
+  const vh = vr.height
+
+  // center against viewable portion of large elements
+  if (dst.top < vh && dst.height > vh) {
+    dst.height = vh - dst.top
+  }
+  // scroll the target into view if necessary
+  else if (dst.bottom + padding > vh) {
+    $container.scrollTo({ top: dst.bottom + padding - vh })
   }
 
   // anchor popup to target
-  $popup.style.cssText = (() => {
+  $coachmark.style.cssText = (() => {
     switch ($coachmark.dataset["demoAnchor"]) {
       case "bottom": return `
         top: ${dst.bottom}px;

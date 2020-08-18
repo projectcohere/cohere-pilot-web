@@ -35,14 +35,12 @@ module DemoHelper
   def demo_coachmark_tag(body = nil, anchor:, &children)
     content = body || capture(&children)
 
-    coachmark_tag = tag.div(
+    coachmark_tag = tag.p(
       id: "demo-coachmark",
       class: "DemoCoachmark DemoCoachmark--#{anchor}",
       data: { "demo-anchor": anchor },
     ) do
-      tag.p(class: "DemoCoachmark-popup") do
-        content
-      end
+      content
     end
 
     return coachmark_tag

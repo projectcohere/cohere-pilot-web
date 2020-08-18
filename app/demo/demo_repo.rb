@@ -81,7 +81,7 @@ class DemoRepo
       supplier_account: {
         supplier_id: @partners[1].id,
         account_number: r.supplier_account_number,
-        arrears: Money.cents(r.supplier_account_arrears_cents).to_s,
+        arrears: Money.cents(r.supplier_account_arrears_cents).dollars,
       },
     }
   end
@@ -128,7 +128,7 @@ class DemoRepo
     @recipients = [
       Recipient::Record.new(
         id: 1,
-        phone_number: Faker::PhoneNumber.phone_number,
+        phone_number: "5553334444",
         first_name: "Janice",
         last_name: "Sample",
         street: "123 Test St.",
