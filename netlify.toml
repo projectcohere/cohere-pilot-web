@@ -1,0 +1,43 @@
+[[headers]]
+  for = "/applicant/*"
+  [headers.values]
+    Content-Type = "text/html; charset=UTF-8"
+
+[[headers]]
+  for = "/call-center/*"
+  [headers.values]
+    Content-Type = "text/html; charset=UTF-8"
+
+[[headers]]
+  for = "/state/*"
+  [headers.values]
+    Content-Type = "text/html; charset=UTF-8"
+
+[[headers]]
+  for = "/nonprofit/*"
+  [headers.values]
+    Content-Type = "text/html; charset=UTF-8"
+
+[[redirects]]
+  from = "/applicant"
+  to = "/applicant/1"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/call-center"
+  to = "/call-center/1"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/state"
+  to = "/state/1"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/nonprofit"
+  to = "/nonprofit/1"
+  status = 301
+  force = true

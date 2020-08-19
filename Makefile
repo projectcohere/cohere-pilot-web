@@ -244,13 +244,27 @@ demo: t
 t: t/build
 .PHONY: t
 
-## build the static demo site
+## build the demo site
 t/build:
 	$(tools-rails) assets:precompile
 	HOST=http://localhost:8000 $(tools-rails) demo:build
 .PHONY: t/build
 
-## serve the static demo site
+## build the prod demo site
+t/b/prod:
+	rm -rf ./public/assets
+	RAILS_ENV=production $(tools-rails) assets:precompile
+	RAILS_ENV=production HOST=https://project-cohere.netlify.app $(tools-rails) demo:build
+	rm -rf ./demo-prod
+	cp -RL ./demo ./demo-prod
+.PHONY: t/b/prod
+
+## deploy the prod demo site
+t/deploy:
+	netlify-cli deploy -d ./demo-prod --prod
+.PHONY: t/deploy
+
+## serve the demo site
 t/start:
 	./demo-server
 .PHONY: t/start

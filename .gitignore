@@ -33,3 +33,7 @@ yarn-debug.log*
 
 # demo site
 /demo
+/demo-prod
+
+# Local Netlify folder
+.netlify

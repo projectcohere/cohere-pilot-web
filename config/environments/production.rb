@@ -35,7 +35,7 @@ Rails.application.configure do
   config.action_controller.perform_caching = true
 
   # -- active storage --
-  config.active_storage.service = :amazon
+  config.active_storage.service = :local
 
   # -- action mailer --
   config.action_mailer.perform_caching = false

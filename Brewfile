@@ -19,6 +19,9 @@ brew "imagemagick"
 # pdf previewer; required by ActiveStorage to generate PDF previews
 brew "poppler"
 
+# tool for deploying demo site
+brew "netlify-cli"
+
 # selenium chromedriver; required for headless system tests
 cask "chromedriver"
 

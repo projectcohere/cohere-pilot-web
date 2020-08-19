@@ -59,6 +59,7 @@ test:
 #
 production:
   <<: *default
-  database: cohere_pilot_web_production
-  username: cohere_pilot_web
-  password: <%= ENV['COHERE_PILOT_WEB_DATABASE_PASSWORD'] %>
+  database: cohere_pilot_web_development
+  # database: cohere_pilot_web_production
+  # username: cohere_pilot_web
+  # password: <%= ENV['COHERE_PILOT_WEB_DATABASE_PASSWORD'] %>

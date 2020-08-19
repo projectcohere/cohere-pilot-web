@@ -17,6 +17,7 @@ class BuildDemoSite < ::Command
     Assets = Public.join("assets")
     Macros = Pathname.new("./macros")
     DemoFiles = Pathname.new("./demo-files")
+    Netlify = Pathname.new("./netlify.toml")
   end
 
   # -- lifetime --
@@ -70,6 +71,9 @@ class BuildDemoSite < ::Command
     # dir itself so that demo-server doesn't error on rebuilt paths)
     Paths::Demo.glob("*").each(&:rmtree) if Paths::Demo.exist?
     Paths::Demo.mkpath
+
+    # symlink netlify config
+    create_symlink(Paths::Netlify, Paths::Demo)
 
     # symlink public files
     Paths::Public.children.each do |public_path|
