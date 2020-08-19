@@ -13,10 +13,6 @@
             <%- image_url = file_url %>
             <%- image_url = d.file.attachment.representation(resize: "200x200>") if d.file.attachment.representable? %>
             <%= image_tag(image_url, height: 140, class: "CaseDocument-image") %>
-
-            <% if d.equal?(documents.last) && @demo_id == "n05" %>
-              <%= demo_coachmark_tag(t("demo.role.nonprofit.mark")[4], anchor: :right) %>
-            <% end %>
           <% end %>
 
           <div class="CaseDocument-info">
@@ -36,4 +32,8 @@
       <% end %>
     <% end %>
   </ul>
+
+  <% if @demo_id == "n05" %>
+    <%= demo_coachmark_tag(t("demo.role.nonprofit.mark")[4], anchor: :right) %>
+  <% end %>
 <% end %>

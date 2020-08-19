@@ -244,7 +244,7 @@ class DemoRepo
     @documents = [
       Document::Record.new(file: @blobs[0]),
       Document::Record.new(file: @blobs[1]),
-      Document::Record.new(file: @blobs[2]),
+      Document::Record.new(file: @blobs[2], classification: :contract),
     ]
 
     @chats = [
