@@ -261,7 +261,7 @@ t/b/prod:
 
 ## deploy the prod demo site
 t/deploy:
-	netlify-cli deploy -d ./demo-prod --prod
+	netlify deploy -d ./demo-prod --prod
 .PHONY: t/deploy
 
 ## serve the demo site

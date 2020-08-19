@@ -1,4 +1,5 @@
 // -- constants --
+const kFrameId = "frame"
 const kContainerId = "container"
 const kDemoCoachmarkId = "demo-coachmark"
 const kDemoBackId = "demo-back"
@@ -78,8 +79,9 @@ function ShowCoachmark() {
     }
   })()
 
-  // show coachmark
-  $container.classList.toggle(kClassVisible, true)
+  // find the frame
+  const $frame = document.getElementById(kFrameId)
+  $frame?.classList.toggle(kClassVisible, true)
 }
 
 function AdvanceDemoOnClick() {
@@ -130,12 +132,9 @@ function AdvanceDemoOnClick() {
     }
 
     // otherwise, fade out the frame and advance
-    const $container = document.getElementById(kContainerId)
-    if ($container == null) {
-      return
-    }
+    const $frame = document.getElementById(kFrameId)
+    $frame?.classList.toggle(kClassVisible, false)
 
-    $container.classList.toggle(kClassVisible, false)
     setTimeout(() => {
       location.href = `/${role}/${page + 1}`
     }, 100)
