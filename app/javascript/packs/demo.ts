@@ -1,7 +1,14 @@
 // -- constants --
 const kContainerId = "container"
-const kCoachmarkId = "demo-coachmark"
+const kDemoCoachmarkId = "demo-coachmark"
 const kDemoBackId = "demo-back"
+const kClassVisible = "is-visible"
+
+const kInterceptedEvents = [
+  "click",
+  "confirm"
+]
+
 const kDemoPageCount = {
   "applicant": 6,
   "call-center": 6,
@@ -9,10 +16,13 @@ const kDemoPageCount = {
   "nonprofit": 9,
 }
 
+// -- state --
+let listener: ((e: MouseEvent) => void) | null = null
+
 // -- commands --
 function ShowCoachmark() {
   // find coachmark and target
-  const $coachmark = document.getElementById("demo-coachmark")
+  const $coachmark = document.getElementById(kDemoCoachmarkId)
   const $target = $coachmark?.previousElementSibling
   if ($coachmark == null || $target == null) {
     return
@@ -69,20 +79,32 @@ function ShowCoachmark() {
   })()
 
   // show coachmark
-  $coachmark.classList.toggle("is-visible", true)
+  $container.classList.toggle(kClassVisible, true)
 }
 
 function AdvanceDemoOnClick() {
+  // clean up the old listener, if any
+  if (listener != null) {
+    for (const event of kInterceptedEvents) {
+      document.removeEventListener(event as any, listener)
+    }
+
+    listener = null
+  }
+
+  // check that were on a slideshow page
   const matches = location.pathname.match(/^\/(.+)\/(\d+)$/)
   if (matches == null) {
-    console.log("Not on demo page.")
+    console.log("Not on slideshow page.")
     return
   }
 
+  // add a global click interceptor that advances to the next page in this
+  // section
   const role = matches[1] as keyof typeof kDemoPageCount
   const page = Number.parseInt(matches[2])
 
-  document.addEventListener("click", (event) => {
+  listener = (event) => {
     if (event == null) {
       return
     }
@@ -101,12 +123,27 @@ function AdvanceDemoOnClick() {
     event.preventDefault()
     event.stopPropagation()
 
-    if (page != kDemoPageCount[role]) {
-      location.href = `/${role}/${page + 1}`
-    } else {
+    // immediately navigate home if last page in section
+    if (page == kDemoPageCount[role]) {
       location.href = "/"
+      return
     }
-  })
+
+    // otherwise, fade out the frame and advance
+    const $container = document.getElementById(kContainerId)
+    if ($container == null) {
+      return
+    }
+
+    $container.classList.toggle(kClassVisible, false)
+    setTimeout(() => {
+      location.href = `/${role}/${page + 1}`
+    }, 100)
+  }
+
+  for (const event of kInterceptedEvents) {
+    document.addEventListener(event as any, listener)
+  }
 }
 
 (function main() {

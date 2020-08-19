@@ -21,7 +21,7 @@
       <%= tag.div(t(".hours-banner"), class: "Layout-banner") %>
     <% end %>
 
-    <div class="Layout-frame">
+    <div id="frame" class="Layout-frame">
       <% if shows_navigation? %>
         <%= render(partial: "layouts/navigation") %>
       <% end %>
