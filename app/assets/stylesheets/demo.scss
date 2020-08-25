@@ -70,14 +70,14 @@
   height: 100%;
 }
 
-.DemoBackButton {
+.DemoNav {
   position: absolute;
   top: 20px;
   right: 20px;
   border-radius: 7px;
   border: 1px solid var(--role-color);
 
-  &-label, &-prompt {
+  &-label, &-home, &-next {
     padding: 5px 10px;
   }
 
@@ -89,8 +89,32 @@
     font-weight: 600;
   }
 
-  &:hover {
-    opacity: 0.8;
+  &-actions {
+    display: flex;
+  }
+
+  &-home {
+    display: flex;
+    align-items: center;
+    border-right: 1px solid var(--role-color);
+
+    span {
+      width: 15px;
+      height: 11px;
+      margin-top: -1px;
+    }
+
+    &:hover span {
+      background-color: var(--role-color);
+    }
+  }
+
+  &-next {
+    flex: 1;
+
+    &:hover {
+      color: var(--role-color);
+    }
   }
 }
 

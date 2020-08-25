@@ -1,10 +1,7 @@
 module DemoHelper
+  # -- helpers --
   def demo?
-    return @demo_id != nil
-  end
-
-  def demo_role
-    return DemoRole.from_demo_id(@demo_id)
+    return @demo != nil && @demo
   end
 
   # -- types --
@@ -24,7 +21,7 @@ module DemoHelper
       return super
     end
 
-    return demo_role&.to_user_role
+    return @demo_role&.to_user_role
   end
 
   def cookies
@@ -36,6 +33,24 @@ module DemoHelper
     return tag.li(class: "DemoLanding-role Layout--#{demo_role.to_user_role}") do
       link_to(t("demo.role.#{demo_role}.name"), "/#{demo_role}/1") +
       tag.p(t("demo.role.#{demo_role}.body"))
+    end
+  end
+
+  def demo_next_link_tag
+    if @demo_page >= @demo_role.pages
+      return link_to(
+        t("demo.actions.home"),
+        "/",
+        data: { demo: true },
+        class: "DemoNav-next"
+      )
+    else
+      return link_to(
+        t("demo.actions.next"),
+        "/#{@demo_role}/#{@demo_page + 1}",
+        data: { demo: true },
+        class: "DemoNav-next",
+      )
     end
   end
 

@@ -36,7 +36,7 @@ class BuildDemoSite < ::Command
     mock_service(Chat::Repo, @repo)
     mock_service(InMemoryStore, @store)
 
-    # create pages
+    # create pages (TODO: could infer url from renderer ivars now)
     r = DemoRole
     create_page("index.html", render.landing)
     create_page("1", render.a01_communication, role: r::Applicant)

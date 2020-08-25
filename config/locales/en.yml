@@ -391,9 +391,9 @@ en:
 
   demo:
     actions:
-      back:
-        label: "Viewing:"
-        prompt: "Return to Home"
+      label: "Viewing:"
+      home: "Return Home"
+      next: "Next Page"
 
     index:
       title: "Welcome to Cohere!"

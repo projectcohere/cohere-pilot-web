@@ -1,9 +1,12 @@
 class DemoRole < ::Option
+  # -- props --
+  prop(:pages)
+
   # -- options --
-  option(:applicant)
-  option(:call_center)
-  option(:state)
-  option(:nonprofit)
+  option(:applicant, pages: 6)
+  option(:call_center, pages: 6)
+  option(:state, pages: 3)
+  option(:nonprofit, pages: 9)
 
   # -- queries --
   def to_user_role
@@ -23,19 +26,5 @@ class DemoRole < ::Option
 
   def to_s
     return super.dasherize
-  end
-
-  # -- factories --
-  def self.from_demo_id(demo_id)
-    case demo_id[0]
-    when "a"
-      return DemoRole::Applicant
-    when "c"
-      return DemoRole::CallCenter
-    when "s"
-      return DemoRole::State
-    when "n"
-      return DemoRole::Nonprofit
-    end
   end
 end

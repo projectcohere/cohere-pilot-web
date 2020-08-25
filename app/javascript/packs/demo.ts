@@ -2,23 +2,10 @@
 const kFrameId = "frame"
 const kContainerId = "container"
 const kDemoCoachmarkId = "demo-coachmark"
-const kDemoBackId = "demo-back"
 const kClassVisible = "is-visible"
 
-const kInterceptedEvents = [
-  "click",
-  "confirm"
-]
-
-const kDemoPageCount = {
-  "applicant": 6,
-  "call-center": 6,
-  "state": 3,
-  "nonprofit": 9,
-}
-
 // -- state --
-let listener: ((e: MouseEvent) => void) | null = null
+let listeners: Map<any[], any> | null
 
 // -- commands --
 function ShowCoachmark() {
@@ -84,14 +71,16 @@ function ShowCoachmark() {
   $frame?.classList.toggle(kClassVisible, true)
 }
 
-function AdvanceDemoOnClick() {
+function RegisterListeners() {
   // clean up the old listener, if any
-  if (listener != null) {
-    for (const event of kInterceptedEvents) {
-      document.removeEventListener(event as any, listener)
+  if (listeners != null) {
+    for (const [events, listener] of listeners.entries()) {
+      for (const event of events) {
+        document.removeEventListener(event, listener)
+      }
     }
 
-    listener = null
+    listeners = null
   }
 
   // check that were on a slideshow page
@@ -101,53 +90,96 @@ function AdvanceDemoOnClick() {
     return
   }
 
-  // add a global click interceptor that advances to the next page in this
-  // section
-  const role = matches[1] as keyof typeof kDemoPageCount
-  const page = Number.parseInt(matches[2])
+  // register listeners
+  listeners = new Map<any[], any>()
 
-  listener = (event) => {
-    if (event == null) {
-      return
-    }
+  // add a link click interceptor that ignores any non-demo link
+  listeners.set(["click"], (event: MouseEvent) => {
+    const tags = new Set(["A", "INPUT"])
 
-    // check if this click was inside the back button
+    // check if this click is on a matching tag
     let target = event.target as HTMLElement | null
-    while (target != null && target.id !== kDemoBackId) {
-      target = target.parentElement
+    while (target != null && !tags.has(target.tagName)) {
+      target = target.parentElement as HTMLElement
     }
 
-    if (target != null) {
+    if (target == null) {
       return
     }
 
-    // otherwise intercept and advance page
-    event.preventDefault()
-    event.stopPropagation()
-
-    // immediately navigate home if last page in section
-    if (page == kDemoPageCount[role]) {
-      location.href = "/"
-      return
+    // if it's a file input, prevent it
+    if (target.tagName == "INPUT") {
+      DidClickInput(event, target as HTMLInputElement)
+    } else {
+      DidClickLink(event, target as HTMLLinkElement)
     }
+  })
 
-    // otherwise, fade out the frame and advance
-    const $frame = document.getElementById(kFrameId)
-    $frame?.classList.toggle(kClassVisible, false)
+  listeners.set(["confirm"], (event: Event) => {
+    CancelEvent(event)
+  })
 
-    setTimeout(() => {
-      location.href = `/${role}/${page + 1}`
-    }, 100)
-  }
+  listeners.set(["submit"], (event: Event) => {
+    DidSubmitForm(event)
+  })
 
-  for (const event of kInterceptedEvents) {
-    document.addEventListener(event as any, listener)
+  // add all listeners
+  for (const [events, listener] of listeners.entries()) {
+    for (const event of events) {
+      document.addEventListener(event, listener)
+    }
   }
 }
 
+// -- events --
+function CancelEvent(event: Event) {
+  event.preventDefault()
+  event.stopPropagation()
+}
+
+function DidClickInput(event: Event, input: HTMLInputElement) {
+  const type = input.getAttribute("type")
+  if (type == "file" || type == "submit") {
+    CancelEvent(event)
+  }
+}
+
+function DidClickLink(event: Event, link: HTMLLinkElement) {
+  // ignore non-demo links
+  if (link.dataset["demo"] == null) {
+    CancelEvent(event)
+    return
+  }
+
+  // otherwise, examine the demo link
+  const url = new URL(link.href)
+
+  // allow root links to work normally
+  if (url.pathname === "/") {
+    return
+  }
+
+  // if this is a non-root link, stop navigation and crossfade
+  CancelEvent(event)
+  const $frame = document.getElementById(kFrameId)
+  $frame?.classList.toggle(kClassVisible, false)
+  setTimeout(() => { location.href = url.href }, 100)
+}
+
+function DidSubmitForm(event: Event) {
+  // disable form submission
+  CancelEvent(event)
+
+  // if necessary re-enable button
+  const form = event.target as HTMLElement
+  const button = form.querySelector("input[type='submit']")
+  button?.removeAttribute("disabled")
+}
+
+// -- main --
 (function main() {
   document.addEventListener("turbolinks:load", () => {
     ShowCoachmark()
-    AdvanceDemoOnClick()
+    RegisterListeners()
   })
 })()

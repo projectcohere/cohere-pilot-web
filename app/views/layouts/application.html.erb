@@ -37,14 +37,21 @@
       <% end %>
     </div>
 
-    <% if demo? && @demo_id != "index" %>
-      <%= button_to("/", method: :get, id: "demo-back", class: "DemoBackButton") do %>
-        <%= tag.p(class: "DemoBackButton-label") do %>
-          <%= t("demo.actions.back.label") %>
-          <%= tag.span(demo_role.to_s.titlecase, class: "DemoBackButton-role") %>
-        <%- end %>
-        <%= tag.p(t("demo.actions.back.prompt"), class: "DemoBackButton-prompt") %>
-      <%- end %>
+    <% if demo? && @demo_role != nil %>
+      <div class="DemoNav">
+        <p class="DemoNav-label">
+          <%= t("demo.actions.label") %>
+          <%= tag.span(t("demo.#{@demo_role}.name"), class: "DemoNav-role") %>
+        </p>
+
+        <nav class="DemoNav-actions">
+          <%= link_to("/", class: "DemoNav-home", data: { demo: true }) do %>
+            <%= navigation_icon_tag(:home, t("demo.actions.home"), width: 15, height: 11) %>
+          <%- end %>
+
+          <%= demo_next_link_tag %>
+        </nav>
+      </div>
     <% end %>
   <%- end %>
 </html>

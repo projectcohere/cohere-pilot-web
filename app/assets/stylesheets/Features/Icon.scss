@@ -40,4 +40,8 @@
   &--profile {
     @include prefix(webkit, (mask-image: image-url("profile.svg")));
   }
+
+  &--home {
+    @include prefix(webkit, (mask-image: image-url("home.svg")));
+  }
 }
