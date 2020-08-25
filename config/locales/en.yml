@@ -189,10 +189,10 @@ en:
       complete: &case-actions-complete
         <<: *case-actions
         approve:
-          name: "Save & Approve"
+          name: "Approve"
           confirm: "Are you sure you want to approve this case?"
         deny:
-          name: "Save & Deny"
+          name: "Deny"
           confirm: "Are you sure you want to deny this case?"
 
     flashes: &case-flashes
@@ -308,7 +308,7 @@ en:
         actions:
           <<: *case-actions-complete
           submit:
-            name: "Save & Submit to Enroller"
+            name: "Submit to Enroller"
             confirm: "Are you sure you want to submit this case?"
           remove:
             name: "Remove Case"
@@ -359,7 +359,7 @@ en:
         actions:
           save: "Save New Referral"
           submit:
-            name: "Save & Submit to Enroller"
+            name: "Submit to Enroller"
             confirm: "Are you sure you want to submit this case?"
 
   enroller:
