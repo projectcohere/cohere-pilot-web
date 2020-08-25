@@ -145,6 +145,11 @@ function DidClickInput(event: Event, input: HTMLInputElement) {
 }
 
 function DidClickLink(event: Event, link: HTMLLinkElement) {
+  // allow document links to work
+  if (link.target === "_blank") {
+    return
+  }
+
   // ignore non-demo links
   if (link.dataset["demo"] == null) {
     CancelEvent(event)
