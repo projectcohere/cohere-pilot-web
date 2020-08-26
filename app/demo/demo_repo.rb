@@ -40,9 +40,9 @@ class DemoRepo
 
   # -- queries/cases
   def find_cases(scope)
-    page = Pagy.new(count: 1)
-    kase = Cases::Views::Repo.map_cell(find_case, scope)
-    return page, [kase]
+    cases = scope.all? ? @cases : @cases.slice(0, 1)
+    cells = cases.map { |r| Cases::Views::Repo.map_cell(r, scope) }
+    return Pagy.new(count: cells.count), cells
   end
 
   def find_pending_case
@@ -234,6 +234,20 @@ class DemoRepo
       ),
     ]
 
+    5.times do
+      @recipients.push(Recipient::Record.new(
+        id: @recipients.count + 1,
+        phone_number: "555#{Faker::Number.number(digits: 7)}",
+        first_name: Faker::Name.first_name,
+        last_name: Faker::Name.last_name,
+        street: "#{Faker::Number.number(digits: 3)} Test St.",
+        city: "Testburg",
+        state: "Michigan",
+        zip: "12345",
+        household_proof_of_income: Recipient::ProofOfIncome::Dhs.to_i,
+      ))
+    end
+
     @cases = [
       Case::Record.new(
         id: 1,
@@ -248,6 +262,21 @@ class DemoRepo
         updated_at: 1.hour.ago,
       ),
     ]
+
+    5.times do
+      @cases.push(Case::Record.new(
+        id: @cases.count + 1,
+        status: Case::Status::Approved.to_i,
+        program: @programs[0],
+        recipient: @recipients[@cases.count],
+        enroller: @partners[0],
+        supplier: @partners[1],
+        supplier_account_number: Faker::Alphanumeric.alphanumeric(number: 10).upcase,
+        supplier_account_arrears_cents: Faker::Number.number(digits: 5),
+        created_at: 2.days.ago + Faker::Number.digit.hours.ago,
+        updated_at: 2.days.ago - Faker::Number.digit.hours.ago,
+      ))
+    end
 
     @blobs = [
       build_blob("id.jpg"),

@@ -21,11 +21,6 @@
       <%= tag.h2(t(".list.fallback"), class: "CaseList-fallback") %>
     <% else %>
       <%= render(partial: "source/cases/cell", collection: @cases) %>
-
-      <% case @demo_id %>
-      <% when "c06" %>
-        <%= demo_coachmark_tag(t("demo.role.call-center.mark")[5], anchor: :bottom) %>
-      <% end %>
     <% end %>
   </ul>
 
