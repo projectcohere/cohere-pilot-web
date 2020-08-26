@@ -393,7 +393,7 @@ en:
     actions:
       label: "Viewing:"
       home: "Return Home"
-      next: "Next Page"
+      next: "Continue"
 
     index:
       title: "Welcome to Cohere!"

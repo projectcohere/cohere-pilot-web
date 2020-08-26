@@ -36,28 +36,10 @@ module DemoHelper
     end
   end
 
-  def demo_next_link_tag
-    if @demo_page >= @demo_role.pages
-      return link_to(
-        t("demo.actions.home"),
-        "/",
-        data: { demo: true },
-        class: "DemoNav-next"
-      )
-    else
-      return link_to(
-        t("demo.actions.next"),
-        "/#{@demo_role}/#{@demo_page + 1}",
-        data: { demo: true },
-        class: "DemoNav-next",
-      )
-    end
-  end
-
   def demo_coachmark_tag(body = nil, anchor:, &children)
-    content = body || capture(&children)
+    content = block_given? ? capture(&children) : tag.p(body, class: "DemoCoachmark-body")
 
-    coachmark_tag = tag.p(
+    coachmark_tag = tag.div(
       id: "demo-coachmark",
       class: "DemoCoachmark DemoCoachmark--#{anchor.to_s.underscore.camelcase(:lower)}",
       data: { "demo-anchor": anchor },
@@ -66,9 +48,31 @@ module DemoHelper
         tag.path(d: "m0 8 8-8v16z")
       end
 
-      triangle_tag + content
+      content_tag = tag.div(class: "DemoCoachmark-content") do
+        content + demo_coachmark_link_tag
+      end
+
+      triangle_tag + content_tag
     end
 
     return coachmark_tag
+  end
+
+  def demo_coachmark_link_tag
+    if @demo_page >= @demo_role.pages
+      return link_to(
+        t("demo.actions.home"),
+        "/",
+        data: { demo: true },
+        class: "DemoCoachmark-next"
+      )
+    else
+      return link_to(
+        t("demo.actions.next"),
+        "/#{@demo_role}/#{@demo_page + 1}",
+        data: { demo: true },
+        class: "DemoCoachmark-next",
+      )
+    end
   end
 end

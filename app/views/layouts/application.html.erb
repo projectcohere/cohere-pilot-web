@@ -47,9 +47,8 @@
         <nav class="DemoNav-actions">
           <%= link_to("/", class: "DemoNav-home", data: { demo: true }) do %>
             <%= navigation_icon_tag(:home, t("demo.actions.home"), width: 15, height: 11) %>
+            <%= t("demo.actions.home") %>
           <%- end %>
-
-          <%= demo_next_link_tag %>
         </nav>
       </div>
     <% end %>

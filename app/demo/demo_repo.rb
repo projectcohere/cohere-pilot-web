@@ -1,3 +1,5 @@
+require "faker"
+
 class DemoRepo
   # -- lifetime --
   def initialize

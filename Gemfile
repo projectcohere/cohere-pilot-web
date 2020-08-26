@@ -6,6 +6,7 @@ ruby "~> 2.6.3"
 gem "aws-sdk-s3", "~> 1.52", require: false
 gem "bootsnap", ">= 1.4.2", require: false
 gem "clearance", "~> 1.17"
+gem "faker", "~> 2.6"
 gem "image_processing", "~> 1.9"
 gem "openssl", "~> 2.1"
 gem "pagy", "~> 3.7"
@@ -32,7 +33,6 @@ end
 group :development, :test do
   gem "awesome_print", "~> 1.8"
   gem "dotenv-rails", "~> 2.7"
-  gem "faker", "~> 2.6"
   gem "pry-rails", "~> 0.3.9"
   gem "pry-byebug", "~> 3.8"
   gem "pry-rescue", "~> 1.5"
