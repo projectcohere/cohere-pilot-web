@@ -1,7 +1,7 @@
 import { IComponent } from "../Core"
 import { kEventConfirm } from "../Shared/Constants"
 import { Modal } from "../Shared/Modal"
-import { getReadableTime, formatTimes } from "../Shared/Time"
+import { getNow, getReadableTime, formatTimes } from "../Shared/Time"
 
 // -- constants --
 const kIdNotes = "note-list"
@@ -64,7 +64,7 @@ export class ShowEditCase implements IComponent {
   private didConfirmAddNote() {
     const body = this.getBody()
     this.$addNoteField!.setAttribute("value", body)
-    this.$notes!.insertAdjacentHTML("afterbegin", this.renderNote(body, new Date()));
+    this.$notes!.insertAdjacentHTML("afterbegin", this.renderNote(body, getNow()));
   }
 
   // -- view --

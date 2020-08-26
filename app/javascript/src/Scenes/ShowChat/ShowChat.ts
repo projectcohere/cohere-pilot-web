@@ -3,7 +3,7 @@ import { Macros, IMacro } from "./Macros"
 import { UploadFiles } from "./UploadFiles"
 import { IComponent, kConsumer, Id } from "../../Core"
 import { kClassLoaded } from "../../Shared/Constants"
-import { getReadableTimeSince, formatTimes } from "../../Shared/Time"
+import { setNow, getNow, getReadableTimeSince, formatTimes } from "../../Shared/Time"
 
 // -- constants --
 const kChannelChat = "Chats::MessagesChannel"
@@ -108,6 +108,9 @@ export class ShowChat implements IComponent {
       return
     }
 
+    // set demo time
+    setNow()
+
     // find temporary elements
     const $chatForm = document.getElementById(kIdChatForm)!
 
@@ -207,9 +210,9 @@ export class ShowChat implements IComponent {
       return
     }
 
-    // build outoing message
+    // build outgoing message
     const sender = this.sender
-    const timestamp = new Date().getTime()
+    const timestamp = getNow().getTime()
     const clientId = Id.generate()
 
     // display message optimistically

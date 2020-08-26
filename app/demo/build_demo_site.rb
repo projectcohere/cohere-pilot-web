@@ -28,7 +28,7 @@ class BuildDemoSite < ::Command
 
   # -- command --
   def call
-    scaffold_dir
+    scaffold_dir()
 
     # mock services
     mock_service(Partner::Repo, @repo)

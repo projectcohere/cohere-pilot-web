@@ -9,8 +9,18 @@ const kDateConfig = {
   hour12: true
 }
 
+let now: Date | null
+
 // -- impls --
 // -- impls/commands
+export function setNow() {
+  const $now = document.getElementById("time-now")
+  if ($now != null) {
+    now = new Date(JSON.parse($now.textContent || "") * 1000)
+    $now.remove()
+  }
+}
+
 export function formatTimes($times: NodeListOf<HTMLTimeElement>, format: (d: Date) => string) {
   for (let i = 0; i < $times.length; i++) {
     const $time = $times[i]
@@ -20,12 +30,20 @@ export function formatTimes($times: NodeListOf<HTMLTimeElement>, format: (d: Dat
 }
 
 // -- impls/queries
+export function getNow(): Date {
+  if (now != null) {
+    return now
+  } else {
+    return new Date()
+  }
+}
+
 export function getReadableTime(date: Date): string {
   return date.toLocaleString("en-US", kDateConfig)
 }
 
 export function getReadableTimeSince(date: Date): string {
-  const delta = Math.max(new Date().getTime() - date.getTime(), 0)
+  const delta = Math.max(getNow().getTime() - date.getTime(), 0)
   const minutes = Math.floor(delta / 1000 / 60)
   const hours = Math.floor(minutes / 60)
 

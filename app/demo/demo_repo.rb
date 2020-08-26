@@ -78,12 +78,20 @@ class DemoRepo
   end
 
   def find_chat(step:)
+    @chat_step = step
+
     chat = @chats[0]
     chat_messages = @chat_messages[0..step].flatten.map do |m|
       Chat::Message::Repo.map_record(m, attachments: m.attachments)
     end
 
     return Chat::Repo.map_record(chat, chat_messages)
+  end
+
+  def find_current_chat
+    if @chat_step != nil
+      return find_chat(step: @chat_step)
+    end
   end
 
   # -- queries/reports
@@ -194,7 +202,7 @@ class DemoRepo
       ),
       Partner::Record.new(
         id: 2,
-        name: "Test Energy",
+        name: "DTE Energy",
         membership: Partner::Membership::Supplier.to_i,
         programs: [@programs[0]],
       ),
@@ -203,6 +211,12 @@ class DemoRepo
         name: "Michigan",
         membership: Partner::Membership::Governor.to_i,
         programs: [],
+      ),
+      Partner::Record.new(
+        id: 4,
+        name: "Consumers Energy",
+        membership: Partner::Membership::Supplier.to_i,
+        programs: [@programs[0]],
       ),
     ]
 
@@ -214,7 +228,7 @@ class DemoRepo
         last_name: "Sample",
         street: "123 Test St.",
         city: "Testburg",
-        state: "Testissippi",
+        state: "Michigan",
         zip: "12345",
         household_proof_of_income: Recipient::ProofOfIncome::Dhs.to_i,
       ),
@@ -256,47 +270,47 @@ class DemoRepo
 
     @chat_messages = [
       [
-        build_msg_from_macro(0, 0),
+        build_msg_from_macro(0, 0, at: 1.minute),
       ],
       [
-        build_msg(body: Recipient::Repo.map_name(@recipients[0])),
+        build_msg(body: Recipient::Repo.map_name(@recipients[0]), at: 2.minutes),
       ],
       [
-        build_msg_from_macro(1, 0),
-        build_msg(body: find_case(step: 1).recipient.household_size),
+        build_msg_from_macro(1, 0, at: 3.minutes),
+        build_msg(body: find_case(step: 1).recipient.household_size, at: 3.minutes + 13.seconds),
       ],
       [
-        build_msg_from_macro(1, 1),
-        build_msg(attachments: [Chat::Attachment::Record.new(file: @blobs[0])]),
+        build_msg_from_macro(1, 1, at: 4.minutes + 5.seconds),
+        build_msg(attachments: [Chat::Attachment::Record.new(file: @blobs[0])], at: 5.minutes + 7.seconds),
       ],
       [
-        build_msg_from_macro(3, 0),
-        build_msg(attachments: [Chat::Attachment::Record.new(file: @blobs[1])]),
+        build_msg_from_macro(3, 0, at: 5.minutes + 25.seconds),
+        build_msg(attachments: [Chat::Attachment::Record.new(file: @blobs[1])], at: 5.minutes + 58.seconds),
       ],
       [
-        build_msg_from_macro(5, 5),
-        build_msg(body: "Thank you!."),
-        build_msg_from_macro(6, 1),
-        build_msg(body: "Yes"),
+        build_msg_from_macro(5, 5, at: 6.minutes + 3.seconds),
+        build_msg(body: "Thank you!.", at: 6.minutes + 12.seconds),
+        build_msg_from_macro(6, 1, at: 6.minutes + 49.seconds),
+        build_msg(body: "Yes", at: 7.minutes),
       ],
     ]
 
     @users = [
       User::Record.new(
         id: 1,
-        email: "source@testmetro.com",
+        email: "call-center-rep@utility.com",
         role: Role::Source.to_i,
         partner: @partners[0],
       ),
       User::Record.new(
         id: 2,
-        email: "test@michigan.gov",
+        email: "caseworker@state.gov",
         role: Role::Governor.to_i,
         partner: @partners[2],
       ),
       User::Record.new(
         id: 3,
-        email: "agent@testmetro.org",
+        email: "caseworker@nonprofit.org",
         role: Role::Agent.to_i,
         partner: @partners[0],
         admin: true,
@@ -304,16 +318,17 @@ class DemoRepo
     ]
   end
 
-  def build_msg(body: nil, attachments: [])
+  def build_msg(body: nil, attachments: [], at:)
     return Chat::Message::Record.new(
       sender: "recipient",
       body: body&.to_s,
       attachments: attachments,
       status: Chat::Message::Status::Received.to_i,
+      created_at: chat_time + at,
     )
   end
 
-  def build_msg_from_macro(group, item)
+  def build_msg_from_macro(group, item, at:)
     @macros ||= begin
       Chat::Macro::Repo.get.find_grouped
     end
@@ -324,6 +339,7 @@ class DemoRepo
       body: macro.body,
       attachments: [Chat::Attachment::Record.new(file: macro.file)],
       status: Chat::Message::Status::Received.to_i,
+      created_at: chat_time + at,
     )
   end
 
@@ -339,5 +355,9 @@ class DemoRepo
       filename: filename,
       content_type: content_type,
     )
+  end
+
+  private def chat_time
+    return DateTime.civil(2020, 1, 25, 5, 25, 00, Rational(-6, 24))
   end
 end

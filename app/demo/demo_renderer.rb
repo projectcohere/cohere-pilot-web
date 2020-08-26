@@ -196,6 +196,12 @@ class DemoRenderer
   end
 
   private def render(template, path:)
+    # set time if possible
+    chat = @repo.find_current_chat
+    if chat != nil
+      @demo_time = chat.messages.last&.timestamp
+    end
+
     # create renderer with path
     r = renderer.new({ "PATH_INFO": path })
 

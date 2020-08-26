@@ -53,5 +53,11 @@
         </nav>
       </div>
     <% end %>
+
+    <% if demo? && @demo_time != nil %>
+      <script id="time-now">
+        <%= @demo_time %>
+      </script>
+    <% end %>
   <%- end %>
 </html>
