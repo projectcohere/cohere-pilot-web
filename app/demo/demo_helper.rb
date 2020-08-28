@@ -75,4 +75,15 @@ module DemoHelper
       )
     end
   end
+
+  def demo_link_out_to(path, *args, **kwargs, &block)
+    return link_to(
+      path,
+      *args,
+      target: "_blank",
+      rel: "noopener noreferrer",
+      **kwargs,
+      &block
+    )
+  end
 end

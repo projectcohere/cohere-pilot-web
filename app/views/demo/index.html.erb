@@ -1,6 +1,13 @@
 <main class="DemoLanding">
-  <header class="PageHeader">
+  <header class="DemoLanding-header PageHeader">
     <h1><%= image_tag("logo-large-full.svg", height: 67, alt: "Cohere Logo") %></h1>
+
+    <div class="DemoLanding-links">
+      <%= demo_link_out_to("https://github.com/projectcohere/cohere-pilot-web") do %>
+        <%= image_tag("github.svg", width: 15) %>
+        <%= t(".links.github") %>
+      <%- end %>
+    </div>
   </header>
 
   <div class="DemoLanding-content">

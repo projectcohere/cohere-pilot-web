@@ -2,12 +2,22 @@
   height: 100%;
   padding: 100px;
 
-  .PageHeader {
+  &-header {
     margin-bottom: 40px;
+    justify-content: space-between;
 
     > h1 > img {
       height: 67px;
-      margin-left: -4px;
+      margin-left: -4x;
+    }
+  }
+
+  &-links > a {
+    display: flex;
+
+    > img {
+      margin-top: -1px;
+      margin-right: 5px;
     }
   }
 
