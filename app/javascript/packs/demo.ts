@@ -16,9 +16,9 @@ function ShowCoachmark() {
     return
   }
 
-  // find container
+  // find container and make sure coachmark isn't already its child
   const $container = document.getElementById(kContainerId)
-  if ($container == null) {
+  if ($container == null || $coachmark.parentElement === $container) {
     return
   }
 

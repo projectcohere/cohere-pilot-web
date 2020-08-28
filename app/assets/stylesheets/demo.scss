@@ -162,25 +162,25 @@
 
   &--bottom {
     flex-direction: column;
-    translate: 0 15px;
+    transform: translateY(15px);
 
     > svg {
       top: -$arrow-width * 1.5;
-      rotate: 90deg;
+      transform: rotate(90deg);
     }
   }
 
   &--left {
-    translate: -15px 0;
+    transform: translateX(-15px);
 
     > svg {
       right: -$arrow-width;
-      rotate: 180deg;
+      transform: rotate(180deg);
     }
   }
 
   &--right {
-    translate: 15px 0;
+    transform: translateX(15px);
     left: -8px;
 
     > svg {

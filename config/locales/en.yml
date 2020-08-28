@@ -404,7 +404,7 @@ en:
         - "The pilot removed significant barriers and demonstrated the advantages of simplified policy requirements. It reused existing applicant data and enable applicants to apply in real time via two-way text messaging."
         - "Case determinations that commonly took 40 days were completed in under 10 minutes. Administrative tasks that took staff 45 minutes were completed in under 5 minutes. The successful enrollment rate increased by 60%."
       links:
-        github: "View on GitHub"
+        github: "GitHub"
 
     role:
       applicant:
