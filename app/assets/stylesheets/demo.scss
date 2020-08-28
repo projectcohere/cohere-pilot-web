@@ -78,6 +78,23 @@
 
 .DemoPhone {
   height: 100%;
+
+  &-frame {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 365px;
+    height: 662px;
+  }
+
+  &-mockup {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    fill: #efeeff;
+  }
 }
 
 .DemoNav {

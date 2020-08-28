@@ -1,5 +1,5 @@
 <main class="DemoPhone Phone Page">
-  <div class="Phone-frame">
+  <div class="DemoPhone-frame">
     <%=
       render(partial: "chats/chat", locals: {
         chat: @chat,
@@ -7,6 +7,16 @@
         receiver: "Gaby",
       })
     %>
+
+    <svg
+      class="DemoPhone-mockup"
+      viewBox="67 19 365 662"
+      width="365"
+      height="662"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="m99 681c-17.673 0-32-14.327-32-32v-598c0-17.673 14.327-32 32-32h301c17.673 0 32 14.327 32 32v598c0 17.673-14.327 32-32 32zm114-20h73c2.209 0 4-1.791 4-4s-1.791-4-4-4h-73c-2.209 0-4 1.791-4 4s1.791 4 4 4zm-121-27h316c6.627 0 12-5.373 12-12v-544c0-6.627-5.373-12-12-12h-316c-6.627 0-12 5.373-12 12v544c0 6.627 5.373 12 12 12zm90-587c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5zm31-1h73c2.209 0 4-1.791 4-4s-1.791-4-4-4h-73c-2.209 0-4 1.791-4 4s1.791 4 4 4z"/>
+    </svg>
   </div>
 
   <% case @demo_id %>
