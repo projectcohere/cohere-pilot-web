@@ -5,18 +5,12 @@
     <h1 class="PageHeader-title">
       <%= @case.recipient_name %>'s case
     </h1>
-
-    <% case @demo_id %>
-    <% when "n02" %>
-      <%= demo_coachmark_tag(t("demo.role.nonprofit.mark")[1], anchor: :right) %>
-    <% end %>
   </header>
 
   <div class="CaseDetail CaseDetail--edit">
     <% demo_tab = case @demo_id %>
       <% when "n05"; :documents %>
       <% when "n06"; :household %>
-      <% when "n07"; :household %>
       <% else; :overview %>
     <% end %>
 
@@ -150,8 +144,8 @@
           <%- end %>
 
           <% case @demo_id %>
-          <% when "n07" %>
-            <%= demo_coachmark_tag(t("demo.role.nonprofit.mark")[6], anchor: :right) %>
+          <% when "n06" %>
+            <%= demo_coachmark_tag(t("demo.role.nonprofit.mark")[5], anchor: :right) %>
           <% end %>
         </div>
       <% end %>

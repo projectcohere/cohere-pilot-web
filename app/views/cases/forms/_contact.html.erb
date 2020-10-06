@@ -9,6 +9,11 @@
       <%= f.text_field(:last_name, tid: "Last Name Field") %>
     <% end %>
 
+    <% case @demo_id %>
+    <% when "n02" %>
+      <%= demo_coachmark_tag(t("demo.role.nonprofit.mark")[1], anchor: :top) %>
+    <% end %>
+
     <%= f.field(:phone_number, "Phone #", prefix: "#1", class: "CaseForm-phoneNumber") do %>
       <%=
         f.telephone_field(:phone_number,

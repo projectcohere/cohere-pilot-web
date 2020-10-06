@@ -49,8 +49,7 @@ class BuildDemoSite < ::Command
     create_page("2", render.c02_start_case, role: r::CallCenter)
     create_page("3", render.c03_form, role: r::CallCenter)
     create_page("4", render.c04_state_data, role: r::CallCenter)
-    create_page("5", render.c05_begin_application, role: r::CallCenter)
-    create_page("6", render.c06_view_cases, role: r::CallCenter)
+    create_page("5", render.c05_view_cases, role: r::CallCenter)
     create_page("1", render.s01_case_alert, role: r::State)
     create_page("2", render.s02_form, role: r::State)
     create_page("3", render.s03_fpl, role: r::State)
@@ -59,10 +58,9 @@ class BuildDemoSite < ::Command
     create_page("3", render.n03_chat, role: r::Nonprofit)
     create_page("4", render.n04_macros, role: r::Nonprofit)
     create_page("5", render.n05_documents, role: r::Nonprofit)
-    create_page("6", render.n06_fpl, role: r::Nonprofit)
-    create_page("7", render.n07_determination, role: r::Nonprofit)
-    create_page("8", render.n08_referrals, role: r::Nonprofit)
-    create_page("9", render.n09_reports, role: r::Nonprofit)
+    create_page("6", render.n06_determination, role: r::Nonprofit)
+    create_page("7", render.n07_referrals, role: r::Nonprofit)
+    create_page("8", render.n08_reports, role: r::Nonprofit)
   end
 
   # -- helpers --

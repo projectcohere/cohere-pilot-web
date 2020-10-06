@@ -1,6 +1,8 @@
 require "faker"
 
 class DemoRepo
+  include ActionView::Helpers::TranslationHelper
+
   # -- lifetime --
   def initialize
     build_db
@@ -32,7 +34,7 @@ class DemoRepo
 
   # -- queries/partners
   def find_all_suppliers_by_program(_)
-    return [@partners[1]]
+    return [@partners[1], @partners[3]]
   end
 
   # -- queries/programs
@@ -42,7 +44,14 @@ class DemoRepo
 
   # -- queries/cases
   def find_cases(scope)
-    cases = scope.all? ? @cases : @cases.slice(0, 1)
+    cases = if scope.all?
+      @cases
+    elsif @user != nil && @user.role.agent?
+      @cases.slice(0, 2)
+    else
+      @cases.slice(0, 1)
+    end
+
     cells = cases.map { |r| Cases::Views::Repo.map_cell(r, scope) }
     return Pagy.new(count: cells.count), cells
   end
@@ -61,8 +70,8 @@ class DemoRepo
     return form
   end
 
-  def find_active_case(step:)
-    view = Cases::Views::Repo.map_detail_from_record(find_case(step: step))
+  def find_active_case(step:, has_id: false)
+    view = Cases::Views::Repo.map_detail_from_record(find_case(step: step, has_id: has_id))
     form = make_form(view)
     return form
   end
@@ -102,9 +111,13 @@ class DemoRepo
   end
 
   # -- helpers --
-  private def find_case(step: 0)
+  private def find_case(step: 0, has_id: false)
     c = @cases[0]
     r = c.recipient
+
+    if has_id
+      c.documents = [@documents[0]]
+    end
 
     if step >= 1
       r.assign_attributes(
@@ -124,14 +137,12 @@ class DemoRepo
 
     if step >= 4
       @chat_step = 4
-
       c.status = :submitted
       c.documents = @documents
     end
 
     if step >= 5
       @chat_step = 5
-
       c.status = :approved
     end
 
@@ -236,12 +247,18 @@ class DemoRepo
       ),
     ]
 
-    5.times do
+    5.times do |i|
+      first_name, last_name = if i == 0
+        ["Dee", "Hock"]
+      else
+        [Faker::Name.first_name, Faker::Name.last_name]
+      end
+
       @recipients.push(Recipient::Record.new(
         id: @recipients.count + 1,
         phone_number: "555#{Faker::Number.number(digits: 7)}",
-        first_name: Faker::Name.first_name,
-        last_name: Faker::Name.last_name,
+        first_name: first_name,
+        last_name: last_name,
         street: "#{Faker::Number.number(digits: 3)} Test St.",
         city: "Testburg",
         state: "Michigan",
@@ -275,21 +292,21 @@ class DemoRepo
         supplier: @partners[1],
         supplier_account_number: Faker::Alphanumeric.alphanumeric(number: 10).upcase,
         supplier_account_arrears_cents: Faker::Number.number(digits: 5),
-        created_at: 2.days.ago + Faker::Number.digit.hours.ago,
-        updated_at: 2.days.ago - Faker::Number.digit.hours.ago,
+        created_at: 2.days.ago,
+        updated_at: 2.days.ago,
       ))
     end
 
     @blobs = [
       build_blob("id.jpg"),
-      build_blob("document.jpg"),
       build_blob("contract.jpg"),
+      build_blob("approved.png"),
+      build_blob("referral.png"),
     ]
 
     @documents = [
       Document::Record.new(file: @blobs[0]),
-      Document::Record.new(file: @blobs[1]),
-      Document::Record.new(file: @blobs[2], classification: :contract),
+      Document::Record.new(file: @blobs[1], classification: :contract),
     ]
 
     @chats = [
@@ -312,16 +329,14 @@ class DemoRepo
       ],
       [
         build_msg_from_macro(1, 1, at: 4.minutes + 5.seconds),
-        build_msg(attachments: [Chat::Attachment::Record.new(file: @blobs[0])], at: 5.minutes + 7.seconds),
       ],
       [
-        build_msg_from_macro(3, 0, at: 5.minutes + 25.seconds),
-        build_msg(attachments: [Chat::Attachment::Record.new(file: @blobs[1])], at: 5.minutes + 58.seconds),
+        build_msg(files: [@blobs[0]], at: 5.minutes + 7.seconds),
       ],
       [
-        build_msg_from_macro(5, 5, at: 6.minutes + 3.seconds),
-        build_msg(body: "Thank you!.", at: 6.minutes + 12.seconds),
-        build_msg_from_macro(6, 1, at: 6.minutes + 49.seconds),
+        build_msg(sender: "Gaby", files: [@blobs[2]], at: 6.minutes + 3.seconds),
+        build_msg(body: "Thank you so much!", at: 6.minutes + 12.seconds),
+        build_msg(sender: "Gaby", files: [@blobs[3]], at: 6.minutes + 49.seconds),
         build_msg(body: "Yes", at: 7.minutes),
       ],
     ]
@@ -349,11 +364,11 @@ class DemoRepo
     ]
   end
 
-  def build_msg(body: nil, attachments: [], at:)
+  def build_msg(sender: "recipient", body: nil, files: [], at:)
     return Chat::Message::Record.new(
-      sender: "recipient",
+      sender: sender,
       body: body&.to_s,
-      attachments: attachments,
+      attachments: files.map { |f| Chat::Attachment::Record.new(file: f) },
       status: Chat::Message::Status::Received.to_i,
       created_at: chat_time + at,
     )
@@ -378,6 +393,8 @@ class DemoRepo
     content_type = case filename.split(".").last
     when "jpg"
       "image/jpg"
+    when "png"
+      "image/png"
     else
       "application/octet-stream"
     end

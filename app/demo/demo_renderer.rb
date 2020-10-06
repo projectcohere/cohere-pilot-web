@@ -78,15 +78,8 @@ class DemoRenderer
     return render("source/cases/new", path: "/cases/new")
   end
 
-  def c05_begin_application
+  def c05_view_cases
     setup(demo_role: DemoRole::CallCenter, demo_page: 5, user: @repo.find_source_user)
-    @form = @repo.find_new_case(filled: true)
-    @case = @form.model
-    return render("source/cases/new", path: "/cases/new")
-  end
-
-  def c06_view_cases
-    setup(demo_role: DemoRole::CallCenter, demo_page: 6, user: @repo.find_source_user)
     @scope = Cases::Scope::All
     @page, @cases = @repo.find_cases(@scope)
     return render("source/cases/index", path: "/cases")
@@ -101,7 +94,7 @@ class DemoRenderer
 
   def s02_form
     setup(demo_role: DemoRole::State, demo_page: 2, user: @repo.find_state_user)
-    @form = @repo.find_active_case(step: 0)
+    @form = @repo.find_active_case(step: 0, has_id: true)
     @case = @form.model
     return render("governor/cases/edit", path: "/cases/1/edit")
   end
@@ -122,21 +115,21 @@ class DemoRenderer
 
   def n02_form
     setup(demo_role: DemoRole::Nonprofit, demo_page: 2, user: @repo.find_nonprofit_user)
-    @form = @repo.find_active_case(step: 1)
+    @form = @repo.find_active_case(step: 4)
     @case = @form.model
     return render("agent/cases/edit", path: "/cases/1/edit")
   end
 
   def n03_chat
     setup(demo_role: DemoRole::Nonprofit, demo_page: 3, user: @repo.find_nonprofit_user)
-    @form = @repo.find_active_case(step: 2)
+    @form = @repo.find_active_case(step: 4)
     @case = @form.model
     return render("agent/cases/edit", path: "/cases/1/edit")
   end
 
   def n04_macros
     setup(demo_role: DemoRole::Nonprofit, demo_page: 4, user: @repo.find_nonprofit_user)
-    @form = @repo.find_active_case(step: 3)
+    @form = @repo.find_active_case(step: 4)
     @case = @form.model
     return render("agent/cases/edit", path: "/cases/1/edit")
   end
@@ -148,29 +141,22 @@ class DemoRenderer
     return render("agent/cases/edit", path: "/cases/1/edit#documents")
   end
 
-  def n06_fpl
+  def n06_determination
     setup(demo_role: DemoRole::Nonprofit, demo_page: 6, user: @repo.find_nonprofit_user)
     @form = @repo.find_active_case(step: 4)
     @case = @form.model
     return render("agent/cases/edit", path: "/cases/1/edit")
   end
 
-  def n07_determination
+  def n07_referrals
     setup(demo_role: DemoRole::Nonprofit, demo_page: 7, user: @repo.find_nonprofit_user)
-    @form = @repo.find_active_case(step: 4)
-    @case = @form.model
-    return render("agent/cases/edit", path: "/cases/1/edit")
-  end
-
-  def n08_referrals
-    setup(demo_role: DemoRole::Nonprofit, demo_page: 8, user: @repo.find_nonprofit_user)
     @form = @repo.find_referral_case
     @case = @form.model
     return render("agent/referrals/select", path: "/cases/1/referrals/select")
   end
 
-  def n09_reports
-    setup(demo_role: DemoRole::Nonprofit, demo_page: 9, user: @repo.find_nonprofit_user)
+  def n08_reports
+    setup(demo_role: DemoRole::Nonprofit, demo_page: 8, user: @repo.find_nonprofit_user)
     @form = @repo.find_report_form
     return render("reports/base/new", path: "/reports")
   end
@@ -200,6 +186,11 @@ class DemoRenderer
     chat = @repo.find_current_chat
     if chat != nil
       @demo_time = chat.messages.last&.timestamp
+    end
+
+    if @cases&.length > 0
+      now = @cases[0].updated_at + 1.minute
+      Time.redefine_singleton_method(:now) { now }
     end
 
     # create renderer with path

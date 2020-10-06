@@ -36,8 +36,9 @@ module DemoHelper
     end
   end
 
-  def demo_coachmark_tag(body = nil, anchor:, &children)
-    content = block_given? ? capture(&children) : tag.p(body, class: "DemoCoachmark-body")
+  def demo_coachmark_tag(body, anchor:)
+    name_tag = tag.p(body[:name], class: "DemoCoachmark-name")
+    text_tag = tag.p(body[:text], class: "DemoCoachmark-text")
 
     coachmark_tag = tag.div(
       id: "demo-coachmark",
@@ -49,7 +50,7 @@ module DemoHelper
       end
 
       content_tag = tag.div(class: "DemoCoachmark-content") do
-        content + demo_coachmark_link_tag
+        name_tag + text_tag + demo_coachmark_link_tag
       end
 
       triangle_tag + content_tag

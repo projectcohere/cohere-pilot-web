@@ -1,29 +1,40 @@
 <main class="DemoLanding">
-  <header class="DemoLanding-header PageHeader">
-    <h1><%= image_tag("logo-large-full.svg", height: 67, alt: "Cohere Logo") %></h1>
-
-    <div class="DemoLanding-links">
-      <%= demo_link_out_to("https://github.com/projectcohere/cohere-pilot-web") do %>
-        <%= image_tag("github.svg", width: 15) %>
-        <%= t(".links.github") %>
-      <%- end %>
-    </div>
-  </header>
-
   <div class="DemoLanding-content">
-    <nav class="DemoLanding-nav">
-      <ul class="DemoLanding-roles">
-        <%= demo_role_tag(DemoRole::Applicant) %>
-        <%= demo_role_tag(DemoRole::CallCenter) %>
-        <%= demo_role_tag(DemoRole::State) %>
-        <%= demo_role_tag(DemoRole::Nonprofit) %>
-      </ul>
-    </nav>
+    <section class="DemoLanding-nav">
+      <header class="DemoLanding-header PageHeader">
+        <h1><%= image_tag("logo-large-full.svg", height: 67, alt: "Cohere Logo") %></h1>
+      </header>
+
+      <nav>
+        <ul class="DemoLanding-roles">
+          <%= demo_role_tag(DemoRole::Applicant) %>
+          <%= demo_role_tag(DemoRole::CallCenter) %>
+          <%= demo_role_tag(DemoRole::State) %>
+          <%= demo_role_tag(DemoRole::Nonprofit) %>
+        </ul>
+      </nav>
+    </section>
 
     <section class="DemoLanding-intro">
       <%= tag.h2(t(".prompt")) %>
-      <% t(".intro").each do |line| %>
-        <p><%= line %></p>
+
+      <%- links = { %>
+      <%-   github: demo_link_out_to(t(".links.github"), "https://github.com/projectcohere/cohere-pilot-web").html_safe, %>
+      <%-   report: demo_link_out_to(t(".links.report"), "").html_safe, %>
+      <%- } %>
+
+      <% t(".intro.open", **links).each do |line| %>
+        <p><%= line.html_safe %></p>
+      <% end %>
+
+      <ul>
+        <% t(".intro.metrics").each do |line| %>
+          <li><%= line %></li>
+        <% end %>
+      </ul>
+
+      <% t(".intro.close", **links).each do |line| %>
+        <p><%= line.html_safe %></p>
       <% end %>
     </section>
   </div>

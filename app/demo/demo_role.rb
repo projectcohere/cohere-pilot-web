@@ -4,9 +4,9 @@ class DemoRole < ::Option
 
   # -- options --
   option(:applicant, pages: 6)
-  option(:call_center, pages: 6)
+  option(:call_center, pages: 5)
   option(:state, pages: 3)
-  option(:nonprofit, pages: 9)
+  option(:nonprofit, pages: 8)
 
   # -- queries --
   def to_user_role

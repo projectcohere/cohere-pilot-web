@@ -54,6 +54,10 @@ function ShowCoachmark() {
         top: ${dst.bottom}px;
         left: ${dst.left + (dst.width - src.width) / 2}px;
       `
+      case "top": return `
+        top: ${dst.top - src.height}px;
+        left: ${dst.left + (dst.width - src.width) / 2}px;
+      `
       case "left": return `
         left: ${dst.left - src.width}px;
         top: ${dst.top + (dst.height - src.height) / 2}px;
